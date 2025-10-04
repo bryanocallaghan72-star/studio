@@ -70,7 +70,14 @@ export function MapMyDay() {
         if (!currentVibe) return;
         // For now, this regenerates the whole itinerary.
         // In the future, it will respect held stops.
-        handleGenerateItinerary(currentVibe);
+        startTransition(async () => {
+            const response = await generateItinerary(currentVibe);
+            if (response.error) {
+                setError(response.error);
+            } else if (response.success) {
+                setItinerary(response.success);
+            }
+        });
     }
 
     function toggleHold(stop: ItineraryStop) {
@@ -85,7 +92,14 @@ export function MapMyDay() {
     }
 
     const VibeSelector = () => (
-        <>
+        <motion.div
+            key="selector"
+            initial={{ opacity: 0, x: -300 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -300 }}
+            transition={{ duration: 0.3 }}
+            className="h-full flex flex-col"
+        >
             <CardHeader>
                 <div className="flex items-center gap-3">
                     <Calendar className="h-8 w-8 text-primary" />
@@ -117,7 +131,7 @@ export function MapMyDay() {
                     </Card>
                 ))}
             </CardContent>
-        </>
+        </motion.div>
     );
 
     const ItineraryBuilder = () => {
@@ -125,7 +139,14 @@ export function MapMyDay() {
         const selectedVibe = vibes.find(v => v.request.vibe === currentVibe?.vibe);
 
         return (
-            <div className="h-full flex flex-col bg-secondary/30">
+            <motion.div
+                key="builder"
+                initial={{ opacity: 0, x: 300 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 300 }}
+                transition={{ duration: 0.3 }}
+                className="h-full flex flex-col bg-secondary/30"
+            >
                 <div className="p-4 bg-background">
                     <div className="flex items-center gap-4">
                         <Button variant="ghost" size="icon" onClick={handleBack} className="text-muted-foreground">
@@ -139,7 +160,7 @@ export function MapMyDay() {
                     </div>
                 </div>
 
-                <div className="flex-grow p-4 space-y-3">
+                <div className="flex-grow p-4 space-y-3 overflow-y-auto">
                      {itinerary.stops.map((stop, index) => {
                         const isHeld = heldStops.some(held => held.title === stop.title && held.location === stop.location);
                         return (
@@ -160,7 +181,7 @@ export function MapMyDay() {
                      })}
                 </div>
 
-                <div className="p-4 grid grid-cols-2 gap-4 bg-background">
+                <div className="p-4 grid grid-cols-2 gap-4 bg-background border-t">
                      <Button size="lg" className="w-full" onClick={() => setIsModalOpen(true)}>Start Plan</Button>
                      <Button size="lg" variant="outline" className="w-full" onClick={handleShuffle} disabled={isPending}>
                         {isPending ? (
@@ -171,7 +192,7 @@ export function MapMyDay() {
                         Shuffle
                     </Button>
                 </div>
-            </div>
+            </motion.div>
         )
     };
 
@@ -221,31 +242,25 @@ export function MapMyDay() {
     return (
         <Card className="w-full flex flex-col min-h-[30rem] overflow-hidden">
              <AnimatePresence mode="wait">
-                <motion.div
-                    key={itinerary ? "builder" : "selector"}
-                    initial={{ opacity: 0, x: itinerary ? 300 : -300 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: itinerary ? -300 : 300 }}
-                    transition={{ duration: 0.3 }}
-                    className="h-full flex flex-col"
-                >
-                    {isPending && !itinerary && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
-                            <Loader2 className="h-10 w-10 animate-spin text-primary" />
-                        </div>
-                    )}
-                    {error && (
-                        <Alert variant="destructive" className="m-6">
-                            <AlertTitle>Error</AlertTitle>
-                            <AlertDescription>{error}</AlertDescription>
-                             <Button variant="link" onClick={handleBack}>Go Back</Button>
-                        </Alert>
-                    )}
+                 {itinerary ? <ItineraryBuilder /> : <VibeSelector />}
+             </AnimatePresence>
 
-                    {!itinerary && !error ? <VibeSelector /> : null}
-                    {itinerary && !error ? <ItineraryBuilder /> : null}
-                </motion.div>
-            </AnimatePresence>
+             {isPending && !itinerary && (
+                <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
+                    <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                </div>
+            )}
+            
+            {error && !itinerary && (
+                <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10 p-6">
+                    <Alert variant="destructive">
+                        <AlertTitle>Error</AlertTitle>
+                        <AlertDescription>{error}</AlertDescription>
+                            <Button variant="link" onClick={handleBack} className="p-0 mt-2">Go Back</Button>
+                    </Alert>
+                </div>
+            )}
+
             <ItineraryModal />
         </Card>
     );
