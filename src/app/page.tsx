@@ -6,6 +6,7 @@ import { Deals } from "@/components/iykyk/Deals";
 import { MyDay } from "@/components/iykyk/MyDay";
 import { SurpriseMe } from "@/components/iykyk/SurpriseMe";
 import { CommunityConnector } from "@/components/iykyk/CommunityConnector";
+import { Features } from "@/components/iykyk/Features";
 
 export default function Home() {
   return (
@@ -18,6 +19,8 @@ export default function Home() {
           <VibeSelector />
         </div>
         
+        <Features />
+
         <FlowTabs />
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
