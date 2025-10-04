@@ -32,70 +32,71 @@ const categories = [
 ];
 
 const venues = [
-  {
-    name: "The Beachcomber Bar",
-    slug: "the-beachcomber-bar",
-    category: "Cocktails",
-    position: { top: "30%", left: "55%" },
-    color: "bg-accent",
-  },
-  {
-    name: "Sakura Sushi",
-    slug: "sakura-sushi",
-    category: "Sushi",
-    position: { top: "50%", left: "40%" },
-    color: "bg-blue-400",
-  },
-  {
-    name: "Morning Glory Cafe",
-    slug: "morning-glory-cafe",
-    category: "Brunch",
-    position: { top: "65%", left: "65%" },
-    color: "bg-pink-400",
-  },
-  {
-    name: "Bondi Beach",
-    slug: "bondi-beach",
-    category: "Vibes",
-    position: { top: "15%", left: "25%" },
-    color: "bg-cyan-400",
-  },
-  {
-    name: "Icebergs Pool",
-    slug: "icebergs-pool",
-    category: "Health & Fitness",
-    position: { top: "80%", left: "30%" },
-    color: "bg-teal-500",
-  },
-  {
-    name: "Bondi Markets",
-    slug: "bondi-markets",
-    category: "Retail",
-    position: { top: "45%", left: "15%" },
-    color: "bg-purple-400",
-  },
     {
-    name: "Sunset Picnic Spot",
-    slug: "sunset-picnic-spot",
-    category: "Vibes",
-    position: { top: "25%", left: "80%" },
-    color: "bg-orange-400",
-  },
-  {
-    name: "The Corner House",
-    slug: "the-corner-house",
-    category: "Restaurants",
-    position: { top: "75%", left: "85%" },
-    color: "bg-red-400",
-  },
-   {
-    name: "Bondi Festival",
-    slug: "bondi-festival",
-    category: "Events",
-    position: { top: "55%", left: "50%" },
-    color: "bg-yellow-400",
-  },
+      name: "Icebergs Dining Room",
+      slug: "icebergs-dining-room",
+      category: "Restaurants",
+      position: { top: "80%", left: "30%" },
+      color: "bg-blue-400",
+    },
+    {
+      name: "Hotel Ravesis",
+      slug: "hotel-ravesis",
+      category: "Nightlife",
+      position: { top: "30%", left: "55%" },
+      color: "bg-pink-400",
+    },
+    {
+      name: "The Depot",
+      slug: "the-depot",
+      category: "Brunch",
+      position: { top: "65%", left: "65%" },
+      color: "bg-orange-400",
+    },
+    {
+      name: "Bondi Beach",
+      slug: "bondi-beach",
+      category: "Vibes",
+      position: { top: "15%", left: "25%" },
+      color: "bg-cyan-400",
+    },
+    {
+      name: "Raw Bar",
+      slug: "raw-bar",
+      category: "Sushi",
+      position: { top: "50%", left: "40%" },
+      color: "bg-red-400",
+    },
+    {
+        name: "Speedo's Cafe",
+        slug: "speedos-cafe",
+        category: "Brunch",
+        position: { top: "25%", left: "80%" },
+        color: "bg-yellow-400",
+    },
+    {
+        name: "Totti's",
+        slug: "tottis",
+        category: "Restaurants",
+        position: { top: "75%", left: "85%" },
+        color: "bg-green-500",
+    },
+    {
+        name: "Bondi Trattoria",
+        slug: "bondi-trattoria",
+        category: "Restaurants",
+        position: { top: "55%", left: "20%" },
+        color: "bg-teal-500",
+    },
+    {
+        name: "The Corner House",
+        slug: "the-corner-house",
+        category: "Cocktails",
+        position: { top: "45%", left: "75%" },
+        color: "bg-purple-500",
+    },
 ];
+
 
 export function IykykVibeMap() {
   const mapImage = PlaceHolderImages.find((img) => img.id === "map-1");
@@ -153,7 +154,7 @@ export function IykykVibeMap() {
             {filteredVenues.map((venue) => (
               <Tooltip key={venue.name}>
                 <TooltipTrigger asChild>
-                   <Link href={`/venue/${venue.slug}`} passHref legacyBehavior>
+                   <Link href={`/venue/${venue.slug}`} passHref>
                     <Button
                         variant="ghost"
                         size="icon"
