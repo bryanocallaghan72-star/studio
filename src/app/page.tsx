@@ -7,6 +7,7 @@ import { MyDay } from "@/components/iykyk/MyDay";
 import { SurpriseMe } from "@/components/iykyk/SurpriseMe";
 import { CommunityConnector } from "@/components/iykyk/CommunityConnector";
 import { MobileNav } from "@/components/iykyk/MobileNav";
+import { Features } from "@/components/iykyk/Features";
 
 export default function Home() {
   return (
@@ -30,6 +31,8 @@ export default function Home() {
             <CommunityConnector />
         </div>
         <SurpriseMe />
+
+        <Features />
 
       </main>
       <MobileNav />
