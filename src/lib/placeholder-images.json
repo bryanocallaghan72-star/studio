@@ -131,6 +131,12 @@
       "description": "A group fitness class outdoors.",
       "imageUrl": "https://images.unsplash.com/photo-1607962837359-5e7e89f86776?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxncm91cCUyMGZpdG5lc3N8ZW58MHx8fHwxNzU5NTM2MTg3fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "group fitness"
+    },
+    {
+      "id": "map-1",
+      "description": "A stylized, abstract map of a coastal area like Bondi.",
+      "imageUrl": "https://images.unsplash.com/photo-1584962428213-9a378d371424?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxhYnN0cmFjdCUyMGJlYWNoJTIwbWFwfGVufDB8fHx8MTc2MDAxMjI5M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract map"
     }
   ]
 }
