@@ -32,16 +32,15 @@ export function IykykVibeMap() {
         </p>
 
         <div className="flex justify-center overflow-x-auto pb-4 scrollbar-hide">
-            {Object.entries(categories).map(([category, {icon: Icon}]) => (
+            {Object.entries(categories).map(([category, {icon: Icon, color, textColor}]) => (
                 <button 
                     key={category} 
                     onClick={() => setActiveTab(category)} 
                     className={cn(
                         "flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full mx-1 transition-all duration-200 inline-flex items-center",
-                        activeTab === category 
-                            ? 'bg-primary text-primary-foreground shadow-md' 
-                            : 'bg-card text-card-foreground hover:bg-secondary'
+                        activeTab !== category && 'bg-card text-card-foreground hover:bg-secondary'
                     )}
+                    style={activeTab === category ? { backgroundColor: color, color: textColor } : {}}
                 >
                     <Icon className="mr-2 h-4 w-4" />
                     {category}
