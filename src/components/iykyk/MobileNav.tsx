@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 
 const navItems = [
   { href: "/feed", icon: Home, label: "Feed" },
-  { href: "#", icon: PlaySquare, label: "Reels" },
+  { href: "/reels", icon: PlaySquare, label: "Reels" },
   { href: "/", icon: Compass, label: "iykyk" },
   { href: "#", icon: Users, label: "Community" },
   { href: "#", icon: Flame, label: "Fire" },
@@ -16,7 +16,7 @@ const navItems = [
 export function MobileNav() {
   const pathname = usePathname();
   return (
-    <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-background border-t">
+    <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-background/80 backdrop-blur-sm border-t">
       <div className="grid h-full max-w-lg grid-cols-6 mx-auto font-medium">
         {navItems.map((item) => {
           const isActive =
