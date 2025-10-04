@@ -43,9 +43,19 @@ const appData = {
         { name: "Sean's", description: "Farm-to-table dining with ocean views.", type: "Restaurants" },
         { name: "La Piadina", description: "Authentic Italian flatbread sandwiches.", type: "Restaurants" },
         { name: "The Bucket List", description: "Casual beachside bar with a lively atmosphere.", type: "Nightlife" },
-        { name: "Porch and Parlour", description: "Bohemian-style cafe with healthy options.", type: "Brunch" },
+        { name: "Porch and Parlour", description: "Bohemian-style cafe with healthy options.", type_of: "Brunch" },
         { name: "Anatomy", description: "Boutique fitness studio offering various classes.", type: "Health & Fitness" },
-        { name: "Acai Brothers", description: "Superfood bar specializing in acai bowls.", type: "Health & Fitness" }
+        { name: "Acai Brothers", description: "Superfood bar specializing in acai bowls.", type: "Health & Fitness" },
+        { name: "Bondi Trattoria", description: "Classic Italian dishes with a sea view.", type: "Restaurants" },
+        { name: "El Indio", description: "Authentic Mexican street food.", type: "Restaurants" },
+        { name: "The Rum Diary Bar", description: "Caribbean-themed bar with a wide rum selection.", type: "Cocktails" },
+        { name: "The Shop & Wine Bar", description: "Cozy wine bar with a curated selection.", type: "Cocktails" },
+        { name: "Upstairs at The Beresford", description: "Rooftop bar with city views and cocktails.", type: "Cocktails" },
+        { name: "Fishbowl", description: "Healthy and delicious poke bowls.", type: "Sushi" },
+        { name: "Ora", description: "Organic and healthy cafe with vegan options.", type: "Brunch" },
+        { name: "Brown Sugar", description: "Modern Australian cuisine with a focus on local produce.", type_of: "Brunch" },
+        { name: "Fika Swedish Kitchen", description: "Cozy cafe with Swedish pastries and coffee.", type: "Brunch" },
+        { name: "The Nine", description: "Bright and airy cafe with a Mediterranean-inspired menu.", type_of: "Brunch" }
     ]
   }
 };
@@ -286,15 +296,13 @@ export function MapMyDay() {
                     </motion.div>
                 )}
                 
-                {view === 'selection' && (
+                {view === 'selection' ? (
                     <EventAndItinerarySelectionPage
                         onSelectVibe={handleSelectVibe}
                         onSelectEvent={() => {}} 
                     />
-                )}
-                
-                {view === 'itinerary' && itinerary && (
-                    <MapMyDayItineraryPage
+                ) : (
+                    itinerary && <MapMyDayItineraryPage
                         itineraryData={itinerary}
                         onStartPlan={handleStartPlan}
                         onBack={handleBackToSelection}
@@ -330,4 +338,3 @@ export function MapMyDay() {
         </Card>
     );
 }
-
