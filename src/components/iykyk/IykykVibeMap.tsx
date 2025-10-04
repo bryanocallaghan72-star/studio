@@ -95,6 +95,41 @@ const venues = [
         position: { top: "45%", left: "75%" },
         color: "bg-purple-500",
     },
+    {
+      name: "Harry's Bondi",
+      slug: "harrys-bondi",
+      category: "Brunch",
+      position: { top: "40%", left: "15%" },
+      color: "bg-red-500",
+    },
+    {
+      name: "LULU",
+      slug: "lulu-pan-asian",
+      category: "Restaurants",
+      position: { top: "60%", left: "50%" },
+      color: "bg-lime-500",
+    },
+    {
+      name: "RND Izakaya",
+      slug: "rnd-izakaya",
+      category: "Restaurants",
+      position: { top: "70%", left: "10%" },
+      color: "bg-indigo-500",
+    },
+    {
+      name: "Luca and Luca",
+      slug: "luca-and-luca-gelato",
+      category: "Brunch",
+      position: { top: "20%", left: "70%" },
+      color: "bg-rose-400",
+    },
+    {
+      name: "Volume One",
+      slug: "volume-one",
+      category: "Cocktails",
+      position: { top: "85%", left: "55%" },
+      color: "bg-amber-500",
+    },
 ];
 
 
