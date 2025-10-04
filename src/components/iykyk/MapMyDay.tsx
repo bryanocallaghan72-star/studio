@@ -1,14 +1,10 @@
+
 "use client";
 
 import { useState, useTransition } from 'react';
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Calendar, Loader2, Shuffle, Wand2 } from "lucide-react";
+import { Calendar, Loader2, Shuffle, Wand2, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { AnimatePresence, motion } from "framer-motion";
@@ -16,11 +12,15 @@ import { generateItinerary } from '@/app/actions';
 import { Itinerary } from '@/ai/flows/generate-itinerary-flow';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
-const FormSchema = z.object({
-  mood: z.string().min(3, {
-    message: "Describe the mood for your day.",
-  }),
-});
+const vibes = [
+    "Tinder Date - Bondi",
+    "Single & Ready to Mingle",
+    "Date Night - Bondi",
+    "Wellness Saturday",
+    "Ladies' Lunch",
+    "Quick Bondi Lunch",
+    "Girls' Night Out",
+];
 
 // Fisher-Yates shuffle algorithm
 const shuffleArray = (array: any[]) => {
@@ -37,19 +37,15 @@ export function MapMyDay() {
     const [isPending, startTransition] = useTransition();
     const [itinerary, setItinerary] = useState<Itinerary | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [selectedVibe, setSelectedVibe] = useState<string | null>(null);
 
-    const form = useForm<z.infer<typeof FormSchema>>({
-        resolver: zodResolver(FormSchema),
-        defaultValues: {
-            mood: "",
-        },
-    });
 
-    function onSubmit(data: z.infer<typeof FormSchema>) {
+    function handleVibeSelection(vibe: string) {
         setError(null);
         setItinerary(null);
+        setSelectedVibe(vibe);
         startTransition(async () => {
-          const response = await generateItinerary(data.mood);
+          const response = await generateItinerary(vibe);
           if (response.error) {
             setError(response.error);
           } else if (response.success) {
@@ -88,29 +84,27 @@ export function MapMyDay() {
                 <CardDescription>Choose a vibe (e.g., "Wellness Saturday," "Tinder Date") and get an instant itinerary.</CardDescription>
             </CardHeader>
             <CardContent className="flex-grow flex flex-col">
-                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField
-                        control={form.control}
-                        name="mood"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormControl>
-                                <Input placeholder="e.g., A chill Sunday with good food..." {...field} />
-                            </FormControl>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                        <Button type="submit" disabled={isPending} className="w-full">
-                        {isPending ? (
-                            <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</>
-                        ) : (
-                            <><Wand2 className="mr-2 h-4 w-4" /> Generate Itinerary</>
-                        )}
-                        </Button>
-                    </form>
-                </Form>
+                 <div className="mb-6">
+                    <h4 className="font-semibold text-sm mb-3">Choose your vibe:</h4>
+                    <div className="flex flex-wrap gap-2">
+                        {vibes.map(vibe => (
+                            <Button 
+                                key={vibe}
+                                variant={selectedVibe === vibe && !isPending ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => handleVibeSelection(vibe)}
+                                disabled={isPending}
+                            >
+                                {isPending && selectedVibe === vibe ? (
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                ) : (
+                                    <Sparkles className="mr-2 h-4 w-4" />
+                                )}
+                                {vibe}
+                            </Button>
+                        ))}
+                    </div>
+                </div>
 
                 <div className="mt-6 space-y-4 flex-grow">
                     {error && (
@@ -121,10 +115,10 @@ export function MapMyDay() {
                     )}
                     
                     {!isPending && !itinerary && !error && (
-                         <div className="flex flex-col items-center justify-center text-center h-full text-muted-foreground p-8">
+                         <div className="flex flex-col items-center justify-center text-center h-full text-muted-foreground p-8 rounded-lg bg-secondary/50">
                             <Calendar className="h-12 w-12 mb-4" />
                             <p className="font-medium">Your curated day awaits.</p>
-                            <p className="text-sm">Enter a mood to get started!</p>
+                            <p className="text-sm">Select a vibe above to get started!</p>
                         </div>
                     )}
                     
@@ -134,7 +128,7 @@ export function MapMyDay() {
                              const image = getRandomImage(index);
                              return (
                                  <motion.div
-                                     key={activity.title}
+                                     key={activity.title + index} // Add index to key for shuffle to re-animate
                                      layout
                                      initial={{ opacity: 0, y: 20 }}
                                      animate={{ opacity: 1, y: 0 }}
