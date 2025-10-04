@@ -2,6 +2,50 @@
 import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar } from 'lucide-react';
 
 export const appData = {
+  creators: [
+    {
+      id: 'shannon',
+      name: 'Shannon',
+      bio: 'Just an Irish girl who\'s new to Bondi. Show me the best spots for a pint and a good chat!',
+      avatar: 'https://github.com/shannon.png'
+    },
+    {
+      id: 'alice',
+      name: 'Alice',
+      bio: 'French DJ spinning tunes across Bondi. Find me where the beat drops and the cocktails flow.',
+      avatar: 'https://github.com/alice.png'
+    },
+    {
+      id: 'lucas',
+      name: 'Lucas',
+      bio: 'Upcoming DJ and barman from a hospo family. I know the best-kept secrets of Bondi\'s nightlife.',
+      avatar: 'https://github.com/lucas.png'
+    },
+    {
+      id: 'jay',
+      name: 'Jay',
+      bio: 'Korean foodie on a mission to find the most authentic and delicious eats in town.',
+      avatar: 'https://github.com/jay.png'
+    },
+    {
+      id: 'kevin',
+      name: 'Kevin',
+      bio: 'I just really, really love bananas. And anything made with them. Send me your best banana bread recipes.',
+      avatar: 'https://github.com/kevin.png'
+    },
+    {
+      id: 'bondicreator',
+      name: 'bondicreator',
+      bio: 'I make content about Bondi.',
+      avatar: 'https://github.com/shadcn.png'
+    },
+    {
+      id: 'foodiegal',
+      name: 'foodiegal',
+      bio: 'I love food!',
+      avatar: 'https://github.com/foodie.png'
+    }
+  ],
   categories: {
     "All": { icon: Sparkles, color: "#FF7F50" },
     "Brunch": { icon: Coffee, color: "#FFA07A" },

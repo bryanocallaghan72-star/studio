@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Flame, MapPin, Ticket } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const getImageForVenue = (venueName: string) => {
     const venueNameLower = venueName.toLowerCase();
@@ -20,6 +21,8 @@ const getImageForVenue = (venueName: string) => {
     if (venueNameLower.includes('totti')) return "my-day-3";
     return "night-1";
 }
+
+const spottedHereCreators = [appData.creators[2], appData.creators[3]]; // Lucas and Jay
 
 export default function VenueProfilePage({ params }: { params: { id: string } }) {
   const venue = appData.map.pins.find(p => p.slug === params.id);
@@ -86,32 +89,21 @@ export default function VenueProfilePage({ params }: { params: { id: string } })
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
-                        <div className="flex items-center gap-4">
-                            <Avatar>
-                                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                                <AvatarFallback>CN</AvatarFallback>
-                            </Avatar>
-                            <div className="flex-grow">
-                                <p className="font-semibold">@bondicreator</p>
-                                <p className="text-sm text-muted-foreground">"Best cocktails in Bondi! 🍹"</p>
-                            </div>
-                            <Button variant="ghost" size="icon">
-                                <ArrowRight className="h-4 w-4" />
-                            </Button>
-                        </div>
-                         <div className="flex items-center gap-4">
-                            <Avatar>
-                                <AvatarImage src="https://github.com/foodie.png" alt="@foodie" />
-                                <AvatarFallback>FG</AvatarFallback>
-                            </Avatar>
-                            <div className="flex-grow">
-                                <p className="font-semibold">@foodiegal</p>
-                                <p className="text-sm text-muted-foreground">"The pasta here is a must-try."</p>
-                            </div>
-                            <Button variant="ghost" size="icon">
-                                <ArrowRight className="h-4 w-4" />
-                            </Button>
-                        </div>
+                        {spottedHereCreators.map(creator => (
+                             <Link key={creator.id} href={`/creator/${creator.id}`} className="flex items-center gap-4 group">
+                                <Avatar>
+                                    <AvatarImage src={creator.avatar} alt={`@${creator.id}`} />
+                                    <AvatarFallback>{creator.name.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                                <div className="flex-grow">
+                                    <p className="font-semibold group-hover:underline">@{creator.id}</p>
+                                    <p className="text-sm text-muted-foreground line-clamp-1">{creator.bio}</p>
+                                </div>
+                                <Button variant="ghost" size="icon" className="group-hover:text-primary">
+                                    <ArrowRight className="h-4 w-4" />
+                                </Button>
+                            </Link>
+                        ))}
                     </div>
                 </CardContent>
             </Card>
