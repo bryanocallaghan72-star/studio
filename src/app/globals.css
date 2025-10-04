@@ -4,33 +4,33 @@
 
 @layer base {
   :root {
-    --background: 350 25% 95%; /* Soft Peach */
-    --foreground: 15 70% 25%;
+    --background: 260 80% 10%; /* Deep Purple */
+    --foreground: 40 80% 85%; /* Light Cream */
     
-    --card: 350 30% 98%;
-    --card-foreground: 15 70% 25%;
+    --card: 260 70% 15%;
+    --card-foreground: 40 80% 85%;
     
-    --popover: 350 30% 98%;
-    --popover-foreground: 15 70% 25%;
+    --popover: 260 70% 12%;
+    --popover-foreground: 40 80% 85%;
     
-    --primary: 16 100% 66%; /* Vibrant Coral */
-    --primary-foreground: 15 70% 10%;
+    --primary: 25 100% 60%; /* Vibrant Orange */
+    --primary-foreground: 260 80% 10%;
     
-    --secondary: 350 40% 90%;
-    --secondary-foreground: 15 70% 25%;
+    --secondary: 260 60% 25%;
+    --secondary-foreground: 40 80% 85%;
     
-    --muted: 350 30% 92%;
-    --muted-foreground: 15 50% 45%;
+    --muted: 260 60% 20%;
+    --muted-foreground: 40 60% 70%;
     
-    --accent: 175 72% 56%; /* Turquoise */
-    --accent-foreground: 180 50% 10%;
+    --accent: 50 100% 60%; /* Gold */
+    --accent-foreground: 260 80% 10%;
     
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 350 20% 88%;
-    --input: 350 20% 88%;
-    --ring: 16 100% 70%;
+    --border: 260 60% 25%;
+    --input: 260 60% 25%;
+    --ring: 25 100% 65%;
     
     --radius: 0.8rem;
     
@@ -44,33 +44,33 @@
   }
 
   .dark {
-    --background: 220 40% 10%; /* Deep Navy */
-    --foreground: 210 40% 90%;
+    --background: 260 80% 10%; /* Deep Purple */
+    --foreground: 40 80% 85%; /* Light Cream */
     
-    --card: 220 40% 15%;
-    --card-foreground: 210 40% 90%;
+    --card: 260 70% 15%;
+    --card-foreground: 40 80% 85%;
 
-    --popover: 220 40% 8%;
-    --popover-foreground: 210 40% 90%;
+    --popover: 260 70% 12%;
+    --popover-foreground: 40 80% 85%;
 
-    --primary: 16 100% 66%; /* Vibrant Coral */
-    --primary-foreground: 15 70% 10%;
+    --primary: 25 100% 60%; /* Vibrant Orange */
+    --primary-foreground: 260 80% 10%;
     
-    --secondary: 220 30% 20%;
-    --secondary-foreground: 210 40% 90%;
+    --secondary: 260 60% 25%;
+    --secondary-foreground: 40 80% 85%;
     
-    --muted: 220 30% 20%;
-    --muted-foreground: 210 30% 70%;
+    --muted: 260 60% 20%;
+    --muted-foreground: 40 60% 70%;
 
-    --accent: 175 72% 56%; /* Turquoise */
-    --accent-foreground: 180 50% 10%;
+    --accent: 50 100% 60%; /* Gold */
+    --accent-foreground: 260 80% 10%;
 
     --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 220 40% 20%;
-    --input: 220 40% 20%;
-    --ring: 16 100% 70%;
+    --border: 260 60% 25%;
+    --input: 260 60% 25%;
+    --ring: 25 100% 65%;
 
     /* Custom App-Specific Variables from user code */
     --bg-primary: hsl(var(--background));

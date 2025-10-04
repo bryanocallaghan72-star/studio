@@ -2,14 +2,13 @@
 
 import { useEffect, useState } from 'react';
 
-// Day is from 9 AM to 8 PM (20:00)
+// For "dawn" mode, we want the dark theme to be the default.
 const isDayTime = () => {
-  const hours = new Date().getHours();
-  return hours >= 9 && hours < 20;
+  return false; // Always return false to default to dark theme
 };
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
 
   useEffect(() => {
     // This effect runs only on the client
