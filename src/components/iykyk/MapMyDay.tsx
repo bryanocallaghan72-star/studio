@@ -1,10 +1,11 @@
 
+
 "use client";
 
 import { useState, useTransition, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, ArrowLeft, CheckCircle2, Sparkles, X, Search, Pin } from "lucide-react";
+import { Loader2, ArrowLeft, CheckCircle2, Sparkles, X, Search, Wand2, ThumbsUp, RefreshCw, Pin } from "lucide-react";
 import { generateItinerary } from '@/app/actions';
 import { Itinerary, ItineraryRequest, ItineraryStop } from '@/ai/schemas';
 import { AnimatePresence, motion } from "framer-motion";
@@ -146,24 +147,26 @@ const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle }
     >
       <div className="flex items-center justify-between mb-4">
         <Button onClick={onBack} variant="ghost" size="icon" className="text-foreground hover:bg-accent"><ArrowLeft size={24} /></Button>
-        <h2 className="text-2xl font-bold text-foreground text-center flex-grow">{itineraryData.title}</h2>
+        <div className='text-center'>
+            <h2 className="text-2xl font-bold text-foreground">{itineraryData.title}</h2>
+            <p className="text-muted-foreground text-sm">Cliffop glow & photo spots</p>
+        </div>
         <div className="w-10"></div>
       </div>
-      <p className="text-muted-foreground text-sm mb-6 text-center">Your curated plan. Hold your favorites, shuffle the rest!</p>
       
-      <div className="flex-grow space-y-4">
+      <div className="flex-grow space-y-4 pt-4">
         {shuffledItinerary.map((stop, index) => {
             const isHeld = !!heldStops[stop.title];
             return (
-            <Card key={`${stop.title}-${index}`} className={`rounded-2xl p-4 shadow-xl flex items-center transition-all duration-300 ${isHeld ? 'border-2 border-primary' : 'border'}`}>
+            <Card key={`${stop.title}-${index}`} className={`rounded-2xl p-4 shadow-lg flex items-center transition-all duration-300 bg-secondary/30`}>
                 <Button onClick={() => handleToggleHold(stop)} variant="ghost" size="icon" className="flex-shrink-0 mr-4">
-                  <Pin size={24} className={isHeld ? 'text-primary fill-primary' : 'text-muted-foreground'} />
+                  <CheckCircle2 size={24} className={isHeld ? 'text-primary' : 'text-muted-foreground'} />
                 </Button>
-                <div className="w-16 h-16 bg-secondary rounded-xl overflow-hidden flex-shrink-0">
+                <div className="w-16 h-16 bg-primary/20 rounded-xl overflow-hidden flex-shrink-0">
                     <Image src={`https://picsum.photos/seed/${stop.location.replace(/\s+/g, '-')}/64/64`} alt={stop.location} width={64} height={64} className="w-full h-full object-cover" />
                 </div>
                 <div className="ml-4 flex-grow">
-                    <p className="font-semibold text-foreground">{stop.time} - {stop.location}</p>
+                    <p className="font-semibold text-foreground">{stop.location}</p>
                     <p className="text-sm text-muted-foreground">{stop.description}</p>
                 </div>
                 <Button onClick={() => setEditingItem(stop)} variant="ghost" size="icon" className="text-muted-foreground hover:text-primary transition-colors flex-shrink-0 ml-4"><Sparkles size={24} /></Button>
@@ -171,9 +174,9 @@ const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle }
         })}
       </div>
 
-      <div className="mt-auto flex space-x-4 pt-4 sticky bottom-6">
+      <div className="mt-auto flex space-x-4 pt-4 sticky bottom-0 bg-background py-4">
         <Button className="flex-grow h-14 font-bold text-lg shadow-2xl" onClick={() => onStartPlan(itineraryData)}>Start Plan</Button>
-        <Button variant="secondary" className="flex-grow h-14 font-bold text-lg shadow-2xl border" onClick={onShuffle}>Shuffle</Button>
+        <Button variant="outline" className="flex-grow h-14 font-bold text-lg shadow-2xl bg-card" onClick={onShuffle}>Shuffle</Button>
       </div>
 
       {editingItem && (
@@ -327,3 +330,4 @@ export function MapMyDay() {
         </Card>
     );
 }
+
