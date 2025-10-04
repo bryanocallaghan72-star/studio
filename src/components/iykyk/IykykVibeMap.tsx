@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -132,6 +131,25 @@ const venues = [
     },
 ];
 
+const PushPinIcon = ({ className, ...props }: React.SVGProps<SVGSVGElement>) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      {...props}
+    >
+      <path d="M12 22V12" />
+      <path d="M16 4H8" />
+      <path d="M12 4V12" />
+    </svg>
+  );
 
 export function IykykVibeMap() {
   const mapImage = PlaceHolderImages.find((img) => img.id === "map-1");
@@ -198,7 +216,7 @@ export function IykykVibeMap() {
                         transform: "translate(-50%, -50%)",
                         }}
                     >
-                        <Pin className={cn("h-10 w-10 text-background drop-shadow-lg", venue.color)} strokeWidth={1.5} />
+                        <PushPinIcon className={cn("h-8 w-8 text-background drop-shadow-lg", venue.color)} strokeWidth={3} />
                     </button>
                   </Link>
                 </TooltipTrigger>
