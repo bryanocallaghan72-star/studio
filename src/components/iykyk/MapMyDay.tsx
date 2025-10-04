@@ -62,6 +62,11 @@ export function MapMyDay() {
         setError(null);
         setCurrentVibe(null);
     }
+    
+    function handleShuffle() {
+        if (!currentVibe) return;
+        handleGenerateItinerary(currentVibe);
+    }
 
     const VibeSelector = () => (
         <>
@@ -76,17 +81,21 @@ export function MapMyDay() {
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {vibes.map((vibe) => (
-                    <Card key={vibe.title} className="flex flex-col justify-between p-6">
+                    <Card key={vibe.title} className="flex flex-col justify-between p-6 hover:shadow-lg transition-shadow">
                         <div>
                             <h3 className="text-lg font-bold">{vibe.title}</h3>
                             <p className="text-muted-foreground text-sm mt-1">{vibe.description}</p>
                         </div>
                         <Button 
                             onClick={() => handleGenerateItinerary(vibe.request)} 
-                            disabled={isPending} 
+                            disabled={isPending && currentVibe?.vibe === vibe.request.vibe}
                             className="w-full mt-4 bg-accent text-accent-foreground hover:bg-accent/90"
                         >
-                            <Wand2 className="mr-2 h-4 w-4" />
+                             {isPending && currentVibe?.vibe === vibe.request.vibe ? (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                             ) : (
+                                <Wand2 className="mr-2 h-4 w-4" />
+                             )}
                             Generate Itinerary
                         </Button>
                     </Card>
@@ -97,41 +106,49 @@ export function MapMyDay() {
 
     const ItineraryBuilder = () => {
         if (!itinerary) return null;
+        const selectedVibe = vibes.find(v => v.request.vibe === currentVibe?.vibe);
 
         return (
-            <div className="h-full flex flex-col">
-                <CardHeader>
-                    <div className="flex items-center justify-between">
-                         <Button variant="ghost" size="icon" onClick={handleBack} className="text-muted-foreground">
+            <div className="h-full flex flex-col bg-secondary/30">
+                <div className="p-4 bg-background">
+                    <div className="flex items-center gap-4">
+                        <Button variant="ghost" size="icon" onClick={handleBack} className="text-muted-foreground">
                             <ArrowLeft className="h-5 w-5" />
                         </Button>
-                        <CardTitle className="text-2xl text-center">{itinerary.title}</CardTitle>
-                        <Button variant="ghost" size="icon" className="text-muted-foreground">
-                            <Shuffle className="h-5 w-5" />
-                        </Button>
+                        <div className='text-center flex-grow'>
+                            <h2 className="text-2xl font-bold">{selectedVibe?.title}</h2>
+                            <p className="text-muted-foreground text-sm">{selectedVibe?.description}</p>
+                        </div>
+                        <div className="w-9"></div>
                     </div>
-                </CardHeader>
-                <CardContent className="flex-grow space-y-4">
+                </div>
+
+                <div className="flex-grow p-4 space-y-3">
                      {itinerary.stops.map((stop, index) => (
-                        <Card key={index} className="p-4">
-                            <div className="flex justify-between items-start">
-                                <div className="flex gap-4 items-start">
-                                    <div className="text-lg font-bold text-primary w-16">{stop.time}</div>
-                                    <div>
-                                        <h4 className="font-semibold text-lg">{stop.location}</h4>
-                                        <p className="text-sm text-muted-foreground">{stop.description}</p>
-                                    </div>
+                        <Card key={index} className="p-3 bg-card/80 backdrop-blur-sm">
+                            <div className="flex items-center gap-4">
+                                <CheckCircle2 className="h-6 w-6 text-primary/70" />
+                                <div className="w-16 h-16 bg-primary/20 rounded-lg flex items-center justify-center text-xs text-primary/80">64x64</div>
+                                <div className="flex-grow">
+                                    <h4 className="font-semibold text-md">{stop.location}</h4>
+                                    <p className="text-sm text-muted-foreground">{stop.description}</p>
                                 </div>
-                                <div className="flex gap-1">
-                                    <Button variant="ghost" size="icon"><ThumbsUp className="h-5 w-5 text-muted-foreground hover:text-primary" /></Button>
-                                    <Button variant="ghost" size="icon"><RefreshCw className="h-5 w-5 text-muted-foreground hover:text-primary" /></Button>
-                                </div>
+                                <Button variant="ghost" size="icon"><Wand2 className="h-5 w-5 text-muted-foreground hover:text-primary" /></Button>
                             </div>
                         </Card>
                      ))}
-                </CardContent>
-                <div className="p-6 pt-0">
+                </div>
+
+                <div className="p-4 grid grid-cols-2 gap-4 bg-background">
                      <Button size="lg" className="w-full" onClick={() => setIsModalOpen(true)}>Start Plan</Button>
+                     <Button size="lg" variant="outline" className="w-full" onClick={handleShuffle} disabled={isPending}>
+                        {isPending ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                            <Shuffle className="mr-2 h-5 w-5" />
+                        )}
+                        Shuffle
+                    </Button>
                 </div>
             </div>
         )
@@ -140,7 +157,7 @@ export function MapMyDay() {
     const ItineraryModal = () => {
         if (!itinerary) return null;
     
-        const summaryDescription = `All good, you're booked in for ${itinerary.stops[0].description.toLowerCase()} at ${itinerary.stops[0].location}, then jump over to ${itinerary.stops[1].location} for some ${itinerary.stops[1].title.toLowerCase()}. Finish the night at ${itinerary.stops[2].location}. You've Got This!`;
+        const summaryDescription = `All good, you're booked in for ${itinerary.stops.length > 0 ? itinerary.stops[0].description.toLowerCase() : ''} at ${itinerary.stops.length > 0 ? itinerary.stops[0].location : ''}, then jump over to ${itinerary.stops.length > 1 ? itinerary.stops[1].location : ''} for some ${itinerary.stops.length > 1 ? itinerary.stops[1].title.toLowerCase() : ''}. ${itinerary.stops.length > 2 ? `Finish the night at ${itinerary.stops[2].location}.` : ''} You've Got This!`;
 
         return (
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -181,17 +198,17 @@ export function MapMyDay() {
     };
 
     return (
-        <Card className="w-full flex flex-col min-h-[30rem]">
+        <Card className="w-full flex flex-col min-h-[30rem] overflow-hidden">
              <AnimatePresence mode="wait">
                 <motion.div
                     key={itinerary ? "builder" : "selector"}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
+                    initial={{ opacity: 0, x: itinerary ? 300 : -300 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: itinerary ? -300 : 300 }}
                     transition={{ duration: 0.3 }}
                     className="h-full flex flex-col"
                 >
-                    {isPending && (
+                    {isPending && !itinerary && (
                         <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
                             <Loader2 className="h-10 w-10 animate-spin text-primary" />
                         </div>
@@ -200,13 +217,17 @@ export function MapMyDay() {
                         <Alert variant="destructive" className="m-6">
                             <AlertTitle>Error</AlertTitle>
                             <AlertDescription>{error}</AlertDescription>
+                             <Button variant="link" onClick={handleBack}>Go Back</Button>
                         </Alert>
                     )}
 
-                    {!itinerary ? <VibeSelector /> : <ItineraryBuilder />}
+                    {!itinerary && !error ? <VibeSelector /> : null}
+                    {itinerary && !error ? <ItineraryBuilder /> : null}
                 </motion.div>
             </AnimatePresence>
             <ItineraryModal />
         </Card>
     );
 }
+
+    
