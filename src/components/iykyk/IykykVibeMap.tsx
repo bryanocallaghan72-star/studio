@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -31,9 +32,16 @@ const venues = [
     { id: 9, name: "The Corner House", slug: "the-corner-house", type: "Cocktails", x: "75%", y: "45%" },
     { id: 10, name: "Harry's Bondi", slug: "harrys-bondi", type: "Brunch", x: "15%", y: "40%" },
     { id: 11, name: "LULU", slug: "lulu-pan-asian", type: "Restaurants", x: "50%", y: "60%" },
-    { id: 12, name: "RND Izakaya", slug: "rnd-izakaya", type: "Restaurants", x: "10%", y: "70%" },
+    { id: 12, name: "RND Izakaya", slug: "rnd-izakaya", type: "Sushi", x: "10%", y: "70%" },
     { id: 13, name: "Luca and Luca", slug: "luca-and-luca-gelato", type: "Brunch", x: "70%", y: "20%" },
     { id: 14, name: "Volume One", slug: "volume-one", type: "Cocktails", x: "55%", y: "85%" },
+    { id: 15, name: "Bills", slug: "bills", type: "Brunch", x: "45%", y: "70%" },
+    { id: 16, name: "Sean's", slug: "seans", type: "Restaurants", x: "90%", y: "10%" },
+    { id: 17, "name": "La Piadina", "slug": "la-piadina", "type": "Restaurants", "x": "60%", "y": "40%" },
+    { id: 18, "name": "The Bucket List", "slug": "the-bucket-list", "type": "Nightlife", "x": "35%", "y": "25%" },
+    { id: 19, "name": "Porch and Parlour", "slug": "porch-and-parlour", "type": "Brunch", "x": "95%", "y": "50%" },
+    { id: 20, "name": "Anatomy", "slug": "anatomy", "type": "Health & Fitness", "x": "5%", "y": "50%" },
+    { id: 21, "name": "Acai Brothers", "slug": "acai-brothers", "type": "Health & Fitness", "x": "90%", "y": "60%" }
 ];
 
 

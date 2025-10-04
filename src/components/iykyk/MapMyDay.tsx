@@ -10,8 +10,9 @@ import { Itinerary, ItineraryRequest, ItineraryStop } from '@/ai/schemas';
 import { AnimatePresence, motion } from "framer-motion";
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '../ui/input';
 
-// Placeholder data structure similar to what the user code expects
+
 const appData = {
   mapMyDayOptions: [
     { id: "tinder-date", title: "Tinder Date", description: "Casual cocktails to break the ice.", request: { vibe: "Tinder Date - Bondi", pace: 2, budget: 3, travelMode: 'walk' } },
@@ -32,6 +33,18 @@ const appData = {
         { name: "Speedo's Cafe", description: "Insta-famous colorful brunch dishes.", type: "Brunch" },
         { name: "Totti's", description: "Vibrant Italian restaurant with a leafy courtyard.", type: "Restaurants" },
         { name: "The Corner House", description: "Cozy bar with a great cocktail list.", type: "Cocktails" },
+        { name: "Harry's Bondi", description: "Classic brunch fare with a modern twist.", type: "Brunch" },
+        { name: "LULU", description: "Modern Pan-Asian cuisine in a chic setting.", type: "Restaurants" },
+        { name: "RND Izakaya", description: "Japanese pub food and creative cocktails.", type: "Sushi" },
+        { name: "Luca and Luca", description: "Artisanal gelato with unique flavors.", type: "Brunch" },
+        { name: "Volume One", description: "Hidden gem for craft cocktails.", type: "Cocktails" },
+        { name: "Bills", description: "Famous for ricotta hotcakes and scrambled eggs.", type: "Brunch" },
+        { name: "Sean's", description: "Farm-to-table dining with ocean views.", type: "Restaurants" },
+        { name: "La Piadina", description: "Authentic Italian flatbread sandwiches.", type: "Restaurants" },
+        { name: "The Bucket List", description: "Casual beachside bar with a lively atmosphere.", type: "Nightlife" },
+        { name: "Porch and Parlour", description: "Bohemian-style cafe with healthy options.", type: "Brunch" },
+        { name: "Anatomy", description: "Boutique fitness studio offering various classes.", type: "Health & Fitness" },
+        { name: "Acai Brothers", description: "Superfood bar specializing in acai bowls.", type: "Health & Fitness" }
     ]
   }
 };
@@ -314,5 +327,3 @@ export function MapMyDay() {
         </Card>
     );
 }
-
-    
