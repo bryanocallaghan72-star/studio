@@ -28,6 +28,30 @@ const surprises = [
         imageId: "deal-2",
         venue: "Gelato Gusto"
     },
+    {
+        title: "Craft Cocktail Discovery",
+        description: "You've found a hidden bar known for its unique, handcrafted cocktails. Cheers to the unexpected!",
+        imageId: "nightlife-1",
+        venue: "The Alchemist's Nook"
+    },
+    {
+        title: "Tapas for Two",
+        description: "A cozy tapas bar has a table just for you. Enjoy a selection of small plates and big flavors.",
+        imageId: "my-day-3",
+        venue: "El Rincon Escondido"
+    },
+    {
+        title: "Surprise Wellness Session",
+        description: "A local studio is offering a drop-in spot for a meditation and sound bath session. Time to relax and recharge.",
+        imageId: "fitness-1",
+        venue: "Zenith Wellness"
+    },
+    {
+        title: "Omakase Sushi Special",
+        description: "A top sushi chef has an unlisted Omakase special available for the next hour. A true taste of Japan awaits.",
+        imageId: "sushi-1",
+        venue: "Sakura Sushi"
+    },
 ];
 
 export function SurpriseMe() {
