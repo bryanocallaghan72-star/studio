@@ -45,7 +45,7 @@
     {
       "id": "night-2",
       "description": "City lights over the water.",
-      "imageUrl": "https://images.unsplash.com/photo-1571951103752-53c15cad28e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjaXR5JTIwbGlnaHRzfGVufDB8fHx8MTc1OTUzNTkyM3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1571951103752-53c15cad28e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjaXR5JTIwbGlnaHRzfGVufDB8fHx8fDE3NTk1MzU5MjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "city lights"
     },
     {
@@ -135,7 +135,7 @@
     {
       "id": "map-1",
       "description": "A stylized map of Bondi Beach, Australia.",
-      "imageUrl": "https://images.unsplash.com/photo-1584962428213-9a378d371424?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxhYnN0cmFjdCUyMGJlYWNoJTIwbWFwfGVufDB8fHx8MTc2MDAxMjI5M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1616781296053-48037d363989?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxib25kaSUyMGJlYWNoJTIwbWFwfGVufDB8fHx8MTc2MDExOTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "Bondi map"
     }
   ]
