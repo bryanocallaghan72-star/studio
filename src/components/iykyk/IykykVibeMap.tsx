@@ -6,44 +6,9 @@ import Link from "next/link";
 import { Map, MapPin, ShoppingBag, Beer, Utensils, Coffee, Heart, Sun, Dumbbell, Calendar, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ColorPinSVG } from "./ColorPinSVG";
+import { appData } from "@/lib/data";
 
-const categories = {
-    "All": { icon: Sparkles, color: "#FF7F50" },
-    "Brunch": { icon: Coffee, color: "#FFA07A" },
-    "Restaurants": { icon: Utensils, color: "#FA8072" },
-    "Nightlife": { icon: Beer, color: "#E9967A" },
-    "Health & Fitness": { icon: Dumbbell, color: "#40E0D0" },
-    "Vibes": { icon: Sun, color: "#48D1CC" },
-    "Sushi": { icon: Utensils, color: "#20B2AA" },
-    "Cocktails": { icon: Beer, color: "#008B8B" },
-    "Retail": { icon: ShoppingBag, color: "#AFEEEE" },
-    "Events": { icon: Calendar, color: "#7FFFD4" },
-};
-
-const venues = [
-    { id: 1, name: "Icebergs Dining Room", slug: "icebergs-dining-room", type: "Restaurants", x: "30%", y: "80%" },
-    { id: 2, name: "Hotel Ravesis", slug: "hotel-ravesis", type: "Nightlife", x: "55%", y: "30%" },
-    { id: 3, name: "The Depot", slug: "the-depot", type: "Brunch", x: "65%", y: "65%" },
-    { id: 4, name: "Bondi Beach", slug: "bondi-beach", type: "Vibes", x: "25%", y: "15%" },
-    { id: 5, name: "Raw Bar", slug: "raw-bar", type: "Sushi", x: "40%", y: "50%" },
-    { id: 6, name: "Speedo's Cafe", slug: "speedos-cafe", type: "Brunch", x: "80%", y: "25%" },
-    { id: 7, name: "Totti's", slug: "tottis", type: "Restaurants", x: "85%", y: "75%" },
-    { id: 8, name: "Bondi Trattoria", slug: "bondi-trattoria", type: "Restaurants", x: "20%", y: "55%" },
-    { id: 9, name: "The Corner House", slug: "the-corner-house", type: "Cocktails", x: "75%", y: "45%" },
-    { id: 10, name: "Harry's Bondi", slug: "harrys-bondi", type: "Brunch", x: "15%", y: "40%" },
-    { id: 11, name: "LULU", slug: "lulu-pan-asian", type: "Restaurants", x: "50%", y: "60%" },
-    { id: 12, name: "RND Izakaya", slug: "rnd-izakaya", type: "Sushi", x: "10%", y: "70%" },
-    { id: 13, name: "Luca and Luca", slug: "luca-and-luca-gelato", type: "Brunch", x: "70%", y: "20%" },
-    { id: 14, name: "Volume One", slug: "volume-one", type: "Cocktails", x: "55%", y: "85%" },
-    { id: 15, name: "Bills", slug: "bills", type: "Brunch", x: "45%", y: "70%" },
-    { id: 16, name: "Sean's", slug: "seans", type: "Restaurants", x: "90%", y: "10%" },
-    { id: 17, "name": "La Piadina", "slug": "la-piadina", "type": "Restaurants", "x": "60%", "y": "40%" },
-    { id: 18, "name": "The Bucket List", "slug": "the-bucket-list", "type": "Nightlife", "x": "35%", "y": "25%" },
-    { id: 19, "name": "Porch and Parlour", "slug": "porch-and-parlour", "type": "Brunch", "x": "95%", "y": "50%" },
-    { id: 20, "name": "Anatomy", "slug": "anatomy", "type": "Health & Fitness", "x": "5%", "y": "50%" },
-    { id: 21, "name": "Acai Brothers", "slug": "acai-brothers", "type": "Health & Fitness", "x": "90%", "y": "60%" }
-];
-
+const { categories, map: { pins: venues } } = appData;
 
 export function IykykVibeMap() {
   const [activeTab, setActiveTab] = useState('All');
