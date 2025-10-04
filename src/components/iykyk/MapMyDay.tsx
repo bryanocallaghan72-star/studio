@@ -22,17 +22,6 @@ const vibes = [
     "Girls' Night Out",
 ];
 
-// Fisher-Yates shuffle algorithm
-const shuffleArray = (array: any[]) => {
-    let currentIndex = array.length, randomIndex;
-    while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-    }
-    return array;
-};
-
 export function MapMyDay() {
     const [isPending, startTransition] = useTransition();
     const [itinerary, setItinerary] = useState<Itinerary | null>(null);
@@ -55,9 +44,8 @@ export function MapMyDay() {
     }
 
     const handleShuffle = () => {
-        if (itinerary) {
-            setItinerary(prev => prev ? ({ ...prev, stops: shuffleArray([...prev.stops]) }) : null);
-        }
+        if (!selectedVibe) return;
+        handleVibeSelection(selectedVibe);
     };
     
     // Helper to get a semi-random image from placeholders
@@ -75,8 +63,8 @@ export function MapMyDay() {
                         <CardTitle>Map my Day</CardTitle>
                     </div>
                     {itinerary && (
-                         <Button variant="ghost" size="icon" onClick={handleShuffle}>
-                            <Shuffle className="h-5 w-5" />
+                         <Button variant="ghost" size="icon" onClick={handleShuffle} disabled={isPending}>
+                            {isPending && selectedVibe ? <Loader2 className="h-5 w-5 animate-spin" /> : <Shuffle className="h-5 w-5" />}
                             <span className="sr-only">Shuffle</span>
                         </Button>
                     )}
@@ -107,7 +95,15 @@ export function MapMyDay() {
                 </div>
 
                 <div className="mt-6 space-y-4 flex-grow">
-                    {error && (
+                    {isPending && (
+                        <div className="flex flex-col items-center justify-center text-center h-full text-muted-foreground p-8 rounded-lg bg-secondary/50">
+                            <Wand2 className="h-12 w-12 mb-4 animate-pulse text-primary" />
+                            <p className="font-medium">Crafting your perfect day...</p>
+                            <p className="text-sm">This can take a moment!</p>
+                        </div>
+                    )}
+
+                    {error && !isPending && (
                         <Alert variant="destructive">
                             <AlertTitle>Error</AlertTitle>
                             <AlertDescription>{error}</AlertDescription>
@@ -122,7 +118,7 @@ export function MapMyDay() {
                         </div>
                     )}
                     
-                    {itinerary && (
+                    {itinerary && !isPending && (
                          <AnimatePresence>
                          {itinerary.stops.map((activity, index) => {
                              const image = getRandomImage(index);
