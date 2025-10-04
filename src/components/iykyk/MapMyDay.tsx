@@ -1,12 +1,11 @@
 
+
 "use client";
 
 import { useState, useTransition } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Loader2, Shuffle, Wand2, ArrowLeft, CheckCircle2 } from "lucide-react";
-import Image from "next/image";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { Calendar, Loader2, Shuffle, Wand2, ArrowLeft, CheckCircle2, ThumbsUp, RefreshCw } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { generateItinerary } from '@/app/actions';
 import { Itinerary, ItineraryRequest } from '@/ai/schemas';
@@ -42,19 +41,26 @@ export function MapMyDay() {
     const [itinerary, setItinerary] = useState<Itinerary | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentVibe, setCurrentVibe] = useState<ItineraryRequest | null>(null);
 
     function handleGenerateItinerary(request: ItineraryRequest) {
         setError(null);
         setItinerary(null);
+        setCurrentVibe(request);
         startTransition(async () => {
           const response = await generateItinerary(request);
           if (response.error) {
             setError(response.error);
           } else if (response.success) {
             setItinerary(response.success);
-            setIsModalOpen(true);
           }
         });
+    }
+
+    function handleBack() {
+        setItinerary(null);
+        setError(null);
+        setCurrentVibe(null);
     }
 
     const VibeSelector = () => (
@@ -80,17 +86,8 @@ export function MapMyDay() {
                             disabled={isPending} 
                             className="w-full mt-4 bg-accent text-accent-foreground hover:bg-accent/90"
                         >
-                             {isPending ? (
-                                <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Generating...
-                                </>
-                             ) : (
-                                <>
-                                    <Wand2 className="mr-2 h-4 w-4" />
-                                    Generate Itinerary
-                                </>
-                             )}
+                            <Wand2 className="mr-2 h-4 w-4" />
+                            Generate Itinerary
                         </Button>
                     </Card>
                 ))}
@@ -98,10 +95,52 @@ export function MapMyDay() {
         </>
     );
 
+    const ItineraryBuilder = () => {
+        if (!itinerary) return null;
+
+        return (
+            <div className="h-full flex flex-col">
+                <CardHeader>
+                    <div className="flex items-center justify-between">
+                         <Button variant="ghost" size="icon" onClick={handleBack} className="text-muted-foreground">
+                            <ArrowLeft className="h-5 w-5" />
+                        </Button>
+                        <CardTitle className="text-2xl text-center">{itinerary.title}</CardTitle>
+                        <Button variant="ghost" size="icon" className="text-muted-foreground">
+                            <Shuffle className="h-5 w-5" />
+                        </Button>
+                    </div>
+                </CardHeader>
+                <CardContent className="flex-grow space-y-4">
+                     {itinerary.stops.map((stop, index) => (
+                        <Card key={index} className="p-4">
+                            <div className="flex justify-between items-start">
+                                <div className="flex gap-4 items-start">
+                                    <div className="text-lg font-bold text-primary w-16">{stop.time}</div>
+                                    <div>
+                                        <h4 className="font-semibold text-lg">{stop.location}</h4>
+                                        <p className="text-sm text-muted-foreground">{stop.description}</p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-1">
+                                    <Button variant="ghost" size="icon"><ThumbsUp className="h-5 w-5 text-muted-foreground hover:text-primary" /></Button>
+                                    <Button variant="ghost" size="icon"><RefreshCw className="h-5 w-5 text-muted-foreground hover:text-primary" /></Button>
+                                </div>
+                            </div>
+                        </Card>
+                     ))}
+                </CardContent>
+                <div className="p-6 pt-0">
+                     <Button size="lg" className="w-full" onClick={() => setIsModalOpen(true)}>Start Plan</Button>
+                </div>
+            </div>
+        )
+    };
+
     const ItineraryModal = () => {
         if (!itinerary) return null;
     
-        const summaryDescription = `Your ${itinerary.title.toLowerCase()} is all set! Start with ${itinerary.stops[0].title.toLowerCase()} at ${itinerary.stops[0].location}, then enjoy ${itinerary.stops[1].title.toLowerCase()} at ${itinerary.stops[1].location}. Finish your day with ${itinerary.stops[2].title.toLowerCase()} at ${itinerary.stops[2].location}. Have a blast!`;
+        const summaryDescription = `All good, you're booked in for ${itinerary.stops[0].description.toLowerCase()} at ${itinerary.stops[0].location}, then jump over to ${itinerary.stops[1].location} for some ${itinerary.stops[1].title.toLowerCase()}. Finish the night at ${itinerary.stops[2].location}. You've Got This!`;
 
         return (
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -117,9 +156,12 @@ export function MapMyDay() {
               </DialogHeader>
               <div className="my-6 space-y-4 text-left">
                 {itinerary.stops.map((stop, index) => (
-                  <div key={index} className="flex items-center gap-4">
-                    <div className="font-bold text-lg w-20">{stop.time}</div>
-                    <div className="text-lg">{stop.location}</div>
+                  <div key={index} className="flex items-start gap-4">
+                    <div className="font-bold text-primary text-lg w-20">{stop.time}</div>
+                    <div>
+                        <div className="text-lg font-semibold">{stop.location}</div>
+                        <div className="text-sm text-muted-foreground">{stop.title}</div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -136,19 +178,34 @@ export function MapMyDay() {
             </DialogContent>
           </Dialog>
         );
-      };
+    };
 
     return (
         <Card className="w-full flex flex-col min-h-[30rem]">
-            {error && (
-                <Alert variant="destructive" className="m-6">
-                    <AlertTitle>Error</AlertTitle>
-                    <AlertDescription>{error}</AlertDescription>
-                </Alert>
-            )}
+             <AnimatePresence mode="wait">
+                <motion.div
+                    key={itinerary ? "builder" : "selector"}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className="h-full flex flex-col"
+                >
+                    {isPending && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
+                            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                        </div>
+                    )}
+                    {error && (
+                        <Alert variant="destructive" className="m-6">
+                            <AlertTitle>Error</AlertTitle>
+                            <AlertDescription>{error}</AlertDescription>
+                        </Alert>
+                    )}
 
-            <VibeSelector />
-            
+                    {!itinerary ? <VibeSelector /> : <ItineraryBuilder />}
+                </motion.div>
+            </AnimatePresence>
             <ItineraryModal />
         </Card>
     );
