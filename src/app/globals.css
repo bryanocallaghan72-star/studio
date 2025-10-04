@@ -4,26 +4,26 @@
 
 @layer base {
   :root {
-    /* Dawn Theme: Soft peach + aqua gradients */
-    --background: 25 100% 97%; /* Soft Peach */
-    --foreground: 240 10% 3.9%; /* Charcoal Gray */
-    --card: 25 80% 92%; /* Lighter Peach */
-    --card-foreground: 240 10% 3.9%;
-    --popover: 25 100% 97%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 180 80% 40%; /* Aqua */
+    /* Day Theme: Bright whites, crisp blues, sandy warmer tones */
+    --background: 48 33% 94%; /* Sandy White */
+    --foreground: 210 20% 15%; /* Deep Sea Blue */
+    --card: 0 0% 100%;
+    --card-foreground: 210 20% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 20% 15%;
+    --primary: 200 85% 50%; /* Crisp Sky Blue */
     --primary-foreground: 0 0% 100%;
-    --secondary: 180 20% 80%; /* Soft Aqua */
-    --secondary-foreground: 180 50% 20%;
-    --muted: 180 15% 85%;
-    --muted-foreground: 240 5% 40%;
-    --accent: 35 100% 50%; /* Sunset Amber */
-    --accent-foreground: 240 10% 3.9%;
-    --destructive: 5 100% 69%; /* Coral Pink */
+    --secondary: 210 30% 95%; /* Light Sky */
+    --secondary-foreground: 210 20% 25%;
+    --muted: 210 30% 95%;
+    --muted-foreground: 210 15% 45%;
+    --accent: 35 100% 55%; /* Golden Sand */
+    --accent-foreground: 210 20% 15%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 180 20% 88%;
-    --input: 180 20% 88%;
-    --ring: 180 80% 50%; /* Lighter Aqua */
+    --border: 210 20% 88%;
+    --input: 210 20% 88%;
+    --ring: 200 85% 55%;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -41,22 +41,22 @@
   }
 
   .dark {
-    /* Dusk Theme: Deep navy + aqua */
+    /* Dusk Theme: Deep blues, dark navies, and vibrant, neon-like accents */
     --background: 220 40% 10%; /* Deep Navy */
-    --foreground: 180 80% 90%; /* Light Aqua */
+    --foreground: 210 40% 90%; /* Light Steel Blue */
     --card: 220 40% 15%;
-    --card-foreground: 180 80% 90%;
+    --card-foreground: 210 40% 90%;
     --popover: 220 40% 8%;
-    --popover-foreground: 180 80% 90%;
+    --popover-foreground: 210 40% 90%;
     --primary: 180 100% 50%; /* Electric Aqua */
     --primary-foreground: 220 40% 5%;
-    --secondary: 220 30% 25%;
-    --secondary-foreground: 180 80% 90%;
-    --muted: 220 30% 25%;
-    --muted-foreground: 180 50% 70%;
-    --accent: 38 100% 50%; /* Sunset Amber */
-    --accent-foreground: 240 10% 3.9%;
-    --destructive: 5 100% 69%; /* Coral Pink */
+    --secondary: 220 30% 20%;
+    --secondary-foreground: 210 40% 90%;
+    --muted: 220 30% 20%;
+    --muted-foreground: 210 30% 70%;
+    --accent: 40 100% 50%; /* Neon Gold */
+    --accent-foreground: 220 40% 5%;
+    --destructive: 0 70% 55%; /* Neon Red */
     --destructive-foreground: 0 0% 100%;
     --border: 220 40% 20%;
     --input: 220 40% 20%;
