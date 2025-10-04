@@ -6,35 +6,33 @@ import { Deals } from "@/components/iykyk/Deals";
 import { MyDay } from "@/components/iykyk/MyDay";
 import { SurpriseMe } from "@/components/iykyk/SurpriseMe";
 import { CommunityConnector } from "@/components/iykyk/CommunityConnector";
-import { Features } from "@/components/iykyk/Features";
+import { MobileNav } from "@/components/iykyk/MobileNav";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen w-full flex-col">
+    <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
-      <main className="flex flex-1 flex-col gap-8 p-4 md:p-8">
+      <main className="flex flex-1 flex-col gap-8 p-4 md:p-6 pb-24">
         <div className="space-y-4">
           <h1 className="text-3xl font-bold tracking-tight">iykyk Vibe</h1>
-          <p className="text-muted-foreground">Mood-based suggestions for your current desires.</p>
+          <p className="text-muted-foreground">What are you feeling right now?</p>
           <VibeSelector />
         </div>
         
-        <Features />
-
         <FlowTabs />
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          <div className="flex flex-col gap-8 lg:col-span-2">
-            <HotNow />
-            <Deals />
-          </div>
-          <div className="flex flex-col gap-8">
+        <HotNow />
+        
+        <Deals />
+
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             <MyDay />
-            <SurpriseMe />
             <CommunityConnector />
-          </div>
         </div>
+        <SurpriseMe />
+
       </main>
+      <MobileNav />
     </div>
   );
 }
