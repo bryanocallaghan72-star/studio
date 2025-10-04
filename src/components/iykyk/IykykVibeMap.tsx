@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Map, Pin, ShoppingBag, Beer, Utensils, Coffee, Heart, Sun, Dumbbell, Calendar, Sparkles } from "lucide-react";
+import { Map, MapPin, ShoppingBag, Beer, Utensils, Coffee, Heart, Sun, Dumbbell, Calendar, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Card, CardContent } from "@/components/ui/card";
@@ -131,25 +131,6 @@ const venues = [
     },
 ];
 
-const PushPinIcon = ({ className, ...props }: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-    {...props}
-  >
-    <path d="M12 17V4" />
-    <path d="M8 4h8" />
-  </svg>
-);
-
 export function IykykVibeMap() {
   const mapImage = PlaceHolderImages.find((img) => img.id === "map-1");
   const [activeFilter, setActiveFilter] = useState("All");
@@ -207,16 +188,16 @@ export function IykykVibeMap() {
               <Tooltip key={venue.name}>
                 <TooltipTrigger asChild>
                    <Link href={`/venue/${venue.slug}`}>
-                    <button
+                    <div
                         className="absolute transition-transform hover:scale-110 focus:outline-none"
                         style={{
                         top: venue.position.top,
                         left: venue.position.left,
-                        transform: "translate(-50%, -50%)",
+                        transform: "translate(-50%, -100%)",
                         }}
                     >
-                        <PushPinIcon className={cn("h-8 w-8 text-background drop-shadow-lg", venue.color.replace('fill-','text-'))} strokeWidth={3} />
-                    </button>
+                        <MapPin className={cn("h-8 w-8 text-background drop-shadow-lg", venue.color)} strokeWidth={1.5} />
+                    </div>
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent>
