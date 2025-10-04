@@ -16,14 +16,127 @@ import { Input } from '../ui/input';
 
 const appData = {
   mapMyDayOptions: [
-    { id: "tinder-date", title: "Tinder Date", description: "Casual cocktails to break the ice.", request: { vibe: "Tinder Date - Bondi", pace: 2, budget: 3, travelMode: 'walk' } },
-    { id: "date-night", title: "Date Night", description: "Cliff-top glow & photo spots.", request: { vibe: "Date Night - Bondi", pace: 3, budget: 4, travelMode: 'rideshare' } },
-    { id: "wellness-saturday", title: "Wellness Saturday", description: "Stretch with an ocean view.", request: { vibe: "Wellness Saturday", pace: 2, budget: 2, travelMode: 'walk' } },
-    { id: "girls-night-out", title: "Girls' Night Out", description: "Margaritas & shared tapas.", request: { vibe: "Girls' Night Out - Bondi", pace: 4, budget: 3, travelMode: 'rideshare' } }
+    {
+      id: 'mmd1',
+      title: 'Tinder Date - Bondi',
+      description: 'Casual cocktails to break the ice',
+      request: { vibe: "Tinder Date - Bondi", pace: 2, budget: 3, travelMode: 'walk' },
+      stops: [
+        { time: '18:30', location: 'The Rum Diary Bar', description: 'Booked in for a cheeky cocktail.' },
+        { time: '19:30', location: 'Totti\'s', description: 'Reservation for dinner and some delicious Italian food.' },
+        { time: '21:00', location: 'Bondi Icebergs', description: 'Finish the night with some wicked cocktails.' }
+      ],
+      curatedMessage: 'All good, you\'re booked in for a cheeky cocktail at The Rum Diary Bar, then jump over to Totti\'s for some delicious Italian food. Finish the night at Icebergs with some wicked cocktails. You\'ve Got This!'
+    },
+    {
+      id: 'mmd2',
+      title: 'Single & Ready to Mingle - Bondi',
+      description: 'Easy icebreakers over small plates',
+      request: { vibe: "Single & Ready to Mingle - Bondi", pace: 3, budget: 3, travelMode: 'walk' },
+      stops: [
+        { time: '18:30', location: 'LULU', description: 'Trivia & tapas at the local.' },
+        { time: '20:00', location: 'Hotel Ravesis', description: 'Rooftop cocktails - mingle hour.' },
+        { time: '22:00', location: 'The Bucket List', description: 'Dancing & good energy!' }
+      ],
+      curatedMessage: 'Get ready to mingle! You\'re all set for trivia and tapas at Lulu, then hit the rooftop at Ravesis for some cocktails. Finish the night dancing at The Bucket List. Have fun!'
+    },
+    {
+      id: 'mmd3',
+      title: 'Wellness Saturday - Bondi',
+      description: 'Stretch with an an ocean view',
+      request: { vibe: "Wellness Saturday - Bondi", pace: 2, budget: 2, travelMode: 'walk' },
+      stops: [
+        { time: '08:00', location: 'Anatomy', description: 'Sunrise yoga at the Pavilion.' },
+        { time: '09:30', location: 'Harry\'s Bondi', description: 'Acai bowl & green juice.' },
+        { time: '11:00', location: 'Bondi Icebergs', description: 'Cold plunge & reset.' }
+      ],
+      curatedMessage: 'Your wellness day is all planned! Start with sunrise yoga at Anatomy, grab a healthy bite at Harry\'s, then finish with a refreshing cold plunge at Icebergs. A perfect reset!'
+    },
+    {
+      id: 'mmd4',
+      title: 'Date Night - Bondi',
+      description: 'Cliffop glow & photo spots',
+      request: { vibe: "Date Night - Bondi", pace: 3, budget: 4, travelMode: 'rideshare' },
+      stops: [
+        { time: '18:00', location: 'Totti\'s', description: 'Reservation for an amazing meal.' },
+        { time: '19:30', location: 'Hotel Ravesis', description: 'Rooftop drinks with an ocean view.' },
+        { time: '21:00', location: 'Bondi Icebergs', description: 'Sunset walk and cocktails at the pool.' }
+      ],
+      curatedMessage: 'All good, you\'re booked in for a cheeky cocktail at The Rum Diary Bar, then jump over to Totti\'s for some delicious Italian food. Finish the night at Icebergs with some wicked cocktails. You\'ve Got This!'
+    },
+    {
+      id: 'mmd5',
+      title: 'Girls\' Night Out - Bondi',
+      description: 'Margaritas & shared tapas',
+      request: { vibe: "Girls' Night Out - Bondi", pace: 4, budget: 3, travelMode: 'rideshare' },
+      stops: [
+        { time: '18:00', location: 'LULU', description: 'Margaritas and shared tapas.' },
+        { time: '20:00', location: 'Hotel Ravesis', description: 'Skyline cocktails on the rooftop.' },
+        { time: '22:00', location: 'The Bucket List', description: 'Dancing & good energy.' }
+      ],
+      curatedMessage: 'Your girls\' night out is all set! Start with margaritas at LULU, then hit the rooftop at Ravesis for cocktails. Finish the night dancing at The Bucket List. Have a blast!'
+    },
+    {
+      id: 'mmd6',
+      title: 'Ladies\' Lunch - Bondi',
+      description: 'Window shop & try-ons',
+      request: { vibe: "Ladies' Lunch - Bondi", pace: 2, budget: 4, travelMode: 'walk' },
+      stops: [
+        { time: '12:00', location: 'Raw Bar', description: 'Ricotta hotcakes & spritz.' },
+        { time: '13:30', location: 'Totti\'s', description: 'Window shopping & try-ons.' },
+        { time: '15:00', location: 'RND Izakaya', description: 'Champagne & oysters.' }
+      ],
+      curatedMessage: 'Lunch plans are sorted! You\'re all set for ricotta hotcakes and spritz at Raw Bar, then head over to Totti\'s for a window shop. Finish your afternoon with champagne and oysters at RND Izakaya. Enjoy!'
+    },
+    {
+      id: 'mmd7',
+      title: 'Quick Bondi Lunch',
+      description: 'Grab a healthy and delicious bite on your break.',
+      request: { vibe: "Quick Bondi Lunch - Bondi", pace: 1, budget: 2, travelMode: 'walk' },
+      stops: [
+        { time: '13:30', location: 'Raw Bar', description: 'Healthy and fresh lunch.' },
+        { time: '14:30', location: 'La Piadina', description: 'A quick taco.' }
+      ],
+      curatedMessage: 'Your quick lunch is sorted! Head to Raw Bar for a fresh meal, or grab a quick taco at La Piadina. Enjoy!'
+    }
   ],
   groupEventsOptions: [
-    { id: "corporate-event", title: "Corporate Event", description: "Team building with a Bondi twist.", request: { vibe: "Corporate Event - Bondi" } },
-    { id: "birthday-bash", title: "Birthday Bash", description: "Celebrate with sun, surf, and good times.", request: { vibe: "Birthday Bash - Bondi" } },
+    {
+      id: 'ge1',
+      title: 'Birthday Brunch',
+      description: 'A boozy brunch for big groups. ~20 pax',
+      request: { vibe: "Birthday Brunch - Bondi" },
+      stops: [
+        { time: '11:00', location: 'Harry\'s Bondi', description: 'Ricotta hotcakes for everyone.' },
+        { time: '13:00', location: 'The Rum Diary Bar', description: 'Cocktail masterclass for the crew.' },
+        { time: '15:00', location: 'Hotel Ravesis', description: 'Rooftop drinks to finish the day.' }
+      ],
+      curatedMessage: 'Your birthday brunch is set! Start with hotcakes at Harry\'s, then a cocktail masterclass at The Rum Diary Bar, and finish with rooftop drinks at Ravesis. Happy birthday!'
+    },
+    {
+      id: 'ge2',
+      title: 'Staff Party',
+      description: 'Team building and celebrations. ~30 pax, $2500 budget.',
+      request: { vibe: "Staff Party - Bondi" },
+      stops: [
+        { time: '18:00', location: 'Totti\'s', description: 'Dinner reservation for the whole team.' },
+        { time: '20:30', location: 'The Bucket List', description: 'Live music and great vibes.' },
+        { time: '22:00', location: 'The Corner House', description: 'Nightcap on the beach.' }
+      ],
+      curatedMessage: 'Your staff party is on! Start with an elegant dinner at Totti\'s, then head to The Bucket List for some live music, and finish the night with a nightcap at The Corner House. Time to celebrate!'
+    },
+    {
+      id: 'ge3',
+      title: 'Baby Shower',
+      description: 'Bites and mocktails by the beach.',
+      request: { vibe: "Baby Shower - Bondi" },
+      stops: [
+        { time: '12:00', location: 'Bills', description: 'Light lunch with a stunning view.' },
+        { time: '14:00', location: 'Speedo\'s Cafe', description: 'Coffee and cake to celebrate.' },
+        { time: '16:00', location: 'Bondi Icebergs', description: 'Photo op by the pool.' }
+      ],
+      curatedMessage: 'Your baby shower is all set! Start with a light lunch at Bills, then coffee and cake at Speedo\'s Cafe, and finish with a photo op at Bondi Icebergs. Congratulations!'
+    },
   ],
   map: {
     pins: [
@@ -43,7 +156,7 @@ const appData = {
         { name: "Sean's", description: "Farm-to-table dining with ocean views.", type: "Restaurants" },
         { name: "La Piadina", description: "Authentic Italian flatbread sandwiches.", type: "Restaurants" },
         { name: "The Bucket List", description: "Casual beachside bar with a lively atmosphere.", type: "Nightlife" },
-        { name: "Porch and Parlour", description: "Bohemian-style cafe with healthy options.", type_of: "Brunch" },
+        { name: "Porch and Parlour", description: "Bohemian-style cafe with healthy options.", type: "Brunch" },
         { name: "Anatomy", description: "Boutique fitness studio offering various classes.", type: "Health & Fitness" },
         { name: "Acai Brothers", description: "Superfood bar specializing in acai bowls.", type: "Health & Fitness" },
         { name: "Bondi Trattoria", description: "Classic Italian dishes with a sea view.", type: "Restaurants" },
@@ -53,9 +166,9 @@ const appData = {
         { name: "Upstairs at The Beresford", description: "Rooftop bar with city views and cocktails.", type: "Cocktails" },
         { name: "Fishbowl", description: "Healthy and delicious poke bowls.", type: "Sushi" },
         { name: "Ora", description: "Organic and healthy cafe with vegan options.", type: "Brunch" },
-        { name: "Brown Sugar", description: "Modern Australian cuisine with a focus on local produce.", type_of: "Brunch" },
+        { name: "Brown Sugar", description: "Modern Australian cuisine with a focus on local produce.", type: "Brunch" },
         { name: "Fika Swedish Kitchen", description: "Cozy cafe with Swedish pastries and coffee.", type: "Brunch" },
-        { name: "The Nine", description: "Bright and airy cafe with a Mediterranean-inspired menu.", type_of: "Brunch" }
+        { name: "The Nine", description: "Bright and airy cafe with a Mediterranean-inspired menu.", type: "Brunch" }
     ]
   }
 };
@@ -89,7 +202,7 @@ const EventAndItinerarySelectionPage = ({ onSelectVibe, onSelectEvent }) => {
                     <CardDescription className="text-sm mt-1">{option.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="p-0 mt-4 w-full">
-                    <Button onClick={() => onSelectVibe(option.request)} className="w-full font-bold shadow-lg">View Itinerary</Button>
+                    <Button onClick={() => onSelectVibe(option)} className="w-full font-bold shadow-lg">View Itinerary</Button>
                 </CardContent>
             </Card>
         ))) : (appData.groupEventsOptions.map(option => (
@@ -99,7 +212,7 @@ const EventAndItinerarySelectionPage = ({ onSelectVibe, onSelectEvent }) => {
                     <CardDescription className="text-sm mt-1">{option.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="p-0 mt-4 w-full">
-                     <Button onClick={() => onSelectVibe(option.request)} className="w-full font-bold shadow-lg">View Itinerary</Button>
+                     <Button onClick={() => onSelectVibe(option)} className="w-full font-bold shadow-lg">View Itinerary</Button>
                 </CardContent>
             </Card>
         )))}
@@ -122,22 +235,22 @@ const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle }
   }, [itineraryData]);
 
   if (!itineraryData) {
-    return null; // Don't render anything if there's no itinerary data
+    return null; 
   }
 
   const handleToggleHold = (stop: ItineraryStop) => {
-    setHeldStops(prev => ({ ...prev, [stop.title]: !prev[stop.title] }));
+    setHeldStops(prev => ({ ...prev, [stop.location]: !prev[stop.location] }));
   };
   
   const handleSwap = (originalItem, newItem) => {
-    const newItinerary = shuffledItinerary.map(item => (item.title === originalItem.title && item.location === originalItem.location) ? { ...item, location: newItem.name, description: newItem.description } : item);
+    const newItinerary = shuffledItinerary.map(item => (item.location === originalItem.location) ? { ...item, location: newItem.name, description: newItem.description } : item);
     setShuffledItinerary(newItinerary);
     setEditingItem(null);
     setSwapQuery('');
   };
 
   const getItemType = (item) => {
-    const title = item.title.toLowerCase();
+    const title = item.description.toLowerCase();
     if (title.includes('cocktail') || title.includes('bar')) return 'Cocktails';
     if (title.includes('sushi')) return 'Sushi';
     if (title.includes('brunch') || title.includes('cafe')) return 'Brunch';
@@ -159,18 +272,18 @@ const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle }
         <Button onClick={onBack} variant="ghost" size="icon" className="text-foreground hover:bg-accent"><ArrowLeft size={24} /></Button>
         <div className='text-center'>
             <h2 className="text-2xl font-bold text-foreground">{itineraryData.title}</h2>
-            <p className="text-muted-foreground text-sm">Cliffop glow & photo spots</p>
+            <p className="text-muted-foreground text-sm">{itineraryData.description}</p>
         </div>
         <div className="w-10"></div>
       </div>
       
       <div className="flex-grow space-y-4 pt-4">
         {shuffledItinerary.map((stop, index) => {
-            const isHeld = !!heldStops[stop.title];
+            const isHeld = !!heldStops[stop.location];
             return (
-            <Card key={`${stop.title}-${index}`} className={`rounded-2xl p-4 shadow-lg flex items-center transition-all duration-300 bg-secondary/30`}>
+            <Card key={`${stop.location}-${index}`} className={`rounded-2xl p-4 shadow-lg flex items-center transition-all duration-300 bg-secondary/30 ${isHeld ? 'border-2 border-primary' : ''}`}>
                 <Button onClick={() => handleToggleHold(stop)} variant="ghost" size="icon" className="flex-shrink-0 mr-4">
-                  <CheckCircle2 size={24} className={isHeld ? 'text-primary' : 'text-muted-foreground'} />
+                  <Pin size={24} className={isHeld ? 'text-primary fill-primary' : 'text-muted-foreground'} />
                 </Button>
                 <div className="w-16 h-16 bg-primary/20 rounded-xl overflow-hidden flex-shrink-0">
                     <Image src={`https://picsum.photos/seed/${stop.location.replace(/\s+/g, '-')}/64/64`} alt={stop.location} width={64} height={64} className="w-full h-full object-cover" />
@@ -225,24 +338,19 @@ export function MapMyDay() {
     const [isPending, startTransition] = useTransition();
     const [view, setView] = useState<'selection' | 'itinerary'>('selection');
     const [itinerary, setItinerary] = useState<Itinerary | null>(null);
-    const [currentVibe, setCurrentVibe] = useState<ItineraryRequest | null>(null);
+    const [currentVibe, setCurrentVibe] = useState<any | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isConfirmationOpen, setConfirmationOpen] = useState(false);
 
-    const handleSelectVibe = (request: ItineraryRequest) => {
+    const handleSelectVibe = (option) => {
         setError(null);
-        setItinerary(null);
-        setCurrentVibe(request);
-        startTransition(async () => {
-          const response = await generateItinerary(request);
-          if (response.error) {
-            setError(response.error);
-            // Optional: Show error toast
-          } else if (response.success) {
-            setItinerary(response.success);
-            setView('itinerary');
-          }
-        });
+        const newItinerary: Itinerary = {
+            title: option.title,
+            stops: option.stops,
+        };
+        setItinerary(newItinerary);
+        setCurrentVibe(option);
+        setView('itinerary');
     };
 
     const handleBackToSelection = () => {
@@ -253,14 +361,21 @@ export function MapMyDay() {
 
     const handleShuffle = () => {
         if (!currentVibe) return;
-         startTransition(async () => {
-          // Future: Implement shuffle with held items
-          const response = await generateItinerary(currentVibe);
-          if (response.error) {
-            setError(response.error);
-          } else if (response.success) {
-            setItinerary(response.success);
-          }
+
+        const heldStops = itinerary?.stops.filter(stop => stop.isHeld) || [];
+        const nonHeldStops = itinerary?.stops.filter(stop => !stop.isHeld) || [];
+        
+        // This is a placeholder for a real shuffle logic with alternatives.
+        const shuffledNonHeld = [...nonHeldStops].sort(() => Math.random() - 0.5);
+
+        const newItineraryStops = itinerary?.stops.map(stop => {
+            if (stop.isHeld) return stop;
+            return shuffledNonHeld.pop() || stop;
+        }) || [];
+
+        setItinerary({
+            ...itinerary!,
+            stops: newItineraryStops
         });
     }
 
@@ -270,15 +385,8 @@ export function MapMyDay() {
     }
     
     const getConfirmationMessage = () => {
-        if (!itinerary || !itinerary.stops || itinerary.stops.length === 0) return "";
-        const stopNames = itinerary.stops.map(s => s.location).slice(0, 2);
-        const lastStop = itinerary.stops[itinerary.stops.length - 1].location;
-        let message = `All good, you're booked in for a cheeky cocktail at ${stopNames[0]}`;
-        if (stopNames.length > 1) {
-            message += `, then jump over to ${stopNames[1]} for some delicious food.`
-        }
-        message += ` Finish the night at ${lastStop} with some wicked cocktails. You've Got This!`
-        return message;
+        if (!currentVibe) return "";
+        return currentVibe.curatedMessage;
     }
 
     return (
@@ -299,11 +407,11 @@ export function MapMyDay() {
                 {view === 'selection' ? (
                     <EventAndItinerarySelectionPage
                         onSelectVibe={handleSelectVibe}
-                        onSelectEvent={() => {}} 
+                        onSelectEvent={handleSelectVibe} 
                     />
                 ) : (
                     itinerary && <MapMyDayItineraryPage
-                        itineraryData={itinerary}
+                        itineraryData={{...itinerary, description: currentVibe?.description, title: currentVibe?.title}}
                         onStartPlan={handleStartPlan}
                         onBack={handleBackToSelection}
                         onShuffle={handleShuffle}
@@ -338,3 +446,5 @@ export function MapMyDay() {
         </Card>
     );
 }
+
+    
