@@ -1,13 +1,15 @@
+
 "use client";
 
 import { useState, useTransition, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, ArrowLeft, CheckCircle2, Sparkles, X, Search } from "lucide-react";
+import { Loader2, ArrowLeft, CheckCircle2, Sparkles, X, Search, Pin } from "lucide-react";
 import { generateItinerary } from '@/app/actions';
 import { Itinerary, ItineraryRequest, ItineraryStop } from '@/ai/schemas';
 import { AnimatePresence, motion } from "framer-motion";
 import Image from 'next/image';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 // Placeholder data structure similar to what the user code expects
 const appData = {
@@ -22,7 +24,7 @@ const appData = {
     { id: "birthday-bash", title: "Birthday Bash", description: "Celebrate with sun, surf, and good times.", request: { vibe: "Birthday Bash - Bondi" } },
   ],
   map: {
-    pins: [ // This is a simplified placeholder for swap functionality
+    pins: [
         { name: "Icebergs Dining Room", description: "Iconic ocean views and fine dining.", type: "Restaurants" },
         { name: "Hotel Ravesis", description: "Stylish beachfront bar and restaurant.", type: "Nightlife" },
         { name: "The Depot", description: "Popular spot for brunch and coffee.", type: "Brunch" },
@@ -34,44 +36,64 @@ const appData = {
   }
 };
 
-const EventAndItinerarySelectionPage = ({ onSelectVibe, onBack }) => {
+
+const EventAndItinerarySelectionPage = ({ onSelectVibe, onSelectEvent }) => {
   const [activeTab, setActiveTab] = useState('solo');
   return (
     <motion.div
       key="selector"
-      initial={{ opacity: 0, x: -300 }}
+      initial={{ opacity: 0, x: 0 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -300 }}
       transition={{ duration: 0.3 }}
-      className="flex flex-col h-full bg-[var(--bg-primary)] overflow-y-auto p-6 text-center"
+      className="flex flex-col h-full bg-background overflow-y-auto p-6 text-center"
     >
       <div className="flex items-center justify-between mb-6">
-        {/* onBack is not used here as it's the main page, but kept for consistency */}
         <div className="w-6"></div>
-        <h2 className="text-2xl font-bold text-[var(--text-primary)] flex-grow text-center">Plan My Day or Event</h2>
+        <h2 className="text-2xl font-bold text-foreground flex-grow text-center">Plan My Day or Event</h2>
         <div className="w-6"></div>
       </div>
-      <div className="flex justify-center mb-6 w-full max-w-sm bg-[var(--bg-secondary)] rounded-full p-2 shadow-inner mx-auto">
-        <button className={`flex-1 px-4 py-2 rounded-full font-semibold transition-colors ${activeTab === 'solo' ? 'bg-[var(--accent-primary)] text-white' : 'text-[var(--text-secondary)]'}`} onClick={() => setActiveTab('solo')}>Solo Itinerary</button>
-        <button className={`flex-1 px-4 py-2 rounded-full font-semibold transition-colors ${activeTab === 'group' ? 'bg-[var(--accent-primary)] text-white' : 'text-[var(--text-secondary)]'}`} onClick={() => setActiveTab('group')}>Plan an Event</button>
+      <div className="flex justify-center mb-6 w-full max-w-sm bg-card rounded-full p-2 shadow-inner mx-auto">
+        <button className={`flex-1 px-4 py-2 rounded-full font-semibold transition-colors ${activeTab === 'solo' ? 'bg-primary text-primary-foreground' : 'text-secondary-foreground'}`} onClick={() => setActiveTab('solo')}>Solo Itinerary</button>
+        <button className={`flex-1 px-4 py-2 rounded-full font-semibold transition-colors ${activeTab === 'group' ? 'bg-primary text-primary-foreground' : 'text-secondary-foreground'}`} onClick={() => setActiveTab('group')}>Plan an Event</button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {activeTab === 'solo' ? (appData.mapMyDayOptions.map(option => (<div key={option.id} className="bg-[var(--bg-secondary)] rounded-2xl p-6 shadow-xl flex flex-col items-center justify-between"><div className="text-center"><h3 className="text-lg font-bold text-[var(--text-primary)]">{option.title}</h3><p className="text-sm text-[var(--text-secondary)] mt-1">{option.description}</p></div><button onClick={() => onSelectVibe(option.request)} className="mt-4 w-full px-4 py-2 bg-[var(--accent-primary)] text-white rounded-full font-bold shadow-lg transform active:scale-95 transition-transform">View Itinerary</button></div>))) : (appData.groupEventsOptions.map(option => (<div key={option.id} className="bg-[var(--bg-secondary)] rounded-2xl p-6 shadow-xl flex flex-col items-center justify-between"><div className="text-center"><h3 className="text-lg font-bold text-[var(--text-primary)]">{option.title}</h3><p className="text-sm text-[var(--text-secondary)] mt-1">{option.description}</p></div><button onClick={() => onSelectVibe(option.request)} className="mt-4 w-full px-4 py-2 bg-[var(--accent-primary)] text-white rounded-full font-bold shadow-lg transform active:scale-95 transition-transform">View Itinerary</button></div>)))}
+        {activeTab === 'solo' ? (appData.mapMyDayOptions.map(option => (
+            <Card key={option.id} className="rounded-2xl p-6 shadow-xl flex flex-col items-center justify-between text-center">
+                <CardHeader className="p-0">
+                    <CardTitle className="text-lg font-bold">{option.title}</CardTitle>
+                    <CardDescription className="text-sm mt-1">{option.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="p-0 mt-4 w-full">
+                    <Button onClick={() => onSelectVibe(option.request)} className="w-full font-bold shadow-lg">View Itinerary</Button>
+                </CardContent>
+            </Card>
+        ))) : (appData.groupEventsOptions.map(option => (
+            <Card key={option.id} className="rounded-2xl p-6 shadow-xl flex flex-col items-center justify-between text-center">
+                <CardHeader className="p-0">
+                    <CardTitle className="text-lg font-bold">{option.title}</CardTitle>
+                    <CardDescription className="text-sm mt-1">{option.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="p-0 mt-4 w-full">
+                     <Button onClick={() => onSelectVibe(option.request)} className="w-full font-bold shadow-lg">View Itinerary</Button>
+                </CardContent>
+            </Card>
+        )))}
       </div>
     </motion.div>
   );
 };
 
 const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle }) => {
-  const [shuffledItinerary, setShuffledItinerary] = useState([]);
-  const [definiteItems, setDefiniteItems] = useState({});
-  const [editingItem, setEditingItem] = useState(null);
+  const [shuffledItinerary, setShuffledItinerary] = useState<ItineraryStop[]>([]);
+  const [heldStops, setHeldStops] = useState<Record<string, boolean>>({});
+  const [editingItem, setEditingItem] = useState<ItineraryStop | null>(null);
   const [swapQuery, setSwapQuery] = useState('');
   
   useEffect(() => { 
     if (itineraryData?.stops) {
       setShuffledItinerary([...itineraryData.stops]); 
-      setDefiniteItems({}); 
+      setHeldStops({}); 
     }
   }, [itineraryData]);
 
@@ -79,10 +101,12 @@ const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle }
     return null; // Don't render anything if there's no itinerary data
   }
 
-  const handleToggleDefinite = (item) => { setDefiniteItems(prev => ({ ...prev, [item.title]: !prev[item.title] })); };
+  const handleToggleHold = (stop: ItineraryStop) => {
+    setHeldStops(prev => ({ ...prev, [stop.title]: !prev[stop.title] }));
+  };
   
   const handleSwap = (originalItem, newItem) => {
-    const newItinerary = shuffledItinerary.map(item => (item.title === originalItem.title && item.location === originalItem.location) ? { ...item, location: newItem.name, description: newItem.notes } : item);
+    const newItinerary = shuffledItinerary.map(item => (item.title === originalItem.title && item.location === originalItem.location) ? { ...item, location: newItem.name, description: newItem.description } : item);
     setShuffledItinerary(newItinerary);
     setEditingItem(null);
     setSwapQuery('');
@@ -96,7 +120,7 @@ const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle }
     return 'Restaurants';
   }
 
-  const filteredSwapOptions = editingItem ? appData.map.pins.filter(pin => pin.type === getItemType(editingItem) && pin.name.toLowerCase().includes(swapQuery.toLowerCase())).map(pin => ({ name: pin.name, notes: pin.description })) : [];
+  const filteredSwapOptions = editingItem ? appData.map.pins.filter(pin => pin.type === getItemType(editingItem) && pin.name.toLowerCase().includes(swapQuery.toLowerCase())).map(pin => ({ name: pin.name, description: pin.description })) : [];
 
   return (
     <motion.div
@@ -105,65 +129,66 @@ const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle }
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: 300 }}
         transition={{ duration: 0.3 }}
-        className="flex flex-col h-full bg-[var(--bg-primary)] overflow-y-auto p-6"
+        className="flex flex-col h-full bg-background overflow-y-auto p-6"
     >
       <div className="flex items-center justify-between mb-4">
-        <button onClick={onBack} className="text-[var(--text-primary)] hover:text-[var(--accent-primary)] transition-colors"><ArrowLeft size={24} /></button>
-        <h2 className="text-2xl font-bold text-[var(--text-primary)] text-center flex-grow">{itineraryData.title}</h2>
-        <div className="w-6"></div>
+        <Button onClick={onBack} variant="ghost" size="icon" className="text-foreground hover:bg-accent"><ArrowLeft size={24} /></Button>
+        <h2 className="text-2xl font-bold text-foreground text-center flex-grow">{itineraryData.title}</h2>
+        <div className="w-10"></div>
       </div>
-      <p className="text-[var(--text-secondary)] text-sm mb-6 text-center">{itineraryData.description || 'Here is your generated plan.'}</p>
+      <p className="text-muted-foreground text-sm mb-6 text-center">Your curated plan. Hold your favorites, shuffle the rest!</p>
       
-      <div className="flex-grow">
-        {shuffledItinerary.map((item) => {
-            const isDefinite = definiteItems[item.title];
+      <div className="flex-grow space-y-4">
+        {shuffledItinerary.map((stop, index) => {
+            const isHeld = !!heldStops[stop.title];
             return (
-            <div key={`${item.title}-${item.location}`} className={`bg-[var(--bg-secondary)] rounded-2xl p-4 mb-4 shadow-xl flex items-center transition-all duration-300 ${isDefinite ? 'border-2 border-emerald-400' : ''}`}>
-                <button onClick={() => handleToggleDefinite(item)} className="flex-shrink-0 mr-4"><CheckCircle2 size={24} className={isDefinite ? 'text-emerald-400' : 'text-gray-600'} /></button>
-                <div className="w-16 h-16 bg-gray-700 rounded-xl overflow-hidden flex-shrink-0">
-                    <Image src={`https://picsum.photos/seed/${item.location.replace(/\s+/g, '-')}/64/64`} alt="Venue" width={64} height={64} className="w-full h-full object-cover" />
+            <Card key={`${stop.title}-${index}`} className={`rounded-2xl p-4 shadow-xl flex items-center transition-all duration-300 ${isHeld ? 'border-2 border-primary' : 'border'}`}>
+                <Button onClick={() => handleToggleHold(stop)} variant="ghost" size="icon" className="flex-shrink-0 mr-4">
+                  <Pin size={24} className={isHeld ? 'text-primary fill-primary' : 'text-muted-foreground'} />
+                </Button>
+                <div className="w-16 h-16 bg-secondary rounded-xl overflow-hidden flex-shrink-0">
+                    <Image src={`https://picsum.photos/seed/${stop.location.replace(/\s+/g, '-')}/64/64`} alt={stop.location} width={64} height={64} className="w-full h-full object-cover" />
                 </div>
                 <div className="ml-4 flex-grow">
-                    <p className="text-lg font-semibold text-[var(--text-primary)]">{item.location}</p>
-                    <p className="text-sm text-[var(--text-secondary)]">{item.description}</p>
+                    <p className="font-semibold text-foreground">{stop.time} - {stop.location}</p>
+                    <p className="text-sm text-muted-foreground">{stop.description}</p>
                 </div>
-                <button onClick={() => setEditingItem(item)} className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors flex-shrink-0 ml-4"><Sparkles size={24} /></button>
-            </div>);
+                <Button onClick={() => setEditingItem(stop)} variant="ghost" size="icon" className="text-muted-foreground hover:text-primary transition-colors flex-shrink-0 ml-4"><Sparkles size={24} /></Button>
+            </Card>);
         })}
       </div>
 
-      <div className="mt-auto flex space-x-4 pt-4">
-        <button className="flex-grow px-8 py-4 bg-[var(--accent-primary)] text-white rounded-full font-bold text-lg shadow-2xl transform active:scale-95 transition-transform" onClick={() => onStartPlan(itineraryData)}>Start Plan</button>
-        <button className="flex-grow px-8 py-4 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-full font-bold text-lg shadow-2xl transform active:scale-95 transition-transform border-2 border-[var(--border-color)]" onClick={onShuffle}>Shuffle</button>
+      <div className="mt-auto flex space-x-4 pt-4 sticky bottom-6">
+        <Button className="flex-grow h-14 font-bold text-lg shadow-2xl" onClick={() => onStartPlan(itineraryData)}>Start Plan</Button>
+        <Button variant="secondary" className="flex-grow h-14 font-bold text-lg shadow-2xl border" onClick={onShuffle}>Shuffle</Button>
       </div>
 
       {editingItem && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4">
-            <div className="relative bg-[var(--bg-secondary)] rounded-3xl shadow-2xl p-8 w-full max-w-md">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-2xl font-bold text-[var(--text-primary)]">Swap {editingItem.location}</h3>
-                    <button onClick={() => setEditingItem(null)} className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"><X size={24} /></button>
-                </div>
-                <p className="text-[var(--text-secondary)] text-sm mb-4">Find an alternative for your itinerary.</p>
-                <div className="relative mb-4">
-                    <Search size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]" />
-                    <input type="text" value={swapQuery} onChange={(e) => setSwapQuery(e.target.value)} placeholder={`Search ${getItemType(editingItem)} venues...`} className="w-full pl-10 pr-4 py-3 bg-[var(--bg-primary)] text-[var(--text-primary)] rounded-full border border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] placeholder-[var(--text-secondary)]" />
-                </div>
-                <div className="space-y-4 max-h-64 overflow-y-auto scrollbar-hide">
-                    {filteredSwapOptions.map((item, index) => (
-                    <button key={index} onClick={() => handleSwap(editingItem, item)} className="w-full flex items-center bg-[var(--bg-primary)] rounded-xl p-3 shadow-lg transition-transform duration-100 hover:scale-[1.02] active:scale-[0.98]">
-                        <div className="w-16 h-16 bg-gray-700 rounded-xl overflow-hidden flex-shrink-0">
-                          <Image src={`https://picsum.photos/seed/${item.name.replace(/\s+/g, '-')}/64/64`} alt="Venue" width={64} height={64} className="w-full h-full object-cover" />
-                        </div>
-                        <div className="ml-4 text-left">
-                            <p className="text-[var(--text-primary)] font-semibold">{item.name}</p>
-                            <p className="text-sm text-[var(--text-secondary)]">{item.notes}</p>
-                        </div>
-                    </button>
-                    ))}
-                </div>
+        <Dialog open={!!editingItem} onOpenChange={() => setEditingItem(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Swap {editingItem.location}</DialogTitle>
+              <DialogDescription>Find an alternative for your itinerary.</DialogDescription>
+            </DialogHeader>
+            <div className="relative mb-4">
+                <Search size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input type="text" value={swapQuery} onChange={(e) => setSwapQuery(e.target.value)} placeholder={`Search ${getItemType(editingItem)} venues...`} className="w-full pl-10 pr-4 py-3" />
             </div>
-        </div>
+            <div className="space-y-4 max-h-64 overflow-y-auto">
+                {filteredSwapOptions.map((item, index) => (
+                <button key={index} onClick={() => handleSwap(editingItem, item)} className="w-full flex items-center bg-secondary rounded-xl p-3 shadow-lg transition-transform duration-100 hover:scale-[1.02] active:scale-[0.98]">
+                    <div className="w-16 h-16 bg-gray-700 rounded-xl overflow-hidden flex-shrink-0">
+                      <Image src={`https://picsum.photos/seed/${item.name.replace(/\s+/g, '-')}/64/64`} alt="Venue" width={64} height={64} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="ml-4 text-left">
+                        <p className="text-foreground font-semibold">{item.name}</p>
+                        <p className="text-sm text-muted-foreground">{item.description}</p>
+                    </div>
+                </button>
+                ))}
+            </div>
+          </DialogContent>
+        </Dialog>
       )}
     </motion.div>
   );
@@ -172,10 +197,11 @@ const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle }
 
 export function MapMyDay() {
     const [isPending, startTransition] = useTransition();
-    const [currentView, setCurrentView] = useState('selection'); // 'selection' or 'itinerary'
+    const [view, setView] = useState<'selection' | 'itinerary'>('selection');
     const [itinerary, setItinerary] = useState<Itinerary | null>(null);
     const [currentVibe, setCurrentVibe] = useState<ItineraryRequest | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [isConfirmationOpen, setConfirmationOpen] = useState(false);
 
     const handleSelectVibe = (request: ItineraryRequest) => {
         setError(null);
@@ -185,16 +211,16 @@ export function MapMyDay() {
           const response = await generateItinerary(request);
           if (response.error) {
             setError(response.error);
-            // Handle error display, maybe switch back to selection view with an error message
+            // Optional: Show error toast
           } else if (response.success) {
             setItinerary(response.success);
-            setCurrentView('itinerary');
+            setView('itinerary');
           }
         });
     };
 
     const handleBackToSelection = () => {
-        setCurrentView('selection');
+        setView('selection');
         setItinerary(null);
         setCurrentVibe(null);
     };
@@ -212,35 +238,46 @@ export function MapMyDay() {
         });
     }
 
-    const handleStartPlan = (finalItinerary) => {
-        // For now, just log it. Later this will trigger a confirmation modal.
-        console.log("Starting plan:", finalItinerary);
-        alert("Plan started! (Check console for details)");
+    const handleStartPlan = (finalItinerary: Itinerary) => {
+        setItinerary(finalItinerary);
+        setConfirmationOpen(true);
+    }
+    
+    const getConfirmationMessage = () => {
+        if (!itinerary || !itinerary.stops || itinerary.stops.length === 0) return "";
+        const stopNames = itinerary.stops.map(s => s.location).slice(0, 2);
+        const lastStop = itinerary.stops[itinerary.stops.length - 1].location;
+        let message = `All good, you're booked in for a cheeky cocktail at ${stopNames[0]}`;
+        if (stopNames.length > 1) {
+            message += `, then jump over to ${stopNames[1]} for some delicious food.`
+        }
+        message += ` Finish the night at ${lastStop} with some wicked cocktails. You've Got This!`
+        return message;
     }
 
     return (
-        <Card className="w-full flex flex-col min-h-[40rem] overflow-hidden bg-transparent border-none shadow-none">
+        <Card className="w-full flex flex-col min-h-[40rem] overflow-hidden bg-background border-none shadow-none relative">
             <AnimatePresence mode="wait">
                 {isPending && (
                     <motion.div
                         key="loader"
-                        className="absolute inset-0 flex items-center justify-center bg-black/50 z-20"
+                        className="absolute inset-0 flex items-center justify-center bg-background/80 z-20"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                     >
-                       <Loader2 className="h-10 w-10 animate-spin text-white" />
+                       <Loader2 className="h-10 w-10 animate-spin text-primary" />
                     </motion.div>
                 )}
-
-                {currentView === 'selection' && (
+                
+                {view === 'selection' && (
                     <EventAndItinerarySelectionPage
                         onSelectVibe={handleSelectVibe}
-                        onBack={() => {}} // No back action on the main screen
+                        onSelectEvent={() => {}} 
                     />
                 )}
                 
-                {currentView === 'itinerary' && itinerary && (
+                {view === 'itinerary' && itinerary && (
                     <MapMyDayItineraryPage
                         itineraryData={itinerary}
                         onStartPlan={handleStartPlan}
@@ -249,6 +286,33 @@ export function MapMyDay() {
                     />
                 )}
             </AnimatePresence>
+
+            <Dialog open={isConfirmationOpen} onOpenChange={setConfirmationOpen}>
+                <DialogContent>
+                    <DialogHeader className="items-center">
+                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                          <CheckCircle2 className="h-6 w-6 text-green-600" />
+                        </div>
+                        <DialogTitle>Itinerary Confirmed!</DialogTitle>
+                        <DialogDescription className="text-center">
+                            {getConfirmationMessage()}
+                        </DialogDescription>
+                    </DialogHeader>
+                    {itinerary && (
+                         <div className="space-y-4 py-4">
+                            {itinerary.stops.map((stop, index) => (
+                                <div key={index} className="flex items-center gap-4">
+                                    <div className="text-lg font-bold text-primary">{stop.time}</div>
+                                    <div className="font-semibold">{stop.location}</div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    <Button onClick={() => setConfirmationOpen(false)} className="w-full">Let's Go!</Button>
+                </DialogContent>
+            </Dialog>
         </Card>
     );
 }
+
+    
