@@ -1,5 +1,7 @@
+
 "use client";
 
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -11,6 +13,8 @@ import {
   Send,
 } from "lucide-react";
 import Image from "next/image";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 const feedItems = [
   {
@@ -65,6 +69,8 @@ const feedItems = [
 
 const Post = ({ item }: { item: (typeof feedItems)[0] }) => {
   const image = PlaceHolderImages.find((img) => img.id === item.imageId);
+  const [isLiked, setIsLiked] = useState(false);
+  const [comment, setComment] = useState("");
 
   return (
     <Card className="w-full max-w-lg mx-auto rounded-none border-x-0 border-t-0 sm:rounded-lg sm:border">
@@ -104,22 +110,46 @@ const Post = ({ item }: { item: (typeof feedItems)[0] }) => {
           )}
         </div>
         <div className="p-3 space-y-2">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <button className="flex items-center gap-2 hover:text-primary">
-                        <Heart className="h-6 w-6"/>
-                        <span className="text-sm font-semibold">{item.likes}</span>
-                    </button>
-                    <button className="flex items-center gap-2 hover:text-primary">
-                        <MessageCircle className="h-6 w-6"/>
-                         <span className="text-sm font-semibold">{item.comments}</span>
-                    </button>
-                    <button className="hover:text-primary">
-                        <Send className="h-6 w-6"/>
-                    </button>
-                </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button
+                className="flex items-center gap-2 hover:text-primary"
+                onClick={() => setIsLiked(!isLiked)}
+              >
+                <Heart
+                  className={`h-6 w-6 transition-all ${
+                    isLiked ? "text-red-500 fill-current" : ""
+                  }`}
+                />
+                <span className="text-sm font-semibold">
+                  {isLiked ? item.likes + 1 : item.likes}
+                </span>
+              </button>
+              <button className="flex items-center gap-2 hover:text-primary">
+                <MessageCircle className="h-6 w-6" />
+                <span className="text-sm font-semibold">{item.comments}</span>
+              </button>
+              <button className="hover:text-primary">
+                <Send className="h-6 w-6" />
+              </button>
             </div>
-             <p className="text-xs text-muted-foreground">View all {item.comments} comments</p>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            View all {item.comments} comments
+          </p>
+          <div className="flex items-center gap-2 pt-2">
+            <Avatar className="h-6 w-6">
+                <AvatarImage src="https://github.com/user.png" />
+                <AvatarFallback>U</AvatarFallback>
+            </Avatar>
+            <Input 
+                placeholder="Add a comment..." 
+                className="h-8 text-xs bg-transparent border-0 border-b rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+            />
+             {comment && <Button variant="ghost" size="sm" className="text-xs text-primary">Post</Button>}
+          </div>
         </div>
       </CardContent>
     </Card>
