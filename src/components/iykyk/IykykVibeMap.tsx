@@ -1,6 +1,8 @@
+
 "use client";
 
-import { Map, Pin } from "lucide-react";
+import { useState } from "react";
+import { Map, Pin, ShoppingBag, Beer, Utensils, Coffee, Heart, Sun, Dumbbell, Calendar, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,42 +14,86 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+
+const categories = [
+    { name: "All", icon: Sparkles },
+    { name: "Brunch", icon: Coffee },
+    { name: "Lunch", icon: Utensils },
+    { name: "Restaurants", icon: Utensils },
+    { name: "Nightlife", icon: Beer },
+    { name: "Health & Fitness", icon: Dumbbell },
+    { name: "Vibes", icon: Sun },
+    { name: "Sushi", icon: Utensils },
+    { name: "Cocktails", icon: Beer },
+    { name: "Retail", icon: ShoppingBag },
+    { name: "Events", icon: Calendar },
+];
 
 const venues = [
   {
     name: "The Beachcomber Bar",
-    category: "Bar",
+    category: "Cocktails",
     position: { top: "30%", left: "55%" },
     color: "bg-accent",
   },
   {
     name: "Sakura Sushi",
-    category: "Restaurant",
+    category: "Sushi",
     position: { top: "50%", left: "40%" },
-    color: "bg-primary",
-  },
-  {
-    name: "Morning Glory Cafe",
-    category: "Cafe",
-    position: { top: "65%", left: "65%" },
-    color: "bg-destructive",
-  },
-  {
-    name: "Bondi Beach",
-    category: "Beach",
-    position: { top: "15%", left: "25%" },
     color: "bg-blue-400",
   },
   {
+    name: "Morning Glory Cafe",
+    category: "Brunch",
+    position: { top: "65%", left: "65%" },
+    color: "bg-pink-400",
+  },
+  {
+    name: "Bondi Beach",
+    category: "Vibes",
+    position: { top: "15%", left: "25%" },
+    color: "bg-cyan-400",
+  },
+  {
     name: "Icebergs Pool",
-    category: "Fitness",
+    category: "Health & Fitness",
     position: { top: "80%", left: "30%" },
     color: "bg-teal-500",
+  },
+  {
+    name: "Bondi Markets",
+    category: "Retail",
+    position: { top: "45%", left: "15%" },
+    color: "bg-purple-400",
+  },
+    {
+    name: "Sunset Picnic Spot",
+    category: "Vibes",
+    position: { top: "25%", left: "80%" },
+    color: "bg-orange-400",
+  },
+  {
+    name: "The Corner House",
+    category: "Restaurants",
+    position: { top: "75%", left: "85%" },
+    color: "bg-red-400",
+  },
+   {
+    name: "Bondi Festival",
+    category: "Events",
+    position: { top: "55%", left: "50%" },
+    color: "bg-yellow-400",
   },
 ];
 
 export function IykykVibeMap() {
   const mapImage = PlaceHolderImages.find((img) => img.id === "map-1");
+  const [activeFilter, setActiveFilter] = useState("All");
+
+  const filteredVenues = venues.filter(venue => 
+    activeFilter === "All" || venue.category === activeFilter
+  );
 
   return (
     <section>
@@ -58,7 +104,25 @@ export function IykykVibeMap() {
       <p className="text-muted-foreground mb-4">
         Explore Bondi's landscape. Tap a pin to feel the vibe.
       </p>
-      <Card className="overflow-hidden">
+
+      <ScrollArea className="w-full whitespace-nowrap rounded-lg">
+        <div className="flex w-max space-x-2 pb-4">
+            {categories.map((category) => (
+                <Button 
+                    key={category.name}
+                    variant={activeFilter === category.name ? "default" : "outline"}
+                    onClick={() => setActiveFilter(category.name)}
+                    className="flex-shrink-0"
+                >
+                    <category.icon className="mr-2 h-4 w-4" />
+                    {category.name}
+                </Button>
+            ))}
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+
+      <Card className="overflow-hidden mt-2">
         <TooltipProvider>
           <CardContent className="p-0 relative w-full aspect-[4/3] md:aspect-video">
             {mapImage ? (
@@ -76,7 +140,7 @@ export function IykykVibeMap() {
             )}
             <div className="absolute inset-0 bg-black/10" />
 
-            {venues.map((venue) => (
+            {filteredVenues.map((venue) => (
               <Tooltip key={venue.name}>
                 <TooltipTrigger asChild>
                   <Button
@@ -86,6 +150,7 @@ export function IykykVibeMap() {
                     style={{
                       top: venue.position.top,
                       left: venue.position.left,
+
                       transform: "translate(-50%, -50%)",
                     }}
                   >
