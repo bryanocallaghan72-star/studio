@@ -153,9 +153,8 @@ export function IykykVibeMap() {
             {filteredVenues.map((venue) => (
               <Tooltip key={venue.name}>
                 <TooltipTrigger asChild>
-                   <Link href={`/venue/${venue.slug}`} passHref>
+                   <Link href={`/venue/${venue.slug}`} passHref legacyBehavior>
                     <Button
-                        asChild
                         variant="ghost"
                         size="icon"
                         className="absolute w-8 h-8 rounded-full shadow-lg transition-transform hover:scale-110"
@@ -165,10 +164,8 @@ export function IykykVibeMap() {
                         transform: "translate(-50%, -50%)",
                         }}
                     >
-                        <a>
-                            <span className={cn("absolute h-4 w-4 rounded-full", venue.color, "animate-pulse")} />
-                            <span className={cn("h-2.5 w-2.5 rounded-full", venue.color, "ring-4 ring-background")} />
-                        </a>
+                        <span className={cn("absolute h-4 w-4 rounded-full", venue.color, "animate-pulse")} />
+                        <span className={cn("h-2.5 w-2.5 rounded-full", venue.color, "ring-4 ring-background")} />
                     </Button>
                   </Link>
                 </TooltipTrigger>
