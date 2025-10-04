@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { getCommunityRecommendations } from "@/app/actions";
-import { CommunityConnectorOutput } from "@/ai/flows/community-connector-tool";
+import { CommunityConnectorOutput } from "@/ai/schemas";
 import { Users, Loader2, ArrowRight } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Image from "next/image";

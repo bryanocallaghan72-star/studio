@@ -1,7 +1,8 @@
 "use server";
 
-import { communityConnectorTool, CommunityConnectorInput } from "@/ai/flows/community-connector-tool";
-import { generateItinerary as generateItineraryFlow, Itinerary } from "@/ai/flows/generate-itinerary-flow";
+import { communityConnectorTool } from "@/ai/flows/community-connector-tool";
+import { generateItinerary as generateItineraryFlow } from "@/ai/flows/generate-itinerary-flow";
+import { CommunityConnectorInput, Itinerary, ItineraryRequest, ItineraryRequestSchema } from "@/ai/schemas";
 import { z } from "zod";
 
 const CommunityConnectorActionSchema = z.object({
@@ -31,12 +32,19 @@ export async function getCommunityRecommendations(values: { interests: string })
   }
 }
 
-export async function generateItinerary(mood: string): Promise<{ success?: Itinerary, error?: string }> {
-  if (!mood || mood.length < 3) {
+export async function generateItinerary(request: ItineraryRequest): Promise<{ success?: Itinerary, error?: string }> {
+  const validatedRequest = ItineraryRequestSchema.safeParse(request);
+  
+  if (!validatedRequest.success) {
+    return { error: 'Invalid itinerary request.' };
+  }
+
+  if (!request.vibe || request.vibe.length < 3) {
     return { error: 'Please describe the mood for your day in a bit more detail.' };
   }
+  
   try {
-    const result = await generateItineraryFlow(mood);
+    const result = await generateItineraryFlow(request);
     return { success: result };
   } catch (error) {
     console.error('Itinerary generation failed:', error);

@@ -1,0 +1,45 @@
+import { z } from 'zod';
+
+// Schema for Community Connector
+export const CommunityConnectorInputSchema = z.object({
+  interests: z
+    .string()
+    .describe('A comma-separated list of user interests, e.g., sushi, cocktails, fitness.'),
+});
+export type CommunityConnectorInput = z.infer<typeof CommunityConnectorInputSchema>;
+
+export const CommunityConnectorOutputSchema = z.object({
+  communities: z.array(
+    z.object({
+      name: z.string().describe('The name of the community.'),
+      description: z.string().describe('A brief description of the community.'),
+      activityLevel: z
+        .string()
+        .describe('An indication of how active the community is (e.g., high, medium, low).'),
+    })
+  ).describe('A list of the top three recommended communities.'),
+});
+export type CommunityConnectorOutput = z.infer<typeof CommunityConnectorOutputSchema>;
+
+
+// Schema for Itinerary Generation
+const ItineraryStopSchema = z.object({
+    time: z.string().describe('The suggested time for the activity (e.g., "9:00 AM", "1:00 PM").'),
+    title: z.string().describe('A short, catchy title for the itinerary stop.'),
+    location: z.string().describe('The specific venue or location for the stop (e.g., "The Grassy Knoll Cafe", "Bondi Beach").'),
+    description: z.string().describe('A brief, engaging description of the activity at this stop.'),
+});
+
+export const ItinerarySchema = z.object({
+    title: z.string().describe('A creative name for the overall itinerary (e.g., "The Ultimate Bondi Wellness Day").'),
+    stops: z.array(ItineraryStopSchema).describe('An array of 3-4 stops that make up the itinerary for the day.'),
+});
+export type Itinerary = z.infer<typeof ItinerarySchema>;
+
+export const ItineraryRequestSchema = z.object({
+    vibe: z.string(),
+    pace: z.number().optional(),
+    budget: z.number().optional(),
+    travelMode: z.string().optional(),
+});
+export type ItineraryRequest = z.infer<typeof ItineraryRequestSchema>;
