@@ -1,15 +1,18 @@
+
 "use client";
 
 import { useState, useTransition } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Loader2, Shuffle, Wand2, ArrowLeft } from "lucide-react";
+import { Calendar, Loader2, Shuffle, Wand2, ArrowLeft, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { AnimatePresence, motion } from "framer-motion";
 import { generateItinerary } from '@/app/actions';
 import { Itinerary, ItineraryRequest } from '@/ai/schemas';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { Dialog, DialogContent, DialogHeader, DialogTitle as DialogTitleComponent, DialogFooter } from '@/components/ui/dialog';
+
 
 const vibes = [
     { 
@@ -38,30 +41,20 @@ export function MapMyDay() {
     const [isPending, startTransition] = useTransition();
     const [itinerary, setItinerary] = useState<Itinerary | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [currentRequest, setCurrentRequest] = useState<ItineraryRequest | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     function handleGenerateItinerary(request: ItineraryRequest) {
         setError(null);
         setItinerary(null);
-        setCurrentRequest(request);
         startTransition(async () => {
           const response = await generateItinerary(request);
           if (response.error) {
             setError(response.error);
           } else if (response.success) {
             setItinerary(response.success);
+            setIsModalOpen(true);
           }
         });
-    }
-
-    const handleShuffle = () => {
-        if (!currentRequest) return;
-        handleGenerateItinerary(currentRequest);
-    };
-    
-    const getRandomImage = (index: number) => {
-        const imageIds = ["my-day-1", "my-day-2", "my-day-3", "my-day-4", "morning-1", "night-1", "late-night-1"];
-        return PlaceHolderImages.find(img => img.id === imageIds[index % imageIds.length]);
     }
 
     const VibeSelector = () => (
@@ -87,65 +80,63 @@ export function MapMyDay() {
                             disabled={isPending} 
                             className="w-full mt-4 bg-accent text-accent-foreground hover:bg-accent/90"
                         >
-                            <Wand2 className="mr-2 h-4 w-4" />
-                            Generate Itinerary
+                             {isPending ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Generating...
+                                </>
+                             ) : (
+                                <>
+                                    <Wand2 className="mr-2 h-4 w-4" />
+                                    Generate Itinerary
+                                </>
+                             )}
                         </Button>
                     </Card>
                 ))}
             </CardContent>
         </>
     );
+
+    const ItineraryModal = () => {
+        if (!itinerary) return null;
     
-    const ItineraryDisplay = () => (
-      <div>
-        <CardHeader>
-            <div className="flex items-center justify-between">
-                <Button variant="outline" size="sm" onClick={() => { setItinerary(null); setError(null); }} disabled={isPending}>
-                    <ArrowLeft className="mr-2 h-4 w-4" /> Back to Vibes
+        const summaryDescription = `Your ${itinerary.title.toLowerCase()} is all set! Start with ${itinerary.stops[0].title.toLowerCase()} at ${itinerary.stops[0].location}, then enjoy ${itinerary.stops[1].title.toLowerCase()} at ${itinerary.stops[1].location}. Finish your day with ${itinerary.stops[2].title.toLowerCase()} at ${itinerary.stops[2].location}. Have a blast!`;
+
+        return (
+          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <DialogContent className="sm:max-w-md text-center p-8">
+              <DialogHeader className="space-y-4">
+                <div className="flex justify-center">
+                  <CheckCircle2 className="h-16 w-16 text-green-500" />
+                </div>
+                <DialogTitleComponent className="text-2xl font-bold text-center">{itinerary.title}</DialogTitleComponent>
+                <p className="text-muted-foreground text-center">
+                    {summaryDescription}
+                </p>
+              </DialogHeader>
+              <div className="my-6 space-y-4 text-left">
+                {itinerary.stops.map((stop, index) => (
+                  <div key={index} className="flex items-center gap-4">
+                    <div className="font-bold text-lg w-20">{stop.time}</div>
+                    <div className="text-lg">{stop.location}</div>
+                  </div>
+                ))}
+              </div>
+              <DialogFooter>
+                <Button 
+                    type="button" 
+                    size="lg" 
+                    className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
+                    onClick={() => setIsModalOpen(false)}
+                >
+                  Let's Go!
                 </Button>
-                 <Button variant="ghost" onClick={handleShuffle} disabled={isPending} size="sm">
-                    {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Shuffle className="mr-2 h-4 w-4" /> Shuffle</>}
-                 </Button>
-            </div>
-        </CardHeader>
-        <CardContent>
-            <h3 className="text-xl font-bold mb-4">{itinerary?.title}</h3>
-            <AnimatePresence>
-            {itinerary!.stops.map((activity, index) => {
-                const image = getRandomImage(index);
-                return (
-                    <motion.div
-                        key={activity.title + index}
-                        layout
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.3 }}
-                        className="flex items-start gap-4 p-2 rounded-lg -mx-2 mb-2 hover:bg-secondary"
-                    >
-                        {image && (
-                            <Image
-                                src={image.imageUrl}
-                                alt={image.description}
-                                width={64}
-                                height={64}
-                                className="rounded-md object-cover aspect-square"
-                                data-ai-hint={image.imageHint}
-                            />
-                        )}
-                        <div className="flex-grow">
-                            <p className="font-bold">{activity.title}</p>
-                            <p className="text-sm font-semibold text-primary">{activity.time}</p>
-                            <p className="text-sm text-muted-foreground mt-1">{activity.description}</p>
-                            <p className="text-xs text-muted-foreground mt-1">📍 {activity.location}</p>
-                        </div>
-                    </motion.div>
-                );
-            })}
-            </AnimatePresence>
-        </CardContent>
-      </div>
-    );
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        );
+      };
 
     return (
         <Card className="w-full flex flex-col min-h-[30rem]">
@@ -156,17 +147,9 @@ export function MapMyDay() {
                 </Alert>
             )}
 
-            {isPending && !itinerary && (
-                <div className="flex flex-grow flex-col items-center justify-center text-center h-full text-muted-foreground p-8 rounded-lg bg-secondary/50">
-                    <Wand2 className="h-12 w-12 mb-4 animate-pulse text-primary" />
-                    <p className="font-medium">Crafting your perfect day...</p>
-                    <p className="text-sm">This can take a moment!</p>
-                </div>
-            )}
+            <VibeSelector />
             
-            {!isPending && !itinerary && <VibeSelector />}
-            
-            {itinerary && <ItineraryDisplay />}
+            <ItineraryModal />
         </Card>
     );
 }
