@@ -4,33 +4,33 @@
 
 @layer base {
   :root {
-    --background: 260 80% 10%; /* Deep Purple */
-    --foreground: 40 80% 85%; /* Light Cream */
+    --background: 210 40% 98%; /* Light Sky Blue */
+    --foreground: 220 15% 25%; /* Dark Blue-Gray Text */
     
-    --card: 260 70% 15%;
-    --card-foreground: 40 80% 85%;
+    --card: 210 40% 100%;
+    --card-foreground: 220 15% 25%;
     
-    --popover: 260 70% 12%;
-    --popover-foreground: 40 80% 85%;
+    --popover: 210 40% 100%;
+    --popover-foreground: 220 15% 25%;
     
-    --primary: 25 100% 60%; /* Vibrant Orange */
-    --primary-foreground: 260 80% 10%;
+    --primary: 210 90% 55%; /* Ocean Blue */
+    --primary-foreground: 210 40% 98%;
     
-    --secondary: 260 60% 25%;
-    --secondary-foreground: 40 80% 85%;
+    --secondary: 210 30% 94%;
+    --secondary-foreground: 220 15% 25%;
     
-    --muted: 260 60% 20%;
-    --muted-foreground: 40 60% 70%;
+    --muted: 210 30% 94%;
+    --muted-foreground: 220 10% 45%;
     
-    --accent: 50 100% 60%; /* Gold */
-    --accent-foreground: 260 80% 10%;
+    --accent: 45 100% 60%; /* Golden Sand */
+    --accent-foreground: 45 100% 15%;
     
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 260 60% 25%;
-    --input: 260 60% 25%;
-    --ring: 25 100% 65%;
+    --border: 210 20% 88%;
+    --input: 210 20% 92%;
+    --ring: 210 90% 60%;
     
     --radius: 0.8rem;
     
@@ -44,33 +44,33 @@
   }
 
   .dark {
-    --background: 260 80% 10%; /* Deep Purple */
-    --foreground: 40 80% 85%; /* Light Cream */
+    --background: 210 40% 98%; /* Light Sky Blue */
+    --foreground: 220 15% 25%; /* Dark Blue-Gray Text */
     
-    --card: 260 70% 15%;
-    --card-foreground: 40 80% 85%;
+    --card: 210 40% 100%;
+    --card-foreground: 220 15% 25%;
 
-    --popover: 260 70% 12%;
-    --popover-foreground: 40 80% 85%;
+    --popover: 210 40% 100%;
+    --popover-foreground: 220 15% 25%;
 
-    --primary: 25 100% 60%; /* Vibrant Orange */
-    --primary-foreground: 260 80% 10%;
+    --primary: 210 90% 55%; /* Ocean Blue */
+    --primary-foreground: 210 40% 98%;
     
-    --secondary: 260 60% 25%;
-    --secondary-foreground: 40 80% 85%;
+    --secondary: 210 30% 94%;
+    --secondary-foreground: 220 15% 25%;
     
-    --muted: 260 60% 20%;
-    --muted-foreground: 40 60% 70%;
+    --muted: 210 30% 94%;
+    --muted-foreground: 220 10% 45%;
 
-    --accent: 50 100% 60%; /* Gold */
-    --accent-foreground: 260 80% 10%;
+    --accent: 45 100% 60%; /* Golden Sand */
+    --accent-foreground: 45 100% 15%;
 
     --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 260 60% 25%;
-    --input: 260 60% 25%;
-    --ring: 25 100% 65%;
+    --border: 210 20% 88%;
+    --input: 210 20% 92%;
+    --ring: 210 90% 60%;
 
     /* Custom App-Specific Variables from user code */
     --bg-primary: hsl(var(--background));

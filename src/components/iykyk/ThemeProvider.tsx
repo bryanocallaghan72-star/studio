@@ -2,17 +2,22 @@
 
 import { useEffect, useState } from 'react';
 
-// For "dawn" mode, we want the dark theme to be the default.
+// For "day" mode, we want the light theme to be the default.
 const isDayTime = () => {
-  return false; // Always return false to default to dark theme
+  const hours = new Date().getHours();
+  // Day time is between 6 AM and 6 PM
+  return hours > 6 && hours < 18;
 };
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
-    // This effect runs only on the client
-    const currentTheme = isDayTime() ? 'light' : 'dark';
+    // This effect runs only on the client to avoid hydration mismatch
+    // Set theme based on time of day
+    // const currentTheme = isDayTime() ? 'light' : 'dark';
+    // For now, let's default to light theme as requested
+    const currentTheme = 'light';
     setTheme(currentTheme);
   }, []);
   
