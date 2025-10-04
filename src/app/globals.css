@@ -4,76 +4,81 @@
 
 @layer base {
   :root {
-    /* Day Theme: Bright whites, crisp blues, sandy warmer tones */
-    --background: 48 33% 94%; /* Sandy White */
-    --foreground: 210 20% 15%; /* Deep Sea Blue */
-    --card: 0 0% 100%;
-    --card-foreground: 210 20% 15%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 210 20% 15%;
-    --primary: 200 85% 50%; /* Crisp Sky Blue */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 30% 95%; /* Light Sky */
-    --secondary-foreground: 210 20% 25%;
-    --muted: 210 30% 95%;
-    --muted-foreground: 210 15% 45%;
-    --accent: 35 100% 55%; /* Golden Sand */
-    --accent-foreground: 210 20% 15%;
+    --background: 350 25% 95%; /* Soft Peach */
+    --foreground: 15 70% 25%;
+    
+    --card: 350 30% 98%;
+    --card-foreground: 15 70% 25%;
+    
+    --popover: 350 30% 98%;
+    --popover-foreground: 15 70% 25%;
+    
+    --primary: 16 100% 66%; /* Vibrant Coral */
+    --primary-foreground: 15 70% 10%;
+    
+    --secondary: 350 40% 90%;
+    --secondary-foreground: 15 70% 25%;
+    
+    --muted: 350 30% 92%;
+    --muted-foreground: 15 50% 45%;
+    
+    --accent: 175 72% 56%; /* Turquoise */
+    --accent-foreground: 180 50% 10%;
+    
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 210 20% 88%;
-    --input: 210 20% 88%;
-    --ring: 200 85% 55%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    
+    --border: 350 20% 88%;
+    --input: 350 20% 88%;
+    --ring: 16 100% 70%;
+    
     --radius: 0.8rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Custom App-Specific Variables from user code */
+    --bg-primary: hsl(var(--background));
+    --bg-secondary: hsl(var(--card));
+    --text-primary: hsl(var(--foreground));
+    --text-secondary: hsl(var(--muted-foreground));
+    --accent-primary: hsl(var(--primary));
+    --border-color: hsl(var(--border));
   }
 
   .dark {
-    /* Dusk Theme: Deep blues, dark navies, and vibrant, neon-like accents */
     --background: 220 40% 10%; /* Deep Navy */
-    --foreground: 210 40% 90%; /* Light Steel Blue */
+    --foreground: 210 40% 90%;
+    
     --card: 220 40% 15%;
     --card-foreground: 210 40% 90%;
+
     --popover: 220 40% 8%;
     --popover-foreground: 210 40% 90%;
-    --primary: 180 100% 50%; /* Electric Aqua */
-    --primary-foreground: 220 40% 5%;
+
+    --primary: 16 100% 66%; /* Vibrant Coral */
+    --primary-foreground: 15 70% 10%;
+    
     --secondary: 220 30% 20%;
     --secondary-foreground: 210 40% 90%;
+    
     --muted: 220 30% 20%;
     --muted-foreground: 210 30% 70%;
-    --accent: 40 100% 50%; /* Neon Gold */
-    --accent-foreground: 220 40% 5%;
-    --destructive: 0 70% 55%; /* Neon Red */
+
+    --accent: 175 72% 56%; /* Turquoise */
+    --accent-foreground: 180 50% 10%;
+
+    --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
+    
     --border: 220 40% 20%;
     --input: 220 40% 20%;
-    --ring: 180 100% 60%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --ring: 16 100% 70%;
+
+    /* Custom App-Specific Variables from user code */
+    --bg-primary: hsl(var(--background));
+    --bg-secondary: hsl(var(--card));
+    --text-primary: hsl(var(--foreground));
+    --text-secondary: hsl(var(--muted-foreground));
+    --accent-primary: hsl(var(--primary));
+    --border-color: hsl(var(--border));
   }
 }
 
