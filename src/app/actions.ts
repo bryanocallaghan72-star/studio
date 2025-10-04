@@ -1,6 +1,7 @@
 "use server";
 
 import { communityConnectorTool, CommunityConnectorInput } from "@/ai/flows/community-connector-tool";
+import { generateItinerary as generateItineraryFlow, Itinerary } from "@/ai/flows/generate-itinerary-flow";
 import { z } from "zod";
 
 const CommunityConnectorActionSchema = z.object({
@@ -27,5 +28,18 @@ export async function getCommunityRecommendations(values: { interests: string })
     return {
       error: "Failed to get recommendations. Please try again.",
     };
+  }
+}
+
+export async function generateItinerary(mood: string): Promise<{ success?: Itinerary, error?: string }> {
+  if (!mood || mood.length < 3) {
+    return { error: 'Please describe the mood for your day in a bit more detail.' };
+  }
+  try {
+    const result = await generateItineraryFlow(mood);
+    return { success: result };
+  } catch (error) {
+    console.error('Itinerary generation failed:', error);
+    return { error: 'Sorry, I couldn\'t generate an itinerary right now. Please try again later.' };
   }
 }

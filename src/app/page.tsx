@@ -3,7 +3,7 @@ import { VibeSelector } from "@/components/iykyk/VibeSelector";
 import { FlowTabs } from "@/components/iykyk/FlowTabs";
 import { HotNow } from "@/components/iykyk/HotNow";
 import { Deals } from "@/components/iykyk/Deals";
-import { MyDay } from "@/components/iykyk/MyDay";
+import { MapMyDay } from "@/components/iykyk/MapMyDay";
 import { SurpriseMe } from "@/components/iykyk/SurpriseMe";
 import { CommunityConnector } from "@/components/iykyk/CommunityConnector";
 import { MobileNav } from "@/components/iykyk/MobileNav";
@@ -27,7 +27,7 @@ export default function Home() {
         <Deals />
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-            <MyDay />
+            <MapMyDay />
             <CommunityConnector />
         </div>
         <SurpriseMe />
