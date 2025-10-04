@@ -1,3 +1,136 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "coffee-1",
+      "description": "A cozy coffee shop interior.",
+      "imageUrl": "https://images.unsplash.com/photo-1525610553991-2bede1a236e2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjb2ZmZWUlMjBzaG9wfGVufDB8fHx8MTc1OTUwMDU4NHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "coffee shop"
+    },
+    {
+      "id": "sushi-1",
+      "description": "A platter of fresh sushi.",
+      "imageUrl": "https://images.unsplash.com/photo-1582581720432-de83a98176ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzdXNoaSUyMHBsYXR0ZXJ8ZW58MHx8fHwxNzU5NDc0OTQwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "sushi platter"
+    },
+    {
+      "id": "nightlife-1",
+      "description": "A vibrant cocktail bar.",
+      "imageUrl": "https://images.unsplash.com/photo-1598994671512-395d7a6147e0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjb2NrdGFpbCUyMGJhcnxlbnwwfHx8fDE3NTk0NDA4Mzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cocktail bar"
+    },
+    {
+      "id": "fitness-1",
+      "description": "A person doing yoga on a beach.",
+      "imageUrl": "https://images.unsplash.com/photo-1646166468261-b18339c92fda?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxiZWFjaCUyMHlvZ2F8ZW58MHx8fHwxNzU5NDM5MzE1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "beach yoga"
+    },
+    {
+      "id": "morning-1",
+      "description": "Sunrise over Bondi beach.",
+      "imageUrl": "https://images.unsplash.com/photo-1600115010857-edbbc7e1efb8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxiZWFjaCUyMHN1bnJpc2V8ZW58MHx8fHwxNzU5NTIxMzM0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "beach sunrise"
+    },
+    {
+      "id": "morning-2",
+      "description": "An acai bowl for breakfast.",
+      "imageUrl": "https://images.unsplash.com/photo-1627308594190-a057cd4bfac8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxhY2FpJTIwYm93bHxlbnwwfHx8fDE3NTk1MzYxODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "acai bowl"
+    },
+    {
+      "id": "night-1",
+      "description": "A lively restaurant at night.",
+      "imageUrl": "https://images.unsplash.com/photo-1560187839-af980ee37cec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxyZXN0YXVyYW50JTIwbmlnaHR8ZW58MHx8fHwxNzU5NTE5OTA4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "restaurant night"
+    },
+    {
+      "id": "night-2",
+      "description": "City lights over the water.",
+      "imageUrl": "https://images.unsplash.com/photo-1571951103752-53c15cad28e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjaXR5JTIwbGlnaHRzfGVufDB8fHx8MTc1OTUzNTkyM3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "city lights"
+    },
+    {
+      "id": "late-night-1",
+      "description": "A neon sign for a late-night bar.",
+      "imageUrl": "https://images.unsplash.com/photo-1604706924699-108850a7df9e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxuZW9uJTIwc2lnbnxlbnwwfHx8fDE3NTk0MTkzMTN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "neon sign"
+    },
+    {
+      "id": "late-night-2",
+      "description": "Street food vendor at night.",
+      "imageUrl": "https://images.unsplash.com/photo-1440427810006-0e4109fd4abe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c3RyZWV0JTIwZm9vZHxlbnwwfHx8fDE3NTk0ODM0MDB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "street food"
+    },
+    {
+      "id": "hot-1",
+      "description": "A popular, crowded beach.",
+      "imageUrl": "https://images.unsplash.com/photo-1654906096596-4425d5e5fac1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Y3Jvd2RlZCUyMGJlYWNofGVufDB8fHx8MTc1OTUzNjE4N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "crowded beach"
+    },
+    {
+      "id": "hot-2",
+      "description": "A long queue outside a trendy cafe.",
+      "imageUrl": "https://images.unsplash.com/photo-1697724779999-c9e1697bea17?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjYWZlJTIwcXVldWV8ZW58MHx8fHwxNzU5NTM2MTg3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cafe queue"
+    },
+    {
+      "id": "deal-1",
+      "description": "Two-for-one cocktails.",
+      "imageUrl": "https://images.unsplash.com/photo-1682029375756-220f4374a2ca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb2NrdGFpbCUyMGRlYWx8ZW58MHx8fHwxNzU5NTM2MTg3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cocktail deal"
+    },
+    {
+      "id": "deal-2",
+      "description": "Half-price sushi rolls.",
+      "imageUrl": "https://images.unsplash.com/photo-1634434738215-106d790e98b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxzdXNoaSUyMGRlYWx8ZW58MHx8fHwxNzU5NTM2MTg3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "sushi deal"
+    },
+    {
+      "id": "my-day-1",
+      "description": "Person surfing a wave.",
+      "imageUrl": "https://images.unsplash.com/photo-1551524358-f34c0214781d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c3VyZmluZ3xlbnwwfHx8fDE3NTk1MzYxODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "surfing"
+    },
+    {
+      "id": "my-day-2",
+      "description": "A person reading a book in a park.",
+      "imageUrl": "https://images.unsplash.com/photo-1708653584807-b3c1c65a5807?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwYXJrJTIwcmVhZGluZ3xlbnwwfHx8fDE3NTk1MzYxODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "park reading"
+    },
+    {
+      "id": "my-day-3",
+      "description": "Friends having a picnic.",
+      "imageUrl": "https://images.unsplash.com/photo-1633836479310-fc0abb4d1f8b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxmcmllbmRzJTIwcGljbmljfGVufDB8fHx8MTc1OTUzNjE4N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "friends picnic"
+    },
+    {
+      "id": "my-day-4",
+      "description": "Shopping on a bustling street.",
+      "imageUrl": "https://images.unsplash.com/photo-1687358582610-821b0e23df7d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxzdHJlZXQlMjBzaG9wcGluZ3xlbnwwfHx8fDE3NTk1MzYxODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "street shopping"
+    },
+    {
+      "id": "surprise-1",
+      "description": "A hidden laneway with street art.",
+      "imageUrl": "https://images.unsplash.com/photo-1530406831759-15c5c0cbce8b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzdHJlZXQlMjBhcnR8ZW58MHx8fHwxNzU5NDYzMTQyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "street art"
+    },
+    {
+      "id": "community-sushi",
+      "description": "Group of friends eating sushi.",
+      "imageUrl": "https://images.unsplash.com/photo-1632931093467-3e551a4dbe2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxmcmllbmRzJTIwc3VzaGl8ZW58MHx8fHwxNzU5NTM2MTg3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "friends sushi"
+    },
+    {
+      "id": "community-cocktail",
+      "description": "People toasting with cocktails.",
+      "imageUrl": "https://images.unsplash.com/photo-1700615753059-0780f634a434?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjb2NrdGFpbCUyMHRvYXN0fGVufDB8fHx8MTc1OTUzNjE4N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cocktail toast"
+    },
+    {
+      "id": "community-fitness",
+      "description": "A group fitness class outdoors.",
+      "imageUrl": "https://images.unsplash.com/photo-1607962837359-5e7e89f86776?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxncm91cCUyMGZpdG5lc3N8ZW58MHx8fHwxNzU5NTM2MTg3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "group fitness"
+    }
+  ]
 }
