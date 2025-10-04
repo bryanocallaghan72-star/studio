@@ -132,24 +132,23 @@ const venues = [
 ];
 
 const PushPinIcon = ({ className, ...props }: React.SVGProps<SVGSVGElement>) => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      {...props}
-    >
-      <path d="M12 22V12" />
-      <path d="M16 4H8" />
-      <path d="M12 4V12" />
-    </svg>
-  );
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    {...props}
+  >
+    <path d="M12 17V4" />
+    <path d="M8 4h8" />
+  </svg>
+);
 
 export function IykykVibeMap() {
   const mapImage = PlaceHolderImages.find((img) => img.id === "map-1");
@@ -216,7 +215,7 @@ export function IykykVibeMap() {
                         transform: "translate(-50%, -50%)",
                         }}
                     >
-                        <PushPinIcon className={cn("h-8 w-8 text-background drop-shadow-lg", venue.color)} strokeWidth={3} />
+                        <PushPinIcon className={cn("h-8 w-8 text-background drop-shadow-lg", venue.color.replace('fill-','text-'))} strokeWidth={3} />
                     </button>
                   </Link>
                 </TooltipTrigger>
