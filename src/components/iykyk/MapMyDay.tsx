@@ -5,10 +5,10 @@
 import { useState, useTransition } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Loader2, Shuffle, Wand2, ArrowLeft, CheckCircle2, ThumbsUp, RefreshCw } from "lucide-react";
+import { Calendar, Loader2, Shuffle, Wand2, ArrowLeft, CheckCircle2, ThumbsUp, RefreshCw, Pin } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { generateItinerary } from '@/app/actions';
-import { Itinerary, ItineraryRequest } from '@/ai/schemas';
+import { Itinerary, ItineraryRequest, ItineraryStop } from '@/ai/schemas';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Dialog, DialogContent, DialogHeader, DialogTitle as DialogTitleComponent, DialogFooter } from '@/components/ui/dialog';
 
@@ -42,10 +42,12 @@ export function MapMyDay() {
     const [error, setError] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentVibe, setCurrentVibe] = useState<ItineraryRequest | null>(null);
+    const [heldStops, setHeldStops] = useState<ItineraryStop[]>([]);
 
     function handleGenerateItinerary(request: ItineraryRequest) {
         setError(null);
         setItinerary(null);
+        setHeldStops([]);
         setCurrentVibe(request);
         startTransition(async () => {
           const response = await generateItinerary(request);
@@ -61,11 +63,25 @@ export function MapMyDay() {
         setItinerary(null);
         setError(null);
         setCurrentVibe(null);
+        setHeldStops([]);
     }
     
     function handleShuffle() {
         if (!currentVibe) return;
+        // For now, this regenerates the whole itinerary.
+        // In the future, it will respect held stops.
         handleGenerateItinerary(currentVibe);
+    }
+
+    function toggleHold(stop: ItineraryStop) {
+        setHeldStops(prevHeld => {
+            const isHeld = prevHeld.some(held => held.title === stop.title && held.location === stop.location);
+            if (isHeld) {
+                return prevHeld.filter(held => !(held.title === stop.title && held.location === stop.location));
+            } else {
+                return [...prevHeld, stop];
+            }
+        });
     }
 
     const VibeSelector = () => (
@@ -124,19 +140,24 @@ export function MapMyDay() {
                 </div>
 
                 <div className="flex-grow p-4 space-y-3">
-                     {itinerary.stops.map((stop, index) => (
-                        <Card key={index} className="p-3 bg-card/80 backdrop-blur-sm">
-                            <div className="flex items-center gap-4">
-                                <CheckCircle2 className="h-6 w-6 text-primary/70" />
-                                <div className="w-16 h-16 bg-primary/20 rounded-lg flex items-center justify-center text-xs text-primary/80">64x64</div>
-                                <div className="flex-grow">
-                                    <h4 className="font-semibold text-md">{stop.location}</h4>
-                                    <p className="text-sm text-muted-foreground">{stop.description}</p>
+                     {itinerary.stops.map((stop, index) => {
+                        const isHeld = heldStops.some(held => held.title === stop.title && held.location === stop.location);
+                        return (
+                            <Card key={index} className="p-3 bg-card/80 backdrop-blur-sm">
+                                <div className="flex items-center gap-4">
+                                    <Button variant="ghost" size="icon" onClick={() => toggleHold(stop)}>
+                                        <Pin className={`h-5 w-5 text-muted-foreground transition-colors ${isHeld ? 'text-primary fill-primary' : 'hover:text-primary'}`} />
+                                    </Button>
+                                    <div className="w-16 h-16 bg-primary/20 rounded-lg flex items-center justify-center text-xs text-primary/80">64x64</div>
+                                    <div className="flex-grow">
+                                        <h4 className="font-semibold text-md">{stop.location}</h4>
+                                        <p className="text-sm text-muted-foreground">{stop.description}</p>
+                                    </div>
+                                    <Button variant="ghost" size="icon"><Wand2 className="h-5 w-5 text-muted-foreground hover:text-primary" /></Button>
                                 </div>
-                                <Button variant="ghost" size="icon"><Wand2 className="h-5 w-5 text-muted-foreground hover:text-primary" /></Button>
-                            </div>
-                        </Card>
-                     ))}
+                            </Card>
+                         )
+                     })}
                 </div>
 
                 <div className="p-4 grid grid-cols-2 gap-4 bg-background">
@@ -229,5 +250,3 @@ export function MapMyDay() {
         </Card>
     );
 }
-
-    
