@@ -212,7 +212,8 @@ export const appData = {
       { id: 22, name: "The Rum Diary Bar", slug: "the-rum-diary-bar", type: "Cocktails", description: "Caribbean-themed bar with a wide rum selection.", x: "5%", y: "80%" },
       { id: 23, name: "Lulu", slug: "lulu", type: "Restaurants", description: "Modern Pan-Asian cuisine in a chic setting.", x: "50%", y: "60%" },
       { id: 24, name: "Ravesis", slug: "ravesis", type: "Nightlife", description: "Stylish beachfront bar and restaurant.", x: "55%", y: "30%" },
-      { id: 25, name: "Bondi Vibes Bar", slug: "bondi-vibes-bar", type: "Nightlife", description: "Live music and good vibes.", x: "40%", y: "20%" },
+      { id
+: 25, name: "Bondi Vibes Bar", slug: "bondi-vibes-bar", type: "Nightlife", description: "Live music and good vibes.", x: "40%", y: "20%" },
       { id: 26, name: "Fluidform Pilates", slug: "fluidform-pilates", type: "Health & Fitness", description: "Boutique pilates studio.", x: "10%", y: "55%" },
       { id: 27, name: "Sushi-e", slug: "sushi-e", type: "Sushi", description: "High-end sushi experience.", x: "35%", y: "65%" },
       { id: 28, name: "Beach Burrito Company", slug: "beach-burrito-company", type: "Restaurants", description: "Casual Mexican food and frozen margaritas.", x: "65%", y: "55%" },
@@ -221,3 +222,5 @@ export const appData = {
     ]
   }
 };
+
+    
