@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Map } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ColorPinSVG } from "./ColorPinSVG";
@@ -12,7 +13,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const { categories, map: { pins: venues }, creators } = appData;
 
 export function IykykVibeMap() {
-  const [activeTab, setActiveTab] = useState('All');
+  const searchParams = useSearchParams();
+  const initialCategory = searchParams.get('category') || 'All';
+  const [activeTab, setActiveTab] = useState(initialCategory);
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredPins = venues.filter(pin => {
@@ -125,5 +128,3 @@ export function IykykVibeMap() {
     </section>
   );
 }
-
-    
