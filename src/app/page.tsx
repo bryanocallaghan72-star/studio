@@ -84,7 +84,7 @@ export default function Home() {
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                                 </div>
                                 <CardHeader className="absolute bottom-0 left-0 text-white p-4 w-full">
-                                  <div className="flex flex-row items-start gap-4">
+                                  <div className="flex items-start gap-4">
                                       <div className="rounded-full bg-white/20 backdrop-blur-sm p-3 border border-white/30">
                                           <feature.icon className={`h-6 w-6 ${feature.color}`} />
                                       </div>
