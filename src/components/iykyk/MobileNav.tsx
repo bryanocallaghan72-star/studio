@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 const navItems = [
   { href: "/feed", icon: Home, label: "Feed" },
   { href: "/reels", icon: PlaySquare, label: "Reels" },
-  { href: "/", icon: Compass, label: "iykyk" },
+  { href: "/map", icon: Compass, label: "iykyk" },
   { href: "#", icon: Users, label: "Community" },
   { href: "#", icon: Flame, label: "Fire" },
   { href: "#", icon: User, label: "Profile" },
@@ -21,7 +21,8 @@ export function MobileNav() {
         {navItems.map((item) => {
           const isActive =
             (item.href === "/" && pathname === "/") ||
-            (item.href !== "/" && pathname?.startsWith(item.href));
+            (item.href === "/map" && pathname === "/map") ||
+            (item.href !== "/" && item.href !== "/map" && pathname?.startsWith(item.href));
           return (
             <Link
               key={item.label}
