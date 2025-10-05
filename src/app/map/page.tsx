@@ -14,7 +14,7 @@ export default function MapPage() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
-      <main className="flex flex-1 flex-col gap-8 p-4 md:p-6 pb-24">
+      <main className="flex-1 pb-24">
         <Suspense fallback={<div>Loading map...</div>}>
           <MapContent />
         </Suspense>
