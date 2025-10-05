@@ -59,7 +59,7 @@ export default function Home() {
       <main className="flex flex-1 flex-col gap-8 p-4 md:p-6 pb-24">
         <div className="text-center">
             <h2 className="text-3xl font-bold tracking-tight">What's the vibe today?</h2>
-            <p className="text-muted-foreground mt-2">Your real-time cultural portal to Bondi.</p>
+            <p className="text-muted-foreground mt-2">One portal, infinite culture.</p>
         </div>
 
         <div className="grid grid-cols-1 gap-4">
