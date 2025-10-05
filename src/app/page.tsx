@@ -4,8 +4,6 @@ import { MobileNav } from "@/components/iykyk/MobileNav";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Sparkles, Map, Calendar, Flame, Ticket, Gift, Users } from "lucide-react";
 import Link from "next/link";
-import { appData } from "@/lib/data";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { SurpriseMe } from "@/components/iykyk/SurpriseMe";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -130,24 +128,6 @@ export default function Home() {
               </CardContent>
             </Card>
         </div>
-
-
-        <section>
-          <h2 className="text-3xl font-bold tracking-tight text-center my-6">Featured Creators</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {appData.creators.map((creator) => (
-              <Link href={`/creator/${creator.id}`} key={creator.id}>
-                <Card className="group flex flex-col items-center text-center p-4 transition-all hover:shadow-xl hover:-translate-y-1 h-full">
-                  <Avatar className="h-16 w-16 mb-2 border-2 border-primary">
-                    <AvatarImage src={creator.avatar} alt={creator.name} />
-                    <AvatarFallback>{creator.name.charAt(0).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <p className="font-semibold text-sm group-hover:text-primary">@{creator.id}</p>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        </section>
 
       </main>
       <MobileNav />
