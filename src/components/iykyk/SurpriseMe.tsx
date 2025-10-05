@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -72,63 +73,59 @@ export function SurpriseMe() {
     const image = PlaceHolderImages.find(img => img.id === surprise.imageId);
 
     return (
-        <Card>
-            <CardContent className="p-6">
-                <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogTrigger asChild>
-                        <Button variant="secondary" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" onClick={handleSurprise}>
-                            <Gift className="mr-2 h-5 w-5" />
-                            iykyk Surprise Me
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                        <DialogHeader>
-                            <DialogTitle className="flex items-center gap-2">
-                                <Gift className="h-6 w-6 text-primary" />
-                                Surprise!
-                            </DialogTitle>
-                            <DialogDescription>
-                                You've unlocked a hidden gem.
-                            </DialogDescription>
-                        </DialogHeader>
-                        <div className="relative h-64 overflow-hidden rounded-lg">
-                            {isSpinning ? (
-                                <motion.div
-                                    className="flex h-full items-center justify-center bg-secondary"
-                                    animate={{ rotate: 360 }}
-                                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                >
-                                    <Gift className="h-16 w-16 animate-pulse text-primary" />
-                                </motion.div>
-                            ) : (
-                                <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
-                                    <Card className="border-none">
-                                        <CardContent className="p-0">
-                                            {image && (
-                                                <div className="relative h-48 w-full">
-                                                    <Image
-                                                        src={image.imageUrl}
-                                                        alt={image.description}
-                                                        fill
-                                                        className="object-cover rounded-t-lg"
-                                                        data-ai-hint={image.imageHint}
-                                                    />
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                                                </div>
-                                            )}
-                                            <div className="p-4">
-                                                <h3 className="text-xl font-bold">{surprise.title}</h3>
-                                                <p className="text-sm text-muted-foreground mt-1">{surprise.venue}</p>
-                                                <p className="mt-2 text-sm">{surprise.description}</p>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                </motion.div>
-                            )}
-                        </div>
-                    </DialogContent>
-                </Dialog>
-            </CardContent>
-        </Card>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant="secondary" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 mt-4" onClick={handleSurprise}>
+                    <Gift className="mr-2 h-5 w-5" />
+                    Surprise Me
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                        <Gift className="h-6 w-6 text-primary" />
+                        Surprise!
+                    </DialogTitle>
+                    <DialogDescription>
+                        You've unlocked a hidden gem.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="relative h-64 overflow-hidden rounded-lg">
+                    {isSpinning ? (
+                        <motion.div
+                            className="flex h-full items-center justify-center bg-secondary"
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        >
+                            <Gift className="h-16 w-16 animate-pulse text-primary" />
+                        </motion.div>
+                    ) : (
+                        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
+                            <Card className="border-none">
+                                <CardContent className="p-0">
+                                    {image && (
+                                        <div className="relative h-48 w-full">
+                                            <Image
+                                                src={image.imageUrl}
+                                                alt={image.description}
+                                                fill
+                                                className="object-cover rounded-t-lg"
+                                                data-ai-hint={image.imageHint}
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                                        </div>
+                                    )}
+                                    <div className="p-4">
+                                        <h3 className="text-xl font-bold">{surprise.title}</h3>
+                                        <p className="text-sm text-muted-foreground mt-1">{surprise.venue}</p>
+                                        <p className="mt-2 text-sm">{surprise.description}</p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </motion.div>
+                    )}
+                </div>
+            </DialogContent>
+        </Dialog>
     );
 }

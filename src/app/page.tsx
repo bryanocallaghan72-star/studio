@@ -6,6 +6,7 @@ import { Sparkles, Map, Calendar, Flame, Ticket, Gift, Users } from "lucide-reac
 import Link from "next/link";
 import { appData } from "@/lib/data";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { SurpriseMe } from "@/components/iykyk/SurpriseMe";
 
 const features = [
   {
@@ -44,7 +45,7 @@ const features = [
     color: "text-accent",
   },
   {
-    href: "#",
+    href: "#", // Placeholder, will be handled differently
     icon: Gift,
     title: "iykyk Surprise Me",
     description: "Playful randomness with a chance to discover hidden gems.",
@@ -70,7 +71,25 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature) => (
+            {features.map((feature) => {
+              if (feature.title === "iykyk Surprise Me") {
+                return (
+                  <Card key={feature.title} className="group h-full flex flex-col">
+                    <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
+                      <div className="rounded-full bg-primary/10 p-3">
+                        <feature.icon className={`h-6 w-6 ${feature.color}`} />
+                      </div>
+                      <CardTitle className="text-xl">{feature.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-grow flex flex-col">
+                      <p className="text-muted-foreground flex-grow">{feature.description}</p>
+                      <SurpriseMe />
+                    </CardContent>
+                  </Card>
+                );
+              }
+              
+              return (
                 <Link href={feature.href} key={feature.title}>
                     <Card className="group h-full transition-all hover:shadow-xl hover:-translate-y-1">
                         <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
@@ -84,7 +103,8 @@ export default function Home() {
                         </CardContent>
                     </Card>
                 </Link>
-            ))}
+              )
+            })}
         </div>
 
         <section>
