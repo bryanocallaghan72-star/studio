@@ -28,7 +28,9 @@ const ItineraryStopSchema = z.object({
     title: z.string().describe('A short, catchy title for the itinerary stop.'),
     location: z.string().describe('The specific venue or location for the stop (e.g., "The Grassy Knoll Cafe", "Bondi Beach").'),
     description: z.string().describe('A brief, engaging description of the activity at this stop.'),
+    isHeld: z.boolean().optional().describe('Indicates if the user has locked this stop during a shuffle.'),
 });
+export type ItineraryStop = z.infer<typeof ItineraryStopSchema>;
 
 export const ItinerarySchema = z.object({
     title: z.string().describe('A creative name for the overall itinerary (e.g., "The Ultimate Bondi Wellness Day").'),
@@ -41,5 +43,8 @@ export const ItineraryRequestSchema = z.object({
     pace: z.number().optional(),
     budget: z.number().optional(),
     travelMode: z.string().optional(),
+    // Add fields for shuffle functionality
+    numberOfNewStops: z.number().optional().describe('The number of new stops to generate.'),
+    heldStops: z.array(ItineraryStopSchema).optional().describe('An array of stops the user has locked and wants to keep.'),
 });
 export type ItineraryRequest = z.infer<typeof ItineraryRequestSchema>;

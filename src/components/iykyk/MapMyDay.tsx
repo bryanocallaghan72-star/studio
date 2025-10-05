@@ -4,7 +4,7 @@
 import { useState, useTransition, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, ArrowLeft, CheckCircle2, Sparkles, X, Search, RefreshCw, Pin } from "lucide-react";
+import { Loader2, ArrowLeft, CheckCircle2, Sparkles, Search } from "lucide-react";
 import { generateItinerary } from '@/app/actions';
 import { Itinerary, ItineraryRequest, ItineraryStop } from '@/ai/schemas';
 import { AnimatePresence, motion } from "framer-motion";
@@ -61,30 +61,16 @@ const EventAndItinerarySelectionPage = ({ onSelectVibe }) => {
   );
 };
 
-const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle }) => {
-  const [shuffledItinerary, setShuffledItinerary] = useState<ItineraryStop[]>([]);
-  const [heldStops, setHeldStops] = useState<Record<string, boolean>>({});
+const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle, onToggleHold, onSwap }) => {
   const [editingItem, setEditingItem] = useState<ItineraryStop | null>(null);
   const [swapQuery, setSwapQuery] = useState('');
-  
-  useEffect(() => { 
-    if (itineraryData?.stops) {
-      setShuffledItinerary([...itineraryData.stops]); 
-      setHeldStops({}); 
-    }
-  }, [itineraryData]);
 
   if (!itineraryData) {
     return null; 
   }
 
-  const handleToggleHold = (stop: ItineraryStop) => {
-    setHeldStops(prev => ({ ...prev, [stop.location]: !prev[stop.location] }));
-  };
-  
-  const handleSwap = (originalItem, newItem) => {
-    const newItinerary = shuffledItinerary.map(item => (item.location === originalItem.location) ? { ...item, location: newItem.name, description: newItem.description } : item);
-    setShuffledItinerary(newItinerary);
+  const handleSwapClick = (originalItem, newItem) => {
+    onSwap(originalItem, newItem);
     setEditingItem(null);
     setSwapQuery('');
   };
@@ -115,19 +101,18 @@ const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle }
       </div>
       
       <div className="flex-grow space-y-4 pt-4">
-        {shuffledItinerary.map((stop, index) => {
-            const isHeld = !!heldStops[stop.location];
+        {itineraryData.stops.map((stop, index) => {
             return (
-            <Card key={`${stop.location}-${index}`} className={`rounded-2xl p-4 shadow-lg flex items-center transition-all duration-300 bg-card ${isHeld ? 'border-2 border-primary' : ''}`}>
-                <Button onClick={() => handleToggleHold(stop)} variant="ghost" size="icon" className="flex-shrink-0 mr-4">
-                  <CheckCircle2 size={24} className={isHeld ? 'text-primary fill-primary/20' : 'text-muted-foreground'} />
+            <Card key={`${stop.location}-${index}`} className={`rounded-2xl p-4 shadow-lg flex items-center transition-all duration-300 bg-card ${stop.isHeld ? 'border-2 border-primary' : ''}`}>
+                <Button onClick={() => onToggleHold(stop)} variant="ghost" size="icon" className="flex-shrink-0 mr-4">
+                  <CheckCircle2 size={24} className={stop.isHeld ? 'text-primary fill-primary/20' : 'text-muted-foreground'} />
                 </Button>
                 <div className="w-16 h-16 bg-primary/20 rounded-xl overflow-hidden flex-shrink-0">
                     <Image src={`https://picsum.photos/seed/${stop.location.replace(/\s+/g, '-')}/64/64`} alt={stop.location} width={64} height={64} className="w-full h-full object-cover" />
                 </div>
                 <div className="ml-4 flex-grow">
-                    <p className="font-semibold text-foreground">{stop.location}</p>
-                    <p className="text-sm text-muted-foreground">{stop.description}</p>
+                    <p className="font-semibold text-foreground">{stop.title}</p>
+                    <p className="text-sm text-muted-foreground">{stop.location}</p>
                 </div>
                 <Button onClick={() => setEditingItem(stop)} variant="ghost" size="icon" className="text-muted-foreground hover:text-primary transition-colors flex-shrink-0 ml-4"><Sparkles size={24} /></Button>
             </Card>);
@@ -152,7 +137,7 @@ const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle }
             </div>
             <div className="space-y-4 max-h-64 overflow-y-auto">
                 {filteredSwapOptions.map((item, index) => (
-                <button key={index} onClick={() => handleSwap(editingItem, item)} className="w-full flex items-center bg-secondary rounded-xl p-3 shadow-lg transition-transform duration-100 hover:scale-[1.02] active:scale-[0.98]">
+                <button key={index} onClick={() => handleSwapClick(editingItem, item)} className="w-full flex items-center bg-secondary rounded-xl p-3 shadow-lg transition-transform duration-100 hover:scale-[1.02] active:scale-[0.98]">
                     <div className="w-16 h-16 bg-gray-700 rounded-xl overflow-hidden flex-shrink-0">
                       <Image src={`https://picsum.photos/seed/${item.name.replace(/\s+/g, '-')}/64/64`} alt="Venue" width={64} height={64} className="w-full h-full object-cover" />
                     </div>
@@ -181,26 +166,28 @@ export function MapMyDay() {
 
     const handleSelectVibe = (option) => {
         setError(null);
-        if (option.mockItinerary) {
-            const newItinerary: Itinerary = {
-                title: option.title,
-                stops: option.mockItinerary.map(stop => ({...stop, time: stop.time, location: stop.name, description: stop.notes})),
-            };
-            setItinerary(newItinerary);
-            setCurrentVibe(option);
-            setView('itinerary');
-        } else {
-            startTransition(async () => {
+        setItinerary(null);
+        setCurrentVibe(option);
+
+        startTransition(async () => {
+             // For mock itineraries, just set them directly
+            if (option.mockItinerary) {
+                const newItinerary: Itinerary = {
+                    title: option.title,
+                    stops: option.mockItinerary.map(stop => ({...stop, time: stop.time, location: stop.name, title: stop.name, description: stop.notes})),
+                };
+                setItinerary(newItinerary);
+            } else {
+                 // For AI-generated itineraries
                 const response = await generateItinerary(option.request);
-                if (response.error) {
+                 if (response.error) {
                     setError(response.error);
                 } else if (response.success) {
                     setItinerary(response.success);
-                    setCurrentVibe(option);
-                    setView('itinerary');
                 }
-            });
-        }
+            }
+            setView('itinerary');
+        });
     };
 
     const handleBackToSelection = () => {
@@ -209,48 +196,54 @@ export function MapMyDay() {
         setCurrentVibe(null);
     };
 
+    const handleToggleHold = (stopToToggle: ItineraryStop) => {
+        if (!itinerary) return;
+        const newStops = itinerary.stops.map(stop => 
+            stop.location === stopToToggle.location 
+                ? { ...stop, isHeld: !stop.isHeld } 
+                : stop
+        );
+        setItinerary({ ...itinerary, stops: newStops });
+    };
+
+    const handleSwap = (originalStop: ItineraryStop, newVenue: any) => {
+        if (!itinerary) return;
+        const newStops = itinerary.stops.map(stop =>
+            stop.location === originalStop.location
+                ? { ...stop, title: newVenue.name, location: newVenue.name, description: newVenue.description }
+                : stop
+        );
+        setItinerary({ ...itinerary, stops: newStops });
+    };
+
     const handleShuffle = () => {
-        if (!currentVibe) return;
-        
+        if (!currentVibe || !itinerary) return;
+
         startTransition(async () => {
-            const request = {
+            const heldStops = itinerary.stops.filter(stop => stop.isHeld);
+            const numberOfNewStops = itinerary.stops.length - heldStops.length;
+
+            if (numberOfNewStops === 0) {
+                // All stops are held, so no need to call the AI
+                return;
+            }
+
+            const request: ItineraryRequest = {
                 ...currentVibe.request,
-                vibe: `Give me a different, creative, and surprising alternative to this itinerary: ${currentVibe.title} - ${currentVibe.description}. Keep it in Bondi.`
+                vibe: `Give me a different, creative, and surprising alternative to this itinerary: ${currentVibe.title} - ${currentVibe.description}. Keep it in Bondi.`,
+                heldStops: heldStops,
+                numberOfNewStops: numberOfNewStops,
             };
+
             const response = await generateItinerary(request);
             if (response.success) {
-                const heldStops = itinerary?.stops.filter(stop => stop.isHeld) || [];
-                const newStops = response.success.stops.filter(newStop => !heldStops.some(held => held.location === newStop.location));
-                
-                const finalStops = [...heldStops];
-                const itineraryStops = itinerary?.stops || [];
-                
-                for (let i = 0; i < itineraryStops.length; i++) {
-                    if (finalStops.length >= itineraryStops.length) break;
-                    if (!itineraryStops[i].isHeld) {
-                        const newStop = newStops.shift();
-                        if(newStop) {
-                            finalStops.push(newStop);
-                        }
-                    }
-                }
-                
-                // Make sure we have the right number of stops
-                while(finalStops.length < itineraryStops.length && newStops.length > 0) {
-                     finalStops.push(newStops.shift()!);
-                }
-
-                const shuffledItinerary: Itinerary = {
-                    ...response.success,
-                    stops: finalStops.slice(0, itineraryStops.length),
-                };
-
-                setItinerary(shuffledItinerary);
+                // The AI now returns the full itinerary with held stops included
+                setItinerary(response.success);
             } else {
                 setError("Sorry, I couldn't shuffle the itinerary right now.");
             }
         });
-    }
+    };
 
     const handleStartPlan = (finalItinerary: Itinerary) => {
         setItinerary(finalItinerary);
@@ -298,6 +291,8 @@ export function MapMyDay() {
                         onStartPlan={handleStartPlan}
                         onBack={handleBackToSelection}
                         onShuffle={handleShuffle}
+                        onToggleHold={handleToggleHold}
+                        onSwap={handleSwap}
                     />
                 )}
             </AnimatePresence>
