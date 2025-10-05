@@ -23,7 +23,7 @@ const features = [
     color: "text-primary",
   },
   {
-    href: "#",
+    href: "/my-day",
     icon: Calendar,
     title: "iykyk My Day",
     description: "Curated daily itinerary that you can shuffle like a playlist.",
