@@ -30,7 +30,7 @@ const features = [
     color: "text-primary",
   },
   {
-    href: "#",
+    href: "/fire",
     icon: Flame,
     title: "iykyk Fire",
     description: "Real-time “What’s hot right now” with countdowns and FOMO.",
