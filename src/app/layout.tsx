@@ -13,7 +13,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: 'iykyk: One Portal, Infinite Culture.',
+  title: 'iykyk: Your real-time cultural portal to Bondi.',
   description: 'A quirky, game-like travel buddy for tourists, a monetization funnel for creators, and a discovery engine for locals.',
 };
 
