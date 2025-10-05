@@ -170,21 +170,11 @@ export function MapMyDay() {
         setCurrentVibe(option);
 
         startTransition(async () => {
-             // For mock itineraries, just set them directly
-            if (option.mockItinerary) {
-                const newItinerary: Itinerary = {
-                    title: option.title,
-                    stops: option.mockItinerary.map(stop => ({...stop, time: stop.time, location: stop.name, title: stop.name, description: stop.notes, isHeld: false })),
-                };
-                setItinerary(newItinerary);
-            } else {
-                 // For AI-generated itineraries
-                const response = await generateItinerary(option.request);
-                 if (response.error) {
-                    setError(response.error);
-                } else if (response.success) {
-                    setItinerary({...response.success, stops: response.success.stops.map(s => ({...s, isHeld: false}))});
-                }
+            const response = await generateItinerary(option.request);
+             if (response.error) {
+                setError(response.error);
+            } else if (response.success) {
+                setItinerary({...response.success, stops: response.success.stops.map(s => ({...s, isHeld: false}))});
             }
             setView('itinerary');
         });
