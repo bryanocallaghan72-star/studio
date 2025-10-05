@@ -29,14 +29,6 @@ const features = [
     imageId: "night-1"
   },
   {
-    href: "/my-day",
-    icon: Calendar,
-    title: "iykyk My Day",
-    description: "Curated daily itinerary that you can shuffle like a playlist.",
-    color: "text-primary",
-    imageId: "my-day-1"
-  },
-  {
     href: "/fire",
     icon: Flame,
     title: "iykyk Fire",
@@ -53,12 +45,12 @@ const features = [
     imageId: "deal-1"
   },
   {
-    href: "#", // Placeholder, will be Community Connector page later
-    icon: Users,
-    title: "Community Connector",
-    description: "Connect with themed groups, from sushi lovers to cocktail hunters.",
+    href: "/my-day",
+    icon: Calendar,
+    title: "iykyk My Day",
+    description: "Curated daily itinerary that you can shuffle like a playlist.",
     color: "text-primary",
-    imageId: "community-fitness"
+    imageId: "my-day-1"
   },
 ];
 
@@ -72,7 +64,7 @@ export default function Home() {
             <p className="text-muted-foreground mt-2">Your real-time cultural portal to Bondi.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {features.map((feature) => {
                 const image = PlaceHolderImages.find(img => img.id === feature.imageId);
                 return (
@@ -129,7 +121,7 @@ export default function Home() {
               </CardHeader>
               <CardContent className="flex-grow flex flex-col">
                 <p className="text-muted-foreground flex-grow">Connect with themed groups, from sushi lovers to cocktail hunters.</p>
-                <Link href="#" className="mt-4">
+                <Link href="/community-connector" className="mt-4">
                     <Button variant="secondary" className="w-full">Find Your Tribe</Button>
                 </Link>
               </CardContent>
