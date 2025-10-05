@@ -174,7 +174,7 @@ export function MapMyDay() {
             if (option.mockItinerary) {
                 const newItinerary: Itinerary = {
                     title: option.title,
-                    stops: option.mockItinerary.map(stop => ({...stop, time: stop.time, location: stop.name, title: stop.name, description: stop.notes})),
+                    stops: option.mockItinerary.map(stop => ({...stop, time: stop.time, location: stop.name, title: stop.name, description: stop.notes, isHeld: false })),
                 };
                 setItinerary(newItinerary);
             } else {
@@ -183,7 +183,7 @@ export function MapMyDay() {
                  if (response.error) {
                     setError(response.error);
                 } else if (response.success) {
-                    setItinerary(response.success);
+                    setItinerary({...response.success, stops: response.success.stops.map(s => ({...s, isHeld: false}))});
                 }
             }
             setView('itinerary');
@@ -230,7 +230,7 @@ export function MapMyDay() {
 
             const request: ItineraryRequest = {
                 ...currentVibe.request,
-                vibe: `Give me a different, creative, and surprising alternative to this itinerary: ${currentVibe.title} - ${currentVibe.description}. Keep it in Bondi.`,
+                vibe: currentVibe.title, // Use the original vibe title for context
                 heldStops: heldStops,
                 numberOfNewStops: numberOfNewStops,
             };
@@ -238,7 +238,7 @@ export function MapMyDay() {
             const response = await generateItinerary(request);
             if (response.success) {
                 // The AI now returns the full itinerary with held stops included
-                setItinerary(response.success);
+                setItinerary({...response.success, stops: response.success.stops.map(s => ({...s, isHeld: !!s.isHeld}))});
             } else {
                 setError("Sorry, I couldn't shuffle the itinerary right now.");
             }
@@ -277,7 +277,14 @@ export function MapMyDay() {
                         exit={{ opacity: 0 }}
                     >
                         <p className="text-destructive text-center mb-4">{error}</p>
-                        <Button onClick={() => setError(null)}>Try again</Button>
+                        <Button onClick={() => {
+                            setError(null);
+                            if (itinerary) {
+                                handleShuffle(); // Retry shuffle
+                            } else {
+                                handleBackToSelection();
+                            }
+                        }}>Try again</Button>
                     </motion.div>
                 ) : null}
                 

@@ -29,7 +29,7 @@ The user wants to shuffle their itinerary but has locked in the following stops.
 {{#each heldStops}}
 - {{this.time}}: {{this.title}} at {{this.location}}
 {{/each}}
-Generate {{numberOfNewStops}} new, different, and surprising stop(s) to replace the unlocked ones, while maintaining a cohesive and logical flow for the day.
+Generate {{numberOfNewStops}} new, different, and surprising stop(s) to replace the unlocked ones, while maintaining a cohesive and logical flow for the day. The final plan must contain the held stops and the new stops.
 {{else}}
 Generate a complete itinerary object with 3 to 4 stops based on this request.
 {{/if}}
