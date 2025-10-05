@@ -16,7 +16,7 @@ const features = [
     color: "text-primary",
   },
   {
-    href: "#",
+    href: "/flow",
     icon: Sparkles,
     title: "iykyk Flow",
     description: "Time-of-day rhythm suggestions, from morning to late night.",
