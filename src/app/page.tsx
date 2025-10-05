@@ -64,7 +64,7 @@ export default function Home() {
             <p className="text-muted-foreground mt-2">Your real-time cultural portal to Bondi.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
             {features.map((feature) => {
                 const image = PlaceHolderImages.find(img => img.id === feature.imageId);
                 return (
