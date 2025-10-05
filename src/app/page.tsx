@@ -37,7 +37,7 @@ const features = [
     color: "text-destructive",
   },
   {
-    href: "#",
+    href: "/deals",
     icon: Ticket,
     title: "iykyk Deals",
     description: "Venue-linked offers, perks, and creator-powered funnels.",
