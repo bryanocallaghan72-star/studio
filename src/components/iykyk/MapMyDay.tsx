@@ -224,11 +224,14 @@ export function MapMyDay() {
                 heldStops: heldStops,
                 numberOfNewStops: numberOfNewStops,
             };
-
+            
             const response = await generateItinerary(request);
             if (response.success) {
-                // The AI now returns the full itinerary with held stops included
-                setItinerary({...response.success, stops: response.success.stops.map(s => ({...s, isHeld: !!s.isHeld}))});
+                const newStops = response.success.stops.map(newStop => {
+                    const isHeld = heldStops.some(heldStop => heldStop.location === newStop.location);
+                    return { ...newStop, isHeld };
+                });
+                setItinerary({ ...response.success, stops: newStops });
             } else {
                 setError("Sorry, I couldn't shuffle the itinerary right now.");
             }
