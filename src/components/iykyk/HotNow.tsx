@@ -10,16 +10,28 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 const hotItems = [
     {
-        title: "Pop-Up Art Gallery",
-        description: "An exclusive, one-day-only exhibition from a famed street artist. The queue is already around the block!",
-        imageId: "hot-2",
-        endsIn: 3 * 60 * 60 * 1000, // 3 hours
+        title: "Happy Hour Finale",
+        description: "50% off all cocktails at The Beachcomber Bar. The perfect way to kick off the night!",
+        imageId: "deal-1",
+        endsIn: 30 * 60 * 1000, // 30 minutes
     },
     {
-        title: "Bondi Beach Festival",
-        description: "Live music, food stalls, and sunset vibes. The main act starts soon, don't miss out!",
+        title: "Flash Sale: 20% Off",
+        description: "A local boutique is clearing out their new season arrivals. Ends at 9 PM tonight.",
+        imageId: "my-day-4",
+        endsIn: 2 * 60 * 60 * 1000, // 2 hours
+    },
+    {
+        title: "End of Day Cleanse",
+        description: "2-for-1 on all cold-pressed juices at The Juice Bar. Last hour of trading!",
+        imageId: "morning-2",
+        endsIn: 1 * 60 * 60 * 1000, // 1 hour
+    },
+    {
+        title: "Live Set Just Started!",
+        description: "First drink on us for the next 90 mins at The Bucket List. Don't miss out!",
         imageId: "hot-1",
-        endsIn: 5 * 60 * 60 * 1000, // 5 hours
+        endsIn: 90 * 60 * 1000, // 90 minutes
     }
 ];
 
@@ -27,6 +39,9 @@ const Countdown = ({ endsIn }: { endsIn: number }) => {
     const [timeLeft, setTimeLeft] = useState(endsIn);
 
     useEffect(() => {
+        // Only run on the client
+        if (typeof window === 'undefined') return;
+
         if (timeLeft <= 0) return;
 
         const intervalId = setInterval(() => {
@@ -35,14 +50,25 @@ const Countdown = ({ endsIn }: { endsIn: number }) => {
 
         return () => clearInterval(intervalId);
     }, [timeLeft]);
+    
+    // Avoid rendering the countdown on the server to prevent hydration mismatch
+    const [isClient, setIsClient] = useState(false);
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+
+    if (!isClient) {
+        return <span className="font-mono text-sm font-semibold text-primary">Loading...</span>;
+    }
+
+    if (timeLeft <= 0) {
+        return <span className="font-mono text-sm font-bold text-destructive">ENDED</span>;
+    }
 
     const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
     const minutes = Math.floor((timeLeft / 1000 / 60) % 60);
     const seconds = Math.floor((timeLeft / 1000) % 60);
-    
-    if (timeLeft <= 0) {
-        return <span className="font-mono text-sm font-bold text-destructive">ENDED</span>;
-    }
 
     return (
         <span className="font-mono text-sm font-semibold text-primary">
