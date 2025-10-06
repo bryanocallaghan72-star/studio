@@ -1,3 +1,4 @@
+
 {
   "placeholderImages": [
     {
@@ -99,7 +100,7 @@
     {
       "id": "my-day-3",
       "description": "Friends having a picnic.",
-      "imageUrl": "https://images.unsplash.com/photo-1633836479310-fc0abb4d1f8b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxmcmllbmRzJTIwcGljbmljfGVufDB8fHx8MTc1OTUzNjE4N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1633836479310-fc0abb4d1f8b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxmcmllbmRzJTIwcGljbmljfGVufDB8fHx8MTc1OTUzNjE4N3ww&ixlib="rb-4.1.0&q=80&w=1080",
       "imageHint": "friends picnic"
     },
     {
@@ -129,7 +130,7 @@
     {
       "id": "community-fitness",
       "description": "A group fitness class outdoors.",
-      "imageUrl": "https://images.unsplash.com/photo-1607962837359-5e7e89f86776?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxncm91cCUyMGZpdG5lc3N8ZW58MHx8fHwxNzU5NTM2MTg3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1607962837359-5e7e89f86776?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxncm91cCUyMGZpdG5lc3N8ZW58MHx8fHwxNzU5NTM2MTg3fDA&ixlib-rb-4.1.0&q=80&w=1080",
       "imageHint": "group fitness"
     },
     {
@@ -137,6 +138,12 @@
       "description": "A street map of Bondi Beach, Australia.",
       "imageUrl": "https://images.unsplash.com/photo-1704231221711-212d29505d97?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxib25kaSUyMGJlYWNoJTIwbWFwfGVufDB8fHx8MTc2MDExOTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "Bondi map"
+    },
+    {
+      "id": "bondi-beach",
+      "description": "An aerial view of Bondi Beach.",
+      "imageUrl": "https://images.unsplash.com/photo-1590523278143-35a1a1d1375a?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "Bondi beach"
     }
   ]
 }
