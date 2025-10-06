@@ -1,6 +1,15 @@
 
 import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar } from 'lucide-react';
 
+export type Community = {
+  id: string;
+  name: string;
+  description: string;
+  category: keyof typeof appData.categories;
+  members: number;
+  channels: string[];
+};
+
 export const appData = {
   creators: [
     {
@@ -73,6 +82,18 @@ export const appData = {
     "Retail": { icon: Sparkles, color: '#f43f5e', textColor: '#ffffff' },
     "Events": { icon: Calendar, color: '#fb7185', textColor: '#ffffff' },
   },
+  communities: [
+    { id: 'brunch-club', name: 'Bondi Brunch Club', description: 'For the mimosa lovers and avo toast aficionados.', category: 'Brunch', members: 128, channels: ['general', 'tips', 'meetups'] },
+    { id: 'lunch-crew', name: 'Bondi Lunch Crew', description: 'Find the best midday bites and deals.', category: 'Lunch', members: 84, channels: ['general', 'deals', 'recommendations'] },
+    { id: 'restaurant-connoisseurs', name: 'Bondi Restaurant Connoisseurs', description: 'A space for dinner plans and date night discussions.', category: 'Restaurants', members: 231, channels: ['general', 'date-night', 'new-openings'] },
+    { id: 'nightlife-lovers', name: 'Bondi Nightlife', description: 'Discovering the hottest bars, clubs, and late-night spots.', category: 'Nightlife', members: 450, channels: ['general', 'djs-and-music', 'events', 'meetups'] },
+    { id: 'health-fitness-crew', name: 'Bondi Health & Fitness Crew', description: 'Running clubs, yoga classes, and gym tips.', category: 'Health & Fitness', members: 192, channels: ['general', 'running-club', 'yoga', 'gym-buddies'] },
+    { id: 'vibes-sunsets', name: 'Bondi Vibes & Sunsets', description: 'Chasing good music, chill atmospheres, and the perfect photo.', category: 'Vibes', members: 312, channels: ['general', 'photo-sharing', 'best-spots'] },
+    { id: 'sushi-society', name: 'Bondi Sushi Society', description: 'For the love of fresh fish and perfectly rolled maki.', category: 'Sushi', members: 156, channels: ['general', 'recommendations', 'omakase-deals'] },
+    { id: 'cocktail-club', name: 'Bondi Cocktail Club', description: 'From classic martinis to new tiki drinks.', category: 'Cocktails', members: 289, channels: ['general', 'recipes', 'hidden-bars'] },
+    { id: 'retail-style', name: 'Bondi Retail & Style', description: 'For the shopaholics and local boutique supporters.', category: 'Retail', members: 76, channels: ['general', 'new-arrivals', 'sales-and-deals'] },
+    { id: 'events-culture', name: 'Bondi Events & Culture', description: 'Stay in the know about all local happenings.', category: 'Events', members: 500, channels: ['general', 'markets', 'festivals', 'live-music'] },
+  ] as Community[],
   mapMyDayOptions: [
     {
       id: 'mmd1',
@@ -232,5 +253,3 @@ export const appData = {
     ]
   }
 };
-
-    
