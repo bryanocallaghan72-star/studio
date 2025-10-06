@@ -138,8 +138,8 @@ export function HotNow() {
                                                 </div>
                                             )}
                                         </div>
-                                        <h3 className="text-2xl font-bold leading-tight">{item.title}</h3>
-                                        <p className="text-white/90 mt-1">{item.description} at <span className="font-semibold">{item.venue}</span></p>
+                                        <h3 className="text-2xl font-bold leading-tight">{item.venue}</h3>
+                                        <p className="text-white/90 mt-1">{item.title}: {item.description}</p>
                                     </div>
                                     <div className='mt-6'>
                                         <div className="flex items-center justify-between rounded-lg bg-destructive/80 p-3 backdrop-blur-sm border border-destructive-foreground/30">
