@@ -26,11 +26,15 @@ Given a user's desired mood, generate a creative, multi-stop itinerary. The itin
 - **Keep descriptions short, punchy, and enticing.**
 
 {{#if heldStops}}
-The user wants to shuffle their itinerary but has locked in the following stops. Your response MUST include these exact stops in the final plan:
+The user wants to shuffle their itinerary but has locked in the following stops. Your response MUST include these exact stops in the final plan.
+Do NOT modify the held stops.
 {{#each heldStops}}
 - {{this.time}}: {{this.title}} at {{this.location}}
 {{/each}}
-Generate {{numberOfNewStops}} new, different, and surprising stop(s) to replace the unlocked ones. The final plan must contain BOTH the held stops and the new stops, for a total of 3 or 4 stops. Ensure the combined itinerary flows logically.
+
+You MUST generate exactly {{numberOfNewStops}} new, different, and surprising stop(s) to replace the unlocked ones.
+The new stops must NOT be the same as any of the held stops.
+The final plan must contain BOTH the held stops and the new stops, for a total of 3 or 4 stops. Ensure the combined itinerary flows logically.
 {{else}}
 Generate a complete itinerary object with 3 to 4 stops based on this request.
 {{/if}}
@@ -54,3 +58,5 @@ const generateItineraryFlow = ai.defineFlow(
     return output!;
   }
 );
+
+    

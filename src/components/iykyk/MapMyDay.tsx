@@ -61,7 +61,7 @@ const EventAndItinerarySelectionPage = ({ onSelectVibe }) => {
   );
 };
 
-const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle, onToggleHold, onSwap }) => {
+const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle, onToggleHold, onSwap, isPending }) => {
   const [editingItem, setEditingItem] = useState<ItineraryStop | null>(null);
   const [swapQuery, setSwapQuery] = useState('');
 
@@ -104,7 +104,7 @@ const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle, 
         {itineraryData.stops.map((stop, index) => {
             const HoldIcon = stop.isHeld ? Lock : LockOpen;
             return (
-            <Card key={`${stop.id}-${index}`} className={`rounded-2xl p-4 shadow-lg flex items-center transition-all duration-300 bg-card ${stop.isHeld ? 'border-2 border-primary' : 'border-transparent'}`}>
+            <Card key={stop.id} className={`rounded-2xl p-4 shadow-lg flex items-center transition-all duration-300 bg-card ${stop.isHeld ? 'border-2 border-primary' : 'border-transparent'}`}>
                 <Button onClick={() => onToggleHold(stop)} variant="ghost" size="icon" className="flex-shrink-0 mr-4 group">
                   <HoldIcon size={24} className={stop.isHeld ? 'text-primary' : 'text-muted-foreground group-hover:text-primary transition-colors'} />
                 </Button>
@@ -122,7 +122,10 @@ const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle, 
 
       <div className="mt-auto flex space-x-4 pt-4 sticky bottom-0 bg-background py-4">
         <Button className="flex-grow h-14 font-bold text-lg shadow-2xl" onClick={() => onStartPlan(itineraryData)}>Start Plan</Button>
-        <Button variant="outline" className="flex-grow h-14 font-bold text-lg shadow-2xl bg-card" onClick={onShuffle}>Shuffle</Button>
+        <Button variant="outline" className="flex-grow h-14 font-bold text-lg shadow-2xl bg-card" onClick={onShuffle} disabled={isPending}>
+          {isPending ? <Loader2 className="animate-spin mr-2"/> : null}
+          Shuffle
+        </Button>
       </div>
 
       {editingItem && (
@@ -211,34 +214,35 @@ export function MapMyDay() {
     const handleShuffle = () => {
         if (!currentVibe || !itinerary) return;
         setError(null);
-
+    
         startTransition(async () => {
             const heldStops = itinerary.stops.filter(stop => stop.isHeld);
-            const numberOfNewStops = itinerary.stops.length - heldStops.length;
-
+            const nonHeldStops = itinerary.stops.filter(stop => !stop.isHeld);
+            const numberOfNewStops = nonHeldStops.length;
+    
             if (numberOfNewStops === 0) {
-                // If everything is held, don't do anything. Maybe show a message?
+                // Everything is held, so no need to call the AI.
                 return;
             }
-
+    
             const request: ItineraryRequest = {
                 ...currentVibe.request,
                 vibe: currentVibe.title,
-                heldStops: heldStops.map(({ id, isHeld, ...rest }) => rest), // Remove client-side state
-                numberOfNewStops: numberOfNewStops,
+                heldStops: heldStops.map(({ id, isHeld, ...rest }) => rest),
+                numberOfNewStops,
             };
             
             const response = await generateItinerary(request);
+    
             if (response.success) {
-                 const newStopsFromAI = response.success.stops.map(s => ({...s, isHeld: false, id: s.location + Date.now() + Math.random()}));
+                // We only care about the new stops from the AI. The AI might return held stops too.
+                // We'll filter the AI response to get only stops that are NOT in our heldStops list.
+                const newStopsFromAI = response.success.stops
+                    .filter(aiStop => !heldStops.some(heldStop => heldStop.location === aiStop.location))
+                    .map(s => ({...s, isHeld: false, id: s.location + Date.now() + Math.random()}));
 
-                // Filter out new stops that might be duplicates of held stops
-                const uniqueNewStops = newStopsFromAI.filter(
-                    (newStop) => !heldStops.some((heldStop) => heldStop.location === newStop.location)
-                );
-                
-                // Reconstruct the full itinerary, preserving the held stops
-                const finalStops = [...heldStops, ...uniqueNewStops.slice(0, numberOfNewStops)];
+                // Combine the original held stops with the new unique stops from the AI.
+                const finalStops = [...heldStops, ...newStopsFromAI.slice(0, numberOfNewStops)];
                 
                 setItinerary({ ...response.success, stops: finalStops });
             } else {
@@ -269,6 +273,7 @@ export function MapMyDay() {
                 onShuffle={handleShuffle}
                 onToggleHold={handleToggleHold}
                 onSwap={handleSwap}
+                isPending={isPending}
             />;
         }
         return null; // or a placeholder/loading state if needed while itinerary is being fetched
@@ -277,7 +282,7 @@ export function MapMyDay() {
     return (
         <Card className="w-full flex flex-col min-h-[40rem] overflow-hidden bg-transparent border-none shadow-none relative">
             <AnimatePresence mode="wait">
-                {isPending && (
+                {isPending && !itinerary && (
                     <motion.div
                         key="loader"
                         className="absolute inset-0 flex items-center justify-center bg-background/80 z-20"
@@ -336,3 +341,5 @@ export function MapMyDay() {
         </Card>
     );
 }
+
+    
