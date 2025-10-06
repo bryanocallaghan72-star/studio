@@ -1,27 +1,5 @@
 import { z } from 'zod';
 
-// Schema for Community Connector
-export const CommunityConnectorInputSchema = z.object({
-  interests: z
-    .string()
-    .describe('A comma-separated list of user interests, e.g., sushi, cocktails, fitness.'),
-});
-export type CommunityConnectorInput = z.infer<typeof CommunityConnectorInputSchema>;
-
-export const CommunityConnectorOutputSchema = z.object({
-  communities: z.array(
-    z.object({
-      name: z.string().describe('The name of the community.'),
-      description: z.string().describe('A brief description of the community.'),
-      activityLevel: z
-        .string()
-        .describe('An indication of how active the community is (e.g., high, medium, low).'),
-    })
-  ).describe('A list of the top three recommended communities.'),
-});
-export type CommunityConnectorOutput = z.infer<typeof CommunityConnectorOutputSchema>;
-
-
 // Schema for Itinerary Generation
 const ItineraryStopSchema = z.object({
     time: z.string().describe('The suggested time for the activity (e.g., "9:00 AM", "1:00 PM").'),
