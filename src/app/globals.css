@@ -3,82 +3,115 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 20 50% 98%; /* Light Warm Sand */
-    --foreground: 20 15% 25%; /* Dark Brown-Gray Text */
-    
-    --card: 20 40% 100%;
-    --card-foreground: 20 15% 25%;
-    
-    --popover: 20 40% 100%;
-    --popover-foreground: 20 15% 25%;
-    
-    --primary: 25 95% 55%; /* Sun-kissed Orange */
-    --primary-foreground: 25 85% 95%;
-    
-    --secondary: 20 30% 94%;
-    --secondary-foreground: 20 15% 25%;
-    
-    --muted: 20 30% 94%;
-    --muted-foreground: 20 10% 45%;
-    
-    --accent: 180 80% 40%; /* Deep Teal */
-    --accent-foreground: 180 80% 95%;
-    
+  :root, [data-theme="day"] {
+    --background: 210 40% 98%; /* Bright White */
+    --foreground: 215 25% 27%; /* Dark Blue-Gray */
+    --card: 210 40% 100%;
+    --card-foreground: 215 25% 27%;
+    --popover: 210 40% 100%;
+    --popover-foreground: 215 25% 27%;
+    --primary: 34 95% 60%; /* Coral */
+    --primary-foreground: 34 85% 98%;
+    --secondary: 210 30% 94%;
+    --secondary-foreground: 215 25% 27%;
+    --muted: 210 30% 94%;
+    --muted-foreground: 215 15% 55%;
+    --accent: 175 80% 40%; /* Turquoise */
+    --accent-foreground: 175 80% 98%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    
-    --border: 20 20% 88%;
-    --input: 20 20% 92%;
-    --ring: 25 95% 60%;
-    
+    --border: 210 20% 88%;
+    --input: 210 20% 92%;
+    --ring: 34 95% 65%;
     --radius: 0.8rem;
-    
-    /* Custom App-Specific Variables from user code */
-    --bg-primary: hsl(var(--background));
-    --bg-secondary: hsl(var(--card));
-    --text-primary: hsl(var(--foreground));
-    --text-secondary: hsl(var(--muted-foreground));
-    --accent-primary: hsl(var(--primary));
-    --border-color: hsl(var(--border));
+  }
+
+  [data-theme="dawn"] {
+    --background: 45 100% 97%; /* Soft Yellow */
+    --foreground: 215 25% 45%;
+    --card: 45 90% 99%;
+    --card-foreground: 215 25% 45%;
+    --popover: 45 90% 99%;
+    --popover-foreground: 215 25% 45%;
+    --primary: 205 90% 65%; /* Light Blue */
+    --primary-foreground: 205 85% 98%;
+    --secondary: 45 50% 94%;
+    --secondary-foreground: 215 25% 45%;
+    --muted: 45 50% 94%;
+    --muted-foreground: 215 15% 65%;
+    --accent: 34 95% 70%; /* Soft Coral */
+    --accent-foreground: 34 85% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 45 30% 90%;
+    --input: 45 30% 94%;
+    --ring: 205 90% 70%;
+  }
+
+  [data-theme="golden-hour"] {
+    --background: 30 100% 97%; /* Soft Peach */
+    --foreground: 25 25% 30%;
+    --card: 25 80% 99%;
+    --card-foreground: 25 25% 30%;
+    --popover: 25 80% 99%;
+    --popover-foreground: 25 25% 30%;
+    --primary: 15 90% 55%; /* Warm Orange */
+    --primary-foreground: 15 85% 98%;
+    --secondary: 30 50% 94%;
+    --secondary-foreground: 25 25% 30%;
+    --muted: 30 50% 94%;
+    --muted-foreground: 25 15% 60%;
+    --accent: 350 80% 65%; /* Soft Pink */
+    --accent-foreground: 350 80% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 30 30% 90%;
+    --input: 30 30% 94%;
+    --ring: 15 90% 60%;
+  }
+
+  [data-theme="dusk"] {
+    --background: 220 40% 10%; /* Deep Blue */
+    --foreground: 220 20% 90%;
+    --card: 220 40% 15%;
+    --card-foreground: 220 20% 90%;
+    --popover: 220 40% 15%;
+    --popover-foreground: 220 20% 90%;
+    --primary: 34 100% 65%; /* Vibrant Coral (Neon-like) */
+    --primary-foreground: 34 85% 10%;
+    --secondary: 220 30% 20%;
+    --secondary-foreground: 220 20% 90%;
+    --muted: 220 30% 20%;
+    --muted-foreground: 220 10% 65%;
+    --accent: 175 90% 50%; /* Vibrant Turquoise (Neon-like) */
+    --accent-foreground: 175 85% 98%;
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 30% 25%;
+    --input: 220 30% 30%;
+    --ring: 34 100% 70%;
   }
 
   .dark {
-    --background: 20 10% 10%; /* Dark Charcoal */
-    --foreground: 20 5% 90%; /* Light Cream Text */
-
+    --background: 20 10% 10%; /* Fallback Dark Charcoal */
+    --foreground: 20 5% 90%; /* Fallback Light Cream Text */
     --card: 20 10% 15%;
     --card-foreground: 20 5% 90%;
-
     --popover: 20 10% 15%;
     --popover-foreground: 20 5% 90%;
-
-    --primary: 25 95% 55%; /* Sun-kissed Orange */
+    --primary: 25 95% 55%; /* Fallback Sun-kissed Orange */
     --primary-foreground: 25 85% 95%;
-
     --secondary: 20 15% 25%;
     --secondary-foreground: 20 5% 90%;
-
     --muted: 20 15% 25%;
     --muted-foreground: 20 5% 65%;
-    
-    --accent: 180 70% 50%; /* Brighter Teal for Dark Mode */
+    --accent: 180 70% 50%; /* Fallback Brighter Teal for Dark Mode */
     --accent-foreground: 180 70% 95%;
-
     --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
-    
     --border: 20 15% 30%;
     --input: 20 15% 35%;
     --ring: 25 95% 60%;
-
-    /* Custom App-Specific Variables from user code */
-    --bg-primary: hsl(var(--background));
-    --bg-secondary: hsl(var(--card));
-    --text-primary: hsl(var(--foreground));
-    --text-secondary: hsl(var(--muted-foreground));
-    --accent-primary: hsl(var(--primary));
-    --border-color: hsl(var(--border));
   }
 }
 
