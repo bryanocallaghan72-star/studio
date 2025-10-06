@@ -102,23 +102,35 @@ const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle, 
       </div>
       
       <div className="flex-grow space-y-4 pt-4">
-        {itineraryData.stops.map((stop, index) => {
-            const HoldIcon = stop.isHeld ? Lock : LockOpen;
-            return (
-            <Card key={stop.id} className={`rounded-2xl p-4 shadow-lg flex items-center transition-all duration-300 bg-card ${stop.isHeld ? 'border-2 border-primary' : 'border-transparent'}`}>
-                <Button onClick={() => onToggleHold(stop)} variant="ghost" size="icon" className="flex-shrink-0 mr-4 group">
-                  <HoldIcon size={24} className={stop.isHeld ? 'text-primary' : 'text-muted-foreground group-hover:text-primary transition-colors'} />
-                </Button>
-                <div className="w-16 h-16 bg-primary/20 rounded-xl overflow-hidden flex-shrink-0">
-                    <Image src={`https://picsum.photos/seed/${stop.location.replace(/\s+/g, '-')}/64/64`} alt={stop.location} width={64} height={64} className="w-full h-full object-cover" />
-                </div>
-                <div className="ml-4 flex-grow">
-                    <p className="font-semibold text-foreground">{stop.title}</p>
-                    <p className="text-sm text-muted-foreground">{stop.location}</p>
-                </div>
-                <Button onClick={() => setEditingItem(stop)} variant="ghost" size="icon" className="text-muted-foreground hover:text-primary transition-colors flex-shrink-0 ml-4"><Sparkles size={24} /></Button>
-            </Card>);
-        })}
+        <AnimatePresence>
+          {itineraryData.stops.map((stop, index) => {
+              const HoldIcon = stop.isHeld ? Lock : LockOpen;
+              return (
+              <motion.div
+                key={stop.id}
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Card className={`rounded-2xl p-4 shadow-lg flex items-center transition-all duration-300 bg-card ${stop.isHeld ? 'border-2 border-primary' : 'border-transparent'}`}>
+                    <Button onClick={() => onToggleHold(stop)} variant="ghost" size="icon" className="flex-shrink-0 mr-4 group">
+                      <HoldIcon size={24} className={stop.isHeld ? 'text-primary' : 'text-muted-foreground group-hover:text-primary transition-colors'} />
+                    </Button>
+                    <div className="w-16 h-16 bg-primary/20 rounded-xl overflow-hidden flex-shrink-0">
+                        <Image src={`https://picsum.photos/seed/${stop.location.replace(/\s+/g, '-')}/64/64`} alt={stop.location} width={64} height={64} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="ml-4 flex-grow">
+                        <p className="font-semibold text-foreground">{stop.title}</p>
+                        <p className="text-sm text-muted-foreground">{stop.location}</p>
+                    </div>
+                    <Button onClick={() => setEditingItem(stop)} variant="ghost" size="icon" className="text-muted-foreground hover:text-primary transition-colors flex-shrink-0 ml-4"><Sparkles size={24} /></Button>
+                </Card>
+              </motion.div>
+              );
+          })}
+        </AnimatePresence>
       </div>
 
       <div className="mt-auto flex space-x-4 pt-4 sticky bottom-0 bg-background py-4">
@@ -172,13 +184,13 @@ export function MapMyDay() {
         setError(null);
         setCurrentVibe(option);
 
-        const initialStops = option.mockItinerary.map(s => ({
+        const initialStops = option.mockItinerary.map((s, index) => ({
             time: s.time,
             title: s.name,
             location: s.name,
             description: s.notes,
             isHeld: false,
-            id: s.name + Date.now() + Math.random(),
+            id: `${s.name}-${index}`, // Stable ID
         }));
         
         setItinerary({
@@ -219,15 +231,17 @@ export function MapMyDay() {
         if (!itinerary) return;
     
         startTransition(() => {
-            const shuffledStops = [...itinerary.stops];
+            const heldStops = itinerary.stops.filter(s => s.isHeld);
+            const nonHeldStops = itinerary.stops.filter(s => !s.isHeld);
     
-            // Simple Fisher-Yates shuffle
-            for (let i = shuffledStops.length - 1; i > 0; i--) {
+            // Fisher-Yates shuffle for non-held stops
+            for (let i = nonHeldStops.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [shuffledStops[i], shuffledStops[j]] = [shuffledStops[j], shuffledStops[i]];
+                [nonHeldStops[i], nonHeldStops[j]] = [nonHeldStops[j], nonHeldStops[i]];
             }
             
-            setItinerary({ ...itinerary, stops: shuffledStops });
+            // Recombine and update state
+            setItinerary({ ...itinerary, stops: [...heldStops, ...nonHeldStops] });
         });
     };
 
