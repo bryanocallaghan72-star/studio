@@ -1,11 +1,11 @@
 
+
 "use client";
 
 import { useState, useTransition, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowLeft, CheckCircle2, Sparkles, Search, Lock, LockOpen, X } from "lucide-react";
-import { generateItinerary } from '@/app/actions';
 import { Itinerary, ItineraryRequest, ItineraryStop } from '@/ai/schemas';
 import { AnimatePresence, motion } from "framer-motion";
 import Image from 'next/image';
@@ -61,7 +61,7 @@ const EventAndItinerarySelectionPage = ({ onSelectVibe }) => {
   );
 };
 
-const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle, onToggleHold, onSwap, isPending }) => {
+const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle, onToggleHold, onSwap, isPending }) => {
   const [editingItem, setEditingItem] = useState<ItineraryStop | null>(null);
   const [swapQuery, setSwapQuery] = useState('');
 
@@ -172,7 +172,7 @@ const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle, 
 };
 
 
-export function MapMyDay() {
+export function IykykMyDay() {
     const [isPending, startTransition] = useTransition();
     const [view, setView] = useState<'selection' | 'itinerary'>('selection');
     const [itinerary, setItinerary] = useState<Itinerary | null>(null);
@@ -190,7 +190,7 @@ export function MapMyDay() {
             location: s.name,
             description: s.notes,
             isHeld: false,
-            id: `${s.name}-${index}`, // Stable ID
+            id: `${s.name}-${index}-${Date.now()}`, // More robust unique ID
         }));
         
         setItinerary({
@@ -232,9 +232,9 @@ export function MapMyDay() {
     
         startTransition(() => {
             const heldStops = itinerary.stops.filter(s => s.isHeld);
-            const nonHeldStops = itinerary.stops.filter(s => !s.isHeld);
+            let nonHeldStops = itinerary.stops.filter(s => !s.isHeld);
     
-            // Fisher-Yates shuffle for non-held stops
+            // Fisher-Yates shuffle algorithm
             for (let i = nonHeldStops.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [nonHeldStops[i], nonHeldStops[j]] = [nonHeldStops[j], nonHeldStops[i]];
@@ -260,7 +260,7 @@ export function MapMyDay() {
             return <EventAndItinerarySelectionPage onSelectVibe={handleSelectVibe} />;
         }
         if (itinerary) {
-            return <MapMyDayItineraryPage
+            return <IykykMyDayItineraryPage
                 itineraryData={{...itinerary, description: currentVibe?.description, title: currentVibe?.title}}
                 onStartPlan={handleStartPlan}
                 onBack={handleBackToSelection}
@@ -343,10 +343,4 @@ export function MapMyDay() {
         </Card>
     );
 }
-    
-
-    
-
-    
-
     
