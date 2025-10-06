@@ -126,11 +126,11 @@ export default function Home() {
                 <div className="rounded-full bg-primary/10 p-3">
                   <Users className={`h-6 w-6 text-primary`} />
                 </div>
-                <CardTitle className="text-xl">Community Connector</CardTitle>
+                <CardTitle className="text-xl">iykyk &amp; Co</CardTitle>
               </CardHeader>
               <CardContent className="flex-grow flex flex-col">
                 <p className="text-muted-foreground flex-grow">Connect with themed groups, from sushi lovers to cocktail hunters.</p>
-                <Link href="/community-connector" className="mt-4">
+                <Link href="/community" className="mt-4">
                     <Button variant="secondary" className="w-full">Find Your Tribe</Button>
                 </Link>
               </CardContent>
