@@ -8,9 +8,8 @@ import { Map } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ColorPinSVG } from "./ColorPinSVG";
 import { appData } from "@/lib/data";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const { categories, map: { pins: venues }, creators } = appData;
+const { categories, map: { pins: venues } } = appData;
 
 export function IykykVibeMap() {
   const searchParams = useSearchParams();
@@ -28,7 +27,7 @@ export function IykykVibeMap() {
             <h2 className="text-3xl font-bold tracking-tight">iykyk Vibe</h2>
         </div>
         <p className="text-muted-foreground mb-4 p-4 md:p-6 pt-2">
-            Explore Bondi's landscape. Tap a pin for a venue, or an avatar for a creator.
+            Explore Bondi's landscape. Tap a pin for more info.
         </p>
 
         <div className="flex overflow-x-auto pb-4 px-4 md:px-6 scrollbar-hide">
@@ -103,18 +102,6 @@ export function IykykVibeMap() {
                 </svg>
                 </div>
                 
-                {activeTab === 'All' && creators.map(creator => (
-                    <Link key={creator.id} href={`/creator/${creator.id}`} className="absolute group transform -translate-x-1/2 -translate-y-1/2 cursor-pointer" style={{ left: creator.x, top: creator.y }}>
-                        <Avatar className="h-12 w-12 border-2 border-primary shadow-lg transition-transform duration-200 group-hover:scale-110 animate-pulse">
-                            <AvatarImage src={creator.avatar} alt={creator.name} />
-                            <AvatarFallback>{creator.name.charAt(0).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 rounded-lg bg-gray-800 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 pointer-events-none">
-                            @{creator.id}
-                        </div>
-                    </Link>
-                ))}
-
                 {filteredPins.map(pin => (
                   <Link key={pin.id} href={`/venue/${pin.slug}`} className="absolute group transform -translate-x-1/2 -translate-y-full cursor-pointer" style={{ left: pin.x, top: pin.y }}>
                     <ColorPinSVG className="w-10 h-10 drop-shadow-lg transition-transform duration-200 group-hover:scale-125" color={categories[pin.type as keyof typeof categories]?.color || '#FF7F50'} />
