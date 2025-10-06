@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useTransition, useEffect } from 'react';
@@ -216,48 +217,33 @@ export function MapMyDay() {
     };
 
     const handleShuffle = () => {
-        if (!currentVibe || !itinerary) return;
-        setError(null);
+        if (!itinerary) return;
     
-        startTransition(async () => {
+        startTransition(() => {
             const heldStops = itinerary.stops.filter(stop => stop.isHeld);
-            const nonHeldStopsCount = itinerary.stops.filter(stop => !stop.isHeld).length;
+            const nonHeldStops = itinerary.stops.filter(stop => !stop.isHeld);
     
-            if (nonHeldStopsCount === 0) {
-                // If all stops are held, no need to shuffle
+            if (nonHeldStops.length <= 1) {
+                // Not enough items to shuffle
                 return;
             }
     
-            const request: ItineraryRequest = {
-                vibe: currentVibe.title,
-                pace: currentVibe.request?.pace || 3,
-                budget: currentVibe.request?.budget || 3,
-                travelMode: currentVibe.request?.travelMode || 'walking',
-                heldStops: heldStops.map(({ id, isHeld, ...rest }) => rest),
-                numberOfNewStops: nonHeldStopsCount,
-            };
-            
-            const response = await generateItinerary(request);
-    
-            if (response.success) {
-                const newStopsFromAI = response.success.stops
-                    .filter(aiStop => !heldStops.some(heldStop => heldStop.location === aiStop.location))
-                    .map(s => ({...s, isHeld: false, id: s.location + Date.now() + Math.random()}));
-
-                // Combine held stops with new stops
-                const finalStops = [...heldStops, ...newStopsFromAI.slice(0, nonHeldStopsCount)];
-                
-                // Sort by time to maintain a logical flow
-                finalStops.sort((a, b) => {
-                    const timeA = parseInt(a.time.replace(':', ''));
-                    const timeB = parseInt(b.time.replace(':', ''));
-                    return timeA - timeB;
-                });
-
-                setItinerary({ ...itinerary, title: response.success.title, stops: finalStops });
-            } else {
-                setError(response.error || "Sorry, I couldn't shuffle the itinerary right now.");
+            // Simple Fisher-Yates shuffle
+            for (let i = nonHeldStops.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [nonHeldStops[i], nonHeldStops[j]] = [nonHeldStops[j], nonHeldStops[i]];
             }
+    
+            const finalStops = [...heldStops, ...nonHeldStops];
+            
+            // Sort by time to maintain a logical flow
+            finalStops.sort((a, b) => {
+                const timeA = parseInt(a.time.replace(':', ''));
+                const timeB = parseInt(b.time.replace(':', ''));
+                return timeA - timeB;
+            });
+
+            setItinerary({ ...itinerary, stops: finalStops });
         });
     };
 
@@ -360,4 +346,6 @@ export function MapMyDay() {
         </Card>
     );
 }
+    
+
     
