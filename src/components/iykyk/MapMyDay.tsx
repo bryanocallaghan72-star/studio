@@ -172,7 +172,6 @@ export function MapMyDay() {
         setError(null);
         setCurrentVibe(option);
 
-        // Directly use mockItinerary to build the initial state
         const initialStops = option.mockItinerary.map(s => ({
             time: s.time,
             title: s.name,
@@ -220,15 +219,10 @@ export function MapMyDay() {
         if (!itinerary) return;
     
         startTransition(() => {
-            const heldStops = itinerary.stops.filter(stop => stop.isHeld);
-            const nonHeldStops = itinerary.stops.filter(stop => !stop.isHeld);
+            const heldStops = itinerary.stops.filter(s => s.isHeld);
+            const nonHeldStops = itinerary.stops.filter(s => !s.isHeld);
     
-            if (nonHeldStops.length <= 1) {
-                // Not enough items to shuffle
-                return;
-            }
-    
-            // Simple Fisher-Yates shuffle
+            // Simple Fisher-Yates shuffle on the non-held stops
             for (let i = nonHeldStops.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [nonHeldStops[i], nonHeldStops[j]] = [nonHeldStops[j], nonHeldStops[i]];
@@ -236,10 +230,10 @@ export function MapMyDay() {
     
             const finalStops = [...heldStops, ...nonHeldStops];
             
-            // Sort by time to maintain a logical flow
+            // Re-sort the entire list by time to maintain a logical flow
             finalStops.sort((a, b) => {
-                const timeA = parseInt(a.time.replace(':', ''));
-                const timeB = parseInt(b.time.replace(':', ''));
+                const timeA = parseInt(a.time.replace(':', ''), 10);
+                const timeB = parseInt(b.time.replace(':', ''), 10);
                 return timeA - timeB;
             });
 
@@ -272,7 +266,6 @@ export function MapMyDay() {
                 isPending={isPending}
             />;
         }
-        // This loader is for the transition, not initial load
         return (
              <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-20">
                 <Loader2 className="h-10 w-10 animate-spin text-primary" />
@@ -346,6 +339,8 @@ export function MapMyDay() {
         </Card>
     );
 }
+    
+
     
 
     
