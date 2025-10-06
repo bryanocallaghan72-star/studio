@@ -16,35 +16,35 @@ export function IykykVibeMap() {
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get('category') || 'All';
   const [activeTab, setActiveTab] = useState(initialCategory);
-  const [searchTerm, setSearchTerm] = useState('');
 
   const filteredPins = venues.filter(pin => {
-    const categoryMatch = activeTab === 'All' || pin.type === activeTab;
-    const searchMatch = pin.name.toLowerCase().includes(searchTerm.toLowerCase());
-    return categoryMatch && searchMatch;
+    return activeTab === 'All' || pin.type === activeTab;
   });
 
   return (
     <section>
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center gap-3 mb-4 p-4 md:p-6 pb-0">
             <Map className="h-8 w-8 text-primary" />
             <h2 className="text-3xl font-bold tracking-tight">iykyk Vibe</h2>
         </div>
-        <p className="text-muted-foreground mb-4">
+        <p className="text-muted-foreground mb-4 p-4 md:p-6 pt-2">
             Explore Bondi's landscape. Tap a pin for a venue, or an avatar for a creator.
         </p>
 
-        <div className="flex justify-center overflow-x-auto pb-4 scrollbar-hide">
+        <div className="flex overflow-x-auto pb-4 px-4 md:px-6 scrollbar-hide">
             {Object.entries(categories).map(([category, {icon: Icon, color, textColor}]) => (
                 <button
                     key={category}
                     onClick={() => setActiveTab(category)}
                     className={cn(
-                        "flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full mx-1 transition-all duration-200 inline-flex items-center",
+                        "flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full mx-1 transition-all duration-300 inline-flex items-center shadow-sm",
                         activeTab === category
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-blue-100/50 text-slate-700 hover:bg-blue-100'
+                            ? `text-[${textColor}]`
+                            : 'bg-card text-foreground hover:bg-secondary'
                     )}
+                    style={{
+                        backgroundColor: activeTab === category ? color : undefined
+                    }}
                 >
                     <Icon className="mr-2 h-4 w-4" />
                     {category}
@@ -52,7 +52,7 @@ export function IykykVibeMap() {
             ))}
         </div>
 
-        <div className="flex-grow flex flex-col relative aspect-[4/3] md:aspect-video mt-2 rounded-lg border overflow-hidden">
+        <div className="flex-grow flex flex-col relative aspect-[4/3] md:aspect-video mt-2 rounded-lg border overflow-hidden mx-4 md:mx-6">
             <div className="flex-grow bg-secondary relative overflow-hidden">
                 <div className="w-full h-full absolute inset-0">
                 <svg width="100%" height="100%" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
