@@ -10,28 +10,28 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 const hotItems = [
     {
-        title: "Happy Hour Finale",
-        description: "50% off all cocktails at The Bucket List. The perfect way to kick off the night!",
+        title: "Happy Hour Rush",
+        description: "50% off all cocktails at The Rum Diary Bar. The perfect way to kick off the night!",
         imageId: "deal-1",
-        endsIn: 30 * 60 * 1000, // 30 minutes
+        endsIn: 50 * 60 * 1000, // 50 minutes
     },
     {
-        title: "Flash Sale: 20% Off",
-        description: "A local boutique is clearing out their new season arrivals. Ends at 9 PM tonight.",
-        imageId: "my-day-4",
+        title: "Sunset Special",
+        description: "Half-price oysters at North Bondi Fish until 7 PM. Catch the last of the sun!",
+        imageId: "my-day-3",
         endsIn: 2 * 60 * 60 * 1000, // 2 hours
     },
     {
-        title: "End of Day Cleanse",
-        description: "2-for-1 on all cold-pressed juices at Acai Brothers. Last hour of trading!",
-        imageId: "morning-2",
-        endsIn: 1 * 60 * 60 * 1000, // 1 hour
+        title: "Last Minute Spot",
+        description: "25% off the 5pm Reformer class at Fluidform Pilates. Grab it before it's gone!",
+        imageId: "fitness-1",
+        endsIn: 30 * 60 * 1000, // 30 minutes
     },
     {
-        title: "Live Set Just Started!",
-        description: "First drink on us for the next 90 mins at Ravesis. Don't miss out!",
+        title: "Live DJ Set Special",
+        description: "$12 Aperol Spritz for the first hour of the set at The Bucket List. Don't miss out!",
         imageId: "hot-1",
-        endsIn: 90 * 60 * 1000, // 90 minutes
+        endsIn: 60 * 60 * 1000, // 60 minutes
     }
 ];
 
