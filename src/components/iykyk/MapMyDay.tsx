@@ -104,7 +104,7 @@ const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle, 
         {itineraryData.stops.map((stop, index) => {
             const HoldIcon = stop.isHeld ? Lock : LockOpen;
             return (
-            <Card key={`${stop.location}-${index}`} className={`rounded-2xl p-4 shadow-lg flex items-center transition-all duration-300 bg-card ${stop.isHeld ? 'border-2 border-primary' : 'border-transparent'}`}>
+            <Card key={`${stop.id}-${index}`} className={`rounded-2xl p-4 shadow-lg flex items-center transition-all duration-300 bg-card ${stop.isHeld ? 'border-2 border-primary' : 'border-transparent'}`}>
                 <Button onClick={() => onToggleHold(stop)} variant="ghost" size="icon" className="flex-shrink-0 mr-4 group">
                   <HoldIcon size={24} className={stop.isHeld ? 'text-primary' : 'text-muted-foreground group-hover:text-primary transition-colors'} />
                 </Button>
@@ -176,7 +176,7 @@ export function MapMyDay() {
              if (response.error) {
                 setError(response.error);
             } else if (response.success) {
-                const initialStops = response.success.stops.map(s => ({...s, isHeld: false, id: s.location + Date.now()}));
+                const initialStops = response.success.stops.map(s => ({...s, isHeld: false, id: s.location + Date.now() + Math.random()}));
                 setItinerary({...response.success, stops: initialStops});
             }
         });
@@ -217,25 +217,28 @@ export function MapMyDay() {
             const numberOfNewStops = itinerary.stops.length - heldStops.length;
 
             if (numberOfNewStops === 0) {
+                // If everything is held, don't do anything. Maybe show a message?
                 return;
             }
 
             const request: ItineraryRequest = {
                 ...currentVibe.request,
                 vibe: currentVibe.title,
-                heldStops: heldStops.map(({ id, ...rest }) => rest), // Remove ID before sending to AI
+                heldStops: heldStops.map(({ id, isHeld, ...rest }) => rest), // Remove client-side state
                 numberOfNewStops: numberOfNewStops,
             };
             
             const response = await generateItinerary(request);
             if (response.success) {
-                // Add new stops, ensuring they don't duplicate held stops
-                 const newStopsFromAI = response.success.stops.filter(
-                    (newStop) => !heldStops.some((heldStop) => heldStop.location === newStop.location)
-                ).map(s => ({...s, isHeld: false, id: s.location + Date.now()}));
+                 const newStopsFromAI = response.success.stops.map(s => ({...s, isHeld: false, id: s.location + Date.now() + Math.random()}));
 
-                // Combine and preserve order if possible, or just append
-                const finalStops = [...heldStops, ...newStopsFromAI];
+                // Filter out new stops that might be duplicates of held stops
+                const uniqueNewStops = newStopsFromAI.filter(
+                    (newStop) => !heldStops.some((heldStop) => heldStop.location === newStop.location)
+                );
+                
+                // Reconstruct the full itinerary, preserving the held stops
+                const finalStops = [...heldStops, ...uniqueNewStops.slice(0, numberOfNewStops)];
                 
                 setItinerary({ ...response.success, stops: finalStops });
             } else {
@@ -308,19 +311,19 @@ export function MapMyDay() {
 
             <Dialog open={isConfirmationOpen} onOpenChange={setConfirmationOpen}>
                 <DialogContent>
-                    <DialogHeader className="items-center">
-                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                    <DialogHeader className="items-center text-center">
+                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 mb-2">
                           <CheckCircle2 className="h-6 w-6 text-green-600" />
                         </div>
-                        <DialogTitle>Itinerary Confirmed!</DialogTitle>
-                        <DialogDescription className="text-center">
+                        <DialogTitle>{currentVibe?.title}</DialogTitle>
+                        <DialogDescription className="text-center pt-2">
                             {getConfirmationMessage()}
                         </DialogDescription>
                     </DialogHeader>
                     {itinerary && (
-                         <div className="space-y-4 py-4">
+                         <div className="space-y-4 py-4 text-center">
                             {itinerary.stops.map((stop, index) => (
-                                <div key={index} className="flex items-center gap-4">
+                                <div key={index} className="flex items-center justify-center gap-4">
                                     <div className="text-lg font-bold text-primary">{stop.time}</div>
                                     <div className="font-semibold">{stop.location}</div>
                                 </div>
@@ -333,4 +336,3 @@ export function MapMyDay() {
         </Card>
     );
 }
-
