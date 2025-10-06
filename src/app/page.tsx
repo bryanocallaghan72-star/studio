@@ -127,7 +127,7 @@ export default function Home() {
                   <Users className={`h-6 w-6 text-primary`} />
                 </div>
                 <CardTitle className="text-xl">iykyk & Co</CardTitle>
-              </CardHeader>
+              </Header>
               <CardContent className="flex-grow flex flex-col">
                 <p className="text-muted-foreground flex-grow">Connect with themed groups, from sushi lovers to cocktail hunters.</p>
                 <Link href="/community">
@@ -143,7 +143,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
-
-    
