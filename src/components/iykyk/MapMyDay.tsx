@@ -4,7 +4,7 @@
 import { useState, useTransition, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, ArrowLeft, CheckCircle2, Sparkles, Search, Lock, LockOpen } from "lucide-react";
+import { Loader2, ArrowLeft, CheckCircle2, Sparkles, Search, Lock, LockOpen, X } from "lucide-react";
 import { generateItinerary } from '@/app/actions';
 import { Itinerary, ItineraryRequest, ItineraryStop } from '@/ai/schemas';
 import { AnimatePresence, motion } from "framer-motion";
@@ -172,7 +172,6 @@ export function MapMyDay() {
         setCurrentVibe(option);
         setView('itinerary');
         
-        // Load initial itinerary from mock data
         startTransition(async () => {
             const response = await generateItinerary(option.request);
              if (response.error) {
@@ -219,7 +218,6 @@ export function MapMyDay() {
             const nonHeldStopsCount = itinerary.stops.filter(stop => !stop.isHeld).length;
     
             if (nonHeldStopsCount === 0) {
-                // Everything is held, so no need to call the AI.
                 return;
             }
     
@@ -239,7 +237,6 @@ export function MapMyDay() {
 
                 const finalStops = [...heldStops, ...newStopsFromAI.slice(0, nonHeldStopsCount)];
                 
-                // Reorder to match original itinerary's time if possible, or just append
                 finalStops.sort((a, b) => {
                     const timeA = parseInt(a.time.replace(':', ''));
                     const timeB = parseInt(b.time.replace(':', ''));
@@ -278,7 +275,6 @@ export function MapMyDay() {
                 isPending={isPending}
             />;
         }
-        // This is the loading state while waiting for the initial itinerary
         return (
              <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-20">
                 <Loader2 className="h-10 w-10 animate-spin text-primary" />
@@ -348,5 +344,4 @@ export function MapMyDay() {
         </Card>
     );
 }
-
     
