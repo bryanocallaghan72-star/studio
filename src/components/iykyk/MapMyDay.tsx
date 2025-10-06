@@ -208,6 +208,7 @@ export function MapMyDay() {
 
     const handleShuffle = () => {
         if (!currentVibe || !itinerary) return;
+        setError(null);
 
         startTransition(async () => {
             const heldStops = itinerary.stops.filter(stop => stop.isHeld);
@@ -227,13 +228,13 @@ export function MapMyDay() {
             
             const response = await generateItinerary(request);
             if (response.success) {
-                const newStops = response.success.stops.map(newStop => {
-                    const isHeld = heldStops.some(heldStop => heldStop.location === newStop.location);
-                    return { ...newStop, isHeld };
+                const newStopsWithHoldState = response.success.stops.map(newStop => {
+                  const isHeld = heldStops.some(heldStop => heldStop.location === newStop.location && heldStop.title === newStop.title);
+                  return { ...newStop, isHeld };
                 });
-                setItinerary({ ...response.success, stops: newStops });
+                setItinerary({ ...response.success, stops: newStopsWithHoldState });
             } else {
-                setError("Sorry, I couldn't shuffle the itinerary right now.");
+                setError(response.error || "Sorry, I couldn't shuffle the itinerary right now.");
             }
         });
     };
@@ -273,7 +274,7 @@ export function MapMyDay() {
                         <Button onClick={() => {
                             setError(null);
                             if (itinerary) {
-                                handleShuffle(); // Retry shuffle
+                                // Don't auto-retry. Let the user decide.
                             } else {
                                 handleBackToSelection();
                             }
