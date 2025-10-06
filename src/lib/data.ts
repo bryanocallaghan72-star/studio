@@ -162,6 +162,11 @@ export const appData = {
         budget: 4,
         travelMode: 'walking',
       },
+      mockItinerary: [
+        { time: '18:30', name: 'The Rum Diary Bar', notes: 'Booked in for a cheeky cocktail.' },
+        { time: '19:30', name: 'Totti\'s', notes: 'Reservation for dinner and some delicious Italian food.' },
+        { time: '21:00', name: 'Bondi Icebergs', notes: 'Finish the night with some wicked cocktails.' }
+      ],
       curatedMessage: 'All good, you\'re booked in for a cheeky cocktail at The Rum Diary Bar, then jump over to Totti\'s for some delicious Italian food. Finish the night at Icebergs with some wicked cocktails. You\'ve Got This!'
     },
     {
@@ -174,6 +179,11 @@ export const appData = {
         budget: 3,
         travelMode: 'walking',
       },
+      mockItinerary: [
+        { time: '18:30', name: 'Lulu', notes: 'Trivia & tapas at the local.' },
+        { time: '20:00', name: 'Ravesis', notes: 'Rooftop cocktails - mingle hour.' },
+        { time: '22:00', name: 'Bondi Vibes Bar', notes: 'Dancing & good energy!' }
+      ],
       curatedMessage: 'Get ready to mingle! You\'re all set for trivia and tapas at Lulu, then hit the rooftop at Ravesis for some cocktails. Finish the night dancing at Bondi Vibes Bar. Have fun!'
     },
     {
@@ -186,6 +196,11 @@ export const appData = {
         budget: 3,
         travelMode: 'walking',
       },
+      mockItinerary: [
+        { time: '08:00', name: 'Fluidform Pilates', notes: 'Sunrise yoga at the Pavilion.' },
+        { time: '09:30', name: 'Harry\'s Bondi', notes: 'Acai bowl & green juice.' },
+        { time: '11:00', name: 'Bondi Icebergs', notes: 'Cold plunge & reset.' }
+      ],
       curatedMessage: 'Your wellness day is all planned! Start with sunrise yoga at Fluidform Pilates, grab a healthy bite at Harry\'s, then finish with a refreshing cold plunge at Icebergs. A perfect reset!'
     },
     {
@@ -198,18 +213,28 @@ export const appData = {
         budget: 4,
         travelMode: 'walking',
       },
+      mockItinerary: [
+        { time: '18:00', name: 'Totti\'s', notes: 'Reservation for an amazing meal.' },
+        { time: '19:30', name: 'Ravesis', notes: 'Rooftop drinks with an ocean view.' },
+        { time: '21:00', name: 'Bondi Icebergs', notes: 'Sunset walk and cocktails at the pool.' }
+      ],
       curatedMessage: 'All good, you\'re booked in for a cheeky cocktail at Rum Diaries, then jump over to Totti\'s for some delicious Italian food. Finish the night at Icebergs with some wicked cocktails. You\'ve Got This!'
     },
     {
       id: 'mmd5',
       title: 'Girls\' Night Out - Bondi',
       description: 'Margaritas & shared tapas',
-      request: {
+       request: {
         vibe: 'A fun and energetic girls\' night out. We want to start with margaritas and shared tapas, move to a stylish rooftop bar for more cocktails, and end the night dancing at a place with great energy and music.',
         pace: 4,
         budget: 3,
         travelMode: 'uber',
       },
+      mockItinerary: [
+        { time: '18:00', name: 'Lulu', notes: 'Margaritas and shared tapas.' },
+        { time: '20:00', name: 'Ravesis', notes: 'Skyline cocktails on the rooftop.' },
+        { time: '22:00', name: 'Bondi Vibes Bar', notes: 'Dancing & good energy.' }
+      ],
       curatedMessage: 'Your girls\' night out is all set! Start with margaritas at Lulu, then hit the rooftop at Ravesis for cocktails. Finish the night dancing at Bondi Vibes Bar. Have a blast!'
     },
     {
@@ -222,6 +247,11 @@ export const appData = {
         budget: 4,
         travelMode: 'walking',
       },
+      mockItinerary: [
+        { time: '12:00', name: 'Raw Bar', notes: 'Ricotta hotcakes & spritz.' },
+        { time: '13:30', name: 'Totti\'s', notes: 'Window shopping & try-ons.' },
+        { time: '15:00', name: 'Sushi-e', notes: 'Champagne & oysters.' }
+      ],
       curatedMessage: 'Lunch plans are sorted! You\'re all set for ricotta hotcakes and spritz at Raw Bar, then head over to Totti\'s for a window shop. Finish your afternoon with champagne and oysters at Sushi-e. Enjoy!'
     },
     {
@@ -234,6 +264,10 @@ export const appData = {
         budget: 2,
         travelMode: 'walking',
       },
+      mockItinerary: [
+        { time: '13:30', name: 'Raw Bar', notes: 'Healthy and fresh lunch.' },
+        { time: '14:30', name: 'Beach Burrito Company', notes: 'A quick taco.' }
+      ],
       curatedMessage: 'Your quick lunch is sorted! Head to Raw Bar for a fresh meal, or grab a quick taco at Beach Burrito Company. Enjoy!'
     }
   ],
@@ -248,6 +282,11 @@ export const appData = {
         budget: 4,
         travelMode: 'walking',
       },
+      mockItinerary: [
+        { time: '11:00', name: 'Harry\'s Bondi', notes: 'Ricotta hotcakes for everyone.' },
+        { time: '13:00', name: 'The Rum Diary Bar', notes: 'Cocktail masterclass for the crew.' },
+        { time: '15:00', name: 'Ravesis', notes: 'Rooftop drinks to finish the day.' }
+      ],
       curatedMessage: 'Your birthday brunch is set! Start with hotcakes at Harry\'s, then a cocktail masterclass at The Rum Diary Bar, and finish with rooftop drinks at Ravesis. Happy birthday!'
     },
     {
@@ -260,6 +299,11 @@ export const appData = {
         budget: 5,
         travelMode: 'uber',
       },
+      mockItinerary: [
+        { time: '18:00', name: 'Chiswick', notes: 'Dinner reservation for the whole team.' },
+        { time: '20:30', name: 'Bondi Vibes Bar', notes: 'Live music and great vibes.' },
+        { time: '22:00', name: 'The Bucket List', notes: 'Nightcap on the beach.' }
+      ],
       curatedMessage: 'Your staff party is on! Start with an elegant dinner at Chiswick, then head to Bondi Vibes Bar for some live music, and finish the night with a nightcap at The Bucket List. Time to celebrate!'
     },
     {
@@ -272,6 +316,11 @@ export const appData = {
         budget: 3,
         travelMode: 'walking',
       },
+      mockItinerary: [
+        { time: '12:00', name: 'North Bondi Fish', notes: 'Light lunch with a stunning view.' },
+        { time: '14:00', name: 'Speedo\'s Cafe', notes: 'Coffee and cake to celebrate.' },
+        { time: '16:00', name: 'Bondi Icebergs', notes: 'Photo op by the pool.' }
+      ],
       curatedMessage: 'Your baby shower is all set! Start with a light lunch at North Bondi Fish, then coffee and cake at Speedo\'s Cafe, and finish with a photo op at Bondi Icebergs. Congratulations!'
     },
   ],

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useTransition, useEffect } from 'react';
@@ -76,6 +75,7 @@ const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle, 
   };
 
   const getItemType = (item) => {
+    if (!item?.location) return 'Restaurants';
     const venue = appData.map.pins.find(p => p.name === item.location);
     return venue?.type || 'Restaurants';
   }
@@ -170,17 +170,23 @@ export function MapMyDay() {
     const handleSelectVibe = (option) => {
         setError(null);
         setCurrentVibe(option);
-        setView('itinerary');
+
+        // Directly use mockItinerary to build the initial state
+        const initialStops = option.mockItinerary.map(s => ({
+            time: s.time,
+            title: s.name,
+            location: s.name,
+            description: s.notes,
+            isHeld: false,
+            id: s.name + Date.now() + Math.random(),
+        }));
         
-        startTransition(async () => {
-            const response = await generateItinerary(option.request);
-             if (response.error) {
-                setError(response.error);
-            } else if (response.success) {
-                const initialStops = response.success.stops.map(s => ({...s, isHeld: false, id: s.location + Date.now() + Math.random()}));
-                setItinerary({...response.success, stops: initialStops});
-            }
+        setItinerary({
+            title: option.title,
+            stops: initialStops,
         });
+
+        setView('itinerary');
     };
 
     const handleBackToSelection = () => {
@@ -218,12 +224,15 @@ export function MapMyDay() {
             const nonHeldStopsCount = itinerary.stops.filter(stop => !stop.isHeld).length;
     
             if (nonHeldStopsCount === 0) {
+                // If all stops are held, no need to shuffle
                 return;
             }
     
             const request: ItineraryRequest = {
-                ...currentVibe.request,
                 vibe: currentVibe.title,
+                pace: currentVibe.request?.pace || 3,
+                budget: currentVibe.request?.budget || 3,
+                travelMode: currentVibe.request?.travelMode || 'walking',
                 heldStops: heldStops.map(({ id, isHeld, ...rest }) => rest),
                 numberOfNewStops: nonHeldStopsCount,
             };
@@ -235,15 +244,17 @@ export function MapMyDay() {
                     .filter(aiStop => !heldStops.some(heldStop => heldStop.location === aiStop.location))
                     .map(s => ({...s, isHeld: false, id: s.location + Date.now() + Math.random()}));
 
+                // Combine held stops with new stops
                 const finalStops = [...heldStops, ...newStopsFromAI.slice(0, nonHeldStopsCount)];
                 
+                // Sort by time to maintain a logical flow
                 finalStops.sort((a, b) => {
                     const timeA = parseInt(a.time.replace(':', ''));
                     const timeB = parseInt(b.time.replace(':', ''));
                     return timeA - timeB;
                 });
 
-                setItinerary({ ...response.success, stops: finalStops });
+                setItinerary({ ...itinerary, title: response.success.title, stops: finalStops });
             } else {
                 setError(response.error || "Sorry, I couldn't shuffle the itinerary right now.");
             }
@@ -275,6 +286,7 @@ export function MapMyDay() {
                 isPending={isPending}
             />;
         }
+        // This loader is for the transition, not initial load
         return (
              <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-20">
                 <Loader2 className="h-10 w-10 animate-spin text-primary" />
@@ -308,7 +320,11 @@ export function MapMyDay() {
                     <p className="text-destructive text-center mb-4">{error}</p>
                     <Button onClick={() => {
                         setError(null);
-                        handleBackToSelection();
+                        if (itinerary) {
+                            // just hide error and let them try again
+                        } else {
+                           handleBackToSelection();
+                        }
                     }}>Try again</Button>
                 </motion.div>
             )}
