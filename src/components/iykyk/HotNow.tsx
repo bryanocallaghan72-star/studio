@@ -11,7 +11,7 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 const hotItems = [
     {
         title: "Happy Hour Finale",
-        description: "50% off all cocktails at The Beachcomber Bar. The perfect way to kick off the night!",
+        description: "50% off all cocktails at The Bucket List. The perfect way to kick off the night!",
         imageId: "deal-1",
         endsIn: 30 * 60 * 1000, // 30 minutes
     },
@@ -23,13 +23,13 @@ const hotItems = [
     },
     {
         title: "End of Day Cleanse",
-        description: "2-for-1 on all cold-pressed juices at The Juice Bar. Last hour of trading!",
+        description: "2-for-1 on all cold-pressed juices at Acai Brothers. Last hour of trading!",
         imageId: "morning-2",
         endsIn: 1 * 60 * 60 * 1000, // 1 hour
     },
     {
         title: "Live Set Just Started!",
-        description: "First drink on us for the next 90 mins at The Bucket List. Don't miss out!",
+        description: "First drink on us for the next 90 mins at Ravesis. Don't miss out!",
         imageId: "hot-1",
         endsIn: 90 * 60 * 1000, // 90 minutes
     }
