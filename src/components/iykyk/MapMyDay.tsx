@@ -219,25 +219,15 @@ export function MapMyDay() {
         if (!itinerary) return;
     
         startTransition(() => {
-            const heldStops = itinerary.stops.filter(s => s.isHeld);
-            const nonHeldStops = itinerary.stops.filter(s => !s.isHeld);
+            const shuffledStops = [...itinerary.stops];
     
-            // Simple Fisher-Yates shuffle on the non-held stops
-            for (let i = nonHeldStops.length - 1; i > 0; i--) {
+            // Simple Fisher-Yates shuffle
+            for (let i = shuffledStops.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [nonHeldStops[i], nonHeldStops[j]] = [nonHeldStops[j], nonHeldStops[i]];
+                [shuffledStops[i], shuffledStops[j]] = [shuffledStops[j], shuffledStops[i]];
             }
-    
-            const finalStops = [...heldStops, ...nonHeldStops];
             
-            // Re-sort the entire list by time to maintain a logical flow
-            finalStops.sort((a, b) => {
-                const timeA = parseInt(a.time.replace(':', ''), 10);
-                const timeB = parseInt(b.time.replace(':', ''), 10);
-                return timeA - timeB;
-            });
-
-            setItinerary({ ...itinerary, stops: finalStops });
+            setItinerary({ ...itinerary, stops: shuffledStops });
         });
     };
 
@@ -339,6 +329,8 @@ export function MapMyDay() {
         </Card>
     );
 }
+    
+
     
 
     
