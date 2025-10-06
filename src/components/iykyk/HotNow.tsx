@@ -9,6 +9,8 @@ import { Flame, Ticket } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { QRCodeDialog } from './QRCodeDialog';
+import { appData } from '@/lib/data';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 const hotItems = [
     {
@@ -17,6 +19,7 @@ const hotItems = [
         description: "50% off all cocktails.",
         imageId: "deal-1",
         endsIn: 50 * 60 * 1000, // 50 minutes
+        creatorId: "shannon",
     },
     {
         title: "Sunset Special",
@@ -38,6 +41,7 @@ const hotItems = [
         description: "$12 Aperol Spritz for the first hour.",
         imageId: "hot-1",
         endsIn: 60 * 60 * 1000, // 60 minutes
+        creatorId: "alice",
     }
 ];
 
@@ -102,6 +106,7 @@ export function HotNow() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {hotItems.map(item => {
                         const image = PlaceHolderImages.find(img => img.id === item.imageId);
+                        const creator = item.creatorId ? appData.creators.find(c => c.id === item.creatorId) : null;
                         return (
                             <Card key={item.title} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-primary">
                                 {image && (
@@ -118,10 +123,21 @@ export function HotNow() {
                                 )}
                                 <CardContent className="relative z-10 flex flex-col justify-end h-full p-6 text-white min-h-[300px]">
                                     <div>
-                                        <Badge variant="destructive" className="flex items-center gap-2 mb-2 w-min whitespace-nowrap">
-                                            <Flame className="h-4 w-4" />
-                                            <span>HOT</span>
-                                        </Badge>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <Badge variant="destructive" className="flex items-center gap-2 w-min whitespace-nowrap">
+                                                <Flame className="h-4 w-4" />
+                                                <span>HOT</span>
+                                            </Badge>
+                                            {creator && (
+                                                <div className='flex items-center gap-2 text-xs font-semibold bg-black/30 backdrop-blur-sm p-1 rounded-full'>
+                                                    <Avatar className="h-6 w-6">
+                                                        <AvatarImage src={creator.avatar} alt={creator.name} />
+                                                        <AvatarFallback>{creator.name.charAt(0)}</AvatarFallback>
+                                                    </Avatar>
+                                                    <span>@{creator.id}'s pick</span>
+                                                </div>
+                                            )}
+                                        </div>
                                         <h3 className="text-2xl font-bold leading-tight">{item.title}</h3>
                                         <p className="text-white/90 mt-1">{item.description} at <span className="font-semibold">{item.venue}</span></p>
                                     </div>
