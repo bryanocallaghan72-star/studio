@@ -67,11 +67,11 @@ const ReelPlayer = ({ reel }: { reel: (typeof reelsData)[0] }) => {
                     data-ai-hint={image.imageHint}
                 />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
             
-            <div className="absolute bottom-0 left-0 p-4 text-white w-full">
-                <div className="flex items-center gap-2 mb-2">
-                     <Avatar className="h-9 w-9 border-2 border-white">
+            <div className="absolute bottom-20 left-0 p-4 text-white w-full">
+                <div className="flex items-center gap-3 mb-2">
+                     <Avatar className="h-10 w-10 border-2 border-white">
                         <AvatarImage src={reel.creator.avatar} />
                         <AvatarFallback>{reel.creator.name.charAt(0)}</AvatarFallback>
                     </Avatar>
@@ -80,7 +80,7 @@ const ReelPlayer = ({ reel }: { reel: (typeof reelsData)[0] }) => {
                 <p className="text-sm">{reel.description}</p>
             </div>
 
-            <div className="absolute bottom-20 right-2 flex flex-col items-center gap-4 text-white">
+            <div className="absolute bottom-24 right-2 flex flex-col items-center gap-5 text-white">
                 <Button variant="ghost" size="icon" className="h-auto p-0 flex flex-col items-center hover:bg-transparent text-white hover:text-white">
                     <Heart className="h-8 w-8"/>
                     <span className="text-xs font-semibold">{reel.likes}</span>
@@ -103,7 +103,7 @@ const ReelPlayer = ({ reel }: { reel: (typeof reelsData)[0] }) => {
 
 export function Reels() {
     return (
-        <div className="relative h-screen w-full overflow-y-scroll snap-y snap-mandatory">
+        <div className="relative h-[calc(100vh-4rem)] w-full overflow-y-auto snap-y snap-mandatory scrollbar-hide">
             {reelsData.map((reel) => (
                 <ReelPlayer key={reel.id} reel={reel} />
             ))}
