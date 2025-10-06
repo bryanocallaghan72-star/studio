@@ -9,7 +9,7 @@ const navItems = [
   { href: "/feed", icon: Home, label: "Feed" },
   { href: "/reels", icon: PlaySquare, label: "Reels" },
   { href: "/", icon: Compass, label: "iykyk" },
-  { href: "/community-connector", icon: Users, label: "Community" },
+  { href: "/community", icon: Users, label: "Community" },
   { href: "/fire", icon: Flame, label: "Fire" },
   { href: "#", icon: User, label: "Profile" },
 ];

@@ -42,14 +42,6 @@ const features = [
     color: "text-accent",
     imageId: "deal-1"
   },
-  {
-    href: "/my-day",
-    icon: Calendar,
-    title: "iykyk My Day",
-    description: "Curated daily itinerary that you can shuffle like a playlist.",
-    color: "text-primary",
-    imageId: "my-day-1"
-  },
 ];
 
 export default function Home() {
@@ -101,6 +93,20 @@ export default function Home() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <Card className="group h-full flex flex-col">
+              <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
+                <div className="rounded-full bg-primary/10 p-3">
+                  <Calendar className={`h-6 w-6 text-primary`} />
+                </div>
+                <CardTitle className="text-xl">iykyk My Day</CardTitle>
+              </CardHeader>
+              <CardContent className="flex-grow flex flex-col">
+                <p className="text-muted-foreground flex-grow">Curated daily itinerary that you can shuffle like a playlist.</p>
+                <Link href="/my-day" className="mt-4">
+                    <Button variant="secondary" className="w-full">Plan My Day</Button>
+                </Link>
+              </CardContent>
+            </Card>
             <Card className="group h-full flex flex-col">
               <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
                 <div className="rounded-full bg-primary/10 p-3">
@@ -113,7 +119,9 @@ export default function Home() {
                 <SurpriseMe />
               </CardContent>
             </Card>
-            <Card className="group h-full flex flex-col">
+        </div>
+         <div className="grid grid-cols-1">
+             <Card className="group h-full flex flex-col">
               <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
                 <div className="rounded-full bg-primary/10 p-3">
                   <Users className={`h-6 w-6 text-primary`} />
@@ -128,6 +136,7 @@ export default function Home() {
               </CardContent>
             </Card>
         </div>
+
 
       </main>
       <MobileNav />
