@@ -72,6 +72,14 @@ const Post = ({ item }: { item: (typeof feedItems)[0] }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [comment, setComment] = useState("");
 
+  const handlePostComment = () => {
+    if (comment.trim()) {
+        console.log("Posting comment:", comment);
+        // Here you would typically handle the comment submission
+        setComment("");
+    }
+  };
+
   return (
     <Card className="w-full max-w-lg mx-auto rounded-none border-x-0 border-t-0 sm:rounded-lg sm:border">
       <CardContent className="p-0">
@@ -147,8 +155,9 @@ const Post = ({ item }: { item: (typeof feedItems)[0] }) => {
                 className="h-8 text-xs bg-transparent border-0 border-b rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handlePostComment()}
             />
-             {comment && <Button variant="ghost" size="sm" className="text-xs text-primary">Post</Button>}
+             {comment && <Button variant="ghost" size="sm" className="text-xs text-primary" onClick={handlePostComment}>Post</Button>}
           </div>
         </div>
       </CardContent>
