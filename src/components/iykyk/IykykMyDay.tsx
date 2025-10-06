@@ -12,6 +12,7 @@ import Image from 'next/image';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '../ui/input';
 import { appData } from '@/lib/data';
+import { generateItinerary as generateItineraryAction } from '@/app/actions';
 
 
 const EventAndItinerarySelectionPage = ({ onSelectVibe }) => {
@@ -226,24 +227,47 @@ export function IykykMyDay() {
         );
         setItinerary({ ...itinerary, stops: newStops });
     };
-
+    
     const handleShuffle = () => {
         if (!itinerary) return;
-    
-        startTransition(() => {
-            const heldStops = itinerary.stops.filter(s => s.isHeld);
-            let nonHeldStops = itinerary.stops.filter(s => !s.isHeld);
-    
-            // Fisher-Yates shuffle algorithm
-            for (let i = nonHeldStops.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [nonHeldStops[i], nonHeldStops[j]] = [nonHeldStops[j], nonHeldStops[i]];
-            }
+
+        const heldStops = itinerary.stops.filter(s => s.isHeld);
+        const nonHeldStops = itinerary.stops.filter(s => !s.isHeld);
+
+        startTransition(async () => {
+            const request: ItineraryRequest = {
+                vibe: currentVibe?.request?.vibe || 'A fun day in Bondi',
+                pace: currentVibe?.request?.pace || 3,
+                budget: currentVibe?.request?.budget || 3,
+                travelMode: currentVibe?.request?.travelMode || 'walking',
+                numberOfNewStops: nonHeldStops.length,
+                heldStops: heldStops.map(({ id, ...rest }) => rest), // Omit client-side ID
+            };
             
-            // Recombine and update state
-            setItinerary({ ...itinerary, stops: [...heldStops, ...nonHeldStops] });
+            setError(null);
+            const result = await generateItineraryAction(request);
+
+            if (result.error) {
+                setError(result.error);
+            } else if (result.success) {
+                const newStops = result.success.stops
+                    .filter(newStop => !heldStops.some(held => held.location === newStop.location))
+                    .map((s, index) => ({ ...s, isHeld: false, id: `new-${s.location}-${index}-${Date.now()}` }));
+
+                const finalStops = [...heldStops, ...newStops.slice(0, nonHeldStops.length)];
+                
+                // Sort stops by time
+                finalStops.sort((a, b) => {
+                    const timeA = new Date(`1970-01-01T${a.time.replace(' ', '')}`);
+                    const timeB = new Date(`1970-01-01T${b.time.replace(' ', '')}`);
+                    return timeA.getTime() - timeB.getTime();
+                });
+                
+                setItinerary({ ...itinerary, stops: finalStops });
+            }
         });
     };
+
 
     const handleStartPlan = (finalItinerary: Itinerary) => {
         setItinerary(finalItinerary);
