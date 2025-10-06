@@ -228,11 +228,11 @@ export function MapMyDay() {
             
             const response = await generateItinerary(request);
             if (response.success) {
-                const newStopsWithHoldState = response.success.stops.map(newStop => {
-                  const isHeld = heldStops.some(heldStop => heldStop.location === newStop.location && heldStop.title === newStop.title);
-                  return { ...newStop, isHeld };
-                });
-                setItinerary({ ...response.success, stops: newStopsWithHoldState });
+                const newStops = response.success.stops.filter(
+                    (newStop) => !heldStops.some((heldStop) => heldStop.location === newStop.location)
+                );
+                const combinedStops = [...heldStops, ...newStops].map(s => ({...s, isHeld: heldStops.some(hs => hs.location === s.location)}));
+                setItinerary({ ...response.success, stops: combinedStops });
             } else {
                 setError(response.error || "Sorry, I couldn't shuffle the itinerary right now.");
             }
