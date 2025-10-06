@@ -34,7 +34,7 @@ Do NOT modify the held stops.
 
 You MUST generate exactly {{numberOfNewStops}} new, different, and surprising stop(s) to replace the unlocked ones.
 The new stops must NOT be the same as any of the held stops.
-The final plan must contain BOTH the held stops and the new stops, for a total of 3 or 4 stops. Ensure the combined itinerary flows logically.
+The final plan must contain BOTH the held stops and the new stops, for a total of 3 or 4 stops. Ensure the combined itinerary flows logically and the new stops fit naturally with the held ones.
 {{else}}
 Generate a complete itinerary object with 3 to 4 stops based on this request.
 {{/if}}

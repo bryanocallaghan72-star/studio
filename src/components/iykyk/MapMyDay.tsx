@@ -123,8 +123,7 @@ const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle, 
       <div className="mt-auto flex space-x-4 pt-4 sticky bottom-0 bg-background py-4">
         <Button className="flex-grow h-14 font-bold text-lg shadow-2xl" onClick={() => onStartPlan(itineraryData)}>Start Plan</Button>
         <Button variant="outline" className="flex-grow h-14 font-bold text-lg shadow-2xl bg-card" onClick={onShuffle} disabled={isPending}>
-          {isPending ? <Loader2 className="animate-spin mr-2"/> : null}
-          Shuffle
+          {isPending ? <Loader2 className="animate-spin mr-2"/> : 'Shuffle'}
         </Button>
       </div>
 
@@ -170,10 +169,10 @@ export function MapMyDay() {
 
     const handleSelectVibe = (option) => {
         setError(null);
-        setItinerary(null);
         setCurrentVibe(option);
         setView('itinerary');
-
+        
+        // Load initial itinerary from mock data
         startTransition(async () => {
             const response = await generateItinerary(option.request);
              if (response.error) {
@@ -217,10 +216,9 @@ export function MapMyDay() {
     
         startTransition(async () => {
             const heldStops = itinerary.stops.filter(stop => stop.isHeld);
-            const nonHeldStops = itinerary.stops.filter(stop => !stop.isHeld);
-            const numberOfNewStops = nonHeldStops.length;
+            const nonHeldStopsCount = itinerary.stops.filter(stop => !stop.isHeld).length;
     
-            if (numberOfNewStops === 0) {
+            if (nonHeldStopsCount === 0) {
                 // Everything is held, so no need to call the AI.
                 return;
             }
@@ -229,21 +227,25 @@ export function MapMyDay() {
                 ...currentVibe.request,
                 vibe: currentVibe.title,
                 heldStops: heldStops.map(({ id, isHeld, ...rest }) => rest),
-                numberOfNewStops,
+                numberOfNewStops: nonHeldStopsCount,
             };
             
             const response = await generateItinerary(request);
     
             if (response.success) {
-                // We only care about the new stops from the AI. The AI might return held stops too.
-                // We'll filter the AI response to get only stops that are NOT in our heldStops list.
                 const newStopsFromAI = response.success.stops
                     .filter(aiStop => !heldStops.some(heldStop => heldStop.location === aiStop.location))
                     .map(s => ({...s, isHeld: false, id: s.location + Date.now() + Math.random()}));
 
-                // Combine the original held stops with the new unique stops from the AI.
-                const finalStops = [...heldStops, ...newStopsFromAI.slice(0, numberOfNewStops)];
+                const finalStops = [...heldStops, ...newStopsFromAI.slice(0, nonHeldStopsCount)];
                 
+                // Reorder to match original itinerary's time if possible, or just append
+                finalStops.sort((a, b) => {
+                    const timeA = parseInt(a.time.replace(':', ''));
+                    const timeB = parseInt(b.time.replace(':', ''));
+                    return timeA - timeB;
+                });
+
                 setItinerary({ ...response.success, stops: finalStops });
             } else {
                 setError(response.error || "Sorry, I couldn't shuffle the itinerary right now.");
@@ -276,15 +278,20 @@ export function MapMyDay() {
                 isPending={isPending}
             />;
         }
-        return null; // or a placeholder/loading state if needed while itinerary is being fetched
+        // This is the loading state while waiting for the initial itinerary
+        return (
+             <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-20">
+                <Loader2 className="h-10 w-10 animate-spin text-primary" />
+             </div>
+        );
     }
 
     return (
         <Card className="w-full flex flex-col min-h-[40rem] overflow-hidden bg-transparent border-none shadow-none relative">
             <AnimatePresence mode="wait">
-                {isPending && !itinerary && (
+                {isPending && view === 'itinerary' && (
                     <motion.div
-                        key="loader"
+                        key="loader-shuffle"
                         className="absolute inset-0 flex items-center justify-center bg-background/80 z-20"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -327,7 +334,7 @@ export function MapMyDay() {
                     </DialogHeader>
                     {itinerary && (
                          <div className="space-y-4 py-4 text-center">
-                            {itinerary.stops.map((stop, index) => (
+                            {itinerary.stops.sort((a, b) => parseInt(a.time.replace(':', '')) - parseInt(b.time.replace(':', ''))).map((stop, index) => (
                                 <div key={index} className="flex items-center justify-center gap-4">
                                     <div className="text-lg font-bold text-primary">{stop.time}</div>
                                     <div className="font-semibold">{stop.location}</div>
