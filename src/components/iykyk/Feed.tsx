@@ -13,7 +13,7 @@ import {
   Send,
 } from "lucide-react";
 import Image from "next/image";
-import { CommentSheet } from "./CommentSheet";
+import { CommentSheet, type Comment } from "./CommentSheet";
 import { appData } from "@/lib/data";
 
 
@@ -21,7 +21,16 @@ const Post = ({ item }: { item: (typeof appData.feedItems)[0] }) => {
   const image = PlaceHolderImages.find((img) => img.id === item.imageId);
   const [isLiked, setIsLiked] = useState(false);
   const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
+  
+  const [localComments, setLocalComments] = useState<Comment[]>(item.commentData);
+  const [commentCount, setCommentCount] = useState(item.comments);
+
   const likeCount = isLiked ? item.likes + 1 : item.likes;
+
+  const handlePostComment = (commentText: string) => {
+    setLocalComments([...localComments, { author: "You", text: commentText }]);
+    setCommentCount(prev => prev + 1);
+  };
 
   return (
     <>
@@ -86,17 +95,20 @@ const Post = ({ item }: { item: (typeof appData.feedItems)[0] }) => {
             <p className="text-sm font-semibold">
                 {likeCount.toLocaleString()} likes
             </p>
-            <button className="text-sm text-muted-foreground" onClick={() => setIsCommentSheetOpen(true)}>
-                View all {item.comments} comments
-            </button>
+            {commentCount > 0 && (
+                <button className="text-sm text-muted-foreground" onClick={() => setIsCommentSheetOpen(true)}>
+                    View all {commentCount} comments
+                </button>
+            )}
           </div>
         </CardContent>
       </Card>
       <CommentSheet
         isOpen={isCommentSheetOpen}
         onOpenChange={setIsCommentSheetOpen}
-        comments={item.commentData}
-        commentCount={item.comments}
+        comments={localComments}
+        commentCount={commentCount}
+        onPostComment={handlePostComment}
       />
     </>
   );
