@@ -4,7 +4,7 @@
 import { useState, useTransition, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, ArrowLeft, CheckCircle2, Sparkles, Search } from "lucide-react";
+import { Loader2, ArrowLeft, CheckCircle2, Sparkles, Search, Lock, LockOpen } from "lucide-react";
 import { generateItinerary } from '@/app/actions';
 import { Itinerary, ItineraryRequest, ItineraryStop } from '@/ai/schemas';
 import { AnimatePresence, motion } from "framer-motion";
@@ -36,7 +36,7 @@ const EventAndItinerarySelectionPage = ({ onSelectVibe }) => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {activeTab === 'solo' ? (appData.mapMyDayOptions.map(option => (
-            <Card key={option.id} className="rounded-2xl p-6 shadow-xl flex flex-col items-center justify-between text-center">
+            <Card key={option.id} className="rounded-2xl p-6 shadow-xl flex flex-col items-center justify-between text-center transition-all hover:shadow-2xl hover:-translate-y-1">
                 <CardHeader className="p-0">
                     <CardTitle className="text-lg font-bold">{option.title}</CardTitle>
                     <CardDescription className="text-sm mt-1">{option.description}</CardDescription>
@@ -46,7 +46,7 @@ const EventAndItinerarySelectionPage = ({ onSelectVibe }) => {
                 </CardContent>
             </Card>
         ))) : (appData.groupEventsOptions.map(option => (
-            <Card key={option.id} className="rounded-2xl p-6 shadow-xl flex flex-col items-center justify-between text-center">
+            <Card key={option.id} className="rounded-2xl p-6 shadow-xl flex flex-col items-center justify-between text-center transition-all hover:shadow-2xl hover:-translate-y-1">
                 <CardHeader className="p-0">
                     <CardTitle className="text-lg font-bold">{option.title}</CardTitle>
                     <CardDescription className="text-sm mt-1">{option.description}</CardDescription>
@@ -102,10 +102,11 @@ const MapMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle, 
       
       <div className="flex-grow space-y-4 pt-4">
         {itineraryData.stops.map((stop, index) => {
+            const HoldIcon = stop.isHeld ? Lock : LockOpen;
             return (
-            <Card key={`${stop.location}-${index}`} className={`rounded-2xl p-4 shadow-lg flex items-center transition-all duration-300 bg-card ${stop.isHeld ? 'border-2 border-primary' : ''}`}>
-                <Button onClick={() => onToggleHold(stop)} variant="ghost" size="icon" className="flex-shrink-0 mr-4">
-                  <CheckCircle2 size={24} className={stop.isHeld ? 'text-primary fill-primary/20' : 'text-muted-foreground'} />
+            <Card key={`${stop.location}-${index}`} className={`rounded-2xl p-4 shadow-lg flex items-center transition-all duration-300 bg-card ${stop.isHeld ? 'border-2 border-primary' : 'border-transparent'}`}>
+                <Button onClick={() => onToggleHold(stop)} variant="ghost" size="icon" className="flex-shrink-0 mr-4 group">
+                  <HoldIcon size={24} className={stop.isHeld ? 'text-primary' : 'text-muted-foreground group-hover:text-primary transition-colors'} />
                 </Button>
                 <div className="w-16 h-16 bg-primary/20 rounded-xl overflow-hidden flex-shrink-0">
                     <Image src={`https://picsum.photos/seed/${stop.location.replace(/\s+/g, '-')}/64/64`} alt={stop.location} width={64} height={64} className="w-full h-full object-cover" />
@@ -168,15 +169,16 @@ export function MapMyDay() {
         setError(null);
         setItinerary(null);
         setCurrentVibe(option);
+        setView('itinerary');
 
         startTransition(async () => {
             const response = await generateItinerary(option.request);
              if (response.error) {
                 setError(response.error);
             } else if (response.success) {
-                setItinerary({...response.success, stops: response.success.stops.map(s => ({...s, isHeld: false}))});
+                const initialStops = response.success.stops.map(s => ({...s, isHeld: false, id: s.location + Date.now()}));
+                setItinerary({...response.success, stops: initialStops});
             }
-            setView('itinerary');
         });
     };
 
@@ -189,7 +191,7 @@ export function MapMyDay() {
     const handleToggleHold = (stopToToggle: ItineraryStop) => {
         if (!itinerary) return;
         const newStops = itinerary.stops.map(stop => 
-            stop.location === stopToToggle.location 
+            stop.id === stopToToggle.id
                 ? { ...stop, isHeld: !stop.isHeld } 
                 : stop
         );
@@ -199,7 +201,7 @@ export function MapMyDay() {
     const handleSwap = (originalStop: ItineraryStop, newVenue: any) => {
         if (!itinerary) return;
         const newStops = itinerary.stops.map(stop =>
-            stop.location === originalStop.location
+            stop.id === originalStop.id
                 ? { ...stop, title: newVenue.name, location: newVenue.name, description: newVenue.description }
                 : stop
         );
@@ -215,24 +217,27 @@ export function MapMyDay() {
             const numberOfNewStops = itinerary.stops.length - heldStops.length;
 
             if (numberOfNewStops === 0) {
-                // All stops are held, so no need to call the AI
                 return;
             }
 
             const request: ItineraryRequest = {
                 ...currentVibe.request,
-                vibe: currentVibe.title, // Use the original vibe title for context
-                heldStops: heldStops,
+                vibe: currentVibe.title,
+                heldStops: heldStops.map(({ id, ...rest }) => rest), // Remove ID before sending to AI
                 numberOfNewStops: numberOfNewStops,
             };
             
             const response = await generateItinerary(request);
             if (response.success) {
-                const newStops = response.success.stops.filter(
+                // Add new stops, ensuring they don't duplicate held stops
+                 const newStopsFromAI = response.success.stops.filter(
                     (newStop) => !heldStops.some((heldStop) => heldStop.location === newStop.location)
-                );
-                const combinedStops = [...heldStops, ...newStops].map(s => ({...s, isHeld: heldStops.some(hs => hs.location === s.location)}));
-                setItinerary({ ...response.success, stops: combinedStops });
+                ).map(s => ({...s, isHeld: false, id: s.location + Date.now()}));
+
+                // Combine and preserve order if possible, or just append
+                const finalStops = [...heldStops, ...newStopsFromAI];
+                
+                setItinerary({ ...response.success, stops: finalStops });
             } else {
                 setError(response.error || "Sorry, I couldn't shuffle the itinerary right now.");
             }
@@ -249,10 +254,27 @@ export function MapMyDay() {
         return currentVibe.curatedMessage;
     }
 
+    const CurrentPage = () => {
+        if (view === 'selection') {
+            return <EventAndItinerarySelectionPage onSelectVibe={handleSelectVibe} />;
+        }
+        if (itinerary) {
+            return <MapMyDayItineraryPage
+                itineraryData={{...itinerary, description: currentVibe?.description, title: currentVibe?.title}}
+                onStartPlan={handleStartPlan}
+                onBack={handleBackToSelection}
+                onShuffle={handleShuffle}
+                onToggleHold={handleToggleHold}
+                onSwap={handleSwap}
+            />;
+        }
+        return null; // or a placeholder/loading state if needed while itinerary is being fetched
+    }
+
     return (
         <Card className="w-full flex flex-col min-h-[40rem] overflow-hidden bg-transparent border-none shadow-none relative">
             <AnimatePresence mode="wait">
-                {isPending ? (
+                {isPending && (
                     <motion.div
                         key="loader"
                         className="absolute inset-0 flex items-center justify-center bg-background/80 z-20"
@@ -262,40 +284,26 @@ export function MapMyDay() {
                     >
                        <Loader2 className="h-10 w-10 animate-spin text-primary" />
                     </motion.div>
-                ) : error ? (
-                     <motion.div
-                        key="error"
-                        className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 z-20 p-4"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                    >
-                        <p className="text-destructive text-center mb-4">{error}</p>
-                        <Button onClick={() => {
-                            setError(null);
-                            if (itinerary) {
-                                // Don't auto-retry. Let the user decide.
-                            } else {
-                                handleBackToSelection();
-                            }
-                        }}>Try again</Button>
-                    </motion.div>
-                ) : null}
-                
-                {view === 'selection' ? (
-                    <EventAndItinerarySelectionPage
-                        onSelectVibe={handleSelectVibe}
-                    />
-                ) : (
-                    itinerary && <MapMyDayItineraryPage
-                        itineraryData={{...itinerary, description: currentVibe?.description, title: currentVibe?.title}}
-                        onStartPlan={handleStartPlan}
-                        onBack={handleBackToSelection}
-                        onShuffle={handleShuffle}
-                        onToggleHold={handleToggleHold}
-                        onSwap={handleSwap}
-                    />
                 )}
+            </AnimatePresence>
+            {error && (
+                 <motion.div
+                    key="error"
+                    className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 z-20 p-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                >
+                    <p className="text-destructive text-center mb-4">{error}</p>
+                    <Button onClick={() => {
+                        setError(null);
+                        handleBackToSelection();
+                    }}>Try again</Button>
+                </motion.div>
+            )}
+
+            <AnimatePresence mode="wait">
+                <CurrentPage />
             </AnimatePresence>
 
             <Dialog open={isConfirmationOpen} onOpenChange={setConfirmationOpen}>
@@ -325,3 +333,4 @@ export function MapMyDay() {
         </Card>
     );
 }
+

@@ -29,6 +29,7 @@ const ItineraryStopSchema = z.object({
     location: z.string().describe('The specific venue or location for the stop (e.g., "The Grassy Knoll Cafe", "Bondi Beach").'),
     description: z.string().describe('A brief, engaging description of the activity at this stop.'),
     isHeld: z.boolean().optional().describe('Indicates if the user has locked this stop during a shuffle.'),
+    id: z.string().optional().describe('A unique client-side ID for the stop.'),
 });
 export type ItineraryStop = z.infer<typeof ItineraryStopSchema>;
 
@@ -45,6 +46,6 @@ export const ItineraryRequestSchema = z.object({
     travelMode: z.string().optional(),
     // Add fields for shuffle functionality
     numberOfNewStops: z.number().optional().describe('The number of new stops to generate.'),
-    heldStops: z.array(ItineraryStopSchema).optional().describe('An array of stops the user has locked and wants to keep.'),
+    heldStops: z.array(ItineraryStopSchema.omit({ id: true })).optional().describe('An array of stops the user has locked and wants to keep.'),
 });
 export type ItineraryRequest = z.infer<typeof ItineraryRequestSchema>;
