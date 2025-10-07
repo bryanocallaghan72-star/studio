@@ -24,7 +24,7 @@ const features = [
     title: "iykyk Flow",
     description: "Time-of-day rhythm suggestions, from morning to late night.",
     color: "text-primary",
-    imageId: "night-1"
+    imageId: "coffee-1"
   },
   {
     href: "/fire",
@@ -71,18 +71,16 @@ export default function DiscoverPage() {
                                             data-ai-hint={image.imageHint}
                                         />
                                     )}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex flex-col justify-end">
-                                      <CardHeader className="text-white p-4 w-full">
-                                        <div className="flex items-start gap-4">
-                                            <div className="rounded-full bg-white/20 backdrop-blur-sm p-3 border border-white/30">
-                                                <feature.icon className={`h-6 w-6 ${feature.color}`} />
-                                            </div>
-                                            <div>
-                                                <CardTitle className="text-xl text-white">{feature.title}</CardTitle>
-                                                <p className="text-white/90 text-sm mt-1">{feature.description}</p>
-                                            </div>
-                                        </div>
-                                      </CardHeader>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex flex-col justify-end p-4">
+                                      <div className="flex items-center gap-4">
+                                          <div className="rounded-full bg-white/20 backdrop-blur-sm p-3 border border-white/30">
+                                              <feature.icon className={`h-6 w-6 ${feature.color}`} />
+                                          </div>
+                                          <div>
+                                              <CardTitle className="text-xl text-white">{feature.title}</CardTitle>
+                                              <p className="text-white/90 text-sm mt-1">{feature.description}</p>
+                                          </div>
+                                      </div>
                                     </div>
                                 </div>
                             </Card>
