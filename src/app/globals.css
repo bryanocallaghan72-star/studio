@@ -71,48 +71,47 @@
   }
 
   [data-theme="dusk"] {
-    --background: 240 10% 8%; /* Deep Twilight Blue */
-    --foreground: 240 15% 85%;
-    --card: 240 10% 12%;
-    --card-foreground: 240 15% 85%;
-    --popover: 240 10% 12%;
-    --popover-foreground: 240 15% 85%;
-    --primary: 280 80% 70%; /* Vibrant Lavender */
-    --primary-foreground: 280 85% 98%;
-    --secondary: 240 10% 18%;
-    --secondary-foreground: 240 15% 85%;
-    --muted: 240 10% 18%;
-    --muted-foreground: 240 10% 65%;
-    --accent: 30 100% 65%; /* Fiery Orange */
-    --accent-foreground: 30 85% 98%;
-    --destructive: 0 70% 55%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 240 10% 20%;
-    --input: 240 10% 25%;
-    --ring: 280 80% 75%;
+    --background: 222 47% 11%; /* Deep Navy */
+    --foreground: 210 40% 98%; /* White */
+    --card: 222 47% 15%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 45 100% 51%; /* Golden Yellow */
+    --primary-foreground: 222 47% 11%;
+    --secondary: 222 47% 18%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 222 47% 18%;
+    --muted-foreground: 210 40% 60%;
+    --accent: 45 100% 51%; /* Golden Yellow */
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 222 47% 20%;
+    --input: 222 47% 20%;
+    --ring: 45 100% 51%;
   }
 
   .dark {
-    /* Fallback dark theme to match dusk */
-    --background: 240 10% 8%;
-    --foreground: 240 15% 85%;
-    --card: 240 10% 12%;
-    --card-foreground: 240 15% 85%;
-    --popover: 240 10% 12%;
-    --popover-foreground: 240 15% 85%;
-    --primary: 280 80% 70%;
-    --primary-foreground: 280 85% 98%;
-    --secondary: 240 10% 18%;
-    --secondary-foreground: 240 15% 85%;
-    --muted: 240 10% 18%;
-    --muted-foreground: 240 10% 65%;
-    --accent: 30 100% 65%;
-    --accent-foreground: 30 85% 98%;
-    --destructive: 0 70% 55%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 240 10% 20%;
-    --input: 240 10% 25%;
-    --ring: 280 80% 75%;
+    --background: 222 47% 11%; /* Deep Navy */
+    --foreground: 210 40% 98%; /* White */
+    --card: 222 47% 15%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 45 100% 51%; /* Golden Yellow */
+    --primary-foreground: 222 47% 11%;
+    --secondary: 222 47% 18%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 222 47% 18%;
+    --muted-foreground: 210 40% 60%;
+    --accent: 45 100% 51%; /* Golden Yellow */
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 222 47% 20%;
+    --input: 222 47% 20%;
+    --ring: 45 100% 51%;
   }
 }
 
