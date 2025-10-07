@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 const navItems = [
   { href: "/feed", icon: Home, label: "Feed" },
   { href: "/reels", icon: PlaySquare, label: "Reels" },
-  { href: "/", icon: Compass, label: "iykyk" },
+  { href: "/discover", icon: Compass, label: "iykyk" },
   { href: "/community", icon: Users, label: "Community" },
   { href: "/fire", icon: Flame, label: "Fire" },
   { href: "/creator/shannon", icon: User, label: "Profile" },
@@ -16,6 +16,12 @@ const navItems = [
 
 export function MobileNav() {
   const pathname = usePathname();
+  const isLandingPage = pathname === "/";
+
+  if (isLandingPage) {
+    return null;
+  }
+
   return (
     <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-background/80 backdrop-blur-sm border-t">
       <div className="grid h-full max-w-lg grid-cols-6 mx-auto font-medium">
