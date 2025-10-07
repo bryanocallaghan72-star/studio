@@ -26,9 +26,7 @@ export function MobileNav() {
     <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-background/80 backdrop-blur-sm border-t">
       <div className="grid h-full max-w-lg grid-cols-6 mx-auto font-medium">
         {navItems.map((item) => {
-          const isActive =
-            (item.href === "/discover" && pathname.startsWith("/discover")) ||
-            (item.href !== "/" && item.href !== "/discover" && pathname?.startsWith(item.href));
+          const isActive = pathname.startsWith(item.href);
             
           return (
             <Link
