@@ -9,25 +9,26 @@ export const Logo = ({ className }: { className?: string }) => {
       aria-label="iykyk logo"
     >
       <defs>
-        <linearGradient id="iconGradient" x1="0.5" y1="0" x2="0.5" y2="1">
-          <stop offset="0%" stopColor="hsl(var(--primary))" />
-          <stop offset="100%" stopColor="hsl(var(--accent))" />
+        <linearGradient id="iconGradient" x1="0.5" y1="1" x2="0.5" y2="0">
+          <stop offset="0%" stopColor="hsl(var(--accent))" />
+          <stop offset="100%" stopColor="hsl(var(--primary))" />
         </linearGradient>
       </defs>
       
-      {/* Icon Path */}
+      {/* Icon Shape */}
       <path 
-        d="M25 2C12.3 2 2 12.3 2 25s10.3 23 23 23c4.8 0 9.3-1.5 13-4.1.5-.4.9-.8 1.3-1.2-4.2-3.2-7-8.1-7-13.7 0-9.4 7.6-17 17-17 .7 0 1.5.1 2.2.2C47.2 6.4 36.7 2 25 2zm0 10c-3.9 0-7 3.1-7 7s3.1 7 7 7 7-3.1 7-7-3.1-7-7-7z"
+        d="M45.6,25c0,12.5-10.1,22.6-22.6,22.6S0.4,37.5,0.4,25S10.5,2.4,23,2.4c6.1,0,11.6,2.4,15.6,6.3 c-3.9-2.3-8.5-3.6-13.4-3.6C11.6,5.1,3.3,14,3.3,25c0,11,8.3,19.9,19.7,19.9c10.5,0,19.2-8,19.7-18.4H45.6z"
+        transform="translate(0, 0)"
         fill="url(#iconGradient)"
       />
-      <path 
-        d="M25,21c-2.2,0-4-1.8-4-4s1.8-4,4-4s4,1.8,4,4S27.2,21,25,21z"
+       <path
+        d="M23,12.2c-3.9,0-7,3.1-7,7s3.1,7,7,7s7-3.1,7-7S26.9,12.2,23,12.2z"
         fill="white"
       />
 
       {/* Text */}
       <text 
-        x="58" 
+        x="55" 
         y="37" 
         fontFamily="var(--font-poppins), sans-serif"
         fontSize="34" 
