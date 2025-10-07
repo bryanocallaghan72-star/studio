@@ -109,7 +109,7 @@ export default function DiscoverPage() {
             </Card>
             <Card className="group h-full flex flex-col">
               <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
-                <div className="rounded-full bg-primary/10 p-3">
+                <div className="rounded-full bg-accent/10 p-3">
                   <Gift className={`h-6 w-6 text-accent`} />
                 </div>
                 <CardTitle className="text-xl">iykyk Surprise Me</CardTitle>
