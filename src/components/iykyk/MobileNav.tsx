@@ -11,7 +11,7 @@ const navItems = [
   { href: "/", icon: Compass, label: "iykyk" },
   { href: "/community", icon: Users, label: "Community" },
   { href: "/fire", icon: Flame, label: "Fire" },
-  { href: "#", icon: User, label: "Profile" },
+  { href: "/creator/shannon", icon: User, label: "Profile" },
 ];
 
 export function MobileNav() {
