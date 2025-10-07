@@ -1,14 +1,9 @@
-
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { appData } from "@/lib/data";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
-  const router = useRouter();
-
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background text-center p-4">
       <div className="flex flex-col items-center gap-4">
