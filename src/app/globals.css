@@ -4,47 +4,47 @@
 
 @layer base {
   :root, [data-theme="day"] {
-    --background: 210 40% 98%; /* Bright White */
-    --foreground: 215 25% 27%; /* Dark Blue-Gray */
-    --card: 210 40% 100%;
-    --card-foreground: 215 25% 27%;
-    --popover: 210 40% 100%;
-    --popover-foreground: 215 25% 27%;
-    --primary: 34 95% 60%; /* Coral */
-    --primary-foreground: 34 85% 98%;
-    --secondary: 210 30% 94%;
-    --secondary-foreground: 215 25% 27%;
-    --muted: 210 30% 94%;
-    --muted-foreground: 215 15% 55%;
-    --accent: 175 80% 40%; /* Turquoise */
-    --accent-foreground: 175 80% 98%;
+    --background: 210 100% 98%; /* Bright White */
+    --foreground: 205 30% 25%; /* Sandy Blue-Gray */
+    --card: 210 100% 100%;
+    --card-foreground: 205 30% 25%;
+    --popover: 210 100% 100%;
+    --popover-foreground: 205 30% 25%;
+    --primary: 205 90% 55%; /* Crisp Sandy Blue */
+    --primary-foreground: 205 85% 98%;
+    --secondary: 210 60% 96%;
+    --secondary-foreground: 205 30% 25%;
+    --muted: 210 60% 96%;
+    --muted-foreground: 205 15% 55%;
+    --accent: 34 95% 60%; /* Coral Accent */
+    --accent-foreground: 34 85% 98%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 210 20% 88%;
-    --input: 210 20% 92%;
-    --ring: 34 95% 65%;
+    --border: 210 30% 90%;
+    --input: 210 30% 94%;
+    --ring: 205 90% 60%;
     --radius: 0.8rem;
   }
 
   [data-theme="dawn"] {
-    --background: 45 100% 97%; /* Soft Yellow */
+    --background: 50 100% 97%; /* Soft Yellow */
     --foreground: 215 25% 45%;
-    --card: 45 90% 99%;
+    --card: 50 90% 99%;
     --card-foreground: 215 25% 45%;
-    --popover: 45 90% 99%;
+    --popover: 50 90% 99%;
     --popover-foreground: 215 25% 45%;
     --primary: 205 90% 65%; /* Light Blue */
     --primary-foreground: 205 85% 98%;
-    --secondary: 45 50% 94%;
+    --secondary: 50 50% 94%;
     --secondary-foreground: 215 25% 45%;
-    --muted: 45 50% 94%;
+    --muted: 50 50% 94%;
     --muted-foreground: 215 15% 65%;
     --accent: 34 95% 70%; /* Soft Coral */
     --accent-foreground: 34 85% 98%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 45 30% 90%;
-    --input: 45 30% 94%;
+    --border: 50 30% 90%;
+    --input: 50 30% 94%;
     --ring: 205 90% 70%;
   }
 
@@ -71,7 +71,7 @@
   }
 
   [data-theme="dusk"] {
-    --background: 220 40% 10%; /* Deep Blue */
+    --background: 220 40% 10%; /* Deep Blue/Navy */
     --foreground: 220 20% 90%;
     --card: 220 40% 15%;
     --card-foreground: 220 20% 90%;
@@ -93,25 +93,26 @@
   }
 
   .dark {
-    --background: 20 10% 10%; /* Fallback Dark Charcoal */
-    --foreground: 20 5% 90%; /* Fallback Light Cream Text */
-    --card: 20 10% 15%;
-    --card-foreground: 20 5% 90%;
-    --popover: 20 10% 15%;
-    --popover-foreground: 20 5% 90%;
-    --primary: 25 95% 55%; /* Fallback Sun-kissed Orange */
-    --primary-foreground: 25 85% 95%;
-    --secondary: 20 15% 25%;
-    --secondary-foreground: 20 5% 90%;
-    --muted: 20 15% 25%;
-    --muted-foreground: 20 5% 65%;
-    --accent: 180 70% 50%; /* Fallback Brighter Teal for Dark Mode */
-    --accent-foreground: 180 70% 95%;
+    /* Fallback dark theme */
+    --background: 220 40% 10%; /* Deep Blue/Navy */
+    --foreground: 220 20% 90%;
+    --card: 220 40% 15%;
+    --card-foreground: 220 20% 90%;
+    --popover: 220 40% 15%;
+    --popover-foreground: 220 20% 90%;
+    --primary: 34 100% 65%; /* Vibrant Coral (Neon-like) */
+    --primary-foreground: 34 85% 10%;
+    --secondary: 220 30% 20%;
+    --secondary-foreground: 220 20% 90%;
+    --muted: 220 30% 20%;
+    --muted-foreground: 220 10% 65%;
+    --accent: 175 90% 50%; /* Vibrant Turquoise (Neon-like) */
+    --accent-foreground: 175 85% 98%;
     --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 20 15% 30%;
-    --input: 20 15% 35%;
-    --ring: 25 95% 60%;
+    --border: 220 30% 25%;
+    --input: 220 30% 30%;
+    --ring: 34 100% 70%;
   }
 }
 

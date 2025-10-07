@@ -19,7 +19,7 @@ const getThemeByTime = (): Theme => {
 };
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('day'); // Default to 'day'
+  const [theme, setTheme] = useState<Theme | undefined>(undefined); 
 
   useEffect(() => {
     // This effect runs only on the client to avoid hydration mismatch
@@ -28,16 +28,25 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, []);
   
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && theme) {
       const root = window.document.documentElement;
+      
       // Remove all possible theme attributes
-      root.removeAttribute('data-theme');
-      root.classList.remove('dark'); // also remove fallback dark class
+      const themes = ['day', 'dawn', 'golden-hour', 'dusk'];
+      themes.forEach(t => root.removeAttribute(`data-theme`));
+      root.classList.remove('dark');
 
       // Set the new theme
       root.setAttribute('data-theme', theme);
+
+      // If the theme is dusk, also add the .dark class for broader compatibility
+      if (theme === 'dusk') {
+        root.classList.add('dark');
+      }
+
     }
   }, [theme]);
 
+  // Render children immediately but apply theme when client-side logic runs
   return <>{children}</>;
 }
