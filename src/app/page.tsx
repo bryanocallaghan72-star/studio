@@ -8,10 +8,10 @@ export default function LandingPage() {
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background text-center p-4">
       <div className="flex flex-col items-center gap-4">
         <div className="text-center">
-            <h1 className="font-headline text-6xl md:text-8xl font-bold tracking-tighter text-foreground">
+            <h1 className="text-6xl md:text-8xl font-bold tracking-tighter text-foreground">
                 iykyk
             </h1>
-            <p className="font-headline text-2xl md:text-3xl font-semibold tracking-tight text-muted-foreground">Bondi</p>
+            <p className="text-2xl md:text-3xl font-semibold tracking-tight text-muted-foreground">Bondi</p>
         </div>
         <div className="mt-4 max-w-md text-base text-muted-foreground space-y-1">
             <p>Go where the locals go.</p>
