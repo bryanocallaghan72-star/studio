@@ -73,7 +73,7 @@ export default function DiscoverPage() {
                                     )}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex flex-col justify-end p-4">
                                       <div className="flex items-center gap-4">
-                                          <div className="rounded-full bg-white/20 backdrop-blur-sm p-3 border border-white/30">
+                                          <div className="rounded-full bg-background/20 backdrop-blur-sm p-3 border border-white/30">
                                               <feature.icon className={`h-6 w-6 ${feature.color}`} />
                                           </div>
                                           <div>
