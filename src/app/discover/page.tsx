@@ -16,7 +16,7 @@ const features = [
     title: "iykyk Vibe",
     description: "Mood-based map for coffee, sushi, nightlife, and fitness.",
     color: "text-primary",
-    imageId: "bondi-beach",
+    imageId: "bondi-sunset",
   },
   {
     href: "/flow",
