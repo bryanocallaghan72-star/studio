@@ -18,7 +18,7 @@ export default function LandingPage() {
             <p>No reviews. No ads. Just real recommendations.</p>
         </div>
         <Link href="/discover" passHref>
-          <Button size="lg" className="mt-8 rounded-full text-lg font-bold shadow-lg bg-[#38B6FF] hover:bg-[#38B6FF]/90 text-white px-10 py-6">
+          <Button size="lg" className="mt-8 rounded-full text-lg font-bold shadow-lg bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-6">
             Enter Bondi
           </Button>
         </Link>
