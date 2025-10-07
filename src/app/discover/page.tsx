@@ -1,7 +1,7 @@
 
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Sparkles, Map, Calendar, Flame, Ticket, Gift, Users } from "lucide-react";
 import Link from "next/link";
 import { SurpriseMe } from "@/components/iykyk/SurpriseMe";
