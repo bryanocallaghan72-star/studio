@@ -13,7 +13,7 @@ const LandingPage = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 2 }}
       >
-        <div className="absolute inset-0 bg-gradient-to-tr from-accent via-primary to-secondary opacity-30 animate-gradient-xy"></div>
+        <div className="absolute inset-0 bg-gradient-to-tr from-accent via-primary to-secondary opacity-50 animate-gradient-xy"></div>
       </motion.div>
 
       <div className="z-10 flex flex-col items-center gap-4">
