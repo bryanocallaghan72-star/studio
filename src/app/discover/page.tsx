@@ -1,7 +1,7 @@
 
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Sparkles, Map, Calendar, Flame, Ticket, Gift, Users } from "lucide-react";
 import Link from "next/link";
 import { SurpriseMe } from "@/components/iykyk/SurpriseMe";
@@ -16,7 +16,6 @@ const features = [
     title: "iykyk Vibe",
     description: "Mood-based map for coffee, sushi, nightlife, and fitness.",
     color: "text-primary",
-    imageId: "bondi-sunset",
   },
   {
     href: "/flow",
@@ -24,7 +23,6 @@ const features = [
     title: "iykyk Flow",
     description: "Time-of-day rhythm suggestions, from morning to late night.",
     color: "text-primary",
-    imageId: "coffee-1"
   },
   {
     href: "/fire",
@@ -32,7 +30,6 @@ const features = [
     title: "iykyk Fire",
     description: "Real-time “What’s hot right now” with countdowns and FOMO.",
     color: "text-destructive",
-    imageId: "hot-1"
   },
   {
     href: "/deals",
@@ -40,7 +37,6 @@ const features = [
     title: "iykyk Deals",
     description: "Venue-linked offers, perks, and creator-powered funnels.",
     color: "text-accent",
-    imageId: "deal-1"
   },
 ];
 
@@ -55,43 +51,27 @@ export default function DiscoverPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-4">
-            {features.map((feature) => {
-                const image = PlaceHolderImages.find(img => img.id === feature.imageId);
-                return (
-                    <div key={feature.title} className="p-1">
-                        <Link href={feature.href}>
-                            <Card className="group h-full transition-all hover:shadow-xl hover:-translate-y-1 overflow-hidden">
-                                <div className="relative h-48 w-full">
-                                    {image && (
-                                        <Image 
-                                            src={image.imageUrl}
-                                            alt={feature.title}
-                                            fill
-                                            className="object-cover transition-transform group-hover:scale-105"
-                                            data-ai-hint={image.imageHint}
-                                        />
-                                    )}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex flex-col justify-end p-4">
-                                      <div className="flex items-center gap-4">
-                                          <div className="rounded-full bg-background/20 backdrop-blur-sm p-3 border border-white/30">
-                                              <feature.icon className={`h-6 w-6 ${feature.color}`} />
-                                          </div>
-                                          <div>
-                                              <CardTitle className="text-xl text-white">{feature.title}</CardTitle>
-                                              <p className="text-white/90 text-sm mt-1">{feature.description}</p>
-                                          </div>
-                                      </div>
-                                    </div>
+            {features.map((feature) => (
+                <div key={feature.title} className="p-1">
+                    <Link href={feature.href}>
+                        <Card className="group h-full transition-all hover:shadow-xl hover:-translate-y-1 bg-card/50">
+                            <CardHeader className="flex flex-row items-center gap-4 space-y-0">
+                                <div className="rounded-full bg-background/20 backdrop-blur-sm p-3 border border-white/10">
+                                    <feature.icon className={`h-6 w-6 ${feature.color}`} />
                                 </div>
-                            </Card>
-                        </Link>
-                    </div>
-                )
-            })}
+                                <div>
+                                    <CardTitle className="text-lg text-foreground">{feature.title}</CardTitle>
+                                    <CardDescription className="text-muted-foreground">{feature.description}</CardDescription>
+                                </div>
+                            </CardHeader>
+                        </Card>
+                    </Link>
+                </div>
+            ))}
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-             <Card className="group h-full flex flex-col">
+             <Card className="group h-full flex flex-col bg-card/50">
               <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
                 <div className="rounded-full bg-primary/10 p-3">
                   <Calendar className={`h-6 w-6 text-primary`} />
@@ -105,7 +85,7 @@ export default function DiscoverPage() {
                 </Link>
               </CardContent>
             </Card>
-            <Card className="group h-full flex flex-col">
+            <Card className="group h-full flex flex-col bg-card/50">
               <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
                 <div className="rounded-full bg-accent/10 p-3">
                   <Gift className={`h-6 w-6 text-accent`} />
@@ -119,7 +99,7 @@ export default function DiscoverPage() {
             </Card>
         </div>
          <div className="grid grid-cols-1">
-             <Card className="group h-full flex flex-col">
+             <Card className="group h-full flex flex-col bg-card/50">
               <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
                 <div className="rounded-full bg-primary/10 p-3">
                   <Users className={`h-6 w-6 text-primary`} />
