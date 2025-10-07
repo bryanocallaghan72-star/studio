@@ -229,7 +229,7 @@ export function IykykMyDay() {
     };
     
     const handleShuffle = () => {
-        if (!itinerary) return;
+        if (!itinerary || !currentVibe) return;
 
         const heldStops = itinerary.stops.filter(s => s.isHeld);
         const nonHeldStops = itinerary.stops.filter(s => !s.isHeld);
@@ -241,7 +241,7 @@ export function IykykMyDay() {
                 budget: currentVibe?.request?.budget || 3,
                 travelMode: currentVibe?.request?.travelMode || 'walking',
                 numberOfNewStops: nonHeldStops.length,
-                heldStops: heldStops.map(({ id, ...rest }) => rest), // Omit client-side ID
+                heldStops: heldStops.map(({ id, isHeld, ...rest }) => rest), // Omit client-side fields
             };
             
             setError(null);
@@ -250,20 +250,23 @@ export function IykykMyDay() {
             if (result.error) {
                 setError(result.error);
             } else if (result.success) {
-                const newStops = result.success.stops
-                    .filter(newStop => !heldStops.some(held => held.location === newStop.location))
-                    .map((s, index) => ({ ...s, isHeld: false, id: `new-${s.location}-${index}-${Date.now()}` }));
+                const newStops = result.success.stops.map((s, index) => ({ 
+                    ...s, 
+                    isHeld: false, 
+                    id: `new-${s.location}-${index}-${Date.now()}` 
+                }));
 
-                const finalStops = [...heldStops, ...newStops.slice(0, nonHeldStops.length)];
+                // Combine held stops with the newly generated ones
+                const finalStops = [...heldStops, ...newStops];
                 
-                // Sort stops by time
+                // Sort stops by time (e.g., "9:00 AM", "1:00 PM", "9:00 PM")
                 finalStops.sort((a, b) => {
-                    const timeA = new Date(`1970-01-01T${a.time.replace(' ', '')}`);
-                    const timeB = new Date(`1970-01-01T${b.time.replace(' ', '')}`);
+                    const timeA = new Date(`1970-01-01 ${a.time}`);
+                    const timeB = new Date(`1970-01-01 ${b.time}`);
                     return timeA.getTime() - timeB.getTime();
                 });
                 
-                setItinerary({ ...itinerary, stops: finalStops });
+                setItinerary({ ...itinerary, stops: finalStops, title: result.success.title });
             }
         });
     };
@@ -285,7 +288,7 @@ export function IykykMyDay() {
         }
         if (itinerary) {
             return <IykykMyDayItineraryPage
-                itineraryData={{...itinerary, description: currentVibe?.description, title: currentVibe?.title}}
+                itineraryData={{...itinerary, description: currentVibe?.description, title: itinerary.title || currentVibe?.title}}
                 onStartPlan={handleStartPlan}
                 onBack={handleBackToSelection}
                 onShuffle={handleShuffle}
@@ -346,14 +349,18 @@ export function IykykMyDay() {
                         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 mb-2">
                           <CheckCircle2 className="h-6 w-6 text-green-600" />
                         </div>
-                        <DialogTitle>{currentVibe?.title}</DialogTitle>
+                        <DialogTitle>{itinerary?.title}</DialogTitle>
                         <DialogDescription className="text-center pt-2">
                             {getConfirmationMessage()}
                         </DialogDescription>
                     </DialogHeader>
                     {itinerary && (
                          <div className="space-y-4 py-4 text-center">
-                            {itinerary.stops.sort((a, b) => parseInt(a.time.replace(':', '')) - parseInt(b.time.replace(':', ''))).map((stop, index) => (
+                            {itinerary.stops.sort((a, b) => {
+                                const timeA = new Date(`1970-01-01 ${a.time}`);
+                                const timeB = new Date(`1970-01-01 ${b.time}`);
+                                return timeA.getTime() - timeB.getTime();
+                            }).map((stop, index) => (
                                 <div key={index} className="flex items-center justify-center gap-4">
                                     <div className="text-lg font-bold text-primary">{stop.time}</div>
                                     <div className="font-semibold">{stop.location}</div>
@@ -367,4 +374,3 @@ export function IykykMyDay() {
         </Card>
     );
 }
-    

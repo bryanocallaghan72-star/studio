@@ -24,6 +24,24 @@ export const ItineraryRequestSchema = z.object({
     travelMode: z.string().optional(),
     // Add fields for shuffle functionality
     numberOfNewStops: z.number().optional().describe('The number of new stops to generate.'),
-    heldStops: z.array(ItineraryStopSchema.omit({ id: true })).optional().describe('An array of stops the user has locked and wants to keep.'),
+    heldStops: z.array(ItineraryStopSchema.omit({ id: true, isHeld: true })).optional().describe('An array of stops the user has locked and wants to keep.'),
 });
 export type ItineraryRequest = z.infer<typeof ItineraryRequestSchema>;
+
+
+// Schema for Community Connector
+export const CommunityConnectorInputSchema = z.object({
+  interests: z.string().describe('A comma-separated list of user interests.'),
+});
+export type CommunityConnectorInput = z.infer<typeof CommunityConnectorInputSchema>;
+
+export const CommunityConnectorOutputSchema = z.object({
+  communities: z.array(
+    z.object({
+      name: z.string().describe('The name of the recommended community.'),
+      description: z.string().describe('A brief description of the community.'),
+      activityLevel: z.string().describe('An activity level of "high", "medium", or "low".'),
+    })
+  ),
+});
+export type CommunityConnectorOutput = z.infer<typeof CommunityConnectorOutputSchema>;

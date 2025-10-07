@@ -58,5 +58,3 @@ const generateItineraryFlow = ai.defineFlow(
     return output!;
   }
 );
-
-    

@@ -7,6 +7,7 @@ export async function generateItinerary(request: ItineraryRequest): Promise<{ su
   const validatedRequest = ItineraryRequestSchema.safeParse(request);
   
   if (!validatedRequest.success) {
+    console.error('Invalid itinerary request:', validatedRequest.error);
     return { error: 'Invalid itinerary request.' };
   }
 
@@ -15,7 +16,7 @@ export async function generateItinerary(request: ItineraryRequest): Promise<{ su
   }
   
   try {
-    const result = await generateItineraryFlow(request);
+    const result = await generateItineraryFlow(validatedRequest.data);
     return { success: result };
   } catch (error) {
     console.error('Itinerary generation failed:', error);
