@@ -10,35 +10,6 @@ import { CommentSheet } from "./CommentSheet";
 
 const reelsData = [
   {
-    id: 1,
-    creator: {
-      name: "BondiBarista",
-      avatar: "https://github.com/barista.png",
-    },
-    description: "The perfect pour this morning ☕️",
-    imageId: "coffee-1",
-    likes: 1200,
-    comments: 48,
-    commentData: [
-        { author: 'CoffeeLover', text: 'Looks amazing! Where is this?' },
-        { author: 'BondiBarista', text: 'At The Depot! Come say hi!' },
-    ]
-  },
-  {
-    id: 2,
-    creator: {
-      name: "CocktailKing",
-      avatar: "https://github.com/cocktail.png",
-    },
-    description: "Shaking things up tonight! 🍸 #iykyk",
-    imageId: "nightlife-1",
-    likes: 3500,
-    comments: 102,
-    commentData: [
-        { author: 'NightOwl', text: 'That looks delicious!' },
-    ]
-  },
-  {
     id: 3,
     creator: {
       name: "SunsetChaser",
@@ -48,18 +19,6 @@ const reelsData = [
     imageId: "morning-1",
     likes: 15200,
     comments: 876,
-    commentData: []
-  },
-    {
-    id: 4,
-    creator: {
-      name: "StreetArtExplorer",
-      avatar: "https://github.com/art.png",
-    },
-    description: "Found this hidden gem in the laneways.",
-    imageId: "surprise-1",
-    likes: 8900,
-    comments: 341,
     commentData: []
   },
 ];
@@ -143,6 +102,7 @@ const ReelPlayer = ({ reel }: { reel: (typeof reelsData)[0] }) => {
             onOpenChange={setIsCommentSheetOpen}
             comments={reel.commentData}
             commentCount={reel.comments}
+            onPostComment={() => {}}
         />
         </>
     )
