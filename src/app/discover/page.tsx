@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { communityConnectorTool } from '@/ai/flows/community-connector-tool';
 import type { CommunityConnectorOutput } from '@/ai/schemas';
 
-const features = [
+const featureData = [
   {
     href: "/map",
     icon: Map,
@@ -71,6 +71,11 @@ export default function DiscoverPage() {
       setCommunityResults(result);
     });
   };
+  
+  const features = featureData.map(feature => ({
+    ...feature,
+    image: PlaceHolderImages.find(img => img.id === feature.imageId),
+  }));
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
@@ -82,19 +87,17 @@ export default function DiscoverPage() {
         </div>
 
         <div className="flex flex-col gap-4 px-4 md:px-6">
-            {features.map((feature) => {
-              const image = PlaceHolderImages.find(img => img.id === feature.imageId);
-              return (
+            {features.map((feature) => (
                   <Link key={feature.title} href={feature.href}>
                       <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card h-48">
-                          {image ? (
+                          {feature.image ? (
                             <>
                               <Image
-                                src={image.imageUrl}
+                                src={feature.image.imageUrl}
                                 alt={feature.title}
                                 fill
                                 className="object-cover w-full h-full transition-transform group-hover:scale-105"
-                                data-ai-hint={image.imageHint}
+                                data-ai-hint={feature.image.imageHint}
                               />
                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
                             </>
@@ -116,7 +119,7 @@ export default function DiscoverPage() {
                       </Card>
                   </Link>
                 )
-            })}
+            )}
         </div>
 
         <div className="px-4 md:px-6 mt-8 space-y-8">
