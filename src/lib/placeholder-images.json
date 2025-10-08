@@ -149,6 +149,30 @@
       "description": "A silhouette of a person doing yoga against a stunning sunset.",
       "imageUrl": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2120&auto=format&fit=crop",
       "imageHint": "sunset yoga"
+    },
+    {
+      "id": "stay-1",
+      "description": "A bright, modern living room in a beachside apartment with ocean views.",
+      "imageUrl": "https://images.unsplash.com/photo-1615571022219-eb45cf7faa9d?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "modern apartment"
+    },
+    {
+      "id": "stay-2",
+      "description": "A rooftop terrace with comfortable seating and city views at sunset.",
+      "imageUrl": "https://images.unsplash.com/photo-1613553474176-2d559a721834?q=80&w=1974&auto=format&fit=crop",
+      "imageHint": "rooftop terrace"
+    },
+    {
+      "id": "stay-3",
+      "description": "A lush, private garden with a small patio and seating area.",
+      "imageUrl": "https://images.unsplash.com/photo-1589223789938-e3c386713c8f?q=80&w=1974&auto=format&fit=crop",
+      "imageHint": "private garden"
+    },
+    {
+      "id": "stay-4",
+      "description": "A cozy and stylish studio apartment interior.",
+      "imageUrl": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "studio apartment"
     }
   ]
 }

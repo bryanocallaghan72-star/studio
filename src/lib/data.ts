@@ -11,6 +11,48 @@ export type Community = {
 };
 
 export const appData = {
+  stays: [
+    {
+        id: 'stay-1',
+        title: "The Bondi Beach House",
+        description: "Designer apartment with stunning ocean views. Perfect for a luxury getaway.",
+        pricePerNight: 450,
+        rating: 4.9,
+        imageId: "stay-1",
+        creatorId: "alice",
+        endsIn: 3 * 60 * 60 * 1000, // 3 hours
+    },
+    {
+        id: 'stay-2',
+        title: "The Surfer's Penthouse",
+        description: "Modern penthouse with a rooftop terrace. Steps from the sand.",
+        pricePerNight: 650,
+        rating: 4.9,
+        imageId: "stay-2",
+        creatorId: "shannon",
+        endsIn: 5 * 60 * 60 * 1000, // 5 hours
+    },
+    {
+        id: 'stay-3',
+        title: "The Garden Oasis",
+        description: "Chic apartment with a private garden. Your quiet escape in the heart of Bondi.",
+        pricePerNight: 320,
+        rating: 4.8,
+        imageId: "stay-3",
+        creatorId: "jay",
+        endsIn: 8 * 60 * 60 * 1000, // 8 hours
+    },
+    {
+      id: 'stay-4',
+      title: "Cozy Beachside Studio",
+      description: "A compact, stylish studio perfect for solo travelers or couples. Includes a kitchenette and a small balcony.",
+      pricePerNight: 250,
+      rating: 4.7,
+      imageId: "stay-4",
+      creatorId: "lucas",
+      endsIn: 2 * 60 * 60 * 1000, // 2 hours
+    }
+  ],
   feedItems: [
     {
       id: 4,
@@ -332,4 +374,6 @@ export const appData = {
     ]
   }
 };
+    
+
     
