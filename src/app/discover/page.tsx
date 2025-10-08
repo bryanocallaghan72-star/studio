@@ -1,13 +1,19 @@
 
 'use client';
 
+import { useState, useTransition } from 'react';
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { Sparkles, Map, Flame, Ticket, Calendar } from "lucide-react";
+import { Sparkles, Map, Flame, Ticket, Calendar, Users, Gift, Loader2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { SurpriseMe } from '@/components/iykyk/SurpriseMe';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { communityConnectorTool } from '@/ai/flows/community-connector-tool';
+import type { CommunityConnectorOutput } from '@/ai/schemas';
 
 const features = [
   {
@@ -55,6 +61,18 @@ const features = [
 
 
 export default function DiscoverPage() {
+  const [interests, setInterests] = useState('');
+  const [pending, startTransition] = useTransition();
+  const [communityResults, setCommunityResults] = useState<CommunityConnectorOutput | null>(null);
+
+  const handleFindCommunity = () => {
+    if (!interests) return;
+    startTransition(async () => {
+      const result = await communityConnectorTool({ interests });
+      setCommunityResults(result);
+    });
+  };
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
@@ -82,10 +100,11 @@ export default function DiscoverPage() {
                                   className="object-cover w-full h-full transition-transform group-hover:scale-105"
                                   data-ai-hint={image.imageHint}
                                 />
+                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
                               </>
                             )
                           )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+                         
                           <div className="absolute bottom-0 left-0 p-6 w-full">
                              <div className="flex items-center gap-3">
                                   <div className="rounded-full bg-background/80 backdrop-blur-sm p-3">
@@ -101,6 +120,56 @@ export default function DiscoverPage() {
                   </Link>
                 )
             })}
+        </div>
+
+        <div className="px-4 md:px-6 mt-8 space-y-8">
+            <Card>
+                <div className="p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                        <Gift className="h-8 w-8 text-accent" />
+                        <h2 className="text-3xl font-bold tracking-tight">Surprise Me</h2>
+                    </div>
+                    <p className="text-muted-foreground">
+                        Unlock hidden gems and spontaneous experiences with a single tap. A new adventure awaits!
+                    </p>
+                    <SurpriseMe />
+                </div>
+            </Card>
+
+            <Card>
+                <div className="p-6">
+                     <div className="flex items-center gap-3 mb-4">
+                        <Users className="h-8 w-8 text-primary" />
+                        <h2 className="text-3xl font-bold tracking-tight">Community Connector</h2>
+                    </div>
+                    <p className="text-muted-foreground mb-4">
+                        Find and connect with communities that share your interests. Your tribe is waiting for you.
+                    </p>
+                     <div className="flex gap-2">
+                        <Input 
+                            placeholder="e.g. coffee, live music, running" 
+                            value={interests}
+                            onChange={(e) => setInterests(e.target.value)}
+                        />
+                        <Button onClick={handleFindCommunity} disabled={pending}>
+                            {pending ? <Loader2 className="animate-spin" /> : 'Find'}
+                        </Button>
+                    </div>
+
+                    {communityResults && (
+                        <div className="mt-6 space-y-4">
+                            <h3 className='font-bold'>Top recommendations for you:</h3>
+                            {communityResults.communities.map((community, index) => (
+                                <div key={index} className="p-4 rounded-lg border bg-secondary/50">
+                                    <h4 className="font-semibold">{community.name}</h4>
+                                    <p className="text-sm text-muted-foreground">{community.description}</p>
+                                    <p className="text-xs text-muted-foreground mt-1 capitalize">Activity: {community.activityLevel}</p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </Card>
         </div>
       </main>
       <MobileNav />
