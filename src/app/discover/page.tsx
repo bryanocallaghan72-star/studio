@@ -30,7 +30,7 @@ const featureData = [
     title: "iykyk Flow",
     description: "Time-of-day rhythm suggestions, from morning to late night.",
     color: "text-primary",
-    imageId: "morning-1",
+    imageId: "bondi-sunset",
   },
   {
     href: "/fire",
@@ -62,7 +62,7 @@ const featureData = [
     title: "iykyk Stays",
     description: "Curated boutique stays and local gems.",
     color: "text-primary",
-    imageId: "bondi-sunset",
+    imageId: "stay-1",
   },
 ];
 
