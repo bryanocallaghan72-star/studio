@@ -13,48 +13,6 @@ export type Community = {
 export const appData = {
   feedItems: [
     {
-      id: 1,
-      type: "photo",
-      creator: {
-        name: "BondiCreator1",
-        avatar: "https://github.com/shadcn.png",
-      },
-      venue: "The Beachcomber Bar",
-      imageId: "deal-1",
-      likes: 124,
-      comments: 12,
-      commentData: [
-        { author: "TestUser", text: "Looks great!" },
-        { author: "AnotherUser", text: "Where is this?" }
-      ]
-    },
-    {
-      id: 2,
-      type: "video",
-      creator: {
-        name: "SurferDude",
-        avatar: "https://github.com/surferdude.png",
-      },
-      venue: "Bondi Beach",
-      imageId: "my-day-1",
-      likes: 345,
-      comments: 45,
-      commentData: []
-    },
-    {
-      id: 3,
-      type: "photo",
-      creator: {
-        name: "FoodieGal",
-        avatar: "https://github.com/foodie.png",
-      },
-      venue: "Sakura Sushi",
-      imageId: "deal-2",
-      likes: 210,
-      comments: 33,
-      commentData: []
-    },
-    {
       id: 4,
       type: "photo",
       creator: {
@@ -352,7 +310,7 @@ export const appData = {
       { id: 24, name: "Ravesis", slug: "ravesis", type: "Nightlife", description: "Stylish beachfront bar and restaurant.", x: "55%", y: "30%" },
       { id: 25, name: "Bondi Vibes Bar", slug: "bondi-vibes-bar", type: "Nightlife", description: "Live music and good vibes.", x: "40%", y: "20%" },
       { id: 26, name: "Fluidform Pilates", slug: "fluidform-pilates", type: "Health & Fitness", description: "Boutique pilates studio.", x: "10%", y: "55%" },
-      { id: 27, name: "Sushi-e", slug: "sushi-e", type: "Sushi", description: "High-end sushi experience.", x: "35%", y: "65%" },
+      { id: 27, name: "Sushi-e", slug: "sushi-e", type: "Sushi", description: "High-end sushi experience.", x: "35%", "y": "65%" },
       { id: 28, name: "Beach Burrito Company", slug: "beach-burrito-company", type: "Restaurants", description: "Casual Mexican food and frozen margaritas.", x: "65%", y: "55%" },
       { id: 29, name: "Chiswick", slug: "chiswick", type: "Restaurants", description: "Collective dining with a seasonal menu.", x: "80%", y: "85%" },
       { id: 30, name: "North Bondi Fish", slug: "north-bondi-fish", type: "Restaurants", description: "Fresh seafood in a relaxed setting.", x: "90%", y: "40%" },
