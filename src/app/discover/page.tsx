@@ -5,7 +5,7 @@ import { useState, useTransition } from 'react';
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { Sparkles, Map, Flame, Ticket, Calendar, Users, Gift, Loader2 } from "lucide-react";
+import { Sparkles, Map, Flame, Ticket, Calendar, Users, Gift, Loader2, Bed } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -55,6 +55,14 @@ const featureData = [
     description: "Curated daily itinerary that you can shuffle like a playlist.",
     color: "text-primary",
     imageId: "my-day-2",
+  },
+  {
+    href: "/stays",
+    icon: Bed,
+    title: "iykyk Stays",
+    description: "Curated boutique stays and local gems.",
+    color: "text-primary",
+    imageId: "morning-1",
   },
 ];
 
