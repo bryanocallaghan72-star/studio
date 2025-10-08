@@ -4,7 +4,6 @@
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import {
   Heart,
   MessageCircle,
@@ -12,13 +11,11 @@ import {
   PlayCircle,
   Send,
 } from "lucide-react";
-import Image from "next/image";
 import { CommentSheet, type Comment } from "./CommentSheet";
 import { appData } from "@/lib/data";
 
 
 const Post = ({ item }: { item: (typeof appData.feedItems)[0] }) => {
-  const image = PlaceHolderImages.find((img) => img.id === item.imageId);
   const [isLiked, setIsLiked] = useState(false);
   const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
   
@@ -54,22 +51,6 @@ const Post = ({ item }: { item: (typeof appData.feedItems)[0] }) => {
             </button>
           </div>
 
-          <div className="relative w-full aspect-square bg-secondary">
-            {image && (
-              <Image
-                src={image.imageUrl}
-                alt={image.description}
-                fill
-                className="object-cover"
-                data-ai-hint={image.imageHint}
-              />
-            )}
-            {item.type === "video" && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                <PlayCircle className="h-16 w-16 text-white/80" />
-              </div>
-            )}
-          </div>
           <div className="p-3 space-y-2">
             <div className="flex items-center justify-start gap-4">
                 <button
