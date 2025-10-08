@@ -29,7 +29,7 @@ const reelsData = [
         avatar: "https://github.com/sunset.png",
     },
     description: "summertime Heats with deep house beats",
-    imageId: "hot-1",
+    imageId: "morning-1",
     likes: 21300,
     comments: 952,
     commentData: []
