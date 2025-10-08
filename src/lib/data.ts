@@ -20,11 +20,26 @@ export const appData = {
         avatar: "https://github.com/yoga.png",
       },
       venue: "Bondi Beach",
+      description: "Another beautiful start to the day! 🧘‍♀️",
       imageId: "morning-1",
       likes: 501,
       comments: 67,
       commentData: []
     },
+    {
+      id: 5,
+      type: "photo",
+      creator: {
+        name: "SunriseYoga",
+        avatar: "https://github.com/yoga.png",
+      },
+      venue: "Bondi Beach",
+      description: "wow sunset Yoga",
+      imageId: "sunset-yoga",
+      likes: 1204,
+      comments: 132,
+      commentData: []
+    }
   ],
   creators: [
     {

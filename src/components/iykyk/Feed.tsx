@@ -93,6 +93,10 @@ const Post = ({ item }: { item: (typeof appData.feedItems)[0] }) => {
             <p className="text-sm font-semibold">
                 {likeCount.toLocaleString()} likes
             </p>
+             <p className="text-sm">
+              <span className="font-semibold">{item.creator.name}</span>
+              <span className="ml-1">{item.description}</span>
+            </p>
             {commentCount > 0 && (
                 <button className="text-sm text-muted-foreground" onClick={() => setIsCommentSheetOpen(true)}>
                     View all {commentCount} comments
