@@ -1,3 +1,4 @@
+
 import { Moon, Sparkles, Sun } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -76,7 +77,7 @@ export function FlowTabs() {
              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {lateNightActivities.map(activity => <ActivityCard key={activity.title} {...activity} />)}
             </div>
-        </TABSCONTENT>
+        </TabsContent>
       </Tabs>
     </div>
   );
