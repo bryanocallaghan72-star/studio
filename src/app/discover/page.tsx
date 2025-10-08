@@ -17,7 +17,7 @@ const features = [
     icon: Map,
     title: "iykyk Vibe",
     description: "Mood-based map for coffee, sushi, nightlife, and fitness.",
-    color: "text-primary",
+    color: "text-white",
     imageId: "bondi-beach"
   },
   {
@@ -151,7 +151,7 @@ export default function DiscoverPage() {
                      <CardLink key={feature.title}>
                         <Card className="group h-full flex flex-col">
                             <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
-                                <div className={`rounded-full p-3 ${feature.color}/10`}>
+                                <div className={`rounded-full p-3 bg-primary/10`}>
                                     <feature.icon className={`h-6 w-6 ${feature.color}`} />
                                 </div>
                                 <CardTitle className="text-xl">{feature.title}</CardTitle>
@@ -173,7 +173,6 @@ export default function DiscoverPage() {
 
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {features.slice(2).map((feature) => {
-                const image = PlaceHolderImages.find(img => img.id === feature.imageId);
                 return (
                     <Link key={feature.title} href={feature.href}>
                         <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card">
