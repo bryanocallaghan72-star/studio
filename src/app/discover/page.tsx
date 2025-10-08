@@ -72,11 +72,6 @@ export default function DiscoverPage() {
     });
   };
   
-  const features = featureData.map(feature => ({
-    ...feature,
-    image: PlaceHolderImages.find(img => img.id === feature.imageId),
-  }));
-
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
@@ -87,38 +82,41 @@ export default function DiscoverPage() {
         </div>
 
         <div className="flex flex-col gap-4 px-4 md:px-6">
-            {features.map((feature) => (
-                  <Link key={feature.title} href={feature.href}>
-                      <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card h-48">
-                          {feature.image ? (
-                            <>
-                              <Image
-                                src={feature.image.imageUrl}
-                                alt={feature.title}
-                                fill
-                                className="object-cover w-full h-full transition-transform group-hover:scale-105"
-                                data-ai-hint={feature.image.imageHint}
-                              />
-                               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
-                            </>
-                          ) : (
-                            <div className="absolute inset-0 bg-secondary" />
-                          )}
-                         
-                          <div className="absolute bottom-0 left-0 p-6 w-full">
-                             <div className="flex items-center gap-3">
-                                  <div className="rounded-full bg-background/80 backdrop-blur-sm p-3">
-                                     <feature.icon className={`h-6 w-6 ${feature.color}`} />
-                                  </div>
-                                  <div>
-                                     <CardTitle className="text-lg text-white">{feature.title}</CardTitle>
-                                     <CardDescription className="text-white/90">{feature.description}</CardDescription>
-                                  </div>
-                              </div>
-                          </div>
-                      </Card>
-                  </Link>
-                )
+            {featureData.map((feature) => {
+                  const image = PlaceHolderImages.find(img => img.id === feature.imageId);
+                  return (
+                    <Link key={feature.title} href={feature.href}>
+                        <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card h-48">
+                            {image ? (
+                              <>
+                                <Image
+                                  src={image.imageUrl}
+                                  alt={feature.title}
+                                  fill
+                                  className="object-cover w-full h-full transition-transform group-hover:scale-105"
+                                  data-ai-hint={image.imageHint}
+                                />
+                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+                              </>
+                            ) : (
+                              <div className="absolute inset-0 bg-secondary" />
+                            )}
+                           
+                            <div className="absolute bottom-0 left-0 p-6 w-full">
+                               <div className="flex items-center gap-3">
+                                    <div className="rounded-full bg-background/80 backdrop-blur-sm p-3">
+                                       <feature.icon className={`h-6 w-6 ${feature.color}`} />
+                                    </div>
+                                    <div>
+                                       <CardTitle className="text-lg text-white">{feature.title}</CardTitle>
+                                       <CardDescription className="text-white/90">{feature.description}</CardDescription>
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
+                    </Link>
+                  )
+                }
             )}
         </div>
 
