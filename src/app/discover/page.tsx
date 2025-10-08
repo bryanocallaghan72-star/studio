@@ -16,6 +16,7 @@ const features = [
     title: "iykyk Vibe",
     description: "Mood-based map for coffee, sushi, nightlife, and fitness.",
     color: "text-primary",
+    imageId: "bondi-beach"
   },
   {
     href: "/flow",
@@ -23,6 +24,7 @@ const features = [
     title: "iykyk Flow",
     description: "Time-of-day rhythm suggestions, from morning to late night.",
     color: "text-primary",
+    imageId: "bondi-sunset"
   },
   {
     href: "/fire",
@@ -30,6 +32,7 @@ const features = [
     title: "iykyk Fire",
     description: "Real-time “What’s hot right now” with countdowns and FOMO.",
     color: "text-destructive",
+    imageId: "hot-1"
   },
   {
     href: "/deals",
@@ -37,6 +40,7 @@ const features = [
     title: "iykyk Deals",
     description: "Venue-linked offers, perks, and creator-powered funnels.",
     color: "text-accent",
+    imageId: "deal-1"
   },
 ];
 
@@ -50,28 +54,43 @@ export default function DiscoverPage() {
             <p className="text-muted-foreground mt-2">Your real-time cultural portal to Bondi.</p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4">
-            {features.map((feature) => (
-                <div key={feature.title} className="p-1">
-                    <Link href={feature.href}>
-                        <Card className="group h-full transition-all hover:shadow-xl hover:-translate-y-1 bg-card/50">
-                            <CardHeader className="flex flex-row items-center gap-4 space-y-0">
-                                <div className="rounded-full bg-background/20 backdrop-blur-sm p-3 border border-white/10">
-                                    <feature.icon className={`h-6 w-6 ${feature.color}`} />
-                                </div>
-                                <div>
-                                    <CardTitle className="text-lg text-foreground">{feature.title}</CardTitle>
-                                    <CardDescription className="text-muted-foreground">{feature.description}</CardDescription>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {features.map((feature) => {
+                const image = PlaceHolderImages.find(img => img.id === feature.imageId);
+                return (
+                    <Link key={feature.title} href={feature.href}>
+                        <Card className="group relative h-40 w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1">
+                           {image && (
+                             <>
+                                <Image
+                                    src={image.imageUrl}
+                                    alt={feature.title}
+                                    fill
+                                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                    data-ai-hint={image.imageHint}
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+                             </>
+                           )}
+                           <CardHeader className="absolute bottom-0 left-0 w-full p-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="rounded-full bg-background/20 backdrop-blur-sm p-3 border border-white/10">
+                                       <feature.icon className={`h-6 w-6 text-white`} />
+                                    </div>
+                                    <div>
+                                       <CardTitle className="text-lg text-white">{feature.title}</CardTitle>
+                                       <CardDescription className="text-white/80">{feature.description}</CardDescription>
+                                    </div>
                                 </div>
                             </CardHeader>
                         </Card>
                     </Link>
-                </div>
-            ))}
+                )
+            })}
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-             <Card className="group h-full flex flex-col bg-card/50">
+             <Card className="group h-full flex flex-col">
               <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
                 <div className="rounded-full bg-primary/10 p-3">
                   <Calendar className={`h-6 w-6 text-primary`} />
@@ -85,7 +104,7 @@ export default function DiscoverPage() {
                 </Link>
               </CardContent>
             </Card>
-            <Card className="group h-full flex flex-col bg-card/50">
+            <Card className="group h-full flex flex-col">
               <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
                 <div className="rounded-full bg-accent/10 p-3">
                   <Gift className={`h-6 w-6 text-accent`} />
@@ -99,7 +118,7 @@ export default function DiscoverPage() {
             </Card>
         </div>
          <div className="grid grid-cols-1">
-             <Card className="group h-full flex flex-col bg-card/50">
+             <Card className="group h-full flex flex-col">
               <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
                 <div className="rounded-full bg-primary/10 p-3">
                   <Users className={`h-6 w-6 text-primary`} />
