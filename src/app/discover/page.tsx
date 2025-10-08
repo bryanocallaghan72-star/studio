@@ -17,8 +17,7 @@ const features = [
     icon: Map,
     title: "iykyk Vibe",
     description: "Mood-based map for coffee, sushi, nightlife, and fitness.",
-    color: "text-white",
-    imageId: "bondi-beach"
+    color: "text-primary",
   },
   {
     href: "/flow",
@@ -26,7 +25,6 @@ const features = [
     title: "iykyk Flow",
     description: "Time-of-day rhythm suggestions, from morning to late night.",
     color: "text-primary",
-    imageId: "bondi-sunset"
   },
   {
     href: "/fire",
@@ -34,7 +32,6 @@ const features = [
     title: "iykyk Fire",
     description: "Real-time “What’s hot right now” with countdowns and FOMO.",
     color: "text-destructive",
-    imageId: "hot-1"
   },
   {
     href: "/deals",
@@ -42,7 +39,6 @@ const features = [
     title: "iykyk Deals",
     description: "Venue-linked offers, perks, and creator-powered funnels.",
     color: "text-accent",
-    imageId: "deal-1"
   },
 ];
 
@@ -53,7 +49,6 @@ const otherFeatures = [
         title: "iykyk My Day",
         description: "Curated daily itinerary that you can shuffle like a playlist.",
         color: "text-primary",
-        imageId: "my-day-3",
         cta: "Plan My Day",
         Component: null
     },
@@ -63,7 +58,6 @@ const otherFeatures = [
         title: "iykyk & Co",
         description: "Connect with themed groups, from sushi lovers to cocktail hunters.",
         color: "text-primary",
-        imageId: "community-sushi",
         cta: "Find Your Tribe",
         Component: null
     },
@@ -73,22 +67,14 @@ const otherFeatures = [
         title: "iykyk Surprise Me",
         description: "Playful randomness with a chance to discover hidden gems.",
         color: "text-accent",
-        imageId: "surprise-1",
         cta: null,
         Component: SurpriseMe
     },
 ]
 
 export default function DiscoverPage() {
-  const vibeFeature = features[0];
-  const flowFeature = features[1];
-
-  const vibeImage = PlaceHolderImages.find(img => img.id === vibeFeature.imageId);
-  const flowImage = PlaceHolderImages.find(img => img.id === flowFeature.imageId);
-
-
   return (
-    <div className="flex min-h-screen w-full flex-col bg-background dark:bg-transparent">
+    <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
       <main className="flex flex-1 flex-col gap-6 p-4 md:p-6 pb-24">
         <div className="text-center md:text-left">
@@ -96,60 +82,32 @@ export default function DiscoverPage() {
             <p className="text-muted-foreground mt-2">Your real-time cultural portal to Bondi.</p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6">
-            <Link href={vibeFeature.href}>
-                <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card">
-                   <CardHeader>
-                        <div className="flex items-center gap-3">
-                            <div className="rounded-full bg-primary/10 p-3">
-                               <vibeFeature.icon className={'h-6 w-6 text-primary'} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {features.map((feature) => (
+                <Link key={feature.title} href={feature.href}>
+                    <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card h-full">
+                       <CardHeader>
+                            <div className="flex items-center gap-3">
+                                <div className="rounded-full bg-primary/10 p-3">
+                                   <feature.icon className={`h-6 w-6 ${feature.color}`} />
+                                </div>
+                                <div>
+                                   <CardTitle className="text-lg">{feature.title}</CardTitle>
+                                   <CardDescription>{feature.description}</CardDescription>
+                                </div>
                             </div>
-                            <div>
-                               <CardTitle className="text-lg">{vibeFeature.title}</CardTitle>
-                               <CardDescription>{vibeFeature.description}</CardDescription>
-                            </div>
-                        </div>
-                    </CardHeader>
-                </Card>
-            </Link>
-
-            <Link href={flowFeature.href}>
-                <Card className="group relative h-48 w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1">
-                   {flowImage ? (
-                     <>
-                        <Image
-                            src={flowImage.imageUrl}
-                            alt={flowFeature.title}
-                            fill
-                            className="object-cover transition-transform duration-300 group-hover:scale-105"
-                            data-ai-hint={flowImage.imageHint}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
-                     </>
-                   ) : (
-                     <div className="absolute inset-0 bg-gradient-to-br from-secondary to-muted" />
-                   )}
-                   <CardHeader className="absolute bottom-0 left-0 w-full p-4">
-                        <div className="flex items-center gap-3">
-                            <div className="rounded-full bg-background/20 backdrop-blur-sm p-3 border border-white/10">
-                               <flowFeature.icon className={'h-6 w-6 text-white'} />
-                            </div>
-                            <div>
-                               <CardTitle className="text-lg text-white">{flowFeature.title}</CardTitle>
-                               <CardDescription className="text-white/80">{flowFeature.description}</CardDescription>
-                            </div>
-                        </div>
-                    </CardHeader>
-                </Card>
-            </Link>
+                        </CardHeader>
+                    </Card>
+                </Link>
+            ))}
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
              {otherFeatures.map(feature => {
-                 const CardLink = ({children}) => feature.href === "#" ? <div>{children}</div> : <Link href={feature.href} className="h-full">{children}</Link>;
+                 const CardLink = ({children}: {children: React.ReactNode}) => feature.href === "#" ? <div>{children}</div> : <Link href={feature.href} className="h-full">{children}</Link>;
                  return (
                      <CardLink key={feature.title}>
-                        <Card className="group h-full flex flex-col">
+                        <Card className="group h-full flex flex-col bg-card">
                             <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
                                 <div className={`rounded-full p-3 bg-primary/10`}>
                                     <feature.icon className={`h-6 w-6 ${feature.color}`} />
@@ -170,33 +128,8 @@ export default function DiscoverPage() {
                  )
              })}
         </div>
-
-         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {features.slice(2).map((feature) => {
-                return (
-                    <Link key={feature.title} href={feature.href}>
-                        <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card">
-                           <CardHeader>
-                                <div className="flex items-center gap-3">
-                                    <div className="rounded-full bg-primary/10 p-3">
-                                       <feature.icon className={`h-6 w-6 ${feature.color}`} />
-                                    </div>
-                                    <div>
-                                       <CardTitle className="text-lg">{feature.title}</CardTitle>
-                                       <CardDescription>{feature.description}</CardDescription>
-                                    </div>
-                                </div>
-                            </CardHeader>
-                        </Card>
-                    </Link>
-                )
-            })}
-        </div>
-
       </main>
       <MobileNav />
     </div>
   );
 }
-
-    

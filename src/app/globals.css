@@ -69,29 +69,8 @@
     --input: 30 40% 95%;
     --ring: 30 100% 70%;
   }
-
-  [data-theme="dusk"] {
-    --background: 222 47% 11%; /* Deep Navy */
-    --foreground: 210 40% 98%; /* White */
-    --card: 222 47% 15%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 45 100% 51%; /* Golden Yellow */
-    --primary-foreground: 222 47% 11%;
-    --secondary: 222 47% 18%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 222 47% 18%;
-    --muted-foreground: 210 40% 60%;
-    --accent: 45 100% 51%; /* Golden Yellow */
-    --accent-foreground: 222 47% 11%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 222 47% 20%;
-    --input: 222 47% 20%;
-    --ring: 45 100% 51%;
-  }
-
+  
+  [data-theme="dusk"],
   .dark {
     --background: 222 47% 11%; /* Deep Navy */
     --foreground: 210 40% 98%; /* White */
