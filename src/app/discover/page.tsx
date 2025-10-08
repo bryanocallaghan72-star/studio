@@ -81,7 +81,11 @@ const otherFeatures = [
 
 export default function DiscoverPage() {
   const vibeFeature = features[0];
-  const image = PlaceHolderImages.find(img => img.id === vibeFeature.imageId);
+  const flowFeature = features[1];
+
+  const vibeImage = PlaceHolderImages.find(img => img.id === vibeFeature.imageId);
+  const flowImage = PlaceHolderImages.find(img => img.id === flowFeature.imageId);
+
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background dark:bg-transparent">
@@ -94,15 +98,31 @@ export default function DiscoverPage() {
 
         <div className="grid grid-cols-1 gap-6">
             <Link href={vibeFeature.href}>
+                <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card">
+                   <CardHeader>
+                        <div className="flex items-center gap-3">
+                            <div className="rounded-full bg-primary/10 p-3">
+                               <vibeFeature.icon className={'h-6 w-6 text-primary'} />
+                            </div>
+                            <div>
+                               <CardTitle className="text-lg">{vibeFeature.title}</CardTitle>
+                               <CardDescription>{vibeFeature.description}</CardDescription>
+                            </div>
+                        </div>
+                    </CardHeader>
+                </Card>
+            </Link>
+
+            <Link href={flowFeature.href}>
                 <Card className="group relative h-48 w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1">
-                   {image ? (
+                   {flowImage ? (
                      <>
                         <Image
-                            src={image.imageUrl}
-                            alt={vibeFeature.title}
+                            src={flowImage.imageUrl}
+                            alt={flowFeature.title}
                             fill
                             className="object-cover transition-transform duration-300 group-hover:scale-105"
-                            data-ai-hint={image.imageHint}
+                            data-ai-hint={flowImage.imageHint}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
                      </>
@@ -112,36 +132,16 @@ export default function DiscoverPage() {
                    <CardHeader className="absolute bottom-0 left-0 w-full p-4">
                         <div className="flex items-center gap-3">
                             <div className="rounded-full bg-background/20 backdrop-blur-sm p-3 border border-white/10">
-                               <vibeFeature.icon className={'h-6 w-6 text-white'} />
+                               <flowFeature.icon className={'h-6 w-6 text-white'} />
                             </div>
                             <div>
-                               <CardTitle className="text-lg text-white">{vibeFeature.title}</CardTitle>
-                               <CardDescription className="text-white/80">{vibeFeature.description}</CardDescription>
+                               <CardTitle className="text-lg text-white">{flowFeature.title}</CardTitle>
+                               <CardDescription className="text-white/80">{flowFeature.description}</CardDescription>
                             </div>
                         </div>
                     </CardHeader>
                 </Card>
             </Link>
-
-            {features.slice(1, 2).map((feature) => {
-                return (
-                    <Link key={feature.title} href={feature.href}>
-                        <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card">
-                           <CardHeader>
-                                <div className="flex items-center gap-3">
-                                    <div className="rounded-full bg-primary/10 p-3">
-                                       <feature.icon className={`h-6 w-6 ${feature.color}`} />
-                                    </div>
-                                    <div>
-                                       <CardTitle className="text-lg">{feature.title}</CardTitle>
-                                       <CardDescription>{feature.description}</CardDescription>
-                                    </div>
-                                </div>
-                            </CardHeader>
-                        </Card>
-                    </Link>
-                )
-            })}
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
