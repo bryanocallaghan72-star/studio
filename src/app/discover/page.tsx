@@ -23,7 +23,6 @@ const features = [
     description: "Mood-based map for coffee, sushi, nightlife, and fitness.",
     color: "text-primary",
     imageId: "bondi-beach",
-    isPlaceholder: true,
   },
   {
     href: "/flow",
@@ -88,21 +87,19 @@ export default function DiscoverPage() {
               return (
                   <Link key={feature.title} href={feature.href}>
                       <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card h-48">
-                          {feature.isPlaceholder ? (
-                             <div className="absolute inset-0 bg-secondary" />
+                          {image ? (
+                            <>
+                              <Image
+                                src={image.imageUrl}
+                                alt={feature.title}
+                                fill
+                                className="object-cover w-full h-full transition-transform group-hover:scale-105"
+                                data-ai-hint={image.imageHint}
+                              />
+                               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+                            </>
                           ) : (
-                            image && (
-                              <>
-                                <Image
-                                  src={image.imageUrl}
-                                  alt={feature.title}
-                                  fill
-                                  className="object-cover w-full h-full transition-transform group-hover:scale-105"
-                                  data-ai-hint={image.imageHint}
-                                />
-                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
-                              </>
-                            )
+                            <div className="absolute inset-0 bg-secondary" />
                           )}
                          
                           <div className="absolute bottom-0 left-0 p-6 w-full">
