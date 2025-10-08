@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { CommentSheet, type Comment } from "./CommentSheet";
 import { appData } from "@/lib/data";
+import Image from "next/image";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 
 const Post = ({ item }: { item: (typeof appData.feedItems)[0] }) => {
@@ -28,6 +30,8 @@ const Post = ({ item }: { item: (typeof appData.feedItems)[0] }) => {
     setLocalComments([...localComments, { author: "You", text: commentText }]);
     setCommentCount(prev => prev + 1);
   };
+
+  const image = PlaceHolderImages.find(img => img.id === item.imageId);
 
   return (
     <>
@@ -50,6 +54,19 @@ const Post = ({ item }: { item: (typeof appData.feedItems)[0] }) => {
               <MoreVertical className="h-5 w-5" />
             </button>
           </div>
+          
+          {image && (
+            <div className="relative aspect-square w-full">
+              <Image 
+                src={image.imageUrl} 
+                alt={item.venue}
+                fill
+                className="object-cover"
+                data-ai-hint={image.imageHint}
+                priority 
+              />
+            </div>
+          )}
 
           <div className="p-3 space-y-2">
             <div className="flex items-center justify-start gap-4">
