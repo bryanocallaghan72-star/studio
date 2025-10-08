@@ -2,7 +2,6 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
-import { ThemeProvider } from '@/components/iykyk/ThemeProvider';
 import { Poppins } from 'next/font/google';
 
 const poppins = Poppins({
@@ -25,10 +24,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${poppins.variable} font-body antialiased`}>
-        <ThemeProvider>
           {children}
           <Toaster />
-        </ThemeProvider>
       </body>
     </html>
   );
