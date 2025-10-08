@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 
 const morningActivities = [
     { title: "Bondi Sunrise Yoga", description: "Start your day with rejuvenating yoga on the beach.", imageId: "morning-1", tag: "Wellness" },
-    { title: "The Perfect Flat White", description: "Grab a perfectly crafted coffee from a local's favorite spot.", imageId: "coffee-1", tag: "Cafe" },
+    { title: "Bondi Sunrise Yoga 2.0", description: "Start your day with rejuvenating yoga on the beach.", imageId: "morning-1", tag: "Wellness" },
     { title: "Acai Bowl Heaven", description: "Fuel your morning with a delicious and healthy acai bowl.", imageId: "morning-2", tag: "Healthy" },
 ];
 
@@ -76,7 +76,7 @@ export function FlowTabs() {
              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {lateNightActivities.map(activity => <ActivityCard key={activity.title} {...activity} />)}
             </div>
-        </TabsContent>
+        </TABSCONTENT>
       </Tabs>
     </div>
   );
