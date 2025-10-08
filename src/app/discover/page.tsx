@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useTransition } from 'react';
@@ -141,35 +140,56 @@ export default function DiscoverPage() {
         <div className="flex flex-col gap-4 px-4 md:px-6">
             {features.map((feature) => {
               const image = PlaceHolderImages.find(img => img.id === feature.imageId);
+              if (feature.href === '/deals') {
+                return (
+                  <Link key={feature.title} href={feature.href}>
+                      <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card h-48">
+                          {image && (
+                            <>
+                              <Image
+                                src={image.imageUrl}
+                                alt={feature.title}
+                                fill
+                                className="object-cover w-full h-full transition-transform group-hover:scale-105"
+                                data-ai-hint={image.imageHint}
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+                            </>
+                          )}
+                          <div className="absolute bottom-0 left-0 p-6 w-full">
+                             <div className="flex items-center gap-3">
+                                  <div className="rounded-full bg-background/80 backdrop-blur-sm p-3">
+                                     <feature.icon className={`h-6 w-6 ${feature.color}`} />
+                                  </div>
+                                  <div>
+                                     <CardTitle className="text-lg text-white">{feature.title}</CardTitle>
+                                     <CardDescription className="text-white/90">{feature.description}</CardDescription>
+                                  </div>
+                              </div>
+                          </div>
+                      </Card>
+                  </Link>
+                )
+              }
+              // Fallback for other cards
               return (
                 <Link key={feature.title} href={feature.href}>
-                    <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card h-48">
-                        {image && (
-                          <>
-                            <Image
-                              src={image.imageUrl}
-                              alt={feature.title}
-                              fill
-                              className="object-cover w-full h-full transition-transform group-hover:scale-105"
-                              data-ai-hint={image.imageHint}
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
-                          </>
-                        )}
-                        <div className="absolute bottom-0 left-0 p-6 w-full">
+                    <Card className="group w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card">
+                       <CardHeader>
                            <div className="flex items-center gap-3">
-                                <div className="rounded-full bg-background/80 backdrop-blur-sm p-3">
+                                <div className="rounded-full bg-primary/10 p-3">
                                    <feature.icon className={`h-6 w-6 ${feature.color}`} />
                                 </div>
                                 <div>
-                                   <CardTitle className="text-lg text-white">{feature.title}</CardTitle>
-                                   <CardDescription className="text-white/90">{feature.description}</CardDescription>
+                                   <CardTitle className="text-lg">{feature.title}</CardTitle>
+                                   <CardDescription>{feature.description}</CardDescription>
                                 </div>
                             </div>
-                        </div>
+                        </CardHeader>
                     </Card>
                 </Link>
-            )})}
+              )
+            })}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 md:px-6 mt-4">
@@ -196,5 +216,3 @@ export default function DiscoverPage() {
     </div>
   );
 }
-
-    
