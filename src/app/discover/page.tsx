@@ -112,7 +112,7 @@ export default function DiscoverPage() {
                    <CardHeader className="absolute bottom-0 left-0 w-full p-4">
                         <div className="flex items-center gap-3">
                             <div className="rounded-full bg-background/20 backdrop-blur-sm p-3 border border-white/10">
-                               <vibeFeature.icon className={`h-6 w-6 text-white`} />
+                               <vibeFeature.icon className={'h-6 w-6 text-white'} />
                             </div>
                             <div>
                                <CardTitle className="text-lg text-white">{vibeFeature.title}</CardTitle>
