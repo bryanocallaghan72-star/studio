@@ -38,7 +38,7 @@ export default function VenueProfilePage({ params }: { params: { id: string } })
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
       <main className="flex flex-1 flex-col pb-24">
-        <div className="relative h-64 w-full">
+        <div className="relative h-80 w-full">
             {image && (
                 <Image
                     src={image.imageUrl}
