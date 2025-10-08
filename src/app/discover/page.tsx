@@ -1,13 +1,19 @@
 
 'use client';
 
+import { useState, useTransition } from 'react';
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Sparkles, Map, Flame, Ticket, Calendar } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Sparkles, Map, Flame, Ticket, Calendar, Gift, Users, Loader2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { SurpriseMe } from '@/components/iykyk/SurpriseMe';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { communityConnectorTool } from '@/ai/flows/community-connector-tool';
+import { Badge } from '@/components/ui/badge';
 
 const features = [
   {
@@ -52,6 +58,76 @@ const features = [
   },
 ];
 
+
+const CommunityConnector = () => {
+    const [isPending, startTransition] = useTransition();
+    const [interests, setInterests] = useState('');
+    const [results, setResults] = useState<any>(null);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!interests) {
+            setError("Please enter your interests.");
+            return;
+        }
+        setError(null);
+        setResults(null);
+        startTransition(async () => {
+            const res = await communityConnectorTool({ interests });
+            if (res.communities) {
+                setResults(res);
+            } else {
+                setError("Could not find communities. Please try again.");
+            }
+        });
+    }
+
+    return (
+        <Card className="w-full bg-card shadow-lg hover:shadow-xl transition-shadow">
+            <CardHeader>
+                <div className="flex items-center gap-3">
+                    <div className="rounded-full bg-primary/10 p-3">
+                       <Users className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                       <CardTitle className="text-lg">Community Connector</CardTitle>
+                       <CardDescription>Find your tribe. Tell us what you're into.</CardDescription>
+                    </div>
+                </div>
+            </CardHeader>
+            <CardContent>
+                <form onSubmit={handleSubmit} className="flex items-center gap-2">
+                    <Input 
+                        placeholder="e.g., sushi, live music, running"
+                        value={interests}
+                        onChange={(e) => setInterests(e.target.value)}
+                        disabled={isPending}
+                    />
+                    <Button type="submit" disabled={isPending}>
+                        {isPending ? <Loader2 className="animate-spin" /> : 'Find'}
+                    </Button>
+                </form>
+                 {error && <p className="text-destructive text-sm mt-2">{error}</p>}
+                 {results && results.communities && (
+                    <div className="mt-4 space-y-3">
+                        <h3 className="font-semibold">Top 3 recommendations for you:</h3>
+                        {results.communities.map(community => (
+                            <div key={community.name} className="p-3 rounded-lg border bg-secondary/50">
+                                <div className="flex justify-between items-center">
+                                    <h4 className="font-bold">{community.name}</h4>
+                                    <Badge variant="outline">{community.activityLevel} activity</Badge>
+                                </div>
+                                <p className="text-sm text-muted-foreground">{community.description}</p>
+                            </div>
+                        ))}
+                    </div>
+                 )}
+            </CardContent>
+        </Card>
+    )
+}
+
 export default function DiscoverPage() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
@@ -95,8 +171,30 @@ export default function DiscoverPage() {
                 </Link>
             )})}
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 md:px-6 mt-4">
+             <Card className="w-full bg-card shadow-lg hover:shadow-xl transition-shadow">
+                <CardHeader>
+                    <div className="flex items-center gap-3">
+                        <div className="rounded-full bg-accent/10 p-3">
+                           <Gift className="h-6 w-6 text-accent" />
+                        </div>
+                        <div>
+                           <CardTitle className="text-lg">Surprise Me</CardTitle>
+                           <CardDescription>Unlock a hidden gem. Tap to reveal.</CardDescription>
+                        </div>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <SurpriseMe />
+                </CardContent>
+            </Card>
+            <CommunityConnector />
+        </div>
       </main>
       <MobileNav />
     </div>
   );
 }
+
+    
