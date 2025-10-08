@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import { Heart, MessageCircle, Send, MoreVertical, X } from "lucide-react";
 import Image from "next/image";
 import { CommentSheet } from "./CommentSheet";
+import Link from "next/link";
 
 const reelsData = [
   {
@@ -21,6 +22,18 @@ const reelsData = [
     comments: 876,
     commentData: []
   },
+  {
+    id: 4,
+    creator: {
+        name: "SunsetChaser",
+        avatar: "https://github.com/sunset.png",
+    },
+    description: "summertime Heats with deep house beats",
+    imageId: "hot-1",
+    likes: 21300,
+    comments: 952,
+    commentData: []
+  }
 ];
 
 const formatLikes = (likes: number) => {
@@ -50,12 +63,16 @@ const ReelPlayer = ({ reel }: { reel: (typeof reelsData)[0] }) => {
                 />
             )}
             <div className="absolute top-4 left-4 text-white font-bold text-lg z-10">
-                iykyk
+                <Link href="/discover">
+                    iykyk
+                </Link>
             </div>
             <div className="absolute top-4 right-4 z-10">
-                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 hover:text-white">
-                    <X />
-                </Button>
+                <Link href="/discover">
+                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 hover:text-white">
+                        <X />
+                    </Button>
+                </Link>
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
             
