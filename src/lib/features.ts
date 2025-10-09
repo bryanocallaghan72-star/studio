@@ -52,3 +52,5 @@ export const featureData = [
       imageId: "stay-2",
     },
   ];
+
+    
