@@ -36,6 +36,14 @@ export const featureData = [
       imageId: "hot-1",
     },
     {
+      href: "/fire-2",
+      icon: "Flame",
+      title: "iykyk Fire 2.0",
+      description: "Bigger, better, and hotter.",
+      color: "text-rose-500",
+      imageId: "hot-2",
+    },
+    {
       href: "/deals",
       icon: "Tag",
       title: "iykyk Deals",
