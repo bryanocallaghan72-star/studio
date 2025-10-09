@@ -79,8 +79,8 @@ export function SurpriseMe() {
     if (!isMounted) {
         return (
             <Button variant="secondary" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 mt-4" disabled>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Loading...
+                <Gift className="mr-2 h-5 w-5" />
+                Surprise Me
             </Button>
         )
     }
