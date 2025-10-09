@@ -64,11 +64,13 @@ export default function DiscoverPage() {
 
         <div className="flex flex-col gap-4 px-4 md:px-6">
             {featureData.map((feature) => {
+                const image = PlaceHolderImages.find(img => img.id === feature.imageId);
+                const Icon = iconMap[feature.icon as keyof typeof iconMap];
+                
                 if (!isMounted) {
                     return <FeatureCardSkeleton key={feature.title} />;
                 }
-                const image = PlaceHolderImages.find(img => img.id === feature.imageId);
-                const Icon = iconMap[feature.icon as keyof typeof iconMap];
+
                 return (
                   <Link key={feature.title} href={feature.href}>
                       <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card h-48">
