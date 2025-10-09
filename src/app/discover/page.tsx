@@ -1,11 +1,11 @@
 
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useMemo } from 'react';
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { Sparkles, Map, Flame, Ticket, Calendar, Users, Gift, Loader2, Bed, Home, Compass, Tag } from "lucide-react";
+import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Loader2, Home, Compass } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { SurpriseMe } from '@/components/iykyk/SurpriseMe';
@@ -191,7 +191,7 @@ const PlaceHolderImages = [
     }
 ];
 
-const featureData = [
+const initialFeatureData = [
   {
     href: "/map",
     icon: Map,
@@ -208,7 +208,7 @@ const featureData = [
     color: "text-indigo-500",
     imageId: "bondi-sunset",
   },
-  {
+    {
     href: "/fire",
     icon: Flame,
     title: "iykyk Fire",
@@ -247,6 +247,8 @@ export default function DiscoverPage() {
   const [interests, setInterests] = useState('');
   const [pending, startTransition] = useTransition();
   const [communityResults, setCommunityResults] = useState<CommunityConnectorOutput | null>(null);
+
+  const featureData = useMemo(() => initialFeatureData, []);
 
   const handleFindCommunity = () => {
     if (!interests) return;
