@@ -5,7 +5,7 @@ import { useState, useTransition } from 'react';
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { Sparkles, Map, Flame, Ticket, Calendar, Users, Gift, Loader2, Bed } from "lucide-react";
+import { Sparkles, Map, Flame, Ticket, Calendar, Users, Gift, Loader2, Bed, Home, Compass, Tag } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { SurpriseMe } from '@/components/iykyk/SurpriseMe';
@@ -202,27 +202,27 @@ const featureData = [
   },
   {
     href: "/flow",
-    icon: Sparkles,
+    icon: Compass,
     title: "iykyk Flow",
-    description: "Time-of-day rhythm suggestions, from morning to late night.",
-    color: "text-primary",
-    imageId: "night-2",
+    description: "Discover the rhythm of your city through creators’ movements.",
+    color: "text-indigo-500",
+    imageId: "bondi-sunset",
   },
   {
     href: "/fire",
     icon: Flame,
     title: "iykyk Fire",
-    description: "Real-time “What’s hot right now” with countdowns and FOMO.",
-    color: "text-destructive",
+    description: "Trending venues and creator hotspots updated daily.",
+    color: "text-rose-500",
     imageId: "hot-1",
   },
   {
     href: "/deals",
-    icon: Ticket,
+    icon: Tag,
     title: "iykyk Deals",
-    description: "Venue-linked offers, perks, and creator-powered funnels.",
-    color: "text-accent",
-    imageId: "deal-1",
+    description: "Exclusive offers and perks for locals and explorers.",
+    color: "text-emerald-500",
+    imageId: "deal-2",
   },
   {
     href: "/my-day",
@@ -230,15 +230,15 @@ const featureData = [
     title: "iykyk My Day",
     description: "Curated daily itinerary that you can shuffle like a playlist.",
     color: "text-primary",
-    imageId: "stay-2",
+    imageId: "my-day-3",
   },
   {
     href: "/stays",
-    icon: Bed,
+    icon: Home,
     title: "iykyk Stays",
-    description: "Curated boutique stays and local gems.",
-    color: "text-primary",
-    imageId: "stay-1",
+    description: "Creator-approved Airbnb stays and local getaways.",
+    color: "text-sky-500",
+    imageId: "stay-2",
   },
 ];
 
