@@ -24,7 +24,7 @@ const hotItems = [
         title: "$10 Spicy Margs",
         venue: "LULU",
         description: "Spice up your night with our signature spicy margaritas.",
-        imageId: "nightlife-1",
+        imageId: "deal-1",
         creatorId: "lucas",
         endsIn: 2 * 60 * 60 * 1000, // 2 hours
     }
