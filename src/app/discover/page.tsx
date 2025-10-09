@@ -56,7 +56,7 @@ const featureData = [
     title: "iykyk My Day",
     description: "Curated daily itinerary that you can shuffle like a playlist.",
     color: "text-primary",
-    imageId: "my-day-1",
+    imageId: "stay-2",
   },
   {
     href: "/stays",
