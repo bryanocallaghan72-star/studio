@@ -267,6 +267,8 @@ export default function DiscoverPage() {
 
         <div className="flex flex-col gap-4 px-4 md:px-6">
             {featureData.map((feature) => {
+                  console.log('Feature object:', feature);
+                  console.log('Feature imageId:', feature.imageId);
                   const image = PlaceHolderImages.find(img => img.id === feature.imageId);
                   return (
                     <Link key={feature.title} href={feature.href}>
