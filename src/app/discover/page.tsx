@@ -8,12 +8,14 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Sparkles, Map, Flame, Ticket, Calendar, Users, Gift, Loader2, Bed } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
+import data from "@/lib/placeholder-images.json";
 import { SurpriseMe } from '@/components/iykyk/SurpriseMe';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { communityConnectorTool } from '@/ai/flows/community-connector-tool';
 import type { CommunityConnectorOutput } from '@/ai/schemas';
+
+const PlaceHolderImages = data.placeholderImages;
 
 const featureData = [
   {
@@ -30,7 +32,7 @@ const featureData = [
     title: "iykyk Flow",
     description: "Time-of-day rhythm suggestions, from morning to late night.",
     color: "text-primary",
-    imageId: "bondi-beach",
+    imageId: "night-2",
   },
   {
     href: "/fire",
@@ -38,7 +40,7 @@ const featureData = [
     title: "iykyk Fire",
     description: "Real-time “What’s hot right now” with countdowns and FOMO.",
     color: "text-destructive",
-    imageId: "bondi-beach",
+    imageId: "hot-1",
   },
   {
     href: "/deals",
@@ -46,7 +48,7 @@ const featureData = [
     title: "iykyk Deals",
     description: "Venue-linked offers, perks, and creator-powered funnels.",
     color: "text-accent",
-    imageId: "bondi-beach",
+    imageId: "deal-1",
   },
   {
     href: "/my-day",
@@ -54,7 +56,7 @@ const featureData = [
     title: "iykyk My Day",
     description: "Curated daily itinerary that you can shuffle like a playlist.",
     color: "text-primary",
-    imageId: "bondi-beach",
+    imageId: "my-day-1",
   },
   {
     href: "/stays",
@@ -62,7 +64,7 @@ const featureData = [
     title: "iykyk Stays",
     description: "Curated boutique stays and local gems.",
     color: "text-primary",
-    imageId: "bondi-beach",
+    imageId: "stay-1",
   },
 ];
 
