@@ -1,4 +1,7 @@
 
+'use client';
+import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass } from "lucide-react";
+
 export const featureData = [
     {
       href: "/map",
