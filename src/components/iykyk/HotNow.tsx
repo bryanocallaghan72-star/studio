@@ -14,34 +14,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 const hotItems = [
     {
-        title: "Happy Hour Rush",
-        venue: "The Rum Diary Bar",
-        description: "50% off all cocktails.",
-        imageId: "nightlife-1",
-        endsIn: 50 * 60 * 1000, // 50 minutes
-        creatorId: "shannon",
-    },
-    {
-        title: "Sunset Special",
-        venue: "North Bondi Fish",
-        description: "Half-price oysters until 7 PM.",
-        imageId: "deal-2",
-        endsIn: 2 * 60 * 60 * 1000, // 2 hours
-    },
-    {
         title: "Last Minute Spot",
         venue: "Fluidform Pilates",
         description: "25% off the 5pm Reformer class.",
         imageId: "fitness-1",
         endsIn: 30 * 60 * 1000, // 30 minutes
-    },
-    {
-        title: "Live DJ Set Special",
-        venue: "The Bucket List",
-        description: "$12 Aperol Spritz for the first hour.",
-        imageId: "hot-1",
-        endsIn: 60 * 60 * 1000, // 60 minutes
-        creatorId: "alice",
     }
 ];
 
