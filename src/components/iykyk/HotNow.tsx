@@ -17,7 +17,6 @@ const hotItems = [
         title: "Happy Hour Rush",
         venue: "The Rum Diary Bar",
         description: "50% off all cocktails.",
-        imageId: "deal-1",
         endsIn: 50 * 60 * 1000, // 50 minutes
         creatorId: "shannon",
     },
@@ -25,7 +24,7 @@ const hotItems = [
         title: "Sunset Special",
         venue: "North Bondi Fish",
         description: "Half-price oysters until 7 PM.",
-        imageId: "my-day-3",
+        imageId: "deal-2",
         endsIn: 2 * 60 * 60 * 1000, // 2 hours
     },
     {
@@ -39,7 +38,6 @@ const hotItems = [
         title: "Live DJ Set Special",
         venue: "The Bucket List",
         description: "$12 Aperol Spritz for the first hour.",
-        imageId: "hot-1",
         endsIn: 60 * 60 * 1000, // 60 minutes
         creatorId: "alice",
     }
@@ -105,11 +103,11 @@ export function HotNow() {
                 <p className="text-muted-foreground mb-4">What’s hot right now. Catch it before it's gone!</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {hotItems.map(item => {
-                        const image = PlaceHolderImages.find(img => img.id === item.imageId);
+                        const image = item.imageId ? PlaceHolderImages.find(img => img.id === item.imageId) : null;
                         const creator = item.creatorId ? appData.creators.find(c => c.id === item.creatorId) : null;
                         return (
                             <Card key={item.title} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-primary">
-                                {image && (
+                                {image ? (
                                     <>
                                         <Image
                                             src={image.imageUrl}
@@ -120,7 +118,7 @@ export function HotNow() {
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
                                     </>
-                                )}
+                                ) : <div className="absolute inset-0 bg-secondary"/>}
                                 <CardContent className="relative z-10 flex flex-col justify-end h-full p-6 text-white min-h-[300px]">
                                     <div>
                                         <div className="flex items-center justify-between mb-2">
