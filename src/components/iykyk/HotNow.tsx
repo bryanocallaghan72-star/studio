@@ -24,9 +24,16 @@ const hotItems = [
         title: "$10 Spicy Margs",
         venue: "LULU",
         description: "Spice up your night with our signature spicy margaritas.",
-        imageId: "fitness-1",
+        imageId: "deal-1",
         creatorId: "lucas",
         endsIn: 2 * 60 * 60 * 1000, // 2 hours
+    },
+    {
+        title: "2-for-1 Crispy Salmon Rolls",
+        venue: "Raw Bar",
+        description: "Enjoy our signature crispy salmon rolls. Buy one, get one free!",
+        imageId: "sushi-1",
+        endsIn: 1 * 60 * 60 * 1000, // 1 hour
     }
 ];
 
