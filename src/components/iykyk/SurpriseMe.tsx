@@ -1,11 +1,11 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
-import { Gift } from "lucide-react";
+import { Gift, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { motion } from 'framer-motion';
@@ -56,11 +56,17 @@ const surprises = [
 ];
 
 export function SurpriseMe() {
-    const [surprise, setSurprise] = useState(surprises[0]);
+    const [isMounted, setIsMounted] = useState(false);
+    const [surprise, setSurprise] = useState<(typeof surprises)[0] | null>(null);
     const [isSpinning, setIsSpinning] = useState(false);
     const [open, setOpen] = useState(false);
 
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
     const handleSurprise = () => {
+        if (!isMounted) return;
         setIsSpinning(true);
         setOpen(true);
         setTimeout(() => {
@@ -69,8 +75,17 @@ export function SurpriseMe() {
             setIsSpinning(false);
         }, 1500);
     };
+    
+    if (!isMounted) {
+        return (
+            <Button variant="secondary" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 mt-4" disabled>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Loading...
+            </Button>
+        )
+    }
 
-    const image = PlaceHolderImages.find(img => img.id === surprise.imageId);
+    const image = surprise ? PlaceHolderImages.find(img => img.id === surprise.imageId) : null;
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -99,7 +114,7 @@ export function SurpriseMe() {
                         >
                             <Gift className="h-16 w-16 animate-pulse text-primary" />
                         </motion.div>
-                    ) : (
+                    ) : surprise && (
                         <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
                             <Card className="border-none">
                                 <CardContent className="p-0">
