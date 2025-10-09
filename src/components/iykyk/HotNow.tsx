@@ -19,6 +19,14 @@ const hotItems = [
         description: "25% off the 5pm Reformer class.",
         imageId: "fitness-1",
         endsIn: 30 * 60 * 1000, // 30 minutes
+    },
+    {
+        title: "$10 Spicy Margs",
+        venue: "LULU",
+        description: "Spice up your night with our signature spicy margaritas.",
+        imageId: "nightlife-1",
+        creatorId: "lucas",
+        endsIn: 2 * 60 * 60 * 1000, // 2 hours
     }
 ];
 
