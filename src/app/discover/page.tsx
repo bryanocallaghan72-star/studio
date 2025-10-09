@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect, useMemo } from 'react';
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
@@ -12,8 +13,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { communityConnectorTool } from '@/ai/flows/community-connector-tool';
 import type { CommunityConnectorOutput } from '@/ai/schemas';
-import { featureData } from '@/lib/features';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const iconMap = {
     Sparkles,
@@ -27,10 +28,72 @@ const iconMap = {
     Compass
 };
 
+const FeatureCardSkeleton = () => (
+    <div className="bg-card h-48 w-full overflow-hidden rounded-xl">
+        <Skeleton className="w-full h-full" />
+    </div>
+);
+
 export default function DiscoverPage() {
   const [interests, setInterests] = useState('');
   const [pending, startTransition] = useTransition();
   const [communityResults, setCommunityResults] = useState<CommunityConnectorOutput | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const featureData = useMemo(() => [
+    {
+      href: "/map",
+      icon: "Map",
+      title: "iykyk Vibe",
+      description: "Mood-based map for coffee, sushi, nightlife, and fitness.",
+      color: "text-primary",
+      imageId: "bondi-beach",
+    },
+    {
+      href: "/flow",
+      icon: "Compass",
+      title: "iykyk Flow",
+      description: "Discover the rhythm of your city through creators’ movements.",
+      color: "text-indigo-500",
+      imageId: "bondi-sunset",
+    },
+    {
+      href: "/fire",
+      icon: "Flame",
+      title: "iykyk Fire",
+      description: "Trending venues and creator hotspots updated daily.",
+      color: "text-rose-500",
+      imageId: "hot-1",
+    },
+    {
+      href: "/deals",
+      icon: "Tag",
+      title: "iykyk Deals",
+      description: "Exclusive offers and perks for locals and explorers.",
+      color: "text-emerald-500",
+      imageId: "deal-2",
+    },
+    {
+      href: "/my-day",
+      icon: "Calendar",
+      title: "iykyk My Day",
+      description: "Curated daily itinerary that you can shuffle like a playlist.",
+      color: "text-primary",
+      imageId: "my-day-3",
+    },
+    {
+      href: "/stays",
+      icon: "Home",
+      title: "iykyk Stays",
+      description: "Creator-approved Airbnb stays and local getaways.",
+      color: "text-sky-500",
+      imageId: "stay-2",
+    },
+  ], []);
 
   const handleFindCommunity = () => {
     if (!interests) return;
@@ -50,42 +113,53 @@ export default function DiscoverPage() {
         </div>
 
         <div className="flex flex-col gap-4 px-4 md:px-6">
-            {featureData.map((feature) => {
-                  const image = PlaceHolderImages.find(img => img.id === feature.imageId);
-                  const Icon = iconMap[feature.icon as keyof typeof iconMap];
-                  return (
-                    <Link key={feature.title} href={feature.href}>
-                        <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card h-48">
-                            {image ? (
-                              <>
-                                <Image
-                                  src={image.imageUrl}
-                                  alt={feature.title}
-                                  fill
-                                  className="object-cover w-full h-full transition-transform group-hover:scale-105"
-                                  data-ai-hint={image.imageHint}
-                                />
-                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
-                              </>
-                            ) : (
-                              <div className="absolute inset-0 bg-secondary" />
-                            )}
-                           
-                            <div className="absolute bottom-0 left-0 p-6 w-full">
-                               <div className="flex items-center gap-3">
-                                    <div className="rounded-full bg-background/80 backdrop-blur-sm p-3">
-                                       {Icon && <Icon className={`h-6 w-6 ${feature.color}`} />}
-                                    </div>
-                                    <div>
-                                       <CardTitle className="text-lg text-white">{feature.title}</CardTitle>
-                                       <CardDescription className="text-white/90">{feature.description}</CardDescription>
+            {!isMounted ? (
+                <>
+                    <FeatureCardSkeleton />
+                    <FeatureCardSkeleton />
+                    <FeatureCardSkeleton />
+                    <FeatureCardSkeleton />
+                    <FeatureCardSkeleton />
+                    <FeatureCardSkeleton />
+                </>
+            ) : (
+                featureData.map((feature) => {
+                      const image = PlaceHolderImages.find(img => img.id === feature.imageId);
+                      const Icon = iconMap[feature.icon as keyof typeof iconMap];
+                      return (
+                        <Link key={feature.title} href={feature.href}>
+                            <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card h-48">
+                                {image ? (
+                                  <>
+                                    <Image
+                                      src={image.imageUrl}
+                                      alt={feature.title}
+                                      fill
+                                      className="object-cover w-full h-full transition-transform group-hover:scale-105"
+                                      data-ai-hint={image.imageHint}
+                                    />
+                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+                                  </>
+                                ) : (
+                                  <div className="absolute inset-0 bg-secondary" />
+                                )}
+                               
+                                <div className="absolute bottom-0 left-0 p-6 w-full">
+                                   <div className="flex items-center gap-3">
+                                        <div className="rounded-full bg-background/80 backdrop-blur-sm p-3">
+                                           {Icon && <Icon className={`h-6 w-6 ${feature.color}`} />}
+                                        </div>
+                                        <div>
+                                           <CardTitle className="text-lg text-white">{feature.title}</CardTitle>
+                                           <CardDescription className="text-white/90">{feature.description}</CardDescription>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </Card>
-                    </Link>
-                  )
-                }
+                            </Card>
+                        </Link>
+                      )
+                    }
+                )
             )}
         </div>
 
