@@ -23,6 +23,8 @@ const featureData = [
     description: "Mood-based map for coffee, sushi, nightlife, and fitness.",
     color: "text-primary",
     imageId: "bondi-beach",
+    imageUrl: "https://images.unsplash.com/photo-1590523278143-35a1a1d1375a?q=80&w=2070&auto=format&fit=crop",
+    imageHint: "Bondi beach"
   },
   {
     href: "/flow",
@@ -91,7 +93,7 @@ export default function DiscoverPage() {
 
         <div className="flex flex-col gap-4 px-4 md:px-6">
             {featureData.map((feature) => {
-                  const image = PlaceHolderImages.find(img => img.id === feature.imageId);
+                  const image = feature.imageUrl ? { imageUrl: feature.imageUrl, imageHint: feature.imageHint } : PlaceHolderImages.find(img => img.id === feature.imageId);
                   return (
                     <Link key={feature.title} href={feature.href}>
                         <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card h-48">
@@ -182,3 +184,4 @@ export default function DiscoverPage() {
     </div>
   );
 }
+
