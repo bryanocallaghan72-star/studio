@@ -17,6 +17,7 @@ const hotItems = [
         title: "Happy Hour Rush",
         venue: "The Rum Diary Bar",
         description: "50% off all cocktails.",
+        imageId: "nightlife-1",
         endsIn: 50 * 60 * 1000, // 50 minutes
         creatorId: "shannon",
     },
@@ -38,6 +39,7 @@ const hotItems = [
         title: "Live DJ Set Special",
         venue: "The Bucket List",
         description: "$12 Aperol Spritz for the first hour.",
+        imageId: "hot-1",
         endsIn: 60 * 60 * 1000, // 60 minutes
         creatorId: "alice",
     }
