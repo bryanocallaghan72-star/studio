@@ -30,7 +30,7 @@ const featureData = [
     title: "iykyk Flow",
     description: "Time-of-day rhythm suggestions, from morning to late night.",
     color: "text-primary",
-    imageId: "bondi-sunset",
+    imageId: "bondi-beach",
   },
   {
     href: "/fire",
@@ -38,7 +38,7 @@ const featureData = [
     title: "iykyk Fire",
     description: "Real-time “What’s hot right now” with countdowns and FOMO.",
     color: "text-destructive",
-    imageId: "hot-1",
+    imageId: "bondi-beach",
   },
   {
     href: "/deals",
@@ -46,7 +46,7 @@ const featureData = [
     title: "iykyk Deals",
     description: "Venue-linked offers, perks, and creator-powered funnels.",
     color: "text-accent",
-    imageId: "deal-1",
+    imageId: "bondi-beach",
   },
   {
     href: "/my-day",
@@ -54,7 +54,7 @@ const featureData = [
     title: "iykyk My Day",
     description: "Curated daily itinerary that you can shuffle like a playlist.",
     color: "text-primary",
-    imageId: "my-day-2",
+    imageId: "bondi-beach",
   },
   {
     href: "/stays",
@@ -62,7 +62,7 @@ const featureData = [
     title: "iykyk Stays",
     description: "Curated boutique stays and local gems.",
     color: "text-primary",
-    imageId: "stay-1",
+    imageId: "bondi-beach",
   },
 ];
 
@@ -182,5 +182,3 @@ export default function DiscoverPage() {
     </div>
   );
 }
-
-    
