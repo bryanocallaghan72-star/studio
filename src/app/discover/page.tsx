@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useTransition, useMemo } from 'react';
+import { useState, useTransition } from 'react';
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
@@ -191,7 +191,7 @@ const PlaceHolderImages = [
     }
 ];
 
-const initialFeatureData = [
+const featureData = [
   {
     href: "/map",
     icon: Map,
@@ -247,8 +247,6 @@ export default function DiscoverPage() {
   const [interests, setInterests] = useState('');
   const [pending, startTransition] = useTransition();
   const [communityResults, setCommunityResults] = useState<CommunityConnectorOutput | null>(null);
-
-  const featureData = useMemo(() => initialFeatureData, []);
 
   const handleFindCommunity = () => {
     if (!interests) return;
