@@ -20,6 +20,14 @@ export const featureData = [
       imageId: "bondi-sunset",
     },
     {
+      href: "/flow-2",
+      icon: "Compass",
+      title: "iykyk Flow 2.0",
+      description: "Bigger, better, and more intuitive discovery.",
+      color: "text-purple-500",
+      imageId: "sunset-yoga",
+    },
+    {
       href: "/fire",
       icon: "Flame",
       title: "iykyk Fire",
