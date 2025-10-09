@@ -20,28 +20,12 @@ export const featureData = [
       imageId: "bondi-sunset",
     },
     {
-      href: "/flow-2",
-      icon: "Compass",
-      title: "iykyk Flow 2.0",
-      description: "Bigger, better, and more intuitive discovery.",
-      color: "text-indigo-500",
-      imageId: "sunset-yoga",
-    },
-    {
       href: "/fire",
       icon: "Flame",
       title: "iykyk Fire",
       description: "Trending venues and creator hotspots updated daily.",
       color: "text-rose-500",
       imageId: "hot-1",
-    },
-    {
-      href: "/fire-2",
-      icon: "Flame",
-      title: "iykyk Fire 2.0",
-      description: "Bigger, better, and hotter.",
-      color: "text-rose-500",
-      imageId: "hot-2",
     },
     {
       href: "/deals",
@@ -68,5 +52,3 @@ export const featureData = [
       imageId: "stay-2",
     },
   ];
-
-    
