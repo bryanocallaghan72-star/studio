@@ -24,7 +24,7 @@ export const featureData = [
       icon: "Compass",
       title: "iykyk Flow 2.0",
       description: "Bigger, better, and more intuitive discovery.",
-      color: "text-purple-500",
+      color: "text-indigo-500",
       imageId: "sunset-yoga",
     },
     {
