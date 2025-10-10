@@ -53,6 +53,12 @@
       "description": "A cozy and stylish studio apartment interior.",
       "imageUrl": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2070&auto=format&fit=crop",
       "imageHint": "studio apartment"
+    },
+    {
+      "id": "bondi-sunset",
+      "description": "A beautiful sunset over Bondi Beach.",
+      "imageUrl": "https://images.unsplash.com/photo-1579493933735-379539655106?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "Bondi sunset"
     }
   ]
 }
