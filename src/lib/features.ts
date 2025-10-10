@@ -33,7 +33,7 @@ export const featureData = [
       title: "iykyk Deals",
       description: "Exclusive offers and perks for locals and explorers.",
       color: "text-emerald-500",
-      imageId: "my-day-2",
+      imageId: "my-day-3",
     },
     {
       href: "/my-day",
@@ -41,7 +41,7 @@ export const featureData = [
       title: "iykyk My Day",
       description: "Curated daily itinerary that you can shuffle like a playlist.",
       color: "text-primary",
-      imageId: "my-day-3",
+      imageId: "my-day-1",
     },
     {
       href: "/stays",
