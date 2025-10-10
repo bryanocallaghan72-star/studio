@@ -29,6 +29,13 @@ const hotItems = [
         endsIn: 2 * 60 * 60 * 1000, // 2 hours
     },
     {
+        title: "2 for 1 Cocktails",
+        venue: "Raw Bar",
+        description: "Enjoy our signature cocktails. Buy one, get one free!",
+        imageId: "cocktails-1",
+        endsIn: 1 * 60 * 60 * 1000, // 1 hour
+    },
+    {
         title: "2-for-1 Crispy Salmon Rolls",
         venue: "Raw Bar",
         description: "Enjoy our signature crispy salmon rolls. Buy one, get one free!",
