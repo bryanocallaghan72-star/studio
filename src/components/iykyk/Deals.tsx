@@ -54,31 +54,32 @@ export function Deals() {
                          return (
                             <Card key={deal.title} className="group overflow-hidden relative transition-all hover:shadow-xl hover:-translate-y-1">
                                 {image && (
-                                    <>
-                                    <Image
-                                        src={image.imageUrl}
-                                        alt={deal.description}
-                                        width={600}
-                                        height={400}
-                                        className="object-cover w-full h-40 transition-transform group-hover:scale-105"
-                                        data-ai-hint={image.imageHint}
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                                    </>
-                                )}
-                                <div className="absolute bottom-0 left-0 p-4 w-full flex justify-between items-end">
-                                    <div>
-                                        <h3 className="text-lg font-bold text-white">{deal.title}</h3>
-                                        <p className="text-sm text-white/80">{deal.venue}</p>
+                                    <div className="relative h-40 w-full">
+                                        <Image
+                                            src={image.imageUrl}
+                                            alt={deal.description}
+                                            fill
+                                            className="object-cover w-full h-full transition-transform group-hover:scale-105"
+                                            data-ai-hint={image.imageHint}
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                                     </div>
-                                    <Button 
-                                        variant="secondary"
-                                        onClick={() => handleClaimDeal(deal)}
-                                    >
-                                        Claim
-                                    </Button>
-                                </div>
-                                 <Badge className="absolute top-2 right-2 border-accent text-accent bg-background">DEAL</Badge>
+                                )}
+                                <CardContent className="p-4 bg-card">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <h3 className="text-lg font-bold">{deal.title}</h3>
+                                            <p className="text-sm text-muted-foreground">{deal.venue}</p>
+                                        </div>
+                                        <Button 
+                                            variant="secondary"
+                                            onClick={() => handleClaimDeal(deal)}
+                                        >
+                                            Claim
+                                        </Button>
+                                    </div>
+                                    <Badge className="absolute top-2 right-2 border-accent text-accent bg-background">DEAL</Badge>
+                                </CardContent>
                             </Card>
                          )
                     })}
