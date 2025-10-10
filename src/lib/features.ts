@@ -17,7 +17,7 @@ export const featureData = [
       title: "iykyk Flow",
       description: "Discover the rhythm of your city through creators’ movements.",
       color: "text-indigo-500",
-      imageId: "bondi-sunset",
+      imageId: "morning-1",
     },
     {
       href: "/fire",
@@ -52,4 +52,3 @@ export const featureData = [
       imageId: "stay-2",
     },
   ];
-
