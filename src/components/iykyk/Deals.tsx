@@ -54,7 +54,7 @@ export function Deals() {
                          return (
                             <Card key={deal.title} className="group overflow-hidden relative transition-all hover:shadow-xl hover:-translate-y-1">
                                 <div className="relative h-48 w-full">
-                                    {image && (
+                                    {image ? (
                                         <>
                                             <Image
                                                 src={image.imageUrl}
@@ -65,6 +65,8 @@ export function Deals() {
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                                         </>
+                                    ) : (
+                                        <div className="bg-secondary h-full w-full"/>
                                     )}
                                 </div>
                                 <CardContent className="p-4 bg-card">
