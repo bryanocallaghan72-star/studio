@@ -53,12 +53,6 @@
       "description": "A cozy and stylish studio apartment interior.",
       "imageUrl": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2070&auto=format&fit=crop",
       "imageHint": "studio apartment"
-    },
-    {
-      "id": "cocktails-1",
-      "description": "A close-up of two vibrant and colorful cocktails on a bar.",
-      "imageUrl": "https://images.unsplash.com/photo-1609951651556-52d4c262d7e2?q=80&w=1974&auto=format&fit=crop",
-      "imageHint": "colorful cocktails"
     }
   ]
 }
