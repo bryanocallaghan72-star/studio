@@ -49,6 +49,6 @@ export const featureData = [
       title: "iykyk Stays",
       description: "Creator-approved Airbnb stays and local getaways.",
       color: "text-sky-500",
-      imageId: "stay-2",
+      imageId: "morning-1",
     },
   ];
