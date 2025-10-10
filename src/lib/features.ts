@@ -9,7 +9,7 @@ export const featureData = [
       title: "iykyk Vibe",
       description: "Mood-based map for coffee, sushi, nightlife, and fitness.",
       color: "text-primary",
-      imageId: "morning-1",
+      imageId: "bondi-beach",
     },
     {
       href: "/flow",
@@ -17,7 +17,7 @@ export const featureData = [
       title: "iykyk Flow",
       description: "Discover the rhythm of your city through creators’ movements.",
       color: "text-indigo-500",
-      imageId: "morning-1",
+      imageId: "bondi-sunset",
     },
     {
       href: "/fire",
@@ -52,3 +52,4 @@ export const featureData = [
       imageId: "stay-2",
     },
   ];
+
