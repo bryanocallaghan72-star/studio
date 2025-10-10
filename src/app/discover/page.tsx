@@ -11,7 +11,6 @@ import Image from "next/image";
 import { SurpriseMe } from '@/components/iykyk/SurpriseMe';
 import { featureData } from '@/lib/features';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Skeleton } from '@/components/ui/skeleton';
 
 const iconMap = {
     Sparkles,
@@ -25,18 +24,7 @@ const iconMap = {
     Compass
 };
 
-const FeatureCardSkeleton = () => (
-    <div className="bg-card h-48 w-full overflow-hidden rounded-xl">
-        <Skeleton className="w-full h-full" />
-    </div>
-);
-
 export default function DiscoverPage() {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
@@ -48,8 +36,7 @@ export default function DiscoverPage() {
         </div>
 
         <div className="flex flex-col gap-4 px-4 md:px-6">
-            {!isMounted && featureData.map((feature) => <FeatureCardSkeleton key={feature.title} />)}
-            {isMounted && featureData.map((feature) => {
+            {featureData.map((feature) => {
                 const image = PlaceHolderImages.find(img => img.id === feature.imageId);
                 const Icon = iconMap[feature.icon as keyof typeof iconMap];
 

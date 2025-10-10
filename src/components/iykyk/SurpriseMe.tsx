@@ -56,19 +56,12 @@ const surprises = [
 ];
 
 export function SurpriseMe() {
-    const [isMounted, setIsMounted] = useState(false);
     const [surprise, setSurprise] = useState<(typeof surprises)[0] | null>(null);
     const [isSpinning, setIsSpinning] = useState(false);
     const [open, setOpen] = useState(false);
 
-    useEffect(() => {
-        setIsMounted(true);
-    }, []);
-
     const handleSurprise = () => {
-        if (!isMounted) return;
         setIsSpinning(true);
-        // Ensure dialog doesn't open until client-side interaction
         setOpen(true);
         setTimeout(() => {
             const randomIndex = Math.floor(Math.random() * surprises.length);
@@ -76,15 +69,6 @@ export function SurpriseMe() {
             setIsSpinning(false);
         }, 1500);
     };
-    
-    if (!isMounted) {
-        return (
-            <Button variant="secondary" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 mt-4" disabled>
-                <Gift className="mr-2 h-5 w-5" />
-                Surprise Me
-            </Button>
-        )
-    }
 
     const image = surprise ? PlaceHolderImages.find(img => img.id === surprise.imageId) : null;
 

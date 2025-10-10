@@ -33,7 +33,7 @@ export const featureData = [
       title: "iykyk Deals",
       description: "Exclusive offers and perks for locals and explorers.",
       color: "text-emerald-500",
-      imageId: "deal-2",
+      imageId: "deal-1",
     },
     {
       href: "/my-day",
