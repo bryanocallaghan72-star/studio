@@ -46,24 +46,21 @@ const hotItems = [
 
 const Countdown = ({ endsIn }: { endsIn: number }) => {
     const [timeLeft, setTimeLeft] = useState(endsIn);
+    const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
-        if (typeof window === 'undefined') return;
+        setIsClient(true);
+    }, []);
 
-        if (timeLeft <= 0) return;
+    useEffect(() => {
+        if (!isClient || timeLeft <= 0) return;
 
         const intervalId = setInterval(() => {
             setTimeLeft(prevTime => prevTime - 1000);
         }, 1000);
 
         return () => clearInterval(intervalId);
-    }, [timeLeft]);
-    
-    const [isClient, setIsClient] = useState(false);
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-
+    }, [isClient, timeLeft]);
 
     if (!isClient) {
         return <span className="font-mono text-lg font-semibold text-background">Loading...</span>;
