@@ -14,31 +14,31 @@ const surprises = [
     {
         title: "Hidden Laneway Art",
         description: "You've stumbled upon a secret alley filled with stunning street art. Perfect for your next photo op!",
-        imageId: "surprise-1",
+        imageId: "community-fitness",
         venue: "Graffiti Lane"
     },
     {
         title: "Secret Rooftop Garden",
         description: "An urban oasis above the city. Enjoy a moment of peace and quiet with amazing views.",
-        imageId: "my-day-2",
+        imageId: "stay-1",
         venue: "The Sky Garden"
     },
     {
         title: "Spontaneous Gelato Tasting",
         description: "Surprise! A local gelateria is offering free samples of their new, exotic flavor for the next hour.",
-        imageId: "deal-2",
+        imageId: "morning-2",
         venue: "Gelato Gusto"
     },
     {
         title: "Craft Cocktail Discovery",
         description: "You've found a hidden bar known for its unique, handcrafted cocktails. Cheers to the unexpected!",
-        imageId: "nightlife-1",
+        imageId: "community-sushi",
         venue: "The Alchemist's Nook"
     },
     {
         title: "Tapas for Two",
         description: "A cozy tapas bar has a table just for you. Enjoy a selection of small plates and big flavors.",
-        imageId: "my-day-3",
+        imageId: "sushi-1",
         venue: "El Rincon Escondido"
     },
     {
