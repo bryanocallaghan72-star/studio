@@ -14,7 +14,7 @@ const morningActivities = [
 ];
 
 const nightActivities = [
-    { title: "Seaside Dining", description: "Enjoy fresh seafood with a stunning ocean view.", imageId: "Bondi-1", tag: "Dinner" },
+    { title: "Seaside Dining", description: "Enjoy fresh seafood with a stunning ocean view.", imageId: "cocktails-1", tag: "Dinner" },
     { title: "Cocktail Hour", description: "Discover a hidden bar with expertly mixed cocktails.", imageId: "community-sushi", tag: "Bar" },
     { title: "City Lights Stroll", description: "A romantic walk along the illuminated coastline.", imageId: "night-2", tag: "Romantic" },
 ];
