@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
 import { Card, CardDescription, CardTitle, CardContent } from "@/components/ui/card";
-import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Loader2 } from "lucide-react";
+import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { SurpriseMe } from '@/components/iykyk/SurpriseMe';
