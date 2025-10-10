@@ -15,19 +15,19 @@ const deals = [
         title: "2-for-1 Cocktails",
         venue: "The Beachcomber Bar",
         description: "Enjoy two cocktails for the price of one, all week long.",
-        imageId: "deal-1"
+        imageId: "nightlife-1"
     },
     {
         title: "50% Off Sushi Platters",
         venue: "Sakura Sushi",
         description: "Half-price sushi platters every Tuesday and Wednesday.",
-        imageId: "deal-2"
+        imageId: "sushi-1"
     },
     {
         title: "Free Coffee with Breakfast",
         venue: "Morning Glory Cafe",
         description: "Get a free coffee with any breakfast order before 10 AM on weekdays.",
-        imageId: "coffee-1"
+        imageId: "morning-2"
     }
 ];
 
@@ -53,18 +53,20 @@ export function Deals() {
                          const image = PlaceHolderImages.find(img => img.id === deal.imageId);
                          return (
                             <Card key={deal.title} className="group overflow-hidden relative transition-all hover:shadow-xl hover:-translate-y-1">
-                                {image && (
-                                    <div className="relative h-40 w-full">
-                                        <Image
-                                            src={image.imageUrl}
-                                            alt={deal.description}
-                                            fill
-                                            className="object-cover w-full h-full transition-transform group-hover:scale-105"
-                                            data-ai-hint={image.imageHint}
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                                    </div>
-                                )}
+                                <div className="relative h-48 w-full">
+                                    {image && (
+                                        <>
+                                            <Image
+                                                src={image.imageUrl}
+                                                alt={deal.description}
+                                                fill
+                                                className="object-cover w-full h-full transition-transform group-hover:scale-105"
+                                                data-ai-hint={image.imageHint}
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                                        </>
+                                    )}
+                                </div>
                                 <CardContent className="p-4 bg-card">
                                     <div className="flex justify-between items-start">
                                         <div>
