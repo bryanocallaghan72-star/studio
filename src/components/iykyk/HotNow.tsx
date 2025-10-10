@@ -24,7 +24,7 @@ const hotItems = [
         title: "$10 Spicy Margs",
         venue: "LULU",
         description: "Spice up your night with our signature spicy margaritas.",
-        imageId: "deal-1",
+        imageId: "community-sushi",
         creatorId: "lucas",
         endsIn: 2 * 60 * 60 * 1000, // 2 hours
     },
@@ -101,20 +101,20 @@ export function HotNow() {
                         const creator = item.creatorId ? appData.creators.find(c => c.id === item.creatorId) : null;
                         return (
                             <Card key={item.title} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-primary">
+                                <div className="absolute inset-0">
                                 {image ? (
                                     <>
-                                        <div className="absolute inset-0">
-                                            <Image
-                                                src={image.imageUrl}
-                                                alt={item.description}
-                                                fill
-                                                className="object-cover transition-transform group-hover:scale-105"
-                                                data-ai-hint={image.imageHint}
-                                            />
-                                        </div>
+                                        <Image
+                                            src={image.imageUrl}
+                                            alt={item.description}
+                                            fill
+                                            className="object-cover transition-transform group-hover:scale-105"
+                                            data-ai-hint={image.imageHint}
+                                        />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
                                     </>
-                                ) : <div className="absolute inset-0 bg-secondary"/>}
+                                ) : <div className="bg-secondary h-full w-full"/>}
+                                </div>
                                 <CardContent className="relative z-10 flex flex-col justify-end h-full p-6 text-white min-h-[300px]">
                                     <div>
                                         <div className="flex items-center justify-between mb-2">
