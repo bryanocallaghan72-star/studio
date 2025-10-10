@@ -39,12 +39,12 @@ export function IykykVibeMap() {
                     className={cn(
                         "flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full mx-1 transition-all duration-300 inline-flex items-center shadow-sm",
                         "bg-card text-foreground hover:bg-secondary",
-                        "data-[active=true]:text-white"
+                        "data-[active=true]:bg-[--active-bg] data-[active=true]:text-[--active-text]"
                     )}
                     style={{
-                        backgroundColor: activeTab === category ? color : undefined,
-                        color: activeTab === category ? textColor : undefined,
-                    }}
+                        "--active-bg": color,
+                        "--active-text": textColor,
+                    } as React.CSSProperties}
                 >
                     <Icon className="mr-2 h-4 w-4" />
                     {category}
@@ -104,7 +104,7 @@ export function IykykVibeMap() {
                 </div>
                 
                 {filteredPins.map(pin => (
-                  <Link key={pin.id} href={`/venue/${pin.slug}`} className="absolute group transform -translate-x-1/2 -translate-y-full cursor-pointer" style={{ left: pin.x, top: pin.y }}>
+                  <Link key={pin.id} href={`/venue/${pin.slug}`} className="absolute group transform -translate-x-1/2 -translate-y-full cursor-pointer" style={{ left: pin.x, top: pin.y }} aria-label={`View details for ${pin.name}`}>
                     <ColorPinSVG className="w-10 h-10 drop-shadow-lg transition-transform duration-200 group-hover:scale-125" color={categories[pin.type as keyof typeof categories]?.color || '#FF7F50'} />
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 rounded-lg bg-gray-800 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 pointer-events-none">
                         {pin.name}
