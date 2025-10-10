@@ -53,24 +53,6 @@
       "description": "A cozy and stylish studio apartment interior.",
       "imageUrl": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2070&auto=format&fit=crop",
       "imageHint": "studio apartment"
-    },
-    {
-      "id": "Bondi-1",
-      "description": "A beautiful photo of the ocean.",
-      "imageUrl": "https://images.unsplash.com/photo-1500356536419-1a4811c3f1de?q=80&w=2070&auto=format&fit=crop",
-      "imageHint": "ocean daytime"
-    },
-    {
-      "id": "cocktails-1",
-      "description": "A close-up of a brown beverage with olives and herbs in a rocks glass.",
-      "imageUrl": "https://images.unsplash.com/photo-1626202157995-1f91c9e4997a?q=80&w=1964&auto=format&fit=crop",
-      "imageHint": "cocktail glass"
-    },
-    {
-      "id": "cocktail-101",
-      "description": "A close-up of a brown beverage with olives and herbs in a rocks glass.",
-      "imageUrl": "https://images.unsplash.com/photo-1626202157995-1f91c9e4997a?q=80&w=1964&auto=format&fit=crop",
-      "imageHint": "cocktail glass"
     }
   ]
 }
