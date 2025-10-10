@@ -91,24 +91,6 @@
       "imageHint": "surfing"
     },
     {
-      "id": "my-day-2",
-      "description": "A person peacefully reading a book in a lush, green park.",
-      "imageUrl": "https://images.unsplash.com/photo-1524564532789-32948135a585?q=80&w=1974&auto=format&fit=crop",
-      "imageHint": "park reading"
-    },
-    {
-      "id": "my-day-3",
-      "description": "A group of friends enjoying a sunny picnic in a park.",
-      "imageUrl": "https://images.unsplash.com/photo-1559011494-a4f6693456b3?q=80&w=1974&auto=format&fit=crop",
-      "imageHint": "friends picnic"
-    },
-    {
-      "id": "my-day-4",
-      "description": "A person shopping on a vibrant, bustling city street.",
-      "imageUrl": "https://images.unsplash.com/photo-1525562723836-dca67a71d0ab?q=80&w=1974&auto=format&fit=crop",
-      "imageHint": "street shopping"
-    },
-    {
       "id": "surprise-1",
       "description": "A hidden urban laneway covered in colorful street art.",
       "imageUrl": "https://images.unsplash.com/photo-1528747513221-1e9c8f3b068e?q=80&w=1974&auto=format&fit=crop",
