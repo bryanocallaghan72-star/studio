@@ -9,7 +9,7 @@ export const featureData = [
       title: "iykyk Vibe",
       description: "Mood-based map for coffee, sushi, nightlife, and fitness.",
       color: "text-primary",
-      imageId: "bondi-beach",
+      imageId: "morning-1",
     },
     {
       href: "/flow",
