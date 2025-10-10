@@ -35,14 +35,15 @@ export function IykykVibeMap() {
                 <button
                     key={category}
                     onClick={() => setActiveTab(category)}
+                    data-active={activeTab === category}
                     className={cn(
                         "flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full mx-1 transition-all duration-300 inline-flex items-center shadow-sm",
-                        activeTab === category
-                            ? `text-[${textColor}]`
-                            : 'bg-card text-foreground hover:bg-secondary'
+                        "bg-card text-foreground hover:bg-secondary",
+                        "data-[active=true]:text-white"
                     )}
                     style={{
-                        backgroundColor: activeTab === category ? color : undefined
+                        backgroundColor: activeTab === category ? color : undefined,
+                        color: activeTab === category ? textColor : undefined,
                     }}
                 >
                     <Icon className="mr-2 h-4 w-4" />
