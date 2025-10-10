@@ -68,6 +68,7 @@ export function SurpriseMe() {
     const handleSurprise = () => {
         if (!isMounted) return;
         setIsSpinning(true);
+        // Ensure dialog doesn't open until client-side interaction
         setOpen(true);
         setTimeout(() => {
             const randomIndex = Math.floor(Math.random() * surprises.length);
