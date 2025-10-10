@@ -15,7 +15,7 @@ const deals = [
         title: "2-for-1 Cocktails",
         venue: "The Beachcomber Bar",
         description: "Enjoy two cocktails for the price of one, all week long.",
-        imageId: "nightlife-1"
+        imageId: "community-sushi"
     },
     {
         title: "50% Off Sushi Platters",
