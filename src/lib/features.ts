@@ -51,4 +51,13 @@ export const featureData = [
       color: "text-sky-500",
       imageId: "stay-2",
     },
+    {
+      href: "/stays-2",
+      icon: "Home",
+      title: "iykyk Stays 2.0",
+      description: "Creator-approved Airbnb stays and local getaways.",
+      color: "text-sky-500",
+      imageId: "stay-2",
+    },
   ];
+
