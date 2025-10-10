@@ -9,7 +9,7 @@ export const featureData = [
       title: "iykyk Vibe",
       description: "Mood-based map for coffee, sushi, nightlife, and fitness.",
       color: "text-primary",
-      imageId: "morning-1",
+      imageId: "my-day-2",
     },
     {
       href: "/flow",
@@ -25,7 +25,7 @@ export const featureData = [
       title: "iykyk Fire",
       description: "Trending venues and creator hotspots updated daily.",
       color: "text-rose-500",
-      imageId: "morning-1",
+      imageId: "hot-1",
     },
     {
       href: "/deals",
@@ -33,7 +33,7 @@ export const featureData = [
       title: "iykyk Deals",
       description: "Exclusive offers and perks for locals and explorers.",
       color: "text-emerald-500",
-      imageId: "morning-1",
+      imageId: "deal-1",
     },
     {
       href: "/my-day",
@@ -41,7 +41,7 @@ export const featureData = [
       title: "iykyk My Day",
       description: "Curated daily itinerary that you can shuffle like a playlist.",
       color: "text-primary",
-      imageId: "morning-1",
+      imageId: "my-day-3",
     },
     {
       href: "/stays",
@@ -49,6 +49,6 @@ export const featureData = [
       title: "iykyk Stays",
       description: "Creator-approved Airbnb stays and local getaways.",
       color: "text-sky-500",
-      imageId: "morning-1",
+      imageId: "stay-1",
     },
 ];
