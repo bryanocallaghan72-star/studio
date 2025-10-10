@@ -14,38 +14,42 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 const hotItems = [
     {
+        id: 'hot-1',
         title: "Last Minute Spot",
         venue: "Fluidform Pilates",
         description: "25% off the 5pm Reformer class.",
         imageId: "fitness-1",
-        endsIn: 30 * 60 * 1000, // 30 minutes
+        expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
     },
     {
+        id: 'hot-2',
         title: "$10 Spicy Margs",
         venue: "LULU",
         description: "Spice up your night with our signature spicy margaritas.",
         imageId: "community-sushi",
         creatorId: "lucas",
-        endsIn: 2 * 60 * 60 * 1000, // 2 hours
+        expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
     },
     {
+        id: 'hot-3',
         title: "2 for 1 Cocktails",
         venue: "Raw Bar",
         description: "Enjoy our signature cocktails. Buy one, get one free!",
         imageId: "community-sushi",
-        endsIn: 1 * 60 * 60 * 1000, // 1 hour
+        expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
     },
     {
+        id: 'hot-4',
         title: "2-for-1 Crispy Salmon Rolls",
         venue: "Raw Bar",
         description: "Enjoy our signature crispy salmon rolls. Buy one, get one free!",
         imageId: "sushi-1",
-        endsIn: 1 * 60 * 60 * 1000, // 1 hour
+        expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
     }
 ];
 
-const Countdown = ({ endsIn }: { endsIn: number }) => {
-    const [timeLeft, setTimeLeft] = useState(endsIn);
+const Countdown = ({ expiresAt }: { expiresAt: string }) => {
+    const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
@@ -53,14 +57,20 @@ const Countdown = ({ endsIn }: { endsIn: number }) => {
     }, []);
 
     useEffect(() => {
-        if (!isClient || timeLeft <= 0) return;
+        if (!isClient) return;
 
         const intervalId = setInterval(() => {
-            setTimeLeft(prevTime => prevTime - 1000);
+            const newTimeLeft = new Date(expiresAt).getTime() - Date.now();
+            if (newTimeLeft <= 0) {
+                setTimeLeft(0);
+                clearInterval(intervalId);
+            } else {
+                setTimeLeft(newTimeLeft);
+            }
         }, 1000);
 
         return () => clearInterval(intervalId);
-    }, [isClient, timeLeft]);
+    }, [isClient, expiresAt]);
 
     if (!isClient) {
         return <span className="font-mono text-lg font-semibold text-background">Loading...</span>;
@@ -91,6 +101,8 @@ export function HotNow() {
         setIsQRDialogOpen(true);
     };
 
+    const activeItems = hotItems.filter(item => new Date(item.expiresAt).getTime() > Date.now());
+
     return (
         <>
             <section>
@@ -100,11 +112,11 @@ export function HotNow() {
                 </div>
                 <p className="text-muted-foreground mb-4">What’s hot right now. Catch it before it's gone!</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {hotItems.map(item => {
+                    {activeItems.map(item => {
                         const image = item.imageId ? PlaceHolderImages.find(img => img.id === item.imageId) : null;
                         const creator = item.creatorId ? appData.creators.find(c => c.id === item.creatorId) : null;
                         return (
-                            <Card key={item.title} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-primary">
+                            <Card key={item.id} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-primary">
                                 <div className="absolute inset-0">
                                 {image ? (
                                     <>
@@ -142,7 +154,7 @@ export function HotNow() {
                                     <div className='mt-6'>
                                         <div className="flex items-center justify-between rounded-lg bg-destructive/80 p-3 backdrop-blur-sm border border-destructive-foreground/30">
                                             <p className="text-sm font-medium text-destructive-foreground">Ends in:</p>
-                                            <Countdown endsIn={item.endsIn} />
+                                            <Countdown expiresAt={item.expiresAt} />
                                         </div>
                                         <Button 
                                             variant="secondary" 
