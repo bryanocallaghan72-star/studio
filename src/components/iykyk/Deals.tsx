@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Ticket } from "lucide-react";
@@ -12,22 +12,28 @@ import { QRCodeDialog } from './QRCodeDialog';
 
 const deals = [
     {
+        id: 'deal-1',
         title: "2-for-1 Cocktails",
         venue: "The Beachcomber Bar",
         description: "Enjoy two cocktails for the price of one, all week long.",
-        imageId: "community-sushi"
+        imageId: "community-sushi",
+        validity: "All week long"
     },
     {
+        id: 'deal-2',
         title: "50% Off Sushi Platters",
         venue: "Sakura Sushi",
         description: "Half-price sushi platters every Tuesday and Wednesday.",
-        imageId: "sushi-1"
+        imageId: "sushi-1",
+        validity: "Tues & Weds only"
     },
     {
+        id: 'deal-3',
         title: "Free Coffee with Breakfast",
         venue: "Morning Glory Cafe",
         description: "Get a free coffee with any breakfast order before 10 AM on weekdays.",
-        imageId: "morning-2"
+        imageId: "morning-2",
+        validity: "Weekdays before 10 AM"
     }
 ];
 
@@ -52,7 +58,7 @@ export function Deals() {
                     {deals.map(deal => {
                          const image = PlaceHolderImages.find(img => img.id === deal.imageId);
                          return (
-                            <Card key={deal.title} className="group overflow-hidden relative transition-all hover:shadow-xl hover:-translate-y-1">
+                            <Card key={deal.id} className="group overflow-hidden relative transition-all hover:shadow-xl hover:-translate-y-1 bg-card">
                                 <div className="relative h-48 w-full">
                                     {image ? (
                                         <>
@@ -69,11 +75,12 @@ export function Deals() {
                                         <div className="bg-secondary h-full w-full"/>
                                     )}
                                 </div>
-                                <CardContent className="p-4 bg-card">
+                                <CardContent className="p-4">
                                     <div className="flex justify-between items-start">
                                         <div>
                                             <h3 className="text-lg font-bold">{deal.title}</h3>
                                             <p className="text-sm text-muted-foreground">{deal.venue}</p>
+                                            <p className="text-xs text-accent mt-2 font-semibold">{deal.validity}</p>
                                         </div>
                                         <Button 
                                             variant="secondary"
