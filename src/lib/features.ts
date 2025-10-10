@@ -25,7 +25,7 @@ export const featureData = [
       title: "iykyk Fire",
       description: "Trending venues and creator hotspots updated daily.",
       color: "text-rose-500",
-      imageId: "hot-1",
+      imageId: "morning-1",
     },
     {
       href: "/deals",
