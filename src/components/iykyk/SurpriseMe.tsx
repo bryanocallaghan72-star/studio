@@ -70,14 +70,24 @@ export function SurpriseMe() {
         }, 1500);
     };
 
+    const handleOpenChange = (isOpen: boolean) => {
+        setOpen(isOpen);
+        if (!isOpen) {
+            setTimeout(() => {
+                setSurprise(null);
+                setIsSpinning(false);
+            }, 200);
+        }
+    };
+
     const image = surprise ? PlaceHolderImages.find(img => img.id === surprise.imageId) : null;
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
-                <Button variant="secondary" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 mt-4" onClick={handleSurprise}>
-                    <Gift className="mr-2 h-5 w-5" />
-                    Surprise Me
+                <Button variant="secondary" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 mt-4" onClick={handleSurprise} disabled={isSpinning}>
+                    {isSpinning ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Gift className="mr-2 h-5 w-5" />}
+                    {isSpinning ? 'Finding a surprise...' : 'Surprise Me'}
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
@@ -103,17 +113,19 @@ export function SurpriseMe() {
                         <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
                             <Card className="border-none">
                                 <CardContent className="p-0">
-                                    {image && (
+                                    {image ? (
                                         <div className="relative h-48 w-full">
                                             <Image
                                                 src={image.imageUrl}
-                                                alt={image.description}
+                                                alt={surprise.title}
                                                 fill
                                                 className="object-cover rounded-t-lg"
                                                 data-ai-hint={image.imageHint}
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                                         </div>
+                                    ) : (
+                                        <div className="relative h-48 w-full bg-secondary rounded-t-lg" />
                                     )}
                                     <div className="p-4">
                                         <h3 className="text-xl font-bold">{surprise.title}</h3>
