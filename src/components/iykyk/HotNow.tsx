@@ -103,13 +103,15 @@ export function HotNow() {
                             <Card key={item.title} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-primary">
                                 {image ? (
                                     <>
-                                        <Image
-                                            src={image.imageUrl}
-                                            alt={item.description}
-                                            fill
-                                            className="object-cover transition-transform group-hover:scale-105"
-                                            data-ai-hint={image.imageHint}
-                                        />
+                                        <div className="absolute inset-0">
+                                            <Image
+                                                src={image.imageUrl}
+                                                alt={item.description}
+                                                fill
+                                                className="object-cover transition-transform group-hover:scale-105"
+                                                data-ai-hint={image.imageHint}
+                                            />
+                                        </div>
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
                                     </>
                                 ) : <div className="absolute inset-0 bg-secondary"/>}
