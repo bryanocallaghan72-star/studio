@@ -20,6 +20,7 @@ export const appData = {
       },
       description: "Can't get enough of this place #sushi #bondi",
       imageId: "sushi-1",
+      videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4",
       likes: 12500,
       comments: 789,
       commentData: []
@@ -32,6 +33,7 @@ export const appData = {
         },
         description: "Perfect cocktails for a perfect night",
         imageId: "cocktail-101",
+        videoUrl: "https://test-videos.co.uk/vids/elephantsdream/mp4/h264/720/Elephants_Dream_720_10s_1MB.mp4",
         likes: 8300,
         comments: 452,
         commentData: []
@@ -44,6 +46,7 @@ export const appData = {
       },
       description: "Bondi, you have my heart ❤️",
       imageId: "morning-1",
+      videoUrl: "https://test-videos.co.uk/vids/sintel/mp4/h264/720/Sintel_720_10s_1MB.mp4",
       likes: 15200,
       comments: 876,
       commentData: []
@@ -56,6 +59,7 @@ export const appData = {
       },
       description: "Summertime heats with deep house beats",
       imageId: "bondi-sunset",
+      videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4",
       likes: 21300,
       comments: 952,
       commentData: []
@@ -68,6 +72,7 @@ export const appData = {
         },
         description: "Breakfast of champions!",
         imageId: "ricotta-hotcakes",
+        videoUrl: "https://test-videos.co.uk/vids/elephantsdream/mp4/h264/720/Elephants_Dream_720_10s_1MB.mp4",
         likes: 9800,
         comments: 633,
         commentData: []

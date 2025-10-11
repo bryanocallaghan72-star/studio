@@ -5,7 +5,6 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Heart, MessageCircle, Send, MoreVertical, X } from "lucide-react";
-import Image from "next/image";
 import { CommentSheet } from "./CommentSheet";
 import Link from "next/link";
 import { appData } from "@/lib/data";
@@ -29,15 +28,15 @@ const ReelPlayer = ({ reel }: { reel: (typeof reelsData)[0] }) => {
     return (
         <>
         <div className="relative h-screen w-full snap-start flex-shrink-0">
-             {image && (
-                <Image 
-                    src={image.imageUrl}
-                    alt={image.description}
-                    fill
-                    className="object-cover"
-                    data-ai-hint={image.imageHint}
-                />
-            )}
+            <video 
+                src={reel.videoUrl}
+                poster={image?.imageUrl}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="h-full w-full object-cover"
+            />
             <div className="absolute top-4 left-4 text-white font-bold text-lg z-10">
                 <Link href="/discover">
                     iykyk
