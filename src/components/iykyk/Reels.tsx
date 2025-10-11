@@ -8,33 +8,9 @@ import { Heart, MessageCircle, Send, MoreVertical, X } from "lucide-react";
 import Image from "next/image";
 import { CommentSheet } from "./CommentSheet";
 import Link from "next/link";
+import { appData } from "@/lib/data";
 
-const reelsData = [
-  {
-    id: 3,
-    creator: {
-      name: "SunsetChaser",
-      avatar: "https://github.com/sunset.png",
-    },
-    description: "Bondi, you have my heart ❤️",
-    imageId: "morning-1",
-    likes: 15200,
-    comments: 876,
-    commentData: []
-  },
-  {
-    id: 4,
-    creator: {
-        name: "SunsetChaser",
-        avatar: "https://github.com/sunset.png",
-    },
-    description: "summertime Heats with deep house beats",
-    imageId: "bondi-sunset",
-    likes: 21300,
-    comments: 952,
-    commentData: []
-  }
-];
+const { reelsData } = appData;
 
 const formatLikes = (likes: number) => {
     if (likes >= 1000) {

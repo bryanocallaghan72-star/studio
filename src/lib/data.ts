@@ -11,6 +11,32 @@ export type Community = {
 };
 
 export const appData = {
+  reelsData: [
+    {
+      id: 3,
+      creator: {
+        name: "SunsetChaser",
+        avatar: "https://github.com/sunset.png",
+      },
+      description: "Bondi, you have my heart ❤️",
+      imageId: "morning-1",
+      likes: 15200,
+      comments: 876,
+      commentData: []
+    },
+    {
+      id: 4,
+      creator: {
+          name: "SunsetChaser",
+          avatar: "https://github.com/sunset.png",
+      },
+      description: "summertime Heats with deep house beats",
+      imageId: "bondi-sunset",
+      likes: 21300,
+      comments: 952,
+      commentData: []
+    }
+  ],
   stays: [
     {
         id: 'stay-1',
