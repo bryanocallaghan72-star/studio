@@ -13,6 +13,30 @@ export type Community = {
 export const appData = {
   reelsData: [
     {
+      id: 1,
+      creator: {
+        name: "jay",
+        avatar: "https://github.com/jay.png",
+      },
+      description: "Can't get enough of this place #sushi #bondi",
+      imageId: "sushi-1",
+      likes: 12500,
+      comments: 789,
+      commentData: []
+    },
+    {
+        id: 2,
+        creator: {
+            name: "alice",
+            avatar: "https://github.com/alice.png",
+        },
+        description: "Perfect cocktails for a perfect night",
+        imageId: "cocktail-101",
+        likes: 8300,
+        comments: 452,
+        commentData: []
+    },
+    {
       id: 3,
       creator: {
         name: "SunsetChaser",
@@ -30,11 +54,23 @@ export const appData = {
           name: "SunsetChaser",
           avatar: "https://github.com/sunset.png",
       },
-      description: "summertime Heats with deep house beats",
+      description: "Summertime heats with deep house beats",
       imageId: "bondi-sunset",
       likes: 21300,
       comments: 952,
       commentData: []
+    },
+    {
+        id: 5,
+        creator: {
+            name: "shannon",
+            avatar: "https://github.com/shannon.png",
+        },
+        description: "Breakfast of champions!",
+        imageId: "ricotta-hotcakes",
+        likes: 9800,
+        comments: 633,
+        commentData: []
     }
   ],
   stays: [
@@ -402,4 +438,5 @@ export const appData = {
 };
     
 
+    
     

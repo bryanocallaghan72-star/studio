@@ -53,6 +53,24 @@
       "description": "A cozy and stylish studio apartment interior.",
       "imageUrl": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2070&auto=format&fit=crop",
       "imageHint": "studio apartment"
+    },
+    {
+      "id": "cocktail-101",
+      "description": "A beautifully crafted cocktail on a bar top.",
+      "imageUrl": "https://images.unsplash.com/photo-1514362545857-3bc96c4cc7a1?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "craft cocktail"
+    },
+    {
+      "id": "bondi-sunset",
+      "description": "A stunning sunset over Bondi Beach with vibrant colors.",
+      "imageUrl": "https://images.unsplash.com/photo-1593384581543-0a96116d34b6?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "Bondi sunset"
+    },
+    {
+      "id": "ricotta-hotcakes",
+      "description": "A stack of fluffy ricotta hotcakes with honeycomb butter.",
+      "imageUrl": "https://images.unsplash.com/photo-1528207776546-365bb710ee93?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "ricotta hotcakes"
     }
   ]
 }
