@@ -11,6 +11,32 @@ export type Community = {
 };
 
 export const appData = {
+  deals: [
+    {
+        id: 'deal-1',
+        title: "2-for-1 Cocktails",
+        venue: "The Beachcomber Bar",
+        description: "Enjoy two cocktails for the price of one, all week long.",
+        imageId: "community-sushi",
+        validity: "All week long"
+    },
+    {
+        id: 'deal-2',
+        title: "50% Off Sushi Platters",
+        venue: "Sakura Sushi",
+        description: "Half-price sushi platters every Tuesday and Wednesday.",
+        imageId: "sushi-1",
+        validity: "Tues & Weds only"
+    },
+    {
+        id: 'deal-3',
+        title: "Free Coffee with Breakfast",
+        venue: "Morning Glory Cafe",
+        description: "Get a free coffee with any breakfast order before 10 AM on weekdays.",
+        imageId: "morning-2",
+        validity: "Weekdays before 10 AM"
+    }
+  ],
   hotItems: [
     {
         id: 'hot-1',
