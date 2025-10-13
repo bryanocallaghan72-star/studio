@@ -15,13 +15,13 @@
     {
       "id": "morning-1",
       "description": "The sun rising over a calm Bondi beach, casting a golden glow.",
-      "imageUrl": "https://images.unsplash.com/photo-1600115010857-edbbc7e1efb8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxiZWFjaCUyMHN1bnJpc2V8ZW58MHx8fHwxNzU5NTIxMzM0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1600115010857-edbbc7e1efb8?q=80&w=2070&auto=format&fit=crop",
       "imageHint": "beach sunrise"
     },
     {
       "id": "morning-2",
       "description": "A vibrant and healthy acai bowl topped with fresh fruit.",
-      "imageUrl": "https://images.unsplash.com/photo-1627308594190-a057cd4bfac8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxhY2FpJTIwYm93bHxlbnwwfHx8fDE3NTk1MzYxODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1627308594190-a057cd4bfac8?q=80&w=2070&auto=format&fit=crop",
       "imageHint": "acai bowl"
     },
     {
