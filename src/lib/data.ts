@@ -296,16 +296,22 @@ export const appData = {
   ] as Community[],
   surprises: [
     {
-        title: "Hidden Laneway Art",
-        description: "You've stumbled upon a secret alley filled with stunning street art. Perfect for your next photo op!",
-        imageId: "community-fitness",
-        venue: "Graffiti Lane"
+        title: "Bondi to Bronte Cliff Walk",
+        description: "Time for a breathtaking walk. The ocean is calling!",
+        imageId: "coastal-walk",
+        venue: "Bondi Cliffs"
     },
     {
-        title: "Secret Rooftop Garden",
-        description: "An urban oasis above the city. Enjoy a moment of peace and quiet with amazing views.",
-        imageId: "stay-1",
-        venue: "The Sky Garden"
+        title: "Swim at North Bondi",
+        description: "The waves are perfect for a refreshing dip. Go for it!",
+        imageId: "icebergs-pool",
+        venue: "North Bondi Beach"
+    },
+    {
+        title: "BBQ at Tamarama Park",
+        description: "Grab some snags! The public BBQs are free. Time for a classic Aussie arvo.",
+        imageId: "bondi-sunset",
+        venue: "Tamarama Park"
     },
     {
         title: "Spontaneous Gelato Tasting",
@@ -336,7 +342,7 @@ export const appData = {
         description: "A top sushi chef has an unlisted Omakase special available for the next hour. A true taste of Japan awaits.",
         imageId: "sushi-1",
         venue: "Sakura Sushi"
-    },
+    }
   ],
   mapMyDayOptions: [
     {
