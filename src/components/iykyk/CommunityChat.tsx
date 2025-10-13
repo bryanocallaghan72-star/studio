@@ -10,15 +10,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-
-const mockMessages = [
-    { id: 1, author: 'Jay', avatar: 'https://github.com/jay.png', text: 'Just tried the new omakase at Raw Bar. Unbelievable! #tips' },
-    { id: 2, author: 'Alice', avatar: 'https://github.com/alice.png', text: 'Anyone heading to Ravesis tonight? I\'m DJing from 10pm! #events' },
-    { id: 3, author: 'You', avatar: 'https://github.com/you.png', text: 'Sounds awesome! What\'s the vibe like there on a Thursday?' },
-    { id: 4, author: 'Shannon', avatar: 'https://github.com/shannon.png', text: 'Ravesis is always a good time! A bit boujee but the music is great.' },
-    { id: 5, author: 'Lucas', avatar: 'https://github.com/lucas.png', text: 'I\'m working at The Corner House tonight, come say hi if you\'re around! Quieter vibe but great cocktails. #meetups' },
-];
-
+const { mockMessages } = appData;
 
 export function CommunityChat({ community }: { community: Community }) {
     const [activeChannel, setActiveChannel] = useState('general');
