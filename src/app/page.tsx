@@ -4,8 +4,41 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useUser } from "@/firebase";
+import { Loader2 } from "lucide-react";
 
 const LandingPage = () => {
+  const { user, isUserLoading } = useUser();
+
+  const renderAuthButton = () => {
+    if (isUserLoading) {
+      return (
+        <Button variant="link" className="text-muted-foreground" disabled>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Loading...
+        </Button>
+      )
+    }
+
+    if (user) {
+      return (
+        <Link href="/creator/shannon" passHref>
+          <Button variant="link" className="text-muted-foreground">
+            View Your Profile
+          </Button>
+        </Link>
+      )
+    }
+
+    return (
+      <Link href="/login" passHref>
+        <Button variant="link" className="text-muted-foreground">
+          Log In or Sign Up
+        </Button>
+      </Link>
+    )
+  }
+
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-background text-center p-4">
       <div className="z-10 flex flex-col items-center gap-4">
@@ -46,11 +79,7 @@ const LandingPage = () => {
                     Enter Bondi
                 </Button>
             </Link>
-             <Link href="/login" passHref>
-                <Button variant="link" className="text-muted-foreground">
-                    Log In or Sign Up
-                </Button>
-            </Link>
+             {renderAuthButton()}
         </motion.div>
       </div>
     </div>
