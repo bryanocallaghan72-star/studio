@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ const LandingPage = () => {
         </motion.p>
 
         <motion.div
+            className="flex flex-col items-center gap-4 mt-10"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: "spring", stiffness: 100, delay: 0.6 }}
@@ -39,9 +41,14 @@ const LandingPage = () => {
             <Link href="/discover" passHref>
                 <Button 
                     size="lg" 
-                    className="mt-10 rounded-full text-lg font-bold shadow-lg px-12 py-7 transition-all duration-300 ease-in-out hover:scale-105 bg-primary text-primary-foreground hover:bg-primary/90"
+                    className="rounded-full text-lg font-bold shadow-lg px-12 py-7 transition-all duration-300 ease-in-out hover:scale-105 bg-primary text-primary-foreground hover:bg-primary/90"
                 >
                     Enter Bondi
+                </Button>
+            </Link>
+             <Link href="/login" passHref>
+                <Button variant="link" className="text-muted-foreground">
+                    Log In or Sign Up
                 </Button>
             </Link>
         </motion.div>
