@@ -1,0 +1,314 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the iykyk platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user entity."
+        },
+        "username": {
+          "type": "string",
+          "description": "The user's chosen username.",
+          "format": "string"
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address.",
+          "format": "email"
+        },
+        "bio": {
+          "type": "string",
+          "description": "A short biography or description of the user."
+        },
+        "location": {
+          "type": "string",
+          "description": "The user's general location (e.g., Bondi)."
+        },
+        "communityIds": {
+          "type": "array",
+          "description": "References to Communities the user belongs to. (Relationship: User N:N Community)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "username",
+        "email"
+      ]
+    },
+    "Venue": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Venue",
+      "type": "object",
+      "description": "Represents a venue (e.g., restaurant, bar, fitness studio) in the iykyk platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the venue entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the venue."
+        },
+        "address": {
+          "type": "string",
+          "description": "The street address of the venue."
+        },
+        "latitude": {
+          "type": "number",
+          "description": "The latitude coordinate of the venue."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "The longitude coordinate of the venue."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the venue."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category of the venue (e.g., restaurant, bar)."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "address",
+        "latitude",
+        "longitude"
+      ]
+    },
+    "Experience": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Experience",
+      "type": "object",
+      "description": "Represents an experience or event happening at a venue.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the experience entity."
+        },
+        "venueId": {
+          "type": "string",
+          "description": "Reference to Venue. (Relationship: Venue 1:N Experience)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the experience."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the experience."
+        },
+        "startTime": {
+          "type": "string",
+          "description": "The start time of the experience.",
+          "format": "date-time"
+        },
+        "endTime": {
+          "type": "string",
+          "description": "The end time of the experience.",
+          "format": "date-time"
+        },
+        "moods": {
+          "type": "array",
+          "description": "An array of moods associated with the experience.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "venueId",
+        "name",
+        "startTime",
+        "endTime"
+      ]
+    },
+    "Deal": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Deal",
+      "type": "object",
+      "description": "Represents a deal or promotion offered at a venue or by a creator.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the deal entity."
+        },
+        "venueId": {
+          "type": "string",
+          "description": "Reference to Venue. (Relationship: Venue 1:N Deal)"
+        },
+        "creatorId": {
+          "type": "string",
+          "description": "Reference to User who created this deal. (Relationship: User 1:N Deal)"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the deal."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the deal."
+        },
+        "startTime": {
+          "type": "string",
+          "description": "The start time of the deal.",
+          "format": "date-time"
+        },
+        "endTime": {
+          "type": "string",
+          "description": "The end time of the deal.",
+          "format": "date-time"
+        },
+        "discount": {
+          "type": "number",
+          "description": "The discount amount (e.g., 0.20 for 20%)."
+        }
+      },
+      "required": [
+        "id",
+        "venueId",
+        "title",
+        "startTime",
+        "endTime"
+      ]
+    },
+    "Community": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Community",
+      "type": "object",
+      "description": "Represents a themed community within the iykyk platform (e.g., sushi lovers, cocktail hunters).",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the community entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the community."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the community."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category of the community (e.g., food, drink, fitness)."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles. Path-based ownership for user-specific data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/venues/{venueId}",
+        "definition": {
+          "entityName": "Venue",
+          "schema": {
+            "$ref": "#/backend/entities/Venue"
+          },
+          "description": "Stores venue information. Top-level entity for easy querying.",
+          "params": [
+            {
+              "name": "venueId",
+              "description": "The unique identifier of the venue."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/venues/{venueId}/experiences/{experienceId}",
+        "definition": {
+          "entityName": "Experience",
+          "schema": {
+            "$ref": "#/backend/entities/Experience"
+          },
+          "description": "Stores experiences associated with a venue. Includes denormalized 'venueId' for authorization independence.",
+          "params": [
+            {
+              "name": "venueId",
+              "description": "The unique identifier of the venue."
+            },
+            {
+              "name": "experienceId",
+              "description": "The unique identifier of the experience."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/venues/{venueId}/deals/{dealId}",
+        "definition": {
+          "entityName": "Deal",
+          "schema": {
+            "$ref": "#/backend/entities/Deal"
+          },
+          "description": "Stores deals offered at a venue. Includes denormalized 'venueId' for authorization independence.",
+          "params": [
+            {
+              "name": "venueId",
+              "description": "The unique identifier of the venue."
+            },
+            {
+              "name": "dealId",
+              "description": "The unique identifier of the deal."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/communities/{communityId}",
+        "definition": {
+          "entityName": "Community",
+          "schema": {
+            "$ref": "#/backend/entities/Community"
+          },
+          "description": "Stores community information. Includes a 'members' map (uid: role) for role-based access control.",
+          "params": [
+            {
+              "name": "communityId",
+              "description": "The unique identifier of the community."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to support iykyk's real-time cultural portal concept, focusing on the 'now' and providing a playful, discovery-oriented experience. The design prioritizes authorization independence, clear security rules, and scalability. The structure segregates data based on access patterns and utilizes denormalization to avoid complex queries and ensure atomic operations.\n\n**Authorization Independence (Denormalization):**\n\n*   Authorization is implemented using path-based ownership for private user data and membership maps for collaborative data. Where access to a subcollection depends on attributes of a parent collection, these attributes are denormalized into the subcollection documents. This eliminates the need for `get()` calls in security rules, promoting atomic operations and simplifying debugging.\n\n**QAPs (Queryability and Security):**\n\n*   **Segregation:** Data with different security requirements is stored in separate collections. For example, user-owned data resides under `/users/{userId}`, while venue and community data are stored in top-level collections with appropriate security rules.\n*   **Membership Maps:** Communities utilize a `members` map to manage user roles, enabling secure listing of community members and controlling access to community-specific data.\n\n**Explanation of Collections:**\n\n*   `/users/{userId}`: Stores user profiles. This structure provides a dedicated path for user-specific data, simplifying ownership-based security rules. Private user data can be stored directly under this path (e.g., `/users/{userId}/privateData`).\n*   `/venues/{venueId}`: Stores venue information. Venues are top-level entities, allowing for easy querying and indexing.\n*   `/venues/{venueId}/experiences/{experienceId}`: Stores experiences associated with a venue. The `venueId` is denormalized into the experience documents for authorization independence. This enables creating experiences atomically.\n*   `/venues/{venueId}/deals/{dealId}`: Stores deals offered at a venue. Similar to experiences, the `venueId` is denormalized into the deal documents for authorization independence.\n*   `/communities/{communityId}`: Stores community information. The `members` field contains a map of user IDs to roles within the community, enabling role-based access control. Security rules can easily verify if a user is a member of a community and what their role is.\n\nThis design supports iykyk's core features by providing a clear, secure, and scalable data structure that emphasizes real-time cultural experiences and personalized discovery."
+  }
+}

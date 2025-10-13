@@ -1,0 +1,134 @@
+/**
+ * @fileoverview Firestore Security Rules for iykyk Platform
+ *
+ * Core Philosophy:
+ * This ruleset enforces a user-ownership model for user profiles and allows public read access to venues, experiences, deals, and communities.
+ * Write access to venues, experiences, deals, and communities is restricted. Deals are creator-controlled.
+ *
+ * Data Structure:
+ * - /users/{userId}: Stores user profiles. User-owned.
+ * - /venues/{venueId}: Stores venue information. Public read, restricted write.
+ * - /venues/{venueId}/experiences/{experienceId}: Stores experiences associated with a venue. Public read, restricted write.
+ * - /venues/{venueId}/deals/{dealId}: Stores deals offered at a venue. Creator-controlled writes.
+ * - /communities/{communityId}: Stores community information. Public read, restricted write.
+ *
+ * Key Security Decisions:
+ * - Users can only read and write their own profile data.
+ * - Venues, experiences, deals, and communities are publicly readable.
+ * - Listing of users is disallowed.
+ * - Deals are creator-controlled, assuming 'creatorId' is present and enforced.
+ *
+ * Denormalization for Authorization:
+ * - Experiences and Deals denormalize `venueId` for authorization independence, avoiding `get()` calls.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Controls access to user profile data.
+     * @path /users/{userId}
+     * @allow (create) User with ID 'user123' creates their own profile.
+     * @deny (create) User with ID 'user123' tries to create a profile for 'user456'.
+     * @allow (get) User with ID 'user123' reads their own profile.
+     * @deny (get) User with ID 'user123' tries to read the profile of 'user456'.
+     * @allow (update) User with ID 'user123' updates their own profile.
+     * @deny (update) User with ID 'user123' tries to update the profile of 'user456'.
+     * @allow (delete) User with ID 'user123' deletes their own profile.
+     * @deny (delete) User with ID 'user123' tries to delete the profile of 'user456'.
+     * @principle Enforces document ownership for all operations on user profiles.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false; // Listing users is not permitted
+
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Allows public read access to venue data and restricts write access.
+     * @path /venues/{venueId}
+     * @allow (get) Any user can read venue data.
+     * @allow (list) Any user can list venues.
+     * @deny (create) Any user attempts to create a venue.
+     * @deny (update) Any user attempts to update a venue.
+     * @deny (delete) Any user attempts to delete a venue.
+     * @principle Allows public read access while restricting write operations.
+     */
+    match /venues/{venueId} {
+      allow get, list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    /**
+     * @description Allows public read access to experience data and restricts write access.
+     * @path /venues/{venueId}/experiences/{experienceId}
+     * @allow (get) Any user can read experience data.
+     * @allow (list) Any user can list experiences.
+     * @deny (create) Any user attempts to create an experience.
+     * @deny (update) Any user attempts to update an experience.
+     * @deny (delete) Any user attempts to delete an experience.
+     * @principle Allows public read access while restricting write operations.
+     */
+    match /venues/{venueId}/experiences/{experienceId} {
+      allow get, list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    /**
+     * @description Allows public read access to deal data and restricts write access to creator.
+     * @path /venues/{venueId}/deals/{dealId}
+     * @allow (get) Any user can read deal data.
+     * @allow (list) Any user can list deals.
+     * @allow (create) A creator can create a deal if creatorId matches their auth.
+     * @deny (create) A user tries to create a deal with a mismatched creatorId.
+     * @allow (update) The creator can update the deal.
+     * @deny (update) A non-creator tries to update the deal.
+     * @allow (delete) The creator can delete the deal.
+     * @deny (delete) A non-creator tries to delete the deal.
+     * @principle Allows public read access and restricts write operations to the deal creator.
+     */
+    match /venues/{venueId}/deals/{dealId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.creatorId == request.auth.uid;
+      allow update: if isSignedIn() && resource.data.creatorId == request.auth.uid && resource != null;
+      allow delete: if isSignedIn() && resource.data.creatorId == request.auth.uid && resource != null;
+    }
+
+    /**
+     * @description Allows public read access to community data and restricts write access.
+     * @path /communities/{communityId}
+     * @allow (get) Any user can read community data.
+     * @allow (list) Any user can list communities.
+     * @deny (create) Any user attempts to create a community.
+     * @deny (update) Any user attempts to update a community.
+     * @deny (delete) Any user attempts to delete a community.
+     * @principle Allows public read access while restricting write operations.
+     */
+    match /communities/{communityId} {
+      allow get, list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+  }
+
+  // Helper functions
+  function isSignedIn() {
+    return request.auth != null;
+  }
+
+  function isOwner(userId) {
+    return request.auth.uid == userId;
+  }
+
+  function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+  }
+}
