@@ -1,25 +1,46 @@
 
+'use client';
+
+import { useMemo } from 'react';
+import { notFound } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import { Rss, Star, MapPin, Loader2 } from "lucide-react";
+import { doc, collection } from 'firebase/firestore';
+
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
 import { Card, CardContent } from "@/components/ui/card";
-import { appData } from "@/lib/data";
-import { notFound } from "next/navigation";
-import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Rss, Star, MapPin } from "lucide-react";
+import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
+import { appData } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import Link from "next/link";
 
-export default function CreatorProfilePage({ params }: { params: { id: string } }) {
-  const creator = appData.creators.find(c => c.id === params.id);
+export default function ProfilePage({ params }: { params: { id: string } }) {
+  const firestore = useFirestore();
+  const userDocRef = useMemoFirebase(() => {
+    if (!firestore || !params.id) return null;
+    return doc(firestore, 'users', params.id);
+  }, [firestore, params.id]);
 
-  if (!creator) {
-    notFound();
-  }
+  const { data: userProfile, isLoading } = useDoc(userDocRef);
 
   // For the prototype, we'll show a few pins as their "favorite spots" or "pins".
   const creatorPins = appData.map.pins.slice(0, 9); 
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        <p className="mt-4 text-muted-foreground">Loading Profile...</p>
+      </div>
+    );
+  }
+
+  if (!userProfile) {
+    notFound();
+  }
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
@@ -30,7 +51,7 @@ export default function CreatorProfilePage({ params }: { params: { id: string } 
           <div className="relative h-40 w-full bg-secondary">
              <Image 
                 src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop"
-                alt={`${creator.name}'s banner`}
+                alt={`${userProfile.username}'s banner`}
                 fill
                 className="object-cover"
                 data-ai-hint="abstract gradient"
@@ -39,16 +60,16 @@ export default function CreatorProfilePage({ params }: { params: { id: string } 
           <CardContent className="p-0">
             <div className="flex items-end gap-4 -mt-16 px-6">
               <Avatar className="h-28 w-28 border-4 border-background">
-                <AvatarImage src={creator.avatar} alt={creator.name} />
-                <AvatarFallback>{creator.name.charAt(0).toUpperCase()}</AvatarFallback>
+                <AvatarImage src={`https://github.com/${userProfile.username}.png`} alt={userProfile.username} />
+                <AvatarFallback>{userProfile.username.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="flex-grow pb-2">
-                 <h1 className="text-2xl font-bold tracking-tight">{creator.name}</h1>
-                 <p className="text-sm text-muted-foreground">@{creator.id}</p>
+                 <h1 className="text-2xl font-bold tracking-tight">{userProfile.username}</h1>
+                 <p className="text-sm text-muted-foreground">@{userProfile.username}</p>
               </div>
             </div>
              <div className="px-6 mt-4 space-y-4">
-                <p className="text-muted-foreground">{creator.bio}</p>
+                <p className="text-muted-foreground">{userProfile.bio || "No bio yet."}</p>
                 <Button className="w-full md:w-auto">
                     <Rss className="mr-2 h-4 w-4" />
                     Follow

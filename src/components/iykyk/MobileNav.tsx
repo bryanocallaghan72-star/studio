@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/firebase";
+import { useAuth, useUser } from "@/firebase";
 import { signOut } from "firebase/auth";
 
 const navItems = [
@@ -26,6 +26,7 @@ export function MobileNav() {
   const pathname = usePathname();
   const router = useRouter();
   const auth = useAuth();
+  const { user } = useUser();
   const isLandingPage = pathname === "/";
 
   const handleLogout = async () => {
@@ -60,7 +61,7 @@ export function MobileNav() {
             <DropdownMenuTrigger asChild>
                  <button
                     className={`inline-flex flex-col items-center justify-center px-5 hover:bg-secondary ${
-                        pathname.startsWith('/creator') ? "text-primary" : "text-muted-foreground"
+                        pathname.startsWith('/profile') ? "text-primary" : "text-muted-foreground"
                     }`}
                     >
                     <User className="w-5 h-5 mb-1" />
@@ -69,7 +70,7 @@ export function MobileNav() {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 mb-2" side="top" align="end">
                 <DropdownMenuItem asChild>
-                    <Link href="/creator/shannon">
+                    <Link href={user ? `/profile/${user.uid}` : '/login'}>
                         <User className="mr-2 h-4 w-4" />
                         <span>View Profile</span>
                     </Link>
