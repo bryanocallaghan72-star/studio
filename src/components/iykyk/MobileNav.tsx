@@ -1,9 +1,18 @@
 
 "use client";
 
-import { Home, PlaySquare, Compass, Users, Flame, User } from "lucide-react";
+import { Home, PlaySquare, Compass, Users, Flame, User, LogOut } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/firebase";
+import { signOut } from "firebase/auth";
 
 const navItems = [
   { href: "/feed", icon: Home, label: "Feed" },
@@ -11,12 +20,18 @@ const navItems = [
   { href: "/discover", icon: Compass, label: "iykyk" },
   { href: "/community", icon: Users, label: "Community" },
   { href: "/fire", icon: Flame, label: "Fire" },
-  { href: "/creator/shannon", icon: User, label: "Profile" },
 ];
 
 export function MobileNav() {
   const pathname = usePathname();
+  const router = useRouter();
+  const auth = useAuth();
   const isLandingPage = pathname === "/";
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    router.push('/');
+  }
 
   if (isLandingPage) {
     return null;
@@ -41,6 +56,30 @@ export function MobileNav() {
             </Link>
           );
         })}
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                 <button
+                    className={`inline-flex flex-col items-center justify-center px-5 hover:bg-secondary ${
+                        pathname.startsWith('/creator') ? "text-primary" : "text-muted-foreground"
+                    }`}
+                    >
+                    <User className="w-5 h-5 mb-1" />
+                    <span className="text-xs">Profile</span>
+                </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56 mb-2" side="top" align="end">
+                <DropdownMenuItem asChild>
+                    <Link href="/creator/shannon">
+                        <User className="mr-2 h-4 w-4" />
+                        <span>View Profile</span>
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log Out</span>
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
