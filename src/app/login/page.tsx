@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -35,6 +35,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    // If user is loaded and exists, redirect them.
+    if (!isUserLoading && user) {
+      router.replace('/discover');
+    }
+  }, [isUserLoading, user, router]);
+
+
   const handleSignUp = () => {
     startTransition(() => {
       setError(null);
@@ -56,21 +64,11 @@ export default function LoginPage() {
     });
   };
   
-  // If user is loaded and exists, redirect them.
-  if (!isUserLoading && user) {
-    router.replace('/discover');
-    return (
-      <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-4">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="mt-4 text-muted-foreground">Redirecting...</p>
-      </div>
-    );
-  }
-  
-  if (isUserLoading) {
+  if (isUserLoading || (!isUserLoading && user)) {
      return (
       <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-4">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
+         {user && <p className="mt-4 text-muted-foreground">Redirecting...</p>}
       </div>
     );
   }
