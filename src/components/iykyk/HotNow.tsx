@@ -12,42 +12,6 @@ import { QRCodeDialog } from './QRCodeDialog';
 import { appData } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
-const hotItems = [
-    {
-        id: 'hot-1',
-        title: "Last Minute Spot",
-        venue: "Fluidform Pilates",
-        description: "25% off the 5pm Reformer class.",
-        imageId: "fitness-1",
-        expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-    },
-    {
-        id: 'hot-2',
-        title: "$10 Spicy Margs",
-        venue: "LULU",
-        description: "Spice up your night with our signature spicy margaritas.",
-        imageId: "community-sushi",
-        creatorId: "lucas",
-        expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-        id: 'hot-3',
-        title: "2 for 1 Cocktails",
-        venue: "Raw Bar",
-        description: "Enjoy our signature cocktails. Buy one, get one free!",
-        imageId: "community-sushi",
-        expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-        id: 'hot-4',
-        title: "2-for-1 Crispy Salmon Rolls",
-        venue: "Raw Bar",
-        description: "Enjoy our signature crispy salmon rolls. Buy one, get one free!",
-        imageId: "sushi-1",
-        expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
-    }
-];
-
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
     const [isClient, setIsClient] = useState(false);
@@ -93,15 +57,15 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
 
 
 export function HotNow() {
-    const [selectedDeal, setSelectedDeal] = useState<(typeof hotItems)[0] | null>(null);
+    const [selectedDeal, setSelectedDeal] = useState<(typeof appData.hotItems)[0] | null>(null);
     const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
 
-    const handleClaimPerk = (item: (typeof hotItems)[0]) => {
+    const handleClaimPerk = (item: (typeof appData.hotItems)[0]) => {
         setSelectedDeal(item);
         setIsQRDialogOpen(true);
     };
 
-    const activeItems = hotItems.filter(item => new Date(item.expiresAt).getTime() > Date.now());
+    const activeItems = appData.hotItems.filter(item => new Date(item.expiresAt).getTime() > Date.now());
 
     return (
         <>

@@ -11,6 +11,41 @@ export type Community = {
 };
 
 export const appData = {
+  hotItems: [
+    {
+        id: 'hot-1',
+        title: "Last Minute Spot",
+        venue: "Fluidform Pilates",
+        description: "25% off the 5pm Reformer class.",
+        imageId: "fitness-1",
+        expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+    },
+    {
+        id: 'hot-2',
+        title: "$10 Spicy Margs",
+        venue: "LULU",
+        description: "Spice up your night with our signature spicy margaritas.",
+        imageId: "community-sushi",
+        creatorId: "lucas",
+        expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+        id: 'hot-3',
+        title: "2 for 1 Cocktails",
+        venue: "Raw Bar",
+        description: "Enjoy our signature cocktails. Buy one, get one free!",
+        imageId: "community-sushi",
+        expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+        id: 'hot-4',
+        title: "2-for-1 Crispy Salmon Rolls",
+        venue: "Raw Bar",
+        description: "Enjoy our signature crispy salmon rolls. Buy one, get one free!",
+        imageId: "sushi-1",
+        expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
+    }
+  ],
   reelsData: [
     {
       id: 1,
