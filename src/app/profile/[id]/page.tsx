@@ -2,11 +2,11 @@
 'use client';
 
 import { useMemo } from 'react';
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Rss, Star, MapPin, Loader2 } from "lucide-react";
-import { doc, collection } from 'firebase/firestore';
+import { doc } from 'firebase/firestore';
 
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
@@ -17,12 +17,15 @@ import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { appData } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 
-export default function ProfilePage({ params }: { params: { id: string } }) {
+export default function ProfilePage() {
+  const params = useParams();
+  const id = params.id as string;
+
   const firestore = useFirestore();
   const userDocRef = useMemoFirebase(() => {
-    if (!firestore || !params.id) return null;
-    return doc(firestore, 'users', params.id);
-  }, [firestore, params.id]);
+    if (!firestore || !id) return null;
+    return doc(firestore, 'users', id);
+  }, [firestore, id]);
 
   const { data: userProfile, isLoading } = useDoc(userDocRef);
 
