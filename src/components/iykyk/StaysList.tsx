@@ -99,7 +99,7 @@ export function StaysList() {
                                 
                                 <div className='mt-6'>
                                      {creator && (
-                                        <Link href={`/creator/${creator.id}`} className='flex items-center gap-2 text-xs font-semibold bg-black/30 backdrop-blur-sm p-1.5 rounded-full mb-4 w-fit hover:bg-black/50 transition-colors'>
+                                        <Link href={`/profile/${creator.id}`} className='flex items-center gap-2 text-xs font-semibold bg-black/30 backdrop-blur-sm p-1.5 rounded-full mb-4 w-fit hover:bg-black/50 transition-colors'>
                                             <Avatar className="h-7 w-7">
                                                 <AvatarImage src={creator.avatar} alt={creator.name} />
                                                 <AvatarFallback>{creator.name.charAt(0)}</AvatarFallback>

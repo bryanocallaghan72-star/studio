@@ -30,7 +30,7 @@ export default function ProfilePage() {
   const { data: userProfile, isLoading } = useDoc(userDocRef);
 
   // For the prototype, we'll show a few pins as their "favorite spots" or "pins".
-  const creatorPins = appData.map.pins.slice(0, 9); 
+  const userPins = appData.map.pins.slice(0, 3); 
 
   if (isLoading) {
     return (
@@ -87,7 +87,7 @@ export default function ProfilePage() {
                 Pins
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                {creatorPins.map(spot => {
+                {userPins.map(spot => {
                     const imageId = spot.type === 'Sushi' ? 'sushi-1' : spot.type === 'Nightlife' ? 'nightlife-1' : 'coffee-1';
                     const image = PlaceHolderImages.find(img => img.id === imageId);
                     return (

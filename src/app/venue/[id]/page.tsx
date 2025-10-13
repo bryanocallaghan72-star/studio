@@ -90,7 +90,7 @@ export default function VenueProfilePage({ params }: { params: { id: string } })
                 <CardContent>
                     <div className="space-y-4">
                         {spottedHereCreators.map(creator => (
-                             <Link key={creator.id} href={`/creator/${creator.id}`} className="flex items-center gap-4 group">
+                             <Link key={creator.id} href={`/profile/${creator.id}`} className="flex items-center gap-4 group">
                                 <Avatar>
                                     <AvatarImage src={creator.avatar} alt={`@${creator.id}`} />
                                     <AvatarFallback>{creator.name.charAt(0)}</AvatarFallback>
