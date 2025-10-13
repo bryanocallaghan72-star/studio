@@ -294,6 +294,50 @@ export const appData = {
     { id: 'retail-style', name: 'Bondi Retail & Style', description: 'For the shopaholics and local boutique supporters.', category: 'Retail', members: 76, channels: ['general', 'new-arrivals', 'sales-and-deals'] },
     { id: 'events-culture', name: 'Bondi Events & Culture', description: 'Stay in the know about all local happenings.', category: 'Events', members: 500, channels: ['general', 'markets', 'festivals', 'live-music'] },
   ] as Community[],
+  surprises: [
+    {
+        title: "Hidden Laneway Art",
+        description: "You've stumbled upon a secret alley filled with stunning street art. Perfect for your next photo op!",
+        imageId: "community-fitness",
+        venue: "Graffiti Lane"
+    },
+    {
+        title: "Secret Rooftop Garden",
+        description: "An urban oasis above the city. Enjoy a moment of peace and quiet with amazing views.",
+        imageId: "stay-1",
+        venue: "The Sky Garden"
+    },
+    {
+        title: "Spontaneous Gelato Tasting",
+        description: "Surprise! A local gelateria is offering free samples of their new, exotic flavor for the next hour.",
+        imageId: "morning-2",
+        venue: "Gelato Gusto"
+    },
+    {
+        title: "Craft Cocktail Discovery",
+        description: "You've found a hidden bar known for its unique, handcrafted cocktails. Cheers to the unexpected!",
+        imageId: "community-sushi",
+        venue: "The Alchemist's Nook"
+    },
+    {
+        title: "Tapas for Two",
+        description: "A cozy tapas bar has a table just for you. Enjoy a selection of small plates and big flavors.",
+        imageId: "sushi-1",
+        venue: "El Rincon Escondido"
+    },
+    {
+        title: "Surprise Wellness Session",
+        description: "A local studio is offering a drop-in spot for a meditation and sound bath session. Time to relax and recharge.",
+        imageId: "fitness-1",
+        venue: "Zenith Wellness"
+    },
+    {
+        title: "Omakase Sushi Special",
+        description: "A top sushi chef has an unlisted Omakase special available for the next hour. A true taste of Japan awaits.",
+        imageId: "sushi-1",
+        venue: "Sakura Sushi"
+    },
+  ],
   mapMyDayOptions: [
     {
       id: 'mmd1',
