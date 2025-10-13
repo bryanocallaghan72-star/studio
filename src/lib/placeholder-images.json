@@ -49,6 +49,18 @@
       "imageHint": "modern apartment"
     },
     {
+      "id": "stay-2",
+      "description": "Modern penthouse with a rooftop terrace.",
+      "imageUrl": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "modern penthouse"
+    },
+    {
+      "id": "stay-3",
+      "description": "Chic apartment with a private garden.",
+      "imageUrl": "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "private garden"
+    },
+    {
       "id": "stay-4",
       "description": "A cozy and stylish studio apartment interior.",
       "imageUrl": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2070&auto=format&fit=crop",
@@ -83,6 +95,60 @@
       "description": "A scenic view of the Bondi to Bronte coastal walk.",
       "imageUrl": "https://images.unsplash.com/photo-1518532999513-50c26373b5f9?q=80&w=2070&auto=format&fit=crop",
       "imageHint": "coastal walk"
+    },
+    {
+      "id": "nightlife-1",
+      "description": "A vibrant nightlife scene with a busy bar and people enjoying cocktails.",
+      "imageUrl": "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1974&auto=format&fit=crop",
+      "imageHint": "nightlife scene"
+    },
+    {
+      "id": "coffee-1",
+      "description": "A close-up of a perfectly poured latte in a cozy cafe setting.",
+      "imageUrl": "https://images.unsplash.com/photo-1559496417-e7f25cb247f3?q=80&w=1964&auto=format&fit=crop",
+      "imageHint": "latte art"
+    },
+    {
+      "id": "hot-1",
+      "description": "A sunny day at Bondi Beach with crowds of people enjoying the water.",
+      "imageUrl": "https://images.unsplash.com/photo-1528082852536-49035cd84a27?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "sunny beach"
+    },
+    {
+      "id": "my-day-3",
+      "description": "A beautifully set table at Totti's with delicious Italian food.",
+      "imageUrl": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1974&auto=format&fit=crop",
+      "imageHint": "italian food"
+    },
+    {
+      "id": "night-1",
+      "description": "A moody, atmospheric shot of a dimly lit bar at night.",
+      "imageUrl": "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "dimly lit bar"
+    },
+    {
+      "id": "cocktail-1",
+      "description": "A refreshing cocktail with a seaside backdrop.",
+      "imageUrl": "https://images.unsplash.com/photo-1551024709-8f23eda2c5a5?q=80&w=1974&auto=format&fit=crop",
+      "imageHint": "seaside cocktail"
+    },
+    {
+      "id": "night-2",
+      "description": "A romantic nighttime walk along an illuminated coastline.",
+      "imageUrl": "https://images.unsplash.com/photo-1509315811345-67de0a36539f?q=80&w=1974&auto=format&fit=crop",
+      "imageHint": "night walk"
+    },
+    {
+      "id": "late-night-1",
+      "description": "A vibrant bar with neon lights, perfect for a late-night hop.",
+      "imageUrl": "https://images.unsplash.com/photo-1561332824-3e38a209b02a?q=80&w=1974&auto=format&fit=crop",
+      "imageHint": "neon bar"
+    },
+    {
+      "id": "late-night-2",
+      "description": "Delicious street food being prepared at a late-night stall.",
+      "imageUrl": "https://images.unsplash.com/photo-1576926425749-8c4d29c303d2?q=80&w=1964&auto=format&fit=crop",
+      "imageHint": "street food"
     }
   ]
 }
