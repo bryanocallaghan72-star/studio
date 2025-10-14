@@ -1,4 +1,5 @@
 
+
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
 import { appData } from "@/lib/data";
@@ -8,7 +9,7 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Flame, MapPin, Ticket, Clock, TrendingUp, Info } from "lucide-react";
+import { ArrowRight, Flame, MapPin, Ticket, Clock, TrendingUp, Info, Utensils } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -69,8 +70,18 @@ export default function VenueProfilePage({ params }: { params: { id: string } })
             </div>
         </div>
         
-        <div className="flex flex-col gap-8 p-4 md:p-6">
+        <div className="flex flex-col gap-6 p-4 md:p-6">
             
+            <Card>
+                <CardContent className="p-6">
+                    <p className="text-muted-foreground">{venue.description}</p>
+                    <Button className="w-full mt-4 font-bold text-lg h-12">
+                        <Utensils className="mr-2"/>
+                        Book a Table
+                    </Button>
+                </CardContent>
+            </Card>
+
             {activeDeal && (
                 <Card className="border-destructive bg-destructive/10">
                     <CardHeader>
@@ -109,18 +120,6 @@ export default function VenueProfilePage({ params }: { params: { id: string } })
                             </div>
                         </div>
                     )}
-                </CardContent>
-            </Card>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-xl">
-                        <MapPin className="text-primary" />
-                        About this Vibe
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-muted-foreground">{venue.description}</p>
                 </CardContent>
             </Card>
 
