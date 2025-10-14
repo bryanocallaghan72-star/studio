@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -68,19 +69,21 @@ export function StaysList() {
                     const creator = appData.creators.find(c => c.id === stay.creatorId);
                     return (
                         <Card key={stay.id} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-primary">
-                            {image && (
-                                <>
-                                    <Image
-                                        src={image.imageUrl}
-                                        alt={stay.description}
-                                        fill
-                                        className="object-cover transition-transform group-hover:scale-105"
-                                        data-ai-hint={image.imageHint}
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
-                                </>
-                            )}
-                            <CardContent className="relative z-10 flex flex-col justify-end h-full p-6 text-white min-h-[400px]">
+                            <div className="relative h-96 w-full">
+                                {image && (
+                                    <>
+                                        <Image
+                                            src={image.imageUrl}
+                                            alt={stay.description}
+                                            fill
+                                            className="object-cover transition-transform group-hover:scale-105"
+                                            data-ai-hint={image.imageHint}
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
+                                    </>
+                                )}
+                            </div>
+                            <CardContent className="relative z-10 flex flex-col justify-end h-full p-6 text-white absolute inset-0">
                                 <div>
                                     <Badge variant="destructive" className="flex items-center gap-2 w-min whitespace-nowrap mb-2">
                                         <Flame className="h-4 w-4" />
