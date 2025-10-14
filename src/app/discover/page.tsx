@@ -25,7 +25,7 @@ export default function DiscoverPage() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
-      <main className="flex flex-1 flex-col pb-24">
+      <div className="flex flex-1 flex-col pb-24">
         <div className="p-4 md:p-6 text-center">
             <h2 className="text-3xl font-bold tracking-tight">What's the vibe today?</h2>
             <p className="text-muted-foreground mt-2">Your real-time cultural portal to Bondi.</p>
@@ -85,7 +85,7 @@ export default function DiscoverPage() {
                 </div>
             </Card>
         </div>
-      </main>
+      </div>
       <MobileNav />
     </div>
   );

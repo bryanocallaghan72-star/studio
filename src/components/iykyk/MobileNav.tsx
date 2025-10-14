@@ -7,7 +7,6 @@ import { Home, Users, Flame, PlaySquare, User, Compass } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useUser } from "@/firebase";
-import { Logo } from "./Logo";
 
 export function MobileNav() {
   const pathname = usePathname();
