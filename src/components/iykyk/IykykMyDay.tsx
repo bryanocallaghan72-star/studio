@@ -11,7 +11,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { generateItinerary as generateItineraryAction } from '@/app/actions';
 import { EventAndItinerarySelectionPage } from './my-day/EventAndItinerarySelectionPage';
 import { IykykMyDayItineraryPage } from './my-day/IykykMyDayItineraryPage';
-import { useToast } from '@/hooks/use-toast';
 
 export function IykykMyDay() {
     const [isPending, startTransition] = useTransition();
@@ -19,7 +18,6 @@ export function IykykMyDay() {
     const [itinerary, setItinerary] = useState<Itinerary | null>(null);
     const [currentVibe, setCurrentVibe] = useState<any | null>(null);
     const [isConfirmationOpen, setConfirmationOpen] = useState(false);
-    const { toast } = useToast();
 
     const handleSelectVibe = (option: any) => {
         setCurrentVibe(option);
@@ -74,10 +72,7 @@ export function IykykMyDay() {
         const nonHeldStops = itinerary.stops.filter(s => !s.isHeld);
 
         if (nonHeldStops.length === 0) {
-            toast({
-                title: "Everything is locked!",
-                description: "Unlock some stops if you want to shuffle your plan.",
-            });
+            // Silently do nothing if all items are held
             return;
         }
 
@@ -111,8 +106,7 @@ export function IykykMyDay() {
                 
                 setItinerary({ ...itinerary, stops: finalStops, title: result.success.title });
             } else if (result.error) {
-                // Silently fail. The user can just try again.
-                // This is better than showing an error toast.
+                // Silently fail, as requested. The user can just try again.
             }
         });
     };
