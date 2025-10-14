@@ -1,5 +1,5 @@
 
-import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass } from "lucide-react";
+import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap } from "lucide-react";
 
 export const featureData = [
     {
@@ -49,5 +49,13 @@ export const featureData = [
       description: "Creator-approved Airbnb stays and local getaways.",
       color: "text-sky-500",
       imageId: "stay-1",
+    },
+    {
+      href: "/flash-stays",
+      icon: "Zap",
+      title: "iykyk Flash Stays",
+      description: "Last-minute deals on creator-approved stays.",
+      color: "text-purple-500",
+      imageId: "stay-2",
     },
 ];

@@ -1,6 +1,6 @@
 
 
-import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar } from 'lucide-react';
+import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap } from 'lucide-react';
 
 export type Community = {
   id: string;
@@ -312,6 +312,7 @@ export const appData = {
     "Cocktails": { icon: Beer, color: '#d946ef', textColor: '#ffffff' },
     "Retail": { icon: Sparkles, color: '#f43f5e', textColor: '#ffffff' },
     "Events": { icon: Calendar, color: '#fb7185', textColor: '#ffffff' },
+    "Flash": { icon: Zap, color: '#6366f1', textColor: '#ffffff' },
   },
   communities: [
     { id: 'brunch-club', name: 'Bondi Brunch Club', description: 'For the mimosa lovers and avo toast aficionados.', category: 'Brunch', members: 128, channels: ['general', 'tips', 'meetups'] },
@@ -596,5 +597,6 @@ export const appData = {
     
 
     
+
 
 
