@@ -2,16 +2,15 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
-import { Poppins } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import { DesktopNav } from '@/components/iykyk/DesktopNav';
 import { cn } from '@/lib/utils';
 
-const poppins = Poppins({
+const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-poppins',
-  weight: ['300', '400', '500', '600', '700', '800']
+  variable: '--font-inter',
 });
 
 export const metadata: Metadata = {
@@ -26,7 +25,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(poppins.variable, "font-body antialiased")}>
+      <head>
+         <link rel="preload" href="/_next/static/media/24c595304859a84a-s.p.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+      </head>
+      <body className={cn(inter.variable, "font-body antialiased")}>
         <FirebaseClientProvider>
           <div className="md:flex">
             <DesktopNav />
