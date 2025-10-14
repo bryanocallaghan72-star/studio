@@ -58,26 +58,18 @@ export function IykykVibeMap() {
                     {/* Background */}
                     <rect width="800" height="450" fill="hsl(var(--background))" />
                     
-                    {/* Ocean */}
-                    <path d="M 650,0 C 630,150 670,300 650,450 L 800,450 L 800,0 Z" fill="hsl(var(--accent) / 0.5)" />
-                    <path d="M 680,0 C 660,150 700,300 680,450 L 800,450 L 800,0 Z" fill="hsl(var(--accent) / 0.5)" />
-
-                    {/* Sand */}
-                    <rect x="580" y="0" width="70" height="450" fill="hsl(35, 50%, 85%)" />
-                    <text x="615" y="225" fontFamily="sans-serif" fill="hsl(var(--muted-foreground))" fontSize="14" transform="rotate(-90, 615, 225)">Bondi Beach</text>
-
                     {/* Roads */}
                     <g stroke="hsl(var(--border))" strokeWidth="2" fill="none">
-                        <line x1="0" y1="100" x2="580" y2="100" />
-                        <line x1="0" y1="225" x2="580" y2="225" />
-                        <line x1="0" y1="350" x2="580" y2="350" />
+                        <line x1="0" y1="100" x2="800" y2="100" />
+                        <line x1="0" y1="225" x2="800" y2="225" />
+                        <line x1="0" y1="350" x2="800" y2="350" />
                     </g>
                     
                     {/* Labels */}
                     <g fontFamily="sans-serif" fill="hsl(var(--muted-foreground))" fontSize="14">
-                        <text x="500" y="95">Curlewis St</text>
-                        <text x="500" y="220">Roscoe St</text>
-                        <text x="500" y="345">Hall St</text>
+                        <text x="730" y="95">Curlewis St</text>
+                        <text x="730" y="220">Roscoe St</text>
+                        <text x="730" y="345">Hall St</text>
                     </g>
                 </svg>
                 
@@ -94,4 +86,3 @@ export function IykykVibeMap() {
     </section>
   );
 }
-
