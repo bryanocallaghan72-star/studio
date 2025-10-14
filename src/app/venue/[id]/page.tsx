@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
 import { appData } from "@/lib/data";

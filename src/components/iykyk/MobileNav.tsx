@@ -1,87 +1,41 @@
 
 "use client";
 
-import { Home, PlaySquare, Compass, Users, Flame, User, LogOut } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button";
-import { useAuth, useUser } from "@/firebase";
-import { signOut } from "firebase/auth";
+import { usePathname } from "next/navigation";
+import { Home, Plus, Search, User } from "lucide-react";
 
-const navItems = [
-  { href: "/feed", icon: Home, label: "Feed" },
-  { href: "/reels", icon: PlaySquare, label: "Reels" },
-  { href: "/discover", icon: Compass, label: "iykyk" },
-  { href: "/community", icon: Users, label: "Community" },
-  { href: "/fire", icon: Flame, label: "Fire" },
-];
+import { cn } from "@/lib/utils";
+import { useUser } from "@/firebase";
 
 export function MobileNav() {
   const pathname = usePathname();
-  const router = useRouter();
-  const auth = useAuth();
   const { user } = useUser();
-  const isLandingPage = pathname === "/";
 
-  const handleLogout = async () => {
-    await signOut(auth);
-    router.push('/');
-  }
-
-  if (isLandingPage) {
-    return null;
-  }
+  const links = [
+    { href: "/discover", icon: Home, label: "Home" },
+    { href: "/search", icon: Search, label: "Search" },
+    { href: "/new", icon: Plus, label: "New" },
+    { href: user ? `/profile/${user.uid}` : "/login", icon: User, label: "Profile" },
+  ]
 
   return (
-    <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-background/80 backdrop-blur-sm border-t">
-      <div className="grid h-full max-w-lg grid-cols-6 mx-auto font-medium">
-        {navItems.map((item) => {
-          const isActive = pathname.startsWith(item.href) && item.href !== '/';
-            
-          return (
-            <Link
-              key={item.label}
-              href={item.href}
-              className={`inline-flex flex-col items-center justify-center px-5 hover:bg-secondary ${
-                isActive ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              <item.icon className="w-5 h-5 mb-1" />
-              <span className="text-xs">{item.label}</span>
-            </Link>
-          );
-        })}
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                 <button
-                    className={`inline-flex flex-col items-center justify-center px-5 hover:bg-secondary ${
-                        pathname.startsWith('/profile') ? "text-primary" : "text-muted-foreground"
-                    }`}
-                    >
-                    <User className="w-5 h-5 mb-1" />
-                    <span className="text-xs">Profile</span>
-                </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 mb-2" side="top" align="end">
-                <DropdownMenuItem asChild>
-                    <Link href={user ? `/profile/${user.uid}` : '/login'}>
-                        <User className="mr-2 h-4 w-4" />
-                        <span>View Profile</span>
-                    </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log Out</span>
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
+    <div className="fixed bottom-0 left-0 z-50 w-full border-t bg-background md:hidden">
+      <div className="grid max-w-md grid-cols-4 gap-2 p-3 mx-auto">
+        {links.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={cn(
+              "flex h-9 w-9 items-center justify-center rounded-md p-0 text-sm font-medium transition-colors hover:bg-secondary/50",
+              pathname === link.href ? "bg-secondary/50" : "bg-transparent",
+            )}
+          >
+            <link.icon className="h-5 w-5" />
+            <span className="sr-only">{link.label}</span>
+          </Link>
+        ))}
       </div>
     </div>
-  );
+  )
 }

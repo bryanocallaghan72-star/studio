@@ -1,11 +1,11 @@
 
 'use client';
 
-import { useMemo } from 'react';
-import { notFound, useParams } from "next/navigation";
+import { useMemo, useState } from 'react';
+import { useParams, notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Rss, Star, MapPin, Loader2 } from "lucide-react";
+import { Rss, Star, MapPin, Loader2, Edit } from "lucide-react";
 import { doc } from 'firebase/firestore';
 
 import { Header } from "@/components/iykyk/Header";
@@ -13,13 +13,15 @@ import { MobileNav } from "@/components/iykyk/MobileNav";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
+import { useDoc, useFirestore, useMemoFirebase, useUser } from '@/firebase';
 import { appData } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { EditProfileDialog } from '@/components/iykyk/EditProfileDialog';
 
 export default function ProfilePage() {
   const params = useParams();
   const uid = params.uid as string;
+  const { user: currentUser } = useUser();
 
   const firestore = useFirestore();
   const userDocRef = useMemoFirebase(() => {
@@ -28,9 +30,12 @@ export default function ProfilePage() {
   }, [firestore, uid]);
 
   const { data: userProfile, isLoading } = useDoc(userDocRef);
+  const [isEditDialogOpen, setEditDialogOpen] = useState(false);
 
   // For the prototype, we'll show a few pins as their "favorite spots" or "pins".
   const userPins = appData.map.pins.slice(0, 3); 
+
+  const isOwner = currentUser && currentUser.uid === uid;
 
   if (isLoading) {
     return (
@@ -46,6 +51,7 @@ export default function ProfilePage() {
   }
 
   return (
+    <>
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
       <main className="flex flex-1 flex-col gap-8 p-4 md:p-6 pb-24">
@@ -73,10 +79,17 @@ export default function ProfilePage() {
             </div>
              <div className="px-6 mt-4 space-y-4">
                 <p className="text-muted-foreground">{userProfile.bio || "No bio yet."}</p>
-                <Button className="w-full md:w-auto">
-                    <Rss className="mr-2 h-4 w-4" />
-                    Follow
-                </Button>
+                {isOwner ? (
+                  <Button onClick={() => setEditDialogOpen(true)}>
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit Profile
+                  </Button>
+                ) : (
+                  <Button>
+                      <Rss className="mr-2 h-4 w-4" />
+                      Follow
+                  </Button>
+                )}
             </div>
           </CardContent>
         </Card>
@@ -117,5 +130,13 @@ export default function ProfilePage() {
       </main>
       <MobileNav />
     </div>
+    {userProfile && (
+       <EditProfileDialog 
+        isOpen={isEditDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        userProfile={userProfile}
+      />
+    )}
+    </>
   );
 }
