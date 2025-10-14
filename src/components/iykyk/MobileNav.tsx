@@ -3,40 +3,51 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Users, Flame, PlaySquare, User } from "lucide-react";
+import { Home, Users, Flame, PlaySquare, User, Compass } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useUser } from "@/firebase";
+import { Logo } from "./Logo";
 
 export function MobileNav() {
   const pathname = usePathname();
   const { user } = useUser();
 
   const links = [
-    { href: "/discover", icon: Home, label: "Home" },
-    { href: "/feed", icon: Flame, label: "Feed" },
+    { href: "/feed", icon: Home, label: "Feed" },
     { href: "/reels", icon: PlaySquare, label: "Reels" },
+    { href: "/discover", icon: Compass, label: "iykyk" },
     { href: "/community", icon: Users, label: "Community" },
+    { href: "/fire", icon: Flame, label: "Fire" },
     { href: user ? `/profile/${user.uid}` : "/login", icon: User, label: "Profile" },
-  ]
+  ];
 
   return (
     <div className="fixed bottom-0 left-0 z-50 w-full border-t bg-background md:hidden">
-      <div className="grid max-w-md grid-cols-5 gap-2 p-3 mx-auto">
-        {links.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={cn(
-              "flex flex-col h-14 items-center justify-center rounded-md p-2 text-xs font-medium transition-colors hover:bg-secondary/50 gap-1",
-              pathname === link.href ? "text-primary" : "text-muted-foreground",
-            )}
-          >
-            <link.icon className="h-6 w-6" />
-            <span className="">{link.label}</span>
-          </Link>
-        ))}
+      <div className="grid h-16 max-w-full grid-cols-6">
+        {links.map((link) => {
+          const isActive = pathname === link.href;
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={cn(
+                "group flex flex-col items-center justify-center gap-1 p-2 text-xs font-medium transition-colors hover:bg-secondary/50",
+                isActive ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              {link.label === "iykyk" ? (
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                    <link.icon className="h-5 w-5" />
+                </div>
+              ) : (
+                <link.icon className="h-6 w-6" />
+              )}
+              <span className={cn("text-[10px]", isActive && "font-bold")}>{link.label}</span>
+            </Link>
+          );
+        })}
       </div>
     </div>
-  )
+  );
 }
