@@ -22,7 +22,7 @@ const LandingPage = () => {
 
     if (user) {
       return (
-        <Link href={user ? `/profile/${user.uid}` : '/login'} passHref>
+        <Link href={`/profile/${user.uid}`} passHref>
           <Button variant="link" className="text-muted-foreground">
             View Your Profile
           </Button>
