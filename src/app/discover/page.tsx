@@ -28,8 +28,8 @@ export default function DiscoverPage() {
       <Header />
       <div className="flex flex-1 flex-col pb-24">
         <div className="p-4 md:p-6 text-center">
-            <h2 className="text-3xl font-bold tracking-tight">What's the vibe today?</h2>
-            <p className="text-muted-foreground mt-2">Your real-time cultural portal to Bondi.</p>
+            <h2 className="text-3xl font-bold tracking-tight">Your Cultural Concierge</h2>
+            <p className="text-muted-foreground mt-2">The real-time pulse of Bondi, curated for you.</p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 px-4 md:px-6 md:grid-cols-2">
