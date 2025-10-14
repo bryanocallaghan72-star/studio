@@ -175,7 +175,7 @@ export const appData = {
         },
         description: "Breakfast of champions!",
         imageId: "ricotta-hotcakes",
-        videoUrl: "https://test-videos.co.uk/vids/elephantsdream/mp4/h264/720/Elephants_Dream_720_10s_1MB.mp4",
+        videoUrl: "https://test-videos.co.uk/vids/elephantsdream/mp4/h264/70/Elephants_Dream_720_10s_1MB.mp4",
         likes: 9800,
         comments: 633,
         commentData: []
@@ -504,7 +504,7 @@ export const appData = {
     },
     {
       id: 'mmd8',
-      title: 'Bondi Fitness Fiend',
+      title: 'Bondi Fitness Focus',
       description: 'Train hard, eat well, and hit the waves.',
       request: {
         vibe: 'An intense and rewarding fitness day in Bondi. Start with a personal training session at the iconic outdoor gym, refuel with a healthy and protein-packed lunch, and then hit the waves for an afternoon surf session.',
@@ -616,6 +616,7 @@ export const appData = {
     
 
     
+
 
 
 
