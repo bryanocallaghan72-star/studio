@@ -16,7 +16,7 @@ type Venue = typeof appData.map.pins[0];
 const venueTypeToImageId: { [key: string]: string } = {
     'Brunch': 'coffee-1',
     'Sushi': 'sushi-1',
-    'Cocktails': 'cocktail-1',
+    'Cocktails': 'cocktail-101',
     'Restaurants': 'my-day-3',
     'Nightlife': 'nightlife-1',
     'Health & Fitness': 'fitness-1',
