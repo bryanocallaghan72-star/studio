@@ -11,17 +11,17 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { generateItinerary as generateItineraryAction } from '@/app/actions';
 import { EventAndItinerarySelectionPage } from './my-day/EventAndItinerarySelectionPage';
 import { IykykMyDayItineraryPage } from './my-day/IykykMyDayItineraryPage';
+import { useToast } from '@/hooks/use-toast';
 
 export function IykykMyDay() {
     const [isPending, startTransition] = useTransition();
     const [view, setView] = useState<'selection' | 'itinerary'>('selection');
     const [itinerary, setItinerary] = useState<Itinerary | null>(null);
     const [currentVibe, setCurrentVibe] = useState<any | null>(null);
-    const [error, setError] = useState<string | null>(null);
     const [isConfirmationOpen, setConfirmationOpen] = useState(false);
+    const { toast } = useToast();
 
     const handleSelectVibe = (option: any) => {
-        setError(null);
         setCurrentVibe(option);
 
         const initialStops = option.mockItinerary.map((s: any, index: number) => ({
@@ -73,6 +73,14 @@ export function IykykMyDay() {
         const heldStops = itinerary.stops.filter(s => s.isHeld);
         const nonHeldStops = itinerary.stops.filter(s => !s.isHeld);
 
+        if (nonHeldStops.length === 0) {
+            toast({
+                title: "Everything is locked!",
+                description: "Unlock some stops if you want to shuffle your plan.",
+            });
+            return;
+        }
+
         startTransition(async () => {
             const request: ItineraryRequest = {
                 vibe: currentVibe?.request?.vibe || 'A fun day in Bondi',
@@ -83,11 +91,14 @@ export function IykykMyDay() {
                 heldStops: heldStops.map(({ id, isHeld, ...rest }) => rest),
             };
             
-            setError(null);
             const result = await generateItineraryAction(request);
 
             if (result.error) {
-                setError(result.error);
+                toast({
+                    variant: "destructive",
+                    title: result.error.title,
+                    description: result.error.message,
+                });
             } else if (result.success) {
                 const newStops = result.success.stops.map((s, index) => ({ 
                     ...s, 
@@ -157,25 +168,6 @@ export function IykykMyDay() {
                     </motion.div>
                 )}
             </AnimatePresence>
-            {error && (
-                 <motion.div
-                    key="error"
-                    className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 z-20 p-4"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                >
-                    <p className="text-destructive text-center mb-4">{error}</p>
-                    <Button onClick={() => {
-                        setError(null);
-                        if (itinerary) {
-                            // just hide error and let them try again
-                        } else {
-                           handleBackToSelection();
-                        }
-                    }}>Try again</Button>
-                </motion.div>
-            )}
 
             <AnimatePresence mode="wait">
                 <CurrentPage />
