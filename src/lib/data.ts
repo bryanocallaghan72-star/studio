@@ -139,56 +139,47 @@ export const appData = {
         commentData: []
     }
   ],
-  stays: [
-    {
-        id: 'stay-1',
-        title: "The Bondi Beach House",
-        description: "Designer apartment with stunning ocean views. Perfect for a luxury getaway.",
-        pricePerNight: 450,
-        rating: 4.9,
-        imageId: "stay-1",
-        creatorId: "alice",
-        endsIn: 3 * 60 * 60 * 1000, // 3 hours
-    },
-    {
-        id: 'stay-2',
-        title: "The Surfer's Penthouse",
-        description: "Modern penthouse with a rooftop terrace. Steps from the sand.",
-        pricePerNight: 650,
-        rating: 4.9,
-        imageId: "stay-2",
-        creatorId: "shannon",
-        endsIn: 5 * 60 * 60 * 1000, // 5 hours
-    },
-    {
-        id: 'stay-3',
-        title: "The Garden Oasis",
-        description: "Chic apartment with a private garden. Your quiet escape in the heart of Bondi.",
-        pricePerNight: 320,
-        rating: 4.8,
-        imageId: "stay-3",
-        creatorId: "jay",
-        endsIn: 8 * 60 * 60 * 1000, // 8 hours
-    },
-    {
-      id: 'stay-4',
-      title: "Cozy Beachside Studio",
-      description: "A compact, stylish studio perfect for solo travelers or couples. Includes a kitchenette and a small balcony.",
-      pricePerNight: 250,
-      rating: 4.7,
-      imageId: "stay-4",
-      creatorId: "lucas",
-      endsIn: 2 * 60 * 60 * 1000, // 2 hours
-    }
-  ],
   feedItems: [
+    {
+      id: 1,
+      type: "photo",
+      creator: { id: "jay", name: "jay", avatar: "https://github.com/jay.png" },
+      venue: "Raw Bar",
+      description: "Finally found the best sushi in Bondi. That crispy salmon roll is a game changer. 🍣",
+      imageId: "sushi-1",
+      likes: 245,
+      comments: 34,
+      commentData: [
+        { author: "alice", text: "Omg looks amazing!" },
+        { author: "lucas", text: "You have to try their spicy tuna next time." },
+      ]
+    },
+    {
+      id: 2,
+      type: "photo",
+      creator: { id: "alice", name: "alice", avatar: "https://github.com/alice.png" },
+      venue: "Hotel Ravesis",
+      description: "Sunset vibes and perfect cocktails. My kind of Tuesday.",
+      imageId: "cocktail-101",
+      likes: 482,
+      comments: 51,
+      commentData: []
+    },
+    {
+      id: 3,
+      type: "photo",
+      creator: { id: "shannon", name: "shannon", avatar: "https://github.com/shannon.png" },
+      venue: "The Depot",
+      description: "Found the best cure for a rainy day in Bondi... coffee and lots of it!",
+      imageId: "coffee-1",
+      likes: 198,
+      comments: 22,
+      commentData: []
+    },
     {
       id: 4,
       type: "photo",
-      creator: {
-        name: "SunriseYoga",
-        avatar: "https://github.com/yoga.png",
-      },
+      creator: { id: "lucas", name: "lucas", avatar: "https://github.com/lucas.png" },
       venue: "Bondi Beach",
       description: "Another beautiful start to the day! 🧘‍♀️",
       imageId: "morning-1",
@@ -199,10 +190,7 @@ export const appData = {
     {
       id: 5,
       type: "photo",
-      creator: {
-        name: "SunriseYoga",
-        avatar: "https://github.com/yoga.png",
-      },
+      creator: { id: "foodiegal", name: "foodiegal", avatar: "https://github.com/foodie.png" },
       venue: "Bondi Beach",
       description: "wow sunset Yoga",
       imageId: "sunset-yoga",
