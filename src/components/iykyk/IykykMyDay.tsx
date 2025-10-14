@@ -98,8 +98,9 @@ export function IykykMyDay() {
                 const finalStops = [...heldStops, ...newStops];
                 
                 finalStops.sort((a, b) => {
-                    const timeA = new Date(`1970-01-01 ${a.time}`);
-                    const timeB = new Date(`1970-01-01 ${b.time}`);
+                    // Handle potential AM/PM format issues gracefully
+                    const timeA = new Date(`1970/01/01 ${a.time.replace(/\s/g, '')}`);
+                    const timeB = new Date(`1970/01/01 ${b.time.replace(/\s/g, '')}`);
                     return timeA.getTime() - timeB.getTime();
                 });
                 
@@ -194,8 +195,8 @@ export function IykykMyDay() {
                     {itinerary && (
                          <div className="space-y-4 py-4 text-center">
                             {itinerary.stops.sort((a, b) => {
-                                const timeA = new Date(`1970-01-01 ${a.time}`);
-                                const timeB = new Date(`1970-01-01 ${b.time}`);
+                                const timeA = new Date(`1970/01/01 ${a.time.replace(/\s/g, '')}`);
+                                const timeB = new Date(`1970/01/01 ${b.time.replace(/\s/g, '')}`);
                                 return timeA.getTime() - timeB.getTime();
                             }).map((stop, index) => (
                                 <div key={index} className="flex items-center justify-center gap-4">
