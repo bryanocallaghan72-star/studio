@@ -1,5 +1,5 @@
 
-"use client";
+'use client';
 
 import { useState, useTransition } from 'react';
 import { Card } from "@/components/ui/card";
@@ -95,7 +95,6 @@ export function IykykMyDay() {
 
             if (result.error) {
                 toast({
-                    variant: "destructive",
                     title: result.error.title,
                     description: result.error.message,
                 });
