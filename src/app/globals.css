@@ -4,31 +4,31 @@
 
 @layer base {
   :root {
-    --background: 20 14.3% 95.9%;
-    --foreground: 24 9.8% 10%;
+    --background: 48 33% 94%; /* Sandy White */
+    --foreground: 20 14.3% 4.1%;
     --card: 0 0% 100%;
-    --card-foreground: 24 9.8% 10%;
+    --card-foreground: 20 14.3% 4.1%;
     --popover: 0 0% 100%;
-    --popover-foreground: 24 9.8% 10%;
-    --primary: 346.8 77.2% 49.8%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 60 4.8% 95.9%;
+    --popover-foreground: 20 14.3% 4.1%;
+    --primary: 45 96% 51%; /* Golden Yellow */
+    --primary-foreground: 45 96% 10%;
+    --secondary: 210 40% 96.1%;
     --secondary-foreground: 24 9.8% 10%;
-    --muted: 60 4.8% 95.9%;
-    --muted-foreground: 25 5.3% 44.7%;
-    --accent: 346.8 77.2% 49.8%;
-    --accent-foreground: 355.7 100% 97.3%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 200 100% 50%; /* Sky Blue */
+    --accent-foreground: 24 9.8% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 60 9.1% 97.8%;
-    --border: 20 5.9% 90%;
-    --input: 20 5.9% 90%;
-    --ring: 346.8 77.2% 49.8%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 45 96% 51%;
     --radius: 0.8rem;
   }
 
   .dark {
     --background: 222 47% 11%; /* Deep Navy */
-    --foreground: 210 40% 98%; /* White */
+    --foreground: 210 40% 98%;
     --card: 222 47% 15%;
     --card-foreground: 210 40% 98%;
     --popover: 222 47% 11%;
@@ -39,7 +39,7 @@
     --secondary-foreground: 210 40% 98%;
     --muted: 222 47% 18%;
     --muted-foreground: 210 40% 60%;
-    --accent: 45 100% 51%; /* Golden Yellow */
+    --accent: 200 80% 60%; /* Lighter Sky Blue for dark mode */
     --accent-foreground: 222 47% 11%;
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
