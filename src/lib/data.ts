@@ -160,7 +160,7 @@ export const appData = {
       creator: { id: "alice", name: "alice", avatar: "https://github.com/alice.png" },
       venue: "Hotel Ravesis",
       description: "Sunset vibes and perfect cocktails. My kind of Tuesday.",
-      imageId: "cocktail-101",
+      imageId: "community-sushi",
       likes: 482,
       comments: 51,
       commentData: []
