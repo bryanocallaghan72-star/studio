@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { generateItinerary as generateItineraryAction } from '@/app/actions';
 import { EventAndItinerarySelectionPage } from './my-day/EventAndItinerarySelectionPage';
 import { IykykMyDayItineraryPage } from './my-day/IykykMyDayItineraryPage';
+import { appData } from '@/lib/data';
 
 export function IykykMyDay() {
     const [isPending, startTransition] = useTransition();
@@ -66,48 +67,51 @@ export function IykykMyDay() {
     };
     
     const handleShuffle = () => {
-        if (!itinerary || !currentVibe) return;
-
-        const heldStops = itinerary.stops.filter(s => s.isHeld);
-        const nonHeldStops = itinerary.stops.filter(s => !s.isHeld);
-
-        if (nonHeldStops.length === 0) {
-            // Silently do nothing if all items are held
-            return;
-        }
-
-        startTransition(async () => {
-            const request: ItineraryRequest = {
-                vibe: currentVibe?.request?.vibe || 'A fun day in Bondi',
-                pace: currentVibe?.request?.pace || 3,
-                budget: currentVibe?.request?.budget || 3,
-                travelMode: currentVibe?.request?.travelMode || 'walking',
-                numberOfNewStops: nonHeldStops.length,
-                heldStops: heldStops.map(({ id, isHeld, ...rest }) => rest),
-            };
-            
-            const result = await generateItineraryAction(request);
-
-            if (result.success) {
-                const newStops = result.success.stops.map((s, index) => ({ 
-                    ...s, 
-                    isHeld: false, 
-                    id: `new-${s.location}-${index}-${Date.now()}` 
-                }));
-
-                const finalStops = [...heldStops, ...newStops];
-                
-                finalStops.sort((a, b) => {
-                    // Handle potential AM/PM format issues gracefully
-                    const timeA = new Date(`1970/01/01 ${a.time.replace(/\s/g, '')}`);
-                    const timeB = new Date(`1970/01/01 ${b.time.replace(/\s/g, '')}`);
-                    return timeA.getTime() - timeB.getTime();
-                });
-                
-                setItinerary({ ...itinerary, stops: finalStops, title: result.success.title });
-            } else if (result.error) {
-                // Silently fail, as requested. The user can just try again.
-            }
+        if (!itinerary) return;
+    
+        startTransition(() => {
+            const heldStops = itinerary.stops.filter(stop => stop.isHeld);
+            const stopsToShuffle = itinerary.stops.filter(stop => !stop.isHeld);
+    
+            if (stopsToShuffle.length === 0) return;
+    
+            // Get types of venues to shuffle
+            const venueTypes = new Set(stopsToShuffle.map(stop => {
+                const venue = appData.map.pins.find(p => p.name === stop.location);
+                return venue?.type || 'Restaurants';
+            }));
+    
+            // Create a pool of potential replacements
+            const replacementPool = appData.map.pins.filter(pin => 
+                venueTypes.has(pin.type) && 
+                !itinerary.stops.some(s => s.location === pin.name) // Exclude venues already in itinerary
+            );
+    
+            // Shuffle the pool
+            const shuffledPool = [...replacementPool].sort(() => Math.random() - 0.5);
+    
+            const newShuffledStops = stopsToShuffle.map((oldStop, index) => {
+                const replacement = shuffledPool[index % shuffledPool.length]; // Use modulo to loop if pool is small
+                if (replacement) {
+                    return {
+                        ...oldStop,
+                        title: replacement.name,
+                        location: replacement.name,
+                        description: replacement.description,
+                        isHeld: false, // New stops are never held
+                        id: `shuffled-${replacement.name}-${Date.now()}` // Ensure unique ID
+                    };
+                }
+                return oldStop; // Fallback to old stop if no replacement is found
+            });
+    
+            const finalStops = [...heldStops, ...newShuffledStops].sort((a, b) => {
+                const timeA = new Date(`1970/01/01 ${a.time.replace(/\s/g, '')}`);
+                const timeB = new Date(`1970/01/01 ${b.time.replace(/\s/g, '')}`);
+                return timeA.getTime() - timeB.getTime();
+            });
+    
+            setItinerary({ ...itinerary, stops: finalStops });
         });
     };
 
