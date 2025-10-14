@@ -1,24 +1,23 @@
 
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, CheckCircle2 } from "lucide-react";
-import { Itinerary, ItineraryRequest, ItineraryStop } from '@/ai/schemas';
+import { Itinerary, ItineraryStop } from '@/ai/schemas';
 import { AnimatePresence, motion } from "framer-motion";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { generateItinerary as generateItineraryAction } from '@/app/actions';
 import { EventAndItinerarySelectionPage } from './my-day/EventAndItinerarySelectionPage';
 import { IykykMyDayItineraryPage } from './my-day/IykykMyDayItineraryPage';
 import { appData } from '@/lib/data';
 
 export function IykykMyDay() {
-    const [isPending, startTransition] = useTransition();
     const [view, setView] = useState<'selection' | 'itinerary'>('selection');
     const [itinerary, setItinerary] = useState<Itinerary | null>(null);
     const [currentVibe, setCurrentVibe] = useState<any | null>(null);
     const [isConfirmationOpen, setConfirmationOpen] = useState(false);
+    const [isShuffling, setIsShuffling] = useState(false);
 
     const handleSelectVibe = (option: any) => {
         setCurrentVibe(option);
@@ -68,41 +67,43 @@ export function IykykMyDay() {
     
     const handleShuffle = () => {
         if (!itinerary) return;
-    
-        startTransition(() => {
+
+        setIsShuffling(true);
+
+        setTimeout(() => {
             const heldStops = itinerary.stops.filter(stop => stop.isHeld);
             const stopsToShuffle = itinerary.stops.filter(stop => !stop.isHeld);
     
-            if (stopsToShuffle.length === 0) return;
+            if (stopsToShuffle.length === 0) {
+                setIsShuffling(false);
+                return;
+            };
     
-            // Get types of venues to shuffle
             const venueTypes = new Set(stopsToShuffle.map(stop => {
                 const venue = appData.map.pins.find(p => p.name === stop.location);
                 return venue?.type || 'Restaurants';
             }));
     
-            // Create a pool of potential replacements
             const replacementPool = appData.map.pins.filter(pin => 
                 venueTypes.has(pin.type) && 
-                !itinerary.stops.some(s => s.location === pin.name) // Exclude venues already in itinerary
+                !itinerary.stops.some(s => s.location === pin.name)
             );
     
-            // Shuffle the pool
             const shuffledPool = [...replacementPool].sort(() => Math.random() - 0.5);
     
-            const newShuffledStops = stopsToShuffle.map((oldStop, index) => {
-                const replacement = shuffledPool[index % shuffledPool.length]; // Use modulo to loop if pool is small
+            const newShuffledStops = stopsToShuffle.map((oldStop) => {
+                const replacement = shuffledPool.pop();
                 if (replacement) {
                     return {
                         ...oldStop,
                         title: replacement.name,
                         location: replacement.name,
                         description: replacement.description,
-                        isHeld: false, // New stops are never held
-                        id: `shuffled-${replacement.name}-${Date.now()}` // Ensure unique ID
+                        isHeld: false,
+                        id: `shuffled-${replacement.name}-${Date.now()}`
                     };
                 }
-                return oldStop; // Fallback to old stop if no replacement is found
+                return oldStop;
             });
     
             const finalStops = [...heldStops, ...newShuffledStops].sort((a, b) => {
@@ -112,7 +113,8 @@ export function IykykMyDay() {
             });
     
             setItinerary({ ...itinerary, stops: finalStops });
-        });
+            setIsShuffling(false);
+        }, 300); // Simulate a quick shuffle
     };
 
 
@@ -138,7 +140,7 @@ export function IykykMyDay() {
                 onShuffle={handleShuffle}
                 onToggleHold={handleToggleHold}
                 onSwap={handleSwap}
-                isPending={isPending}
+                isPending={isShuffling}
             />;
         }
         return (
@@ -151,7 +153,7 @@ export function IykykMyDay() {
     return (
         <Card className="w-full flex flex-col min-h-[40rem] overflow-hidden bg-transparent border-none shadow-none relative">
             <AnimatePresence mode="wait">
-                {isPending && view === 'itinerary' && (
+                {isShuffling && view === 'itinerary' && (
                     <motion.div
                         key="loader-shuffle"
                         className="absolute inset-0 flex items-center justify-center bg-background/80 z-20"
