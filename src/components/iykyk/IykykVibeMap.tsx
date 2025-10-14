@@ -54,26 +54,32 @@ export function IykykVibeMap() {
 
         <div className="flex-grow flex flex-col relative aspect-[16/9] md:aspect-video mt-2 rounded-lg border overflow-hidden mx-4 md:mx-6">
             <div className="flex-grow bg-secondary/30 relative overflow-hidden">
-                <div className="w-full h-full absolute inset-0">
                 <svg width="100%" height="100%" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
                     {/* Background */}
                     <rect width="800" height="450" fill="hsl(var(--background))" />
+                    
+                    {/* Ocean */}
+                    <path d="M 650,0 C 630,150 670,300 650,450 L 800,450 L 800,0 Z" fill="hsl(var(--accent) / 0.5)" />
+                    <path d="M 680,0 C 660,150 700,300 680,450 L 800,450 L 800,0 Z" fill="hsl(var(--accent) / 0.5)" />
+
+                    {/* Sand */}
+                    <rect x="580" y="0" width="70" height="450" fill="hsl(35, 50%, 85%)" />
+                    <text x="615" y="225" fontFamily="sans-serif" fill="hsl(var(--muted-foreground))" fontSize="14" transform="rotate(-90, 615, 225)">Bondi Beach</text>
 
                     {/* Roads */}
                     <g stroke="hsl(var(--border))" strokeWidth="2" fill="none">
-                        <line x1="0" y1="100" x2="800" y2="100" />
-                        <line x1="0" y1="225" x2="800" y2="225" />
-                        <line x1="0" y1="350" x2="800" y2="350" />
+                        <line x1="0" y1="100" x2="580" y2="100" />
+                        <line x1="0" y1="225" x2="580" y2="225" />
+                        <line x1="0" y1="350" x2="580" y2="350" />
                     </g>
-
-                     {/* Labels */}
+                    
+                    {/* Labels */}
                     <g fontFamily="sans-serif" fill="hsl(var(--muted-foreground))" fontSize="14">
-                        <text x="750" y="95">Curlewis St</text>
-                        <text x="750" y="220">Roscoe St</text>
-                        <text x="750" y="345">Hall St</text>
+                        <text x="500" y="95">Curlewis St</text>
+                        <text x="500" y="220">Roscoe St</text>
+                        <text x="500" y="345">Hall St</text>
                     </g>
                 </svg>
-                </div>
                 
                 {filteredPins.map(pin => (
                   <Link key={pin.id} href={`/venue/${pin.slug}`} className="absolute group transform -translate-x-1/2 -translate-y-full cursor-pointer" style={{ left: pin.x, top: pin.y }} aria-label={`View details for ${pin.name}`}>
@@ -88,3 +94,4 @@ export function IykykVibeMap() {
     </section>
   );
 }
+
