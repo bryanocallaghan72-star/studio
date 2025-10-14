@@ -93,12 +93,7 @@ export function IykykMyDay() {
             
             const result = await generateItineraryAction(request);
 
-            if (result.error) {
-                toast({
-                    title: result.error.title,
-                    description: result.error.message,
-                });
-            } else if (result.success) {
+            if (result.success) {
                 const newStops = result.success.stops.map((s, index) => ({ 
                     ...s, 
                     isHeld: false, 
@@ -115,6 +110,9 @@ export function IykykMyDay() {
                 });
                 
                 setItinerary({ ...itinerary, stops: finalStops, title: result.success.title });
+            } else if (result.error) {
+                // Silently fail. The user can just try again.
+                // This is better than showing an error toast.
             }
         });
     };
