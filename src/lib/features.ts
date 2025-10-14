@@ -1,5 +1,5 @@
 
-import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap } from "lucide-react";
+import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt } from "lucide-react";
 
 export const featureData = [
     {
@@ -41,6 +41,14 @@ export const featureData = [
       description: "Curated daily itinerary that you can shuffle like a playlist.",
       color: "text-primary",
       imageId: "community-fitness",
+    },
+     {
+      href: "/style",
+      icon: "Shirt",
+      title: "iykyk Style",
+      description: "Local boutiques, brands, and the definition of Bondi style.",
+      color: "text-rose-500",
+      imageId: "style-1",
     },
     {
       href: "/stays",

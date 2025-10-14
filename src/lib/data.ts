@@ -1,5 +1,5 @@
 
-import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves } from 'lucide-react';
+import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt } from 'lucide-react';
 
 export type Community = {
   id: string;
@@ -11,6 +11,39 @@ export type Community = {
 };
 
 export const appData = {
+  styleItems: [
+    {
+      id: 'style-1',
+      title: 'Tuchuzy',
+      description: 'Iconic Bondi boutique with curated designer collections.',
+      imageId: 'style-1',
+      category: 'Boutique',
+      creatorId: 'alice'
+    },
+    {
+      id: 'style-2',
+      title: 'Venroy',
+      description: 'Leisurewear for a global nomadic life. Born in Bondi.',
+      imageId: 'style-2',
+      category: 'Local Brand',
+      creatorId: 'lucas'
+    },
+    {
+      id: 'style-3',
+      title: 'Aquabumps',
+      description: 'Gallery showcasing incredible surf and ocean photography.',
+      imageId: 'style-3',
+      category: 'Art & Design',
+      creatorId: 'shannon'
+    },
+    {
+      id: 'style-4',
+      title: 'Bondi Markets',
+      description: 'Sunday markets for unique finds from local designers.',
+      imageId: 'style-4',
+      category: 'Market',
+    }
+  ],
   stays: [
     {
         id: 'stay-1',
@@ -310,7 +343,7 @@ export const appData = {
     "Vibes": { icon: Sun, color: '#fbbf24', textColor: '#0f172a' },
     "Sushi": { icon: Utensils, color: '#2dd4bf', textColor: '#0f172a' },
     "Cocktails": { icon: Beer, color: '#d946ef', textColor: '#ffffff' },
-    "Retail": { icon: Sparkles, color: '#f43f5e', textColor: '#ffffff' },
+    "Retail": { icon: Shirt, color: '#f43f5e', textColor: '#ffffff' },
     "Events": { icon: Calendar, color: '#fb7185', textColor: '#ffffff' },
     "Flash": { icon: Zap, color: '#6366f1', textColor: '#ffffff' },
   },
@@ -591,11 +624,11 @@ export const appData = {
       { id: 14, name: "Volume One", slug: "volume-one", type: "Cocktails", description: "Hidden gem for craft cocktails.", x: "48%", y: "90%", openingHours: "6pm - 1am", vibeTags: ["Hidden", "Craft", "Intimate"], currentVibe: "Chill" },
       { id: 15, "name": "Bills", "slug": "bills", "type": "Brunch", "description": "Famous for ricotta hotcakes and scrambled eggs.", "x": "40%", "y": "80%", openingHours: "7:30am - 3pm", vibeTags: ["Iconic", "Brunch", "Hotcakes"], currentVibe: "Packed" },
       { id: 16, "name": "Sean's", "slug": "seans", "type": "Restaurants", "description": "Farm-to-table dining with ocean views.", "x": "78%", "y": "15%", openingHours: "6pm - 10pm", vibeTags: ["Farm-to-Table", "Fine Dining", "Views"], currentVibe: "Buzzing" },
-      { id: 17, "name": "La Piadina", "slug": "la-piadina", "type": "Restaurants", description: "Authentic Italian flatbread sandwiches.", "x": "52%", "y": "40%", openingHours: "11am - 9pm", vibeTags: ["Quick", "Italian", "Lunch"], currentVibe: "Chill" },
-      { id: 18, "name": "The Bucket List", "slug": "the-bucket-list", "type": "Nightlife", description: "Casual beachside bar with a lively atmosphere.", "x": "30%", "y": "30%", openingHours: "12pm - 12am", vibeTags: ["Beachy", "Casual", "Lively"], currentVibe: "Packed" },
-      { id: 19, "name": "Porch and Parlour", "slug": "porch-and-parlour", "type": "Brunch", description: "Bohemian-style cafe with healthy options.", "x": "83%", "y": "55%", openingHours: "6:30am - 3pm", vibeTags: ["Bohemian", "Healthy", "Coffee"], currentVibe: "Buzzing" },
-      { id: 20, "name": "Anatomy", "slug": "anatomy", "type": "Health & Fitness", description: "Boutique fitness studio offering various classes.", "x": "4%", "y": "55%", openingHours: "6am - 8pm", vibeTags: ["Fitness", "Classes", "Modern"], currentVibe: "Chill" },
-      { id: 21, "name": "Acai Brothers", "slug": "acai-brothers", "type": "Health & Fitness", description: "Superfood bar specializing in acai bowls.", "x": "78%", "y": "65%", openingHours: "7am - 5pm", vibeTags: ["Acai", "Healthy", "Quick"], currentVibe: "Buzzing" },
+      { id: 17, "name": "La Piadina", "slug": "la-piadina", "type": "Restaurants", "description": "Authentic Italian flatbread sandwiches.", "x": "52%", "y": "40%", openingHours: "11am - 9pm", vibeTags: ["Quick", "Italian", "Lunch"], currentVibe: "Chill" },
+      { id: 18, "name": "The Bucket List", "slug": "the-bucket-list", "type": "Nightlife", "description": "Casual beachside bar with a lively atmosphere.", "x": "30%", "y": "30%", openingHours: "12pm - 12am", vibeTags: ["Beachy", "Casual", "Lively"], currentVibe: "Packed" },
+      { id: 19, "name": "Porch and Parlour", "slug": "porch-and-parlour", "type": "Brunch", "description": "Bohemian-style cafe with healthy options.", "x": "83%", "y": "55%", openingHours: "6:30am - 3pm", vibeTags: ["Bohemian", "Healthy", "Coffee"], currentVibe: "Buzzing" },
+      { id: 20, "name": "Anatomy", "slug": "anatomy", "type": "Health & Fitness", "description": "Boutique fitness studio offering various classes.", "x": "4%", "y": "55%", openingHours: "6am - 8pm", vibeTags: ["Fitness", "Classes", "Modern"], currentVibe: "Chill" },
+      { id: 21, "name": "Acai Brothers", "slug": "acai-brothers", "type": "Health & Fitness", "description": "Superfood bar specializing in acai bowls.", "x": "78%", "y": "65%", openingHours: "7am - 5pm", vibeTags: ["Acai", "Healthy", "Quick"], currentVibe: "Buzzing" },
       { id: 22, name: "The Rum Diary Bar", slug: "the-rum-diary-bar", type: "Cocktails", description: "Caribbean-themed bar with a wide rum selection.", x: "4%", y: "85%", openingHours: "5pm - 12am", vibeTags: ["Rum", "Themed", "Cozy"], currentVibe: "Chill" },
       { id: 23, name: "Lulu", slug: "lulu", type: "Restaurants", description: "Modern Pan-Asian cuisine in a chic setting.", x: "43%", y: "70%", openingHours: "5pm - 11pm", vibeTags: ["Pan-Asian", "Chic", "Dinner"], currentVibe: "Packed" },
       { id: 24, name: "Ravesis", slug: "ravesis", type: "Nightlife", description: "Stylish beachfront bar and restaurant.", x: "48%", y: "30%", openingHours: "12pm - 12am", vibeTags: ["Stylish", "Rooftop", "Cocktails"], currentVibe: "Packed" },
@@ -616,6 +649,7 @@ export const appData = {
     
 
     
+
 
 
 
