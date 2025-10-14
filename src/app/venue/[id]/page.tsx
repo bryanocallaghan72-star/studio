@@ -1,3 +1,4 @@
+
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
 import { appData } from "@/lib/data";
@@ -7,9 +8,10 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Flame, MapPin, Ticket } from "lucide-react";
+import { ArrowRight, Flame, MapPin, Ticket, Clock, TrendingUp, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 const getImageForVenue = (venueName: string) => {
     const venueNameLower = venueName.toLowerCase();
@@ -23,6 +25,15 @@ const getImageForVenue = (venueName: string) => {
 
 const spottedHereCreators = [appData.creators[2], appData.creators[3]]; // Lucas and Jay
 
+const VibeIndicator = ({ vibe }: { vibe: string }) => {
+    const vibeStyles = {
+        Chill: 'bg-blue-100 text-blue-800',
+        Buzzing: 'bg-amber-100 text-amber-800 animate-pulse',
+        Packed: 'bg-red-100 text-red-800 font-bold',
+    };
+    return <Badge className={cn('ml-2', vibeStyles[vibe as keyof typeof vibeStyles] || vibeStyles.Chill)}>{vibe}</Badge>;
+}
+
 export default function VenueProfilePage({ params }: { params: { id: string } }) {
   const venue = appData.map.pins.find(p => p.slug === params.id);
 
@@ -32,6 +43,7 @@ export default function VenueProfilePage({ params }: { params: { id: string } })
 
   const imageId = getImageForVenue(venue.name);
   const image = PlaceHolderImages.find(img => img.id === imageId);
+  const activeDeal = appData.hotItems.find(item => item.venue === venue.name && new Date(item.expiresAt).getTime() > Date.now());
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
@@ -49,12 +61,57 @@ export default function VenueProfilePage({ params }: { params: { id: string } })
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
             <div className="absolute bottom-0 left-0 p-4 md:p-6">
-                <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">{venue.name}</h1>
+                <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight flex items-center">
+                    {venue.name}
+                    {venue.currentVibe && <VibeIndicator vibe={venue.currentVibe} />}
+                </h1>
                 <Badge className="mt-2" variant="secondary">{venue.type}</Badge>
             </div>
         </div>
         
         <div className="flex flex-col gap-8 p-4 md:p-6">
+            
+            {activeDeal && (
+                <Card className="border-destructive bg-destructive/10">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-xl text-destructive">
+                            <Flame className="animate-pulse" />
+                            Live Deal!
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <h3 className="font-bold text-lg">{activeDeal.title}</h3>
+                        <p className="text-muted-foreground">{activeDeal.description}</p>
+                        <Button variant="destructive" className="mt-4">Claim Now</Button>
+                    </CardContent>
+                </Card>
+            )}
+
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl">
+                        <Info className="text-primary" />
+                        Essential Info
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div>
+                        <h4 className="font-semibold flex items-center gap-2 mb-2"><Clock size={16}/> Opening Hours</h4>
+                        <p className="text-muted-foreground">{venue.openingHours}</p>
+                    </div>
+                     {venue.vibeTags && venue.vibeTags.length > 0 && (
+                        <div>
+                            <h4 className="font-semibold flex items-center gap-2 mb-2"><TrendingUp size={16}/> Vibe Tags</h4>
+                             <div className="flex flex-wrap gap-2">
+                                {venue.vibeTags.map(tag => (
+                                    <Badge key={tag} variant="outline">{tag}</Badge>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-xl">
@@ -64,18 +121,6 @@ export default function VenueProfilePage({ params }: { params: { id: string } })
                 </CardHeader>
                 <CardContent>
                     <p className="text-muted-foreground">{venue.description}</p>
-                </CardContent>
-            </Card>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-xl">
-                        <Ticket className="text-accent" />
-                        Deals at {venue.name}
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-muted-foreground">No active deals right now. Check back soon!</p>
                 </CardContent>
             </Card>
 
@@ -113,3 +158,5 @@ export default function VenueProfilePage({ params }: { params: { id: string } })
     </div>
   );
 }
+
+    
