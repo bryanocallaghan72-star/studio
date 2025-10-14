@@ -56,47 +56,45 @@ export function IykykVibeMap() {
             <div className="flex-grow bg-secondary relative overflow-hidden">
                 <div className="w-full h-full absolute inset-0">
                 <svg width="100%" height="100%" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
-                    <defs>
-                        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                            <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
-                            <feOffset in="blur" dx="2" dy="2" result="offsetBlur"/>
-                            <feMerge>
-                                <feMergeNode in="offsetBlur"/>
-                                <feMergeNode in="SourceGraphic"/>
-                            </feMerge>
-                        </filter>
-                    </defs>
                     {/* Ocean */}
                     <rect width="800" height="600" fill="#aadaff" />
+                    
                     {/* Land Mass */}
-                    <rect width="700" height="600" fill="#f5f3ef" />
+                    <path d="M 0 0 H 680 Q 720 300 680 600 H 0 Z" fill="#f5f3ef" />
+
                     {/* Beach */}
-                    <path d="M 700 0 C 650 150, 650 450, 700 600 L 750 600 C 700 450, 700 150, 750 0 Z" fill="#ffeebc"/>
-                    {/* Roads - simplified grid based on screenshot */}
-                    <g stroke="#d4d4d4" strokeWidth="6">
+                    <path d="M 680 0 Q 640 150, 640 300 T 680 600 L 710 600 Q 670 300 710 0 Z" fill="#ffeebc"/>
+
+                    {/* Grassy Knoll & Park Areas */}
+                    <path d="M 660 0 H 710 V 150 Q 690 140 660 120 Z" fill="#c8e6c9" />
+                    <path d="M 660 480 Q 690 490 710 520 V 600 H 660 Z" fill="#c8e6c9" />
+                    <path d="M 300 500 H 500 V 580 H 300 Z" fill="#dcedc8" />
+
+
+                    {/* Roads */}
+                    <g stroke="#d4d4d4" strokeWidth="6" fill="none">
                         {/* Campbell Parade */}
-                        <path d="M680 0 C 630 150, 630 450, 680 600" fill="none" />
+                        <path d="M 670 0 Q 630 150, 630 300 T 670 600" strokeWidth="8" />
                         {/* Hall St */}
-                        <line x1="0" y1="480" x2="650" y2="480" />
+                        <path d="M 0 480 H 640" />
                         {/* Roscoe St */}
-                        <line x1="0" y1="350" x2="660" y2="350" />
+                        <path d="M 200 350 H 635" />
                         {/* Curlewis St */}
-                        <line x1="0" y1="250" x2="670" y2="250" />
-                        {/* Blair St */}
-                        <line x1="0" y1="150" x2="680" y2="150" />
-                        {/* Vertical Roads */}
-                        <line x1="500" y1="0" x2="500" y2="600" />
-                        <line x1="350" y1="0" x2="350" y2="600" />
-                        <line x1="200" y1="0" x2="200" y2="600" />
+                        <path d="M 0 250 H 650" />
+                         {/* Gould St */}
+                        <path d="M 300 420 H 635" />
+                         {/* Bondi Rd */}
+                        <path d="M 0 550 H 350 L 400 480" />
                     </g>
 
-                    {/* Labels */}
+                     {/* Labels */}
                     <g fontFamily="Poppins, sans-serif" fill="#7a7a7a" fontSize="14">
-                        <text x="635" y="300" transform="rotate(90 635,300)">Campbell Parade</text>
+                        <text x="625" y="300" transform="rotate(90 625,300)">Campbell Pde</text>
                         <text x="520" y="475">Hall St</text>
                         <text x="520" y="345">Roscoe St</text>
+                         <text x="520" y="415">Gould St</text>
                         <text x="520" y="245">Curlewis St</text>
-                        <text x="520" y="145">Blair St</text>
+                        <text x="250" y="545">Bondi Rd</text>
                         <text x="710" y="40" fontSize="18" fill="#54a0d1">North Bondi</text>
                         <text x="710" y="500" fontSize="18" fill="#eac47c">Bondi Beach</text>
                     </g>
