@@ -1,6 +1,5 @@
 
-
-import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap } from 'lucide-react';
+import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves } from 'lucide-react';
 
 export type Community = {
   id: string;
@@ -307,6 +306,7 @@ export const appData = {
     "Restaurants": { icon: Utensils, color: '#3b82f6', textColor: '#ffffff' },
     "Nightlife": { icon: Beer, color: '#8b5cf6', textColor: '#ffffff' },
     "Health & Fitness": { icon: Dumbbell, color: '#ec4899', textColor: '#ffffff' },
+    "Surf": { icon: Waves, color: '#38bdf8', textColor: '#ffffff' },
     "Vibes": { icon: Sun, color: '#fbbf24', textColor: '#0f172a' },
     "Sushi": { icon: Utensils, color: '#2dd4bf', textColor: '#0f172a' },
     "Cocktails": { icon: Beer, color: '#d946ef', textColor: '#ffffff' },
@@ -501,6 +501,23 @@ export const appData = {
         { time: '14:30', name: 'Beach Burrito Company', notes: 'A quick taco.' }
       ],
       curatedMessage: 'Your quick lunch is sorted! Head to Raw Bar for a fresh meal, or grab a quick taco at Beach Burrito Company. Enjoy!'
+    },
+    {
+      id: 'mmd8',
+      title: 'Bondi Fitness Fiend',
+      description: 'Train hard, eat well, and hit the waves.',
+      request: {
+        vibe: 'An intense and rewarding fitness day in Bondi. Start with a personal training session at the iconic outdoor gym, refuel with a healthy and protein-packed lunch, and then hit the waves for an afternoon surf session.',
+        pace: 4,
+        budget: 3,
+        travelMode: 'walking',
+      },
+      mockItinerary: [
+        { time: '07:00', name: 'Bondi Beach Outdoor Gym', notes: 'PT Session with a view.' },
+        { time: '09:00', name: 'Acai Brothers', notes: 'Protein-packed acai bowl.' },
+        { time: '14:00', name: 'Lets Go Surfing', notes: 'Afternoon surf lesson.' }
+      ],
+      curatedMessage: 'Your fitness day is locked in! Smash a PT session at the outdoor gym, refuel with a protein bowl from Acai Brothers, and then catch some waves with a surf lesson. Go get \'em!'
     }
   ],
   groupEventsOptions: [
@@ -587,7 +604,9 @@ export const appData = {
       { id: 27, name: "Sushi-e", slug: "sushi-e", type: "Sushi", description: "High-end sushi experience.", x: "30%", "y": "65%", openingHours: "6pm - 11pm", vibeTags: ["Omakase", "Fine Dining", "Authentic"], currentVibe: "Buzzing" },
       { id: 28, name: "Beach Burrito Company", slug: "beach-burrito-company", type: "Restaurants", description: "Casual Mexican food and frozen margaritas.", x: "56%", y: "55%", openingHours: "12pm - 10pm", vibeTags: ["Mexican", "Casual", "Margaritas"], currentVibe: "Packed" },
       { id: 29, name: "Chiswick", slug: "chiswick", type: "Restaurants", description: "Collective dining with a seasonal menu.", x: "69%", y: "85%", openingHours: "12pm - 10pm", vibeTags: ["Seasonal", "Elegant", "Garden"], currentVibe: "Buzzing" },
-      { id: 30, name: "North Bondi Fish", slug: "north-bondi-fish", type: "Restaurants", description: "Fresh seafood in a relaxed setting.", x: "78%", y: "40%", openingHours: "12pm - 10pm", vibeTags: ["Seafood", "Beachfront", "Relaxed"], currentVibe: "Buzzing" }
+      { id: 30, name: "North Bondi Fish", slug: "north-bondi-fish", type: "Restaurants", description: "Fresh seafood in a relaxed setting.", x: "78%", y: "40%", openingHours: "12pm - 10pm", vibeTags: ["Seafood", "Beachfront", "Relaxed"], currentVibe: "Buzzing" },
+      { id: 31, name: "Lets Go Surfing", slug: "lets-go-surfing", type: "Surf", description: "Learn to surf with the best in Bondi.", x: "65%", y: "10%", openingHours: "7am - 5pm", vibeTags: ["Surfing", "Lessons", "Beginner Friendly"], currentVibe: "Buzzing" },
+      { id: 32, name: "Bondi Beach Outdoor Gym", slug: "bondi-beach-outdoor-gym", type: "Health & Fitness", description: "Iconic outdoor gym on the beach.", x: "20%", y: "20%", openingHours: "24/7", vibeTags: ["Fitness", "Outdoor", "Gym"], currentVibe: "Buzzing" }
     ]
   }
 };
@@ -597,6 +616,7 @@ export const appData = {
     
 
     
+
 
 
 
