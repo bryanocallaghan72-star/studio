@@ -19,13 +19,13 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 export default function ProfilePage() {
   const params = useParams();
-  const id = params.id as string;
+  const uid = params.uid as string;
 
   const firestore = useFirestore();
   const userDocRef = useMemoFirebase(() => {
-    if (!firestore || !id) return null;
-    return doc(firestore, 'users', id);
-  }, [firestore, id]);
+    if (!firestore || !uid) return null;
+    return doc(firestore, 'users', uid);
+  }, [firestore, uid]);
 
   const { data: userProfile, isLoading } = useDoc(userDocRef);
 
