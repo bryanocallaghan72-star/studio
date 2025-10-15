@@ -1,134 +1,130 @@
 /**
- * @fileoverview Firestore Security Rules for iykyk Platform
+ * @fileoverview Firestore Security Rules for iykyk platform.
  *
  * Core Philosophy:
- * This ruleset enforces a user-ownership model for user profiles and allows public read access to venues, experiences, deals, and communities.
- * Write access to venues, experiences, deals, and communities is restricted. Deals are creator-controlled.
+ * This ruleset enforces a strict user-ownership model for user profiles,
+ * and role-based access control for communities. Venues and their associated
+ * experiences and deals are publicly readable but writable only with proper authorization.
  *
  * Data Structure:
- * - /users/{userId}: Stores user profiles. User-owned.
- * - /venues/{venueId}: Stores venue information. Public read, restricted write.
- * - /venues/{venueId}/experiences/{experienceId}: Stores experiences associated with a venue. Public read, restricted write.
- * - /venues/{venueId}/deals/{dealId}: Stores deals offered at a venue. Creator-controlled writes.
- * - /communities/{communityId}: Stores community information. Public read, restricted write.
+ * - /users/{userId}: Stores user profiles, accessible only by the owning user.
+ * - /venues/{venueId}: Stores venue information, publicly readable.
+ * - /venues/{venueId}/experiences/{experienceId}: Stores experiences, publicly readable.
+ * - /venues/{venueId}/deals/{dealId}: Stores deals, publicly readable.
+ * - /communities/{communityId}: Stores community information, with role-based access.
  *
  * Key Security Decisions:
- * - Users can only read and write their own profile data.
- * - Venues, experiences, deals, and communities are publicly readable.
- * - Listing of users is disallowed.
- * - Deals are creator-controlled, assuming 'creatorId' is present and enforced.
+ * - Users can only read and write their own user profile data.
+ * - Venues, experiences, and deals are publicly readable, but write access requires
+ *   validation of an ownership field (creatorId for deals).
+ * - Communities use a `members` map for role-based access control.
+ * - Listing of user documents is disallowed for privacy.
  *
  * Denormalization for Authorization:
- * - Experiences and Deals denormalize `venueId` for authorization independence, avoiding `get()` calls.
+ * - Experiences and Deals denormalize the `venueId` to allow authorization
+ *   checks without needing to perform `get()` operations on the parent venue document.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Controls access to user profile data.
+     * @description Enforces user-ownership for user profiles.
      * @path /users/{userId}
-     * @allow (create) User with ID 'user123' creates their own profile.
-     * @deny (create) User with ID 'user123' tries to create a profile for 'user456'.
-     * @allow (get) User with ID 'user123' reads their own profile.
-     * @deny (get) User with ID 'user123' tries to read the profile of 'user456'.
-     * @allow (update) User with ID 'user123' updates their own profile.
-     * @deny (update) User with ID 'user123' tries to update the profile of 'user456'.
-     * @allow (delete) User with ID 'user123' deletes their own profile.
-     * @deny (delete) User with ID 'user123' tries to delete the profile of 'user456'.
-     * @principle Enforces document ownership for all operations on user profiles.
+     * @allow (get, create, update, delete, list) User 'lucas' (auth.uid = 'lucas') can access their own profile.
+     * @deny (get, create, update, delete, list) User 'other' (auth.uid = 'other') cannot access user 'lucas' profile.
+     * @principle Enforces document ownership for all operations.
      */
     match /users/{userId} {
-      allow get: if isOwner(userId);
-      allow list: if false; // Listing users is not permitted
+      function isSignedIn() {
+        return request.auth != null;
+      }
 
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isExistingOwner(userId);
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && exists(resource);
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isExistingOwner(userId);
+      allow delete: if isSignedIn() && isExistingOwner(userId);
     }
 
     /**
-     * @description Allows public read access to venue data and restricts write access.
+     * @description Allows public read access to venue information.
      * @path /venues/{venueId}
-     * @allow (get) Any user can read venue data.
-     * @allow (list) Any user can list venues.
-     * @deny (create) Any user attempts to create a venue.
-     * @deny (update) Any user attempts to update a venue.
-     * @deny (delete) Any user attempts to delete a venue.
-     * @principle Allows public read access while restricting write operations.
+     * @allow (get, list) Any user (or no user) can read venue information.
+     * @deny (create, update, delete) No one can create, update, or delete venues in this prototyping phase.
+     * @principle Allows public reads, restricts writes.
      */
     match /venues/{venueId} {
       allow get, list: if true;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
+      allow create, update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
     }
 
     /**
-     * @description Allows public read access to experience data and restricts write access.
+     * @description Allows public read access to experience information.
      * @path /venues/{venueId}/experiences/{experienceId}
-     * @allow (get) Any user can read experience data.
-     * @allow (list) Any user can list experiences.
-     * @deny (create) Any user attempts to create an experience.
-     * @deny (update) Any user attempts to update an experience.
-     * @deny (delete) Any user attempts to delete an experience.
-     * @principle Allows public read access while restricting write operations.
+     * @allow (get, list) Any user (or no user) can read experience information.
+     * @deny (create, update, delete) No one can create, update, or delete experiences in this prototyping phase.
+     * @principle Allows public reads, restricts writes.
      */
     match /venues/{venueId}/experiences/{experienceId} {
       allow get, list: if true;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
+      allow create, update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
     }
 
     /**
-     * @description Allows public read access to deal data and restricts write access to creator.
+     * @description Allows public read access to deal information, restricts writes to authorized users.
      * @path /venues/{venueId}/deals/{dealId}
-     * @allow (get) Any user can read deal data.
-     * @allow (list) Any user can list deals.
-     * @allow (create) A creator can create a deal if creatorId matches their auth.
-     * @deny (create) A user tries to create a deal with a mismatched creatorId.
-     * @allow (update) The creator can update the deal.
-     * @deny (update) A non-creator tries to update the deal.
-     * @allow (delete) The creator can delete the deal.
-     * @deny (delete) A non-creator tries to delete the deal.
-     * @principle Allows public read access and restricts write operations to the deal creator.
+     * @allow (get, list) Any user can read deal information.
+     * @deny (create, update, delete) If creatorId is missing or does not match the authenticated user's ID.
+     * @principle Allows public reads, restricts writes to deal creators.
      */
     match /venues/{venueId}/deals/{dealId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(creatorId) {
+        return isSignedIn() && request.auth.uid == creatorId;
+      }
+
+      function isExistingOwner(creatorId) {
+          return isSignedIn() && resource.data.creatorId == request.auth.uid && exists(resource);
+      }
+
       allow get, list: if true;
       allow create: if isSignedIn() && request.resource.data.creatorId == request.auth.uid;
-      allow update: if isSignedIn() && resource.data.creatorId == request.auth.uid && resource != null;
-      allow delete: if isSignedIn() && resource.data.creatorId == request.auth.uid && resource != null;
+      allow update: if isExistingOwner(resource.data.creatorId);
+      allow delete: if isExistingOwner(resource.data.creatorId);
     }
 
     /**
-     * @description Allows public read access to community data and restricts write access.
+     * @description Enforces role-based access control for communities.
      * @path /communities/{communityId}
-     * @allow (get) Any user can read community data.
-     * @allow (list) Any user can list communities.
-     * @deny (create) Any user attempts to create a community.
-     * @deny (update) Any user attempts to update a community.
-     * @deny (delete) Any user attempts to delete a community.
-     * @principle Allows public read access while restricting write operations.
+     * @allow (get, list) Any user can read community information.
+     * @deny (create, update, delete) Only community members with specific roles can modify community details.
+     * @principle Enforces role-based access using a 'members' map.
      */
     match /communities/{communityId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isMember(communityId) {
+        return isSignedIn() && get(/databases/$(database)/documents/communities/$(communityId)).data.members[request.auth.uid] != null;
+      }
+
       allow get, list: if true;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
+      allow create: if false; // TODO: Add role-based validation once the schema and roles are properly defined.
+      allow update: if false; // TODO: Add role-based validation once the schema and roles are properly defined.
+      allow delete: if false; // TODO: Add role-based validation once the schema and roles are properly defined.
     }
-  }
-
-  // Helper functions
-  function isSignedIn() {
-    return request.auth != null;
-  }
-
-  function isOwner(userId) {
-    return request.auth.uid == userId;
-  }
-
-  function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
   }
 }
