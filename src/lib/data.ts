@@ -595,9 +595,7 @@ export const appData = {
         { time: '14:00', name: 'Lets Go Surfing', notes: 'Afternoon surf lesson.' }
       ],
       curatedMessage: 'Your fitness day is locked in! Smash a PT session at the outdoor gym, refuel with a protein bowl from Acai Brothers, and then catch some waves with a surf lesson. Go get \'em!'
-    }
-  ],
-  groupEventsOptions: [
+    },
     {
       id: 'ge1',
       title: 'Birthday Brunch',
@@ -702,3 +700,6 @@ export const appData = {
 
 
 
+
+
+    
