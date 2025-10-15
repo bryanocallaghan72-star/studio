@@ -171,14 +171,14 @@
     {
       "id": "style-2",
       "description": "Stylish leisurewear hanging on a rack.",
-      "imageUrl": "https://images.unsplash.com/photo-1587825359787-8f553907a988?q=80&w=1974&auto=format&fit=crop",
+      "imageUrl": "https://images.unsplash.com/photo-1620799140408-edc6d5f9650d?q=80&w=1972&auto=format&fit=crop",
       "imageHint": "active wear"
     },
     {
       "id": "style-3",
       "description": "A gallery wall of stunning black and white photography.",
       "imageUrl": "https://images.unsplash.com/photo-1549443224-2c7c5957e841?q=80&w=1974&auto=format&fit=crop",
-      "imageHint": "photo gallery"
+      "imageHint": "art gallery"
     },
     {
       "id": "style-4",
