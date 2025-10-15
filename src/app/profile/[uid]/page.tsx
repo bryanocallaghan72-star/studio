@@ -24,7 +24,7 @@ function shuffleArray(array: any[]) {
     while (currentIndex !== 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex--;
-        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+        [array[currentIndex], array[randomIndex]] = [array[currentIndex], array[currentIndex]];
     }
     return array;
 }
@@ -40,8 +40,33 @@ export default function ProfilePage() {
     return doc(firestore, 'users', uid);
   }, [firestore, uid]);
 
-  const { data: userProfile, isLoading } = useDoc(userDocRef);
+  const { data: firestoreUserProfile, isLoading: isFirestoreLoading } = useDoc(userDocRef);
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
+
+  const mockUserProfile = useMemo(() => {
+    return appData.creators.find(creator => creator.id === uid);
+  }, [uid]);
+
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(isFirestoreLoading);
+    if (!isFirestoreLoading) {
+      if (firestoreUserProfile) {
+        setUserProfile(firestoreUserProfile);
+      } else if (mockUserProfile) {
+        // Adapt mock user to have a similar structure
+        setUserProfile({
+          id: mockUserProfile.id,
+          username: mockUserProfile.name,
+          bio: mockUserProfile.bio
+        });
+      } else {
+        setUserProfile(null);
+      }
+    }
+  }, [isFirestoreLoading, firestoreUserProfile, mockUserProfile]);
 
   // Show a random selection of 3 pins for each profile to make them feel unique
   const userPins = useMemo(() => {
@@ -144,7 +169,7 @@ export default function ProfilePage() {
       </main>
       <MobileNav />
     </div>
-    {userProfile && (
+    {userProfile && firestoreUserProfile && (
        <EditProfileDialog 
         isOpen={isEditDialogOpen}
         onOpenChange={setEditDialogOpen}
