@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useParams, notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,6 +18,17 @@ import { appData } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { EditProfileDialog } from '@/components/iykyk/EditProfileDialog';
 
+// Helper function to shuffle an array
+function shuffleArray(array: any[]) {
+    let currentIndex = array.length, randomIndex;
+    while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+    }
+    return array;
+}
+
 export default function ProfilePage() {
   const params = useParams();
   const uid = params.uid as string;
@@ -32,8 +43,11 @@ export default function ProfilePage() {
   const { data: userProfile, isLoading } = useDoc(userDocRef);
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
 
-  // For the prototype, we'll show a few pins as their "favorite spots" or "pins".
-  const userPins = appData.map.pins.slice(0, 3); 
+  // Show a random selection of 3 pins for each profile to make them feel unique
+  const userPins = useMemo(() => {
+      if (!userProfile) return [];
+      return shuffleArray([...appData.map.pins]).slice(0, 3);
+  }, [userProfile]); 
 
   const isOwner = currentUser && currentUser.uid === uid;
 
@@ -69,7 +83,7 @@ export default function ProfilePage() {
           <CardContent className="p-0">
             <div className="flex items-end gap-4 -mt-16 px-6">
               <Avatar className="h-28 w-28 border-4 border-background">
-                <AvatarImage src={`https://github.com/${userProfile.username}.png`} alt={userProfile.username} />
+                <AvatarImage src={`https://api.dicebear.com/8.x/lorelei/svg?seed=${userProfile.username}`} alt={userProfile.username} />
                 <AvatarFallback>{userProfile.username.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="flex-grow pb-2">
