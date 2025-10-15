@@ -172,16 +172,16 @@
       "id": "style-2",
       "description": "Stylish leisurewear hanging on a rack.",
       "imageUrl": "https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?q=80&w=2500&auto=format&fit=crop",
-      "imageHint": "active wear"
+      "imageHint": "leisurewear"
     },
     {
-      "id": "style-3",
+      "id": "waves-1",
       "description": "A stunning, powerful ocean wave captured in a photograph.",
       "imageUrl": "https://images.unsplash.com/photo-1534279435138-3e414156d05f?q=80&w=2070&auto=format&fit=crop",
       "imageHint": "wave photography"
     },
     {
-      "id": "style-4",
+      "id": "markets-1",
       "description": "A bustling outdoor market with stalls selling crafts and clothing.",
       "imageUrl": "https://images.unsplash.com/photo-1506197061345-c7c575aa54b5?q=80&w=2070&auto=format&fit=crop",
       "imageHint": "markets"

@@ -32,7 +32,7 @@ export const appData = {
       id: 'style-3',
       title: 'Aquabumps',
       description: 'Gallery showcasing incredible surf and ocean photography.',
-      imageId: 'style-3',
+      imageId: 'waves-1',
       category: 'Art & Design',
       creatorId: 'shannon'
     },
@@ -40,7 +40,7 @@ export const appData = {
       id: 'style-4',
       title: 'Bondi Markets',
       description: 'Sunday markets for unique finds from local designers.',
-      imageId: 'style-4',
+      imageId: 'markets-1',
       category: 'Market',
     }
   ],
@@ -243,7 +243,7 @@ export const appData = {
       creator: { id: "shannon", name: "shannon", avatar: "https://github.com/shannon.png" },
       venue: "Aquabumps Gallery",
       description: "Getting lost in the waves at the Aquabumps gallery. Eugene's work is just breathtaking. 📷 #art #wavephotography",
-      imageId: "style-3",
+      imageId: "waves-1",
       likes: 412,
       comments: 45,
       commentData: []
@@ -254,7 +254,7 @@ export const appData = {
       creator: { id: "jay", name: "jay", avatar: "https://github.com/jay.png" },
       venue: "Bondi Markets",
       description: "Sunday well spent digging for treasure at Bondi Markets. Scored some amazing vintage finds! #bondimarkets #supportlocal",
-      imageId: "style-4",
+      imageId: "markets-1",
       likes: 550,
       comments: 59,
       commentData: []
@@ -693,6 +693,7 @@ export const appData = {
     
 
     
+
 
 
 
