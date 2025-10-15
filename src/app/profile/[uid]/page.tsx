@@ -20,11 +20,13 @@ import { EditProfileDialog } from '@/components/iykyk/EditProfileDialog';
 
 // Helper function to shuffle an array
 function shuffleArray(array: any[]) {
-    let currentIndex = array.length, randomIndex;
+    let currentIndex = array.length;
+    // While there remain elements to shuffle.
     while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
+        // Pick a remaining element.
+        let randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex--;
-        // Correctly swap elements
+        // And swap it with the current element.
         [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
     }
     return array;
@@ -72,7 +74,8 @@ export default function ProfilePage() {
   // Show a random selection of 3 pins for each profile to make them feel unique
   const userPins = useMemo(() => {
       if (!userProfile) return [];
-      return shuffleArray([...appData.map.pins]).slice(0, 3);
+      const shuffled = shuffleArray([...appData.map.pins]);
+      return shuffled.slice(0, 3);
   }, [userProfile]); 
 
   const isOwner = currentUser && currentUser.uid === uid;
