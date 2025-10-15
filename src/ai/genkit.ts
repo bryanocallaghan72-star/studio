@@ -1,6 +1,6 @@
 import { genkit, type Plugin } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
-import { nextDev } from '@genkit-ai/next/dev';
+import { nextDev } from '@genkit-ai/next';
 
 const plugins: Plugin<any>[] = [
   googleAI(),
