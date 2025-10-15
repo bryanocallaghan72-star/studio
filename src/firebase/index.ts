@@ -14,35 +14,19 @@ declare module 'firebase/auth' {
 
 // IMPORTANT: DO NOT MODIFY THIS FUNCTION
 export function initializeFirebase() {
-  let firebaseApp;
-  if (!getApps().length) {
-    try {
-      firebaseApp = initializeApp();
-    } catch (e) {
-      if (process.env.NODE_ENV === "production") {
-        console.warn('Automatic initialization failed. Falling back to firebase config object.', e);
-      }
-      firebaseApp = initializeApp(firebaseConfig);
-    }
-  } else {
-    firebaseApp = getApp();
-  }
-
-  return getSdks(firebaseApp);
-}
-
-export function getSdks(firebaseApp: FirebaseApp) {
-  const firestore = getFirestore(firebaseApp);
-  const auth = getAuth(firebaseApp);
+  const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+  const firestore = getFirestore(app);
+  const auth = getAuth(app);
   // Augment the auth instance with a firestore property
   (auth as Auth).firestore = firestore;
 
   return {
-    firebaseApp,
-    auth,
-    firestore
+    firebaseApp: app,
+    auth: auth,
+    firestore: firestore,
   };
 }
+
 
 export * from './provider';
 export * from './client-provider';
