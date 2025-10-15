@@ -1,7 +1,9 @@
+
 "use server";
 
 import { generateItinerary as generateItineraryFlow } from "@/ai/flows/generate-itinerary-flow";
-import { Itinerary, ItineraryRequest, ItineraryRequestSchema } from "@/ai/schemas";
+import { Itinerary, ItineraryRequest, ItineraryRequestSchema, Surprise } from "@/ai/schemas";
+import { generateSurprise as generateSurpriseFlow } from "@/ai/flows/generate-surprise-flow";
 
 export async function generateItinerary(request: ItineraryRequest): Promise<{ success?: Itinerary, error?: { title: string, message: string } }> {
   const validatedRequest = ItineraryRequestSchema.safeParse(request);
@@ -21,5 +23,15 @@ export async function generateItinerary(request: ItineraryRequest): Promise<{ su
   } catch (error) {
     console.error('Itinerary generation failed:', error);
     return { error: { title: 'Generation Failed', message: 'Sorry, I couldn\'t generate an itinerary right now. Please try again later.' } };
+  }
+}
+
+export async function generateSurprise(): Promise<{ success?: Surprise, error?: { title: string, message: string }}> {
+  try {
+    const result = await generateSurpriseFlow();
+    return { success: result };
+  } catch (error) {
+    console.error('Surprise generation failed:', error);
+    return { error: { title: 'Generation Failed', message: 'Sorry, I couldn\'t come up with a surprise right now. Please try again later.' } };
   }
 }

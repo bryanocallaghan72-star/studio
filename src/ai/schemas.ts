@@ -1,3 +1,4 @@
+
 import { z } from 'zod';
 
 // Schema for Itinerary Generation
@@ -27,3 +28,13 @@ export const ItineraryRequestSchema = z.object({
     heldStops: z.array(ItineraryStopSchema.omit({ id: true, isHeld: true })).optional().describe('An array of stops the user has locked and wants to keep.'),
 });
 export type ItineraryRequest = z.infer<typeof ItineraryRequestSchema>;
+
+
+// Schema for Surprise Me Generation
+export const SurpriseSchema = z.object({
+    title: z.string().describe("A short, catchy title for the surprise activity."),
+    description: z.string().describe("A brief, engaging description of the activity."),
+    venue: z.string().describe("The specific, real venue name where the activity takes place."),
+    imageHint: z.string().describe("Two or three keywords that describe an image for this surprise. e.g. 'beach sunset'"),
+});
+export type Surprise = z.infer<typeof SurpriseSchema>;

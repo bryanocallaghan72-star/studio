@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useTransition } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,43 +9,72 @@ import { Gift, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { motion } from 'framer-motion';
-import { appData } from '@/lib/data';
-
-const { surprises } = appData;
+import { generateSurprise } from '@/app/actions';
+import type { Surprise } from '@/ai/schemas';
+import { useToast } from '@/hooks/use-toast';
 
 export function SurpriseMe() {
-    const [surprise, setSurprise] = useState<(typeof surprises)[0] | null>(null);
-    const [isSpinning, setIsSpinning] = useState(false);
+    const [surprise, setSurprise] = useState<Surprise | null>(null);
+    const [isPending, startTransition] = useTransition();
     const [open, setOpen] = useState(false);
+    const { toast } = useToast();
 
-    const handleSurprise = () => {
-        setIsSpinning(true);
+    const handleSurpriseClick = () => {
         setOpen(true);
-        setTimeout(() => {
-            const randomIndex = Math.floor(Math.random() * surprises.length);
-            setSurprise(surprises[randomIndex]);
-            setIsSpinning(false);
-        }, 1500);
+        startTransition(async () => {
+            const result = await generateSurprise();
+            if (result.error) {
+                toast({
+                    variant: "destructive",
+                    title: result.error.title,
+                    description: result.error.message,
+                });
+                setOpen(false); // Close dialog on error
+            } else if (result.success) {
+                setSurprise(result.success);
+            }
+        });
     };
 
     const handleOpenChange = (isOpen: boolean) => {
         setOpen(isOpen);
         if (!isOpen) {
+            // Delay resetting surprise to allow for exit animation
             setTimeout(() => {
                 setSurprise(null);
-                setIsSpinning(false);
-            }, 200);
+            }, 300);
         }
     };
+    
+    // Find a fallback image based on the AI-generated hint
+    const getImageForSurprise = () => {
+        if (!surprise) return PlaceHolderImages[0];
+        const hint = surprise.imageHint.toLowerCase();
+        
+        // Prioritize specific hints
+        if (hint.includes('sushi')) return PlaceHolderImages.find(i => i.id === 'sushi-1');
+        if (hint.includes('cocktail') || hint.includes('bar')) return PlaceHolderImages.find(i => i.id === 'cocktail-101');
+        if (hint.includes('coffee') || hint.includes('cafe')) return PlaceHolderImages.find(i => i.id === 'coffee-1');
+        if (hint.includes('beach') || hint.includes('walk')) return PlaceHolderImages.find(i => i.id === 'coastal-walk');
+        if (hint.includes('yoga') || hint.includes('fitness')) return PlaceHolderImages.find(i => i.id === 'fitness-1');
+        
+        // Fallback to a generic nice image
+        return PlaceHolderImages.find(i => i.id === 'bondi-sunset') || PlaceHolderImages[0];
+    };
 
-    const image = surprise ? PlaceHolderImages.find(img => img.id === surprise.imageId) : null;
+    const image = getImageForSurprise();
 
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
-                <Button variant="secondary" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 mt-4" onClick={handleSurprise} disabled={isSpinning}>
-                    {isSpinning ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Gift className="mr-2 h-5 w-5" />}
-                    {isSpinning ? 'Finding a surprise...' : 'Surprise Me'}
+                <Button 
+                    variant="secondary" 
+                    className="w-full bg-accent text-accent-foreground hover:bg-accent/90 mt-4" 
+                    onClick={handleSurpriseClick}
+                    disabled={isPending}
+                >
+                    {isPending ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Gift className="mr-2 h-5 w-5" />}
+                    {isPending ? 'Finding a surprise...' : 'Surprise Me'}
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
@@ -59,7 +88,7 @@ export function SurpriseMe() {
                     </DialogDescription>
                 </DialogHeader>
                 <div className="relative h-64 overflow-hidden rounded-lg">
-                    {isSpinning ? (
+                    {isPending ? (
                         <motion.div
                             className="flex h-full items-center justify-center bg-secondary"
                             animate={{ rotate: 360 }}
@@ -78,7 +107,7 @@ export function SurpriseMe() {
                                                 alt={surprise.title}
                                                 fill
                                                 className="object-cover rounded-t-lg"
-                                                data-ai-hint={image.imageHint}
+                                                data-ai-hint={surprise.imageHint}
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                                         </div>
