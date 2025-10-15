@@ -20,16 +20,12 @@ import { EditProfileDialog } from '@/components/iykyk/EditProfileDialog';
 
 // Helper function to shuffle an array
 function shuffleArray(array: any[]) {
-    let currentIndex = array.length;
-    // While there remain elements to shuffle.
-    while (currentIndex !== 0) {
-        // Pick a remaining element.
-        let randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-        // And swap it with the current element.
-        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
     }
-    return array;
+    return newArray;
 }
 
 export default function ProfilePage() {
@@ -38,38 +34,42 @@ export default function ProfilePage() {
   const { user: currentUser } = useUser();
 
   const firestore = useFirestore();
-  const userDocRef = useMemoFirebase(() => {
-    if (!firestore || !uid) return null;
-    return doc(firestore, 'users', uid);
-  }, [firestore, uid]);
 
-  const { data: firestoreUserProfile, isLoading: isFirestoreLoading } = useDoc(userDocRef);
-  const [isEditDialogOpen, setEditDialogOpen] = useState(false);
-
+  // First, check if the uid belongs to a mock creator
   const mockUserProfile = useMemo(() => {
     return appData.creators.find(creator => creator.id === uid);
   }, [uid]);
+
+  // Only set up the Firestore reference if it's NOT a mock user
+  const userDocRef = useMemoFirebase(() => {
+    if (mockUserProfile || !firestore || !uid) return null;
+    return doc(firestore, 'users', uid);
+  }, [firestore, uid, mockUserProfile]);
+
+  // Fetch from Firestore only if userDocRef is not null
+  const { data: firestoreUserProfile, isLoading: isFirestoreLoading } = useDoc(userDocRef);
+  const [isEditDialogOpen, setEditDialogOpen] = useState(false);
 
   const [userProfile, setUserProfile] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(isFirestoreLoading);
-    if (!isFirestoreLoading) {
-      if (firestoreUserProfile) {
+    if (mockUserProfile) {
+      // If it's a mock user, use that data directly and stop loading.
+      setUserProfile({
+        id: mockUserProfile.id,
+        username: mockUserProfile.name,
+        bio: mockUserProfile.bio
+      });
+      setIsLoading(false);
+    } else {
+      // It's not a mock user, so rely on the Firestore fetch.
+      setIsLoading(isFirestoreLoading);
+      if (!isFirestoreLoading) {
         setUserProfile(firestoreUserProfile);
-      } else if (mockUserProfile) {
-        // Adapt mock user to have a similar structure
-        setUserProfile({
-          id: mockUserProfile.id,
-          username: mockUserProfile.name,
-          bio: mockUserProfile.bio
-        });
-      } else {
-        setUserProfile(null);
       }
     }
-  }, [isFirestoreLoading, firestoreUserProfile, mockUserProfile]);
+  }, [mockUserProfile, isFirestoreLoading, firestoreUserProfile]);
 
   // Show a random selection of 3 pins for each profile to make them feel unique
   const userPins = useMemo(() => {
@@ -117,17 +117,17 @@ export default function ProfilePage() {
               </Avatar>
               <div className="flex-grow pb-2">
                  <h1 className="text-2xl font-bold tracking-tight">{userProfile.username}</h1>
-                 <p className="text-sm text-muted-foreground">@{userProfile.username}</p>
+                 <p className="text-sm text-muted-foreground">@{mockUserProfile ? mockUserProfile.id : userProfile.username}</p>
               </div>
             </div>
              <div className="px-6 mt-4 space-y-4">
                 <p className="text-muted-foreground">{userProfile.bio || "No bio yet."}</p>
-                {isOwner ? (
+                {isOwner && firestoreUserProfile ? ( // Only show edit for real, owned profiles
                   <Button onClick={() => setEditDialogOpen(true)}>
                     <Edit className="mr-2 h-4 w-4" />
                     Edit Profile
                   </Button>
-                ) : (
+                ) : !isOwner && (
                   <Button>
                       <Rss className="mr-2 h-4 w-4" />
                       Follow
@@ -173,11 +173,11 @@ export default function ProfilePage() {
       </main>
       <MobileNav />
     </div>
-    {userProfile && firestoreUserProfile && (
+    {isOwner && firestoreUserProfile && ( // Check for real profile before rendering dialog
        <EditProfileDialog 
         isOpen={isEditDialogOpen}
         onOpenChange={setEditDialogOpen}
-        userProfile={userProfile}
+        userProfile={firestoreUserProfile}
       />
     )}
     </>
