@@ -28,7 +28,7 @@ Given a user's desired mood, generate a creative, multi-stop itinerary. The itin
 - **Keep descriptions short, punchy, and enticing.**
 
 {{#if surpriseMe}}
-Generate a creative and surprising single-stop itinerary. This is for a "Surprise Me" feature, so make it fun and unexpected. The response should still be a valid Itinerary object, but with only one stop in the 'stops' array. Pick a real, fun venue in Bondi.
+Generate a creative and surprising single-stop itinerary. This is for a "Surprise Me" feature, so make it fun and unexpected. The response should still be a valid Itinerary object, but with only one stop in the 'stops' array. Pick a real, fun venue in Bondi. The 'title' of the main Itinerary object should be the same as the 'title' of the single stop you generate.
 {{else}}
   {{#if heldStops}}
   The user wants to shuffle their itinerary but has locked in the following stops. Your response MUST include these exact stops in the final plan.
@@ -64,3 +64,4 @@ const generateItineraryFlow = ai.defineFlow(
     return output!;
   }
 );
+
