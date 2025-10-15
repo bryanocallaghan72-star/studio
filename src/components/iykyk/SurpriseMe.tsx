@@ -21,6 +21,8 @@ export function SurpriseMe() {
 
     const handleSurpriseClick = () => {
         setOpen(true);
+        // Clear previous surprise immediately
+        setSurprise(null);
         startTransition(async () => {
             const result = await generateSurprise();
             if (result.error) {
@@ -56,7 +58,7 @@ export function SurpriseMe() {
         if (hint.includes('cocktail') || hint.includes('bar')) return PlaceHolderImages.find(i => i.id === 'cocktail-101');
         if (hint.includes('coffee') || hint.includes('cafe')) return PlaceHolderImages.find(i => i.id === 'coffee-1');
         if (hint.includes('beach') || hint.includes('walk')) return PlaceHolderImages.find(i => i.id === 'coastal-walk');
-        if (hint.includes('yoga') || hint.includes('fitness')) return PlaceHolderImages.find(i => i.id === 'fitness-1');
+        if (hint.includes('yoga') || hint.includes('fitness') || hint.includes('pilates')) return PlaceHolderImages.find(i => i.id === 'fitness-1');
         
         // Fallback to a generic nice image
         return PlaceHolderImages.find(i => i.id === 'bondi-sunset') || PlaceHolderImages[0];
@@ -73,8 +75,8 @@ export function SurpriseMe() {
                     onClick={handleSurpriseClick}
                     disabled={isPending}
                 >
-                    {isPending ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Gift className="mr-2 h-5 w-5" />}
-                    {isPending ? 'Finding a surprise...' : 'Surprise Me'}
+                    <Gift className="mr-2 h-5 w-5" />
+                    Surprise Me
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
@@ -84,15 +86,15 @@ export function SurpriseMe() {
                         Surprise!
                     </DialogTitle>
                     <DialogDescription>
-                        You've unlocked a hidden gem.
+                        {isPending ? "Thinking of something amazing..." : "You've unlocked a hidden gem."}
                     </DialogDescription>
                 </DialogHeader>
                 <div className="relative h-64 overflow-hidden rounded-lg">
                     {isPending ? (
                         <motion.div
                             className="flex h-full items-center justify-center bg-secondary"
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1, transition: { delay: 0.2 } }}
                         >
                             <Gift className="h-16 w-16 animate-pulse text-primary" />
                         </motion.div>

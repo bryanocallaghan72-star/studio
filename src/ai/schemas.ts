@@ -26,6 +26,7 @@ export const ItineraryRequestSchema = z.object({
     // Add fields for shuffle functionality
     numberOfNewStops: z.number().optional().describe('The number of new stops to generate.'),
     heldStops: z.array(ItineraryStopSchema.omit({ id: true, isHeld: true })).optional().describe('An array of stops the user has locked and wants to keep.'),
+    surpriseMe: z.boolean().optional().describe('If true, generate a single surprising stop instead of a full itinerary.'),
 });
 export type ItineraryRequest = z.infer<typeof ItineraryRequestSchema>;
 
