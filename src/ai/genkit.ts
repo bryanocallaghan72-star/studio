@@ -6,7 +6,7 @@ const plugins: Plugin<any>[] = [
   googleAI(),
 ];
 if (process.env.NODE_ENV === 'development') {
-  plugins.push(nextDev);
+  plugins.push(nextDev());
 }
 
 export const ai = genkit({
