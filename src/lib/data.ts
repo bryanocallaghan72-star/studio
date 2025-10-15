@@ -216,6 +216,50 @@ export const appData = {
   ],
   feedItems: [
     {
+      id: 6,
+      type: "photo",
+      creator: { id: "alice", name: "alice", avatar: "https://github.com/alice.png" },
+      venue: "Tuchuzy",
+      description: "Obsessed with the new collection at Tuchuzy. The perfect spot for finding designer gems. ✨ #iykykstyle #bondifashion",
+      imageId: "style-1",
+      likes: 621,
+      comments: 68,
+      commentData: []
+    },
+    {
+      id: 7,
+      type: "photo",
+      creator: { id: "lucas", name: "lucas", avatar: "https://github.com/lucas.png" },
+      venue: "Venroy",
+      description: "Living in this new set from Venroy. The ultimate in Bondi leisurewear. 🌊 #venroy #bondi #localbrand",
+      imageId: "style-2",
+      likes: 734,
+      comments: 72,
+      commentData: []
+    },
+    {
+      id: 8,
+      type: "photo",
+      creator: { id: "shannon", name: "shannon", avatar: "https://github.com/shannon.png" },
+      venue: "Aquabumps Gallery",
+      description: "Getting lost in the waves at the Aquabumps gallery. Eugene's work is just breathtaking. 📷 #art #wavephotography",
+      imageId: "style-3",
+      likes: 412,
+      comments: 45,
+      commentData: []
+    },
+    {
+      id: 9,
+      type: "photo",
+      creator: { id: "jay", name: "jay", avatar: "https://github.com/jay.png" },
+      venue: "Bondi Markets",
+      description: "Sunday well spent digging for treasure at Bondi Markets. Scored some amazing vintage finds! #bondimarkets #supportlocal",
+      imageId: "style-4",
+      likes: 550,
+      comments: 59,
+      commentData: []
+    },
+    {
       id: 1,
       type: "photo",
       creator: { id: "jay", name: "jay", avatar: "https://github.com/jay.png" },
@@ -649,6 +693,7 @@ export const appData = {
     
 
     
+
 
 
 
