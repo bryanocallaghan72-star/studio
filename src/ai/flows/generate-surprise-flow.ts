@@ -8,24 +8,18 @@
 
 import { ai } from '@/ai/genkit';
 import { Surprise, SurpriseSchema } from '@/ai/schemas';
-import { z } from 'zod';
-import { appData } from '@/lib/data';
 import { googleAI } from '@genkit-ai/google-genai';
+import { z } from 'zod';
 
 
-// Define the input schema for the flow, which includes the list of venue names
-const SurpriseRequestSchema = z.object({
-  venues: z.array(z.string()),
-});
+// The input is now empty as we are hardcoding the venues in the prompt.
+const SurpriseRequestSchema = z.object({});
 export type SurpriseRequest = z.infer<typeof SurpriseRequestSchema>;
 
 
 export async function generateSurprise(): Promise<Surprise> {
-  // Get a simple list of venue names from our app data
-  const venueNames = appData.map.pins.map(pin => pin.name);
-  
-  // Call the flow with the list of venues
-  return generateSurpriseFlow({ venues: venueNames });
+  // Call the flow with an empty object.
+  return generateSurpriseFlow({});
 }
 
 const prompt = ai.definePrompt({
@@ -40,9 +34,24 @@ Generate a single, surprising activity suggestion. The suggestion should be fun,
 It MUST take place at one of the following real venues. Pick one from the list and use its exact name for the 'venue' field in your response.
 
 Available venues:
-{{#each venues}}
-- {{this}}
-{{/each}}
+- Bondi Icebergs
+- Hotel Ravesis
+- The Depot
+- Raw Bar
+- Speedo's Cafe
+- Totti's
+- The Corner House
+- Harry's Bondi
+- LULU
+- Bills
+- Sean's
+- The Bucket List
+- Porch and Parlour
+- Anatomy
+- Acai Brothers
+- The Rum Diary Bar
+- Fluidform Pilates
+- Lets Go Surfing
 
 Make the title and description creative and exciting. Generate an imageHint that we can use to find a photo on a stock photo site.
 `,
