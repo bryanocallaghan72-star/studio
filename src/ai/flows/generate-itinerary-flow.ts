@@ -8,6 +8,7 @@
 
 import { ai } from '@/ai/genkit';
 import { Itinerary, ItineraryRequest, ItineraryRequestSchema, ItinerarySchema } from '@/ai/schemas';
+import { googleAI } from '@genkit-ai/google-genai';
 
 export async function generateItinerary(request: ItineraryRequest): Promise<Itinerary> {
   return generateItineraryFlow(request);
@@ -17,6 +18,7 @@ const prompt = ai.definePrompt({
   name: 'generateItineraryPrompt',
   input: { schema: ItineraryRequestSchema },
   output: { schema: ItinerarySchema },
+  model: googleAI.model('gemini-flash'),
   prompt: `You are a hyper-local concierge for Bondi, Australia, specializing in crafting perfect day plans for the iykyk app.
 
 Given a user's desired mood, generate a creative, multi-stop itinerary. The itinerary should feel authentic, local, and perfectly match the vibe.

@@ -10,6 +10,7 @@ import { ai } from '@/ai/genkit';
 import { Surprise, SurpriseSchema } from '@/ai/schemas';
 import { z } from 'zod';
 import { appData } from '@/lib/data';
+import { googleAI } from '@genkit-ai/google-genai';
 
 
 // Define the input schema for the flow, which includes the list of venue names
@@ -31,7 +32,7 @@ const prompt = ai.definePrompt({
   name: 'generateSurprisePrompt',
   input: { schema: SurpriseRequestSchema },
   output: { schema: SurpriseSchema },
-  model: 'googleai/gemini-flash',
+  model: googleAI.model('gemini-flash'),
   prompt: `You are a hyper-local concierge for Bondi, Australia, known for your quirky and creative suggestions.
 
 Generate a single, surprising activity suggestion. The suggestion should be fun, spontaneous, and feel like a true hidden gem.
