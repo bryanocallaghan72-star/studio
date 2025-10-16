@@ -38,7 +38,7 @@ export default function StylePage() {
                         const mapPin = appData.map.pins.find(p => p.slug === item.slug);
 
                         return (
-                            <Card key={item.id} className="group flex flex-col overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 rounded-2xl">
+                            <Card key={item.id} className="group relative flex flex-col overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 rounded-2xl">
                                  {image && (
                                     <div className="relative h-80 w-full">
                                         <Image
@@ -48,24 +48,25 @@ export default function StylePage() {
                                             className="object-cover transition-transform group-hover:scale-105"
                                             data-ai-hint={image.imageHint}
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                                     </div>
                                 )}
-                                 <CardContent className="absolute bottom-0 left-0 w-full p-6 text-white bg-gradient-to-t from-black/80 to-transparent">
-                                    <Badge variant="secondary" className="mb-2">{item.category}</Badge>
-                                    <h3 className="text-2xl font-bold">{item.title}</h3>
-                                    <p className="text-white/90 mt-1 line-clamp-2">{item.description}</p>
-                                    
-                                     {creator && (
-                                        <Link href={`/profile/${creator.id}`} className='flex items-center gap-2 text-sm font-semibold text-white hover:text-primary transition-colors w-fit mt-4'>
-                                            <Avatar className="h-8 w-8 border-2 border-white">
-                                                <AvatarImage src={creator.avatar} alt={creator.name} />
-                                                <AvatarFallback>{creator.name.charAt(0)}</AvatarFallback>
-                                            </Avatar>
-                                            <span>@{creator.id}'s pick</span>
-                                        </Link>
-                                    )}
-                                </CardContent>
+                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6 text-white">
+                                    <div>
+                                        <Badge variant="secondary" className="mb-2">{item.category}</Badge>
+                                        <h3 className="text-2xl font-bold">{item.title}</h3>
+                                        <p className="text-white/90 mt-1 line-clamp-2">{item.description}</p>
+                                        
+                                         {creator && (
+                                            <Link href={`/profile/${creator.id}`} className='flex items-center gap-2 text-sm font-semibold text-white hover:text-primary transition-colors w-fit mt-4'>
+                                                <Avatar className="h-8 w-8 border-2 border-white">
+                                                    <AvatarImage src={creator.avatar} alt={creator.name} />
+                                                    <AvatarFallback>{creator.name.charAt(0)}</AvatarFallback>
+                                                </Avatar>
+                                                <span>@{creator.id}'s pick</span>
+                                            </Link>
+                                        )}
+                                    </div>
+                                </div>
                                  <div className="p-4 mt-auto border-t bg-card flex flex-col sm:flex-row gap-2">
                                      <Button className="w-full font-bold flex-1">
                                         <ShoppingCart className="mr-2 h-4 w-4"/>
