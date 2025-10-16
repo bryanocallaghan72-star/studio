@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Loader2, Lock, LockOpen, Search, Sparkles } from "lucide-react";
+import { ArrowLeft, Loader2, Lock, LockOpen, Search, Shuffle } from "lucide-react";
 import { ItineraryStop } from '@/ai/schemas';
 import { appData } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -108,7 +108,7 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
                                         <p className="font-semibold text-foreground">{stop.title}</p>
                                         <p className="text-sm text-muted-foreground">{stop.location}</p>
                                     </div>
-                                    <Button onClick={() => setEditingItem(stop)} variant="ghost" size="icon" className="text-muted-foreground hover:text-primary transition-colors flex-shrink-0 ml-4"><Sparkles size={24} /></Button>
+                                    <Button onClick={() => setEditingItem(stop)} variant="ghost" size="icon" className="text-muted-foreground hover:text-primary transition-colors flex-shrink-0 ml-4"><Shuffle size={24} /></Button>
                                 </Card>
                             </motion.div>
                         );
