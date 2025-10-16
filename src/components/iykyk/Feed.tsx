@@ -17,7 +17,7 @@ import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 
-const Post = memo(({ item }: { item: (typeof appData.feedItems)[0] }) => {
+const Post = memo(({ item, priority }: { item: (typeof appData.feedItems)[0], priority?: boolean }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
   
@@ -80,7 +80,7 @@ const Post = memo(({ item }: { item: (typeof appData.feedItems)[0] }) => {
                 fill
                 className="object-cover"
                 data-ai-hint={image.imageHint}
-                priority={item.id < 3} 
+                priority={priority} 
               />
             </div>
           )}
@@ -138,8 +138,8 @@ Post.displayName = 'Post';
 export function Feed() {
   return (
     <div className="flex flex-col w-full space-y-4">
-      {appData.feedItems.map((item) => (
-        <Post key={item.id} item={item} />
+      {appData.feedItems.map((item, index) => (
+        <Post key={item.id} item={item} priority={index < 2} />
       ))}
     </div>
   );

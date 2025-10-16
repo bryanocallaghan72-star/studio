@@ -19,7 +19,7 @@ const formatLikes = (likes: number) => {
 }
 
 
-const ReelPlayer = ({ reel }: { reel: (typeof reelsData)[0] }) => {
+const ReelPlayer = ({ reel, priority }: { reel: (typeof reelsData)[0], priority?: boolean }) => {
     const image = PlaceHolderImages.find((img) => img.id === reel.imageId);
     const [isLiked, setIsLiked] = useState(false);
     const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
@@ -36,6 +36,7 @@ const ReelPlayer = ({ reel }: { reel: (typeof reelsData)[0] }) => {
                 muted
                 playsInline
                 className="h-full w-full object-cover"
+                data-priority={priority}
             />
             <div className="absolute top-4 left-4 text-white font-bold text-lg z-10">
                 <Link href="/discover">
@@ -104,8 +105,8 @@ const ReelPlayer = ({ reel }: { reel: (typeof reelsData)[0] }) => {
 export function Reels() {
     return (
         <div className="relative h-[calc(100vh)] w-full overflow-y-auto snap-y snap-mandatory scrollbar-hide">
-            {reelsData.map((reel) => (
-                <ReelPlayer key={reel.id} reel={reel} />
+            {reelsData.map((reel, index) => (
+                <ReelPlayer key={reel.id} reel={reel} priority={index === 0} />
             ))}
         </div>
     )
