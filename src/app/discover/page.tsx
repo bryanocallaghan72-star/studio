@@ -40,14 +40,15 @@ export default function DiscoverPage() {
 
                 return (
                   <Link key={feature.title} href={feature.href}>
-                      <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card h-48">
+                      <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card h-48 flex items-center justify-center">
                           {image ? (
                             <>
                               <Image
                                 src={image.imageUrl}
                                 alt={feature.title}
-                                fill
-                                className="object-cover w-full h-full transition-transform group-hover:scale-105"
+                                width={image.width}
+                                height={image.height}
+                                className="absolute inset-0 object-cover w-full h-full transition-transform group-hover:scale-105"
                                 data-ai-hint={image.imageHint}
                               />
                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
@@ -56,7 +57,7 @@ export default function DiscoverPage() {
                             <div className="absolute inset-0 bg-secondary" />
                           )}
                          
-                          <div className="absolute bottom-0 left-0 p-6 w-full">
+                          <div className="relative bottom-0 left-0 p-6 w-full">
                              <div className="flex items-center gap-3">
                                   <div className="rounded-full bg-background/80 backdrop-blur-sm p-3">
                                      {Icon && <Icon className={`h-6 w-6 ${feature.color}`} />}
