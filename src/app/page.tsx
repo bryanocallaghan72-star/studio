@@ -1,13 +1,18 @@
+
 "use client";
 
+import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useUser } from "@/firebase";
 import { Loader2 } from "lucide-react";
 
 const LandingPage = () => {
   const { user, isUserLoading } = useUser();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
   const renderAuthButton = () => {
     if (isUserLoading) {
@@ -37,6 +42,12 @@ const LandingPage = () => {
       </Link>
     )
   }
+
+  const handleEnter = () => {
+    startTransition(() => {
+      router.push("/discover");
+    });
+  };
 
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-background text-center p-4">
@@ -70,14 +81,21 @@ const LandingPage = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: "spring", stiffness: 100, delay: 0.6 }}
         >
-            <Link href="/discover" passHref>
-                <Button 
-                    size="lg" 
-                    className="rounded-full text-lg font-bold shadow-lg px-12 py-7 transition-all duration-300 ease-in-out hover:scale-105 bg-primary text-primary-foreground hover:bg-primary/90"
-                >
-                    Enter Bondi
-                </Button>
-            </Link>
+            <Button 
+                size="lg" 
+                className="rounded-full text-lg font-bold shadow-lg px-12 py-7 transition-all duration-300 ease-in-out hover:scale-105 bg-primary text-primary-foreground hover:bg-primary/90"
+                onClick={handleEnter}
+                disabled={isPending}
+            >
+                {isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                    Entering...
+                  </>
+                ) : (
+                  "Enter Bondi"
+                )}
+            </Button>
              {renderAuthButton()}
         </motion.div>
       </div>
