@@ -18,7 +18,8 @@ export const appData = {
       description: 'Iconic Bondi boutique with curated designer collections.',
       imageId: 'style-1',
       category: 'Boutique',
-      creatorId: 'alice'
+      creatorId: 'alice',
+      slug: 'tuchuzy'
     },
     {
       id: 'style-2',
@@ -26,7 +27,8 @@ export const appData = {
       description: 'Leisurewear for a global nomadic life. Born in Bondi.',
       imageId: 'style-2',
       category: 'Local Brand',
-      creatorId: 'lucas'
+      creatorId: 'lucas',
+      slug: 'venroy'
     },
     {
       id: 'style-3',
@@ -34,7 +36,8 @@ export const appData = {
       description: 'Gallery showcasing incredible surf and ocean photography.',
       imageId: 'waves-1',
       category: 'Art & Design',
-      creatorId: 'shannon'
+      creatorId: 'shannon',
+      slug: 'aquabumps'
     },
     {
       id: 'style-4',
@@ -42,6 +45,7 @@ export const appData = {
       description: 'Sunday markets for unique finds from local designers.',
       imageId: 'markets-1',
       category: 'Market',
+      slug: 'bondi-markets',
     }
   ],
   stays: [
@@ -741,4 +745,5 @@ export const appData = {
     
 
     
+
 
