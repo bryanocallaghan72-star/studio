@@ -1,5 +1,6 @@
 import { ai } from '@/ai/genkit';
 import '@/ai/flows/generate-itinerary-flow';
+import '@/ai/flows/generate-surprise-flow';
 
 import {defineNextActions} from '@genkit-ai/next';
 
