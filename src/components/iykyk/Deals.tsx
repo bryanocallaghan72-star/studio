@@ -5,22 +5,41 @@ import { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Ticket } from "lucide-react";
+import { Ticket, Utensils, Droplet, ShoppingBag, Calendar, CalendarCheck2 } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { QRCodeDialog } from './QRCodeDialog';
 import { appData } from '@/lib/data';
+import { cn } from '@/lib/utils';
 
 const { deals } = appData;
+
+const categories = [
+    { name: 'All', icon: Ticket },
+    { name: 'Food & Drink', icon: Utensils },
+    { name: 'Fitness', icon: Droplet },
+    { name: 'Shopping', icon: ShoppingBag },
+    { name: 'Mid-week', icon: Calendar },
+    { name: 'Weekend', icon: CalendarCheck2 },
+];
+
 
 export function Deals() {
     const [selectedDeal, setSelectedDeal] = useState<(typeof deals)[0] | null>(null);
     const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
+    const [activeCategory, setActiveCategory] = useState('All');
 
     const handleClaimDeal = (deal: (typeof deals)[0]) => {
         setSelectedDeal(deal);
         setIsQRDialogOpen(true);
     };
+
+    const filteredDeals = deals.filter(deal => {
+        if (activeCategory === 'All') return true;
+        if (activeCategory === 'Mid-week') return !deal.tags.includes('Weekend');
+        if (activeCategory === 'Weekend') return deal.tags.includes('Weekend');
+        return deal.category === activeCategory;
+    });
 
     return (
         <>
@@ -29,9 +48,27 @@ export function Deals() {
                      <Ticket className="h-8 w-8 text-accent" />
                      <h2 className="text-3xl font-bold tracking-tight">iykyk Deals</h2>
                 </div>
-                <p className="text-muted-foreground mb-4">Exclusive offers, perks, and creator-powered funnels.</p>
+                <p className="text-muted-foreground mb-6">Exclusive offers, perks, and creator-powered funnels.</p>
+
+                <div className="flex overflow-x-auto pb-4 mb-6 scrollbar-hide -mx-4 px-4">
+                    {categories.map((category) => {
+                        const Icon = category.icon;
+                        return (
+                            <Button
+                                key={category.name}
+                                variant={activeCategory === category.name ? 'default' : 'outline'}
+                                onClick={() => setActiveCategory(category.name)}
+                                className="flex-shrink-0 mr-2 shadow-sm"
+                            >
+                                <Icon className="mr-2 h-4 w-4" />
+                                {category.name}
+                            </Button>
+                        )
+                    })}
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
-                    {deals.map(deal => {
+                    {filteredDeals.map(deal => {
                          const image = PlaceHolderImages.find(img => img.id === deal.imageId);
                          return (
                             <Card key={deal.id} className="group overflow-hidden relative transition-all hover:shadow-xl hover:-translate-y-1 bg-card">
@@ -71,6 +108,11 @@ export function Deals() {
                          )
                     })}
                 </div>
+                 {filteredDeals.length === 0 && (
+                    <div className="text-center py-12">
+                        <p className="text-muted-foreground">No deals available in this category right now.</p>
+                    </div>
+                )}
             </section>
              {selectedDeal && (
                 <QRCodeDialog

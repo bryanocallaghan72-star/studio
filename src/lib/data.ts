@@ -90,26 +90,52 @@ export const appData = {
     {
         id: 'deal-1',
         title: "2-for-1 Cocktails",
-        venue: "The Beachcomber Bar",
-        description: "Enjoy two cocktails for the price of one, all week long.",
-        imageId: "community-sushi",
-        validity: "All week long"
+        venue: "Hotel Ravesis",
+        description: "Enjoy two cocktails for the price of one on weekends.",
+        imageId: "cocktail-101",
+        validity: "Sat & Sun only",
+        category: "Food & Drink",
+        tags: ["Weekend"]
     },
     {
         id: 'deal-2',
         title: "50% Off Sushi Platters",
-        venue: "Sakura Sushi",
+        venue: "Raw Bar",
         description: "Half-price sushi platters every Tuesday and Wednesday.",
         imageId: "sushi-1",
-        validity: "Tues & Weds only"
+        validity: "Tues & Weds only",
+        category: "Food & Drink",
+        tags: ["Mid-week"]
     },
     {
         id: 'deal-3',
         title: "Free Coffee with Breakfast",
-        venue: "Morning Glory Cafe",
+        venue: "Harry's Bondi",
         description: "Get a free coffee with any breakfast order before 10 AM on weekdays.",
-        imageId: "morning-2",
-        validity: "Weekdays before 10 AM"
+        imageId: "coffee-1",
+        validity: "Weekdays before 10 AM",
+        category: "Food & Drink",
+        tags: ["Mid-week"]
+    },
+    {
+        id: 'deal-4',
+        title: "Free Reformer Class",
+        venue: "Fluidform Pilates",
+        description: "First time at Fluidform? Your first class is on us!",
+        imageId: "fitness-1",
+        validity: "New members only",
+        category: "Fitness",
+        tags: ["Mid-week", "Weekend"]
+    },
+    {
+        id: 'deal-5',
+        title: "20% Off Storewide",
+        venue: "Tuchuzy",
+        description: "Get 20% off all new season arrivals this weekend only.",
+        imageId: "style-1",
+        validity: "This weekend only",
+        category: "Shopping",
+        tags: ["Weekend"]
     }
   ],
   hotItems: [
