@@ -50,7 +50,7 @@ export function SurpriseMe() {
     
     // Find a fallback image based on the AI-generated hint
     const getImageForSurprise = () => {
-        if (!surprise) return PlaceHolderImages[0];
+        if (!surprise?.imageHint) return PlaceHolderImages.find(i => i.id === 'bondi-sunset') || PlaceHolderImages[0];
         const hint = surprise.imageHint.toLowerCase();
         
         // Prioritize specific hints
