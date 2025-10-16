@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Loader2, Lock, LockOpen, Search, Shuffle } from "lucide-react";
+import { ArrowLeft, Loader2, Lock, LockOpen, Search, Shuffle, RefreshCw } from "lucide-react";
 import { ItineraryStop } from '@/ai/schemas';
 import { appData } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -108,7 +108,7 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
                                         <p className="font-semibold text-foreground">{stop.title}</p>
                                         <p className="text-sm text-muted-foreground">{stop.location}</p>
                                     </div>
-                                    <Button onClick={() => setEditingItem(stop)} variant="ghost" size="icon" className="text-muted-foreground hover:text-primary transition-colors flex-shrink-0 ml-4"><Shuffle size={24} /></Button>
+                                    <Button onClick={() => setEditingItem(stop)} variant="ghost" size="icon" className="text-muted-foreground hover:text-primary transition-colors flex-shrink-0 ml-4"><RefreshCw size={20} /></Button>
                                 </Card>
                             </motion.div>
                         );
@@ -119,7 +119,8 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
             <div className="mt-auto flex space-x-4 pt-4 sticky bottom-0 bg-background py-4">
                 <Button className="flex-grow h-14 font-bold text-lg shadow-2xl" onClick={() => onStartPlan(itineraryData)}>Start Plan</Button>
                 <Button variant="outline" className="flex-grow h-14 font-bold text-lg shadow-2xl bg-card" onClick={onShuffle} disabled={isPending}>
-                    {isPending ? <Loader2 className="animate-spin mr-2" /> : 'Shuffle'}
+                    {isPending ? <Loader2 className="animate-spin mr-2" /> : <Shuffle className="mr-2" />}
+                    Shuffle
                 </Button>
             </div>
 
@@ -156,3 +157,5 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
         </motion.div>
     );
 };
+
+    
