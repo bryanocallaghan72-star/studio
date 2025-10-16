@@ -271,7 +271,7 @@ export const appData = {
       id: 8,
       type: "photo",
       creator: { id: "shannon", name: "shannon", avatar: "https://github.com/shannon.png" },
-      venue: "Aquabumps Gallery",
+      venue: "Aquabumps",
       description: "Getting lost in the waves at the Aquabumps gallery. Eugene's work is just breathtaking. 📷 #art #wavephotography",
       imageId: "waves-1",
       likes: 412,
@@ -711,7 +711,11 @@ export const appData = {
       { id: 29, name: "Chiswick", slug: "chiswick", type: "Restaurants", description: "Collective dining with a seasonal menu.", x: "69%", y: "85%", openingHours: "12pm - 10pm", vibeTags: ["Seasonal", "Elegant", "Garden"], currentVibe: "Buzzing" },
       { id: 30, name: "North Bondi Fish", slug: "north-bondi-fish", type: "Restaurants", description: "Fresh seafood in a relaxed setting.", x: "78%", y: "40%", openingHours: "12pm - 10pm", vibeTags: ["Seafood", "Beachfront", "Relaxed"], currentVibe: "Buzzing" },
       { id: 31, name: "Lets Go Surfing", slug: "lets-go-surfing", type: "Surf", description: "Learn to surf with the best in Bondi.", x: "65%", y: "10%", openingHours: "7am - 5pm", vibeTags: ["Surfing", "Lessons", "Beginner Friendly"], currentVibe: "Buzzing" },
-      { id: 32, name: "Bondi Beach Outdoor Gym", slug: "bondi-beach-outdoor-gym", type: "Health & Fitness", description: "Iconic outdoor gym on the beach.", x: "20%", y: "20%", openingHours: "24/7", vibeTags: ["Fitness", "Outdoor", "Gym"], currentVibe: "Buzzing" }
+      { id: 32, name: "Bondi Beach Outdoor Gym", slug: "bondi-beach-outdoor-gym", type: "Health & Fitness", description: "Iconic outdoor gym on the beach.", x: "20%", y: "20%", openingHours: "24/7", vibeTags: ["Fitness", "Outdoor", "Gym"], currentVibe: "Buzzing" },
+      { id: 33, name: "Tuchuzy", slug: "tuchuzy", type: "Retail", description: "Iconic Bondi boutique with curated designer collections.", x: "55%", y: "65%", openingHours: "10am - 6pm", vibeTags: ["Designer", "Boutique", "Fashion"], currentVibe: "Chill" },
+      { id: 34, name: "Venroy", slug: "venroy", type: "Retail", description: "Leisurewear for a global nomadic life. Born in Bondi.", x: "62%", y: "60%", openingHours: "10am - 6pm", vibeTags: ["Leisurewear", "Local", "Minimalist"], currentVibe: "Chill" },
+      { id: 35, name: "Aquabumps", slug: "aquabumps", type: "Retail", description: "Gallery showcasing incredible surf and ocean photography.", x: "68%", y: "75%", openingHours: "10am - 5pm", vibeTags: ["Art", "Photography", "Ocean"], currentVibe: "Chill" },
+      { id: 36, name: "Bondi Markets", slug: "bondi-markets", type: "Retail", description: "Sunday markets for unique finds from local designers.", x: "25%", y: "10%", openingHours: "10am - 4pm (Sun)", vibeTags: ["Market", "Local", "Unique"], currentVibe: "Buzzing" }
     ]
   }
 };
@@ -737,3 +741,4 @@ export const appData = {
     
 
     
+
