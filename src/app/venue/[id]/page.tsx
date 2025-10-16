@@ -9,7 +9,7 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Flame, MapPin, Ticket, Clock, TrendingUp, Info, Utensils } from "lucide-react";
+import { ArrowRight, Flame, MapPin, Ticket, Clock, TrendingUp, Info, Utensils, Calendar, ShoppingBag, Waves } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -35,6 +35,27 @@ const VibeIndicator = ({ vibe }: { vibe: string }) => {
     return <Badge className={cn('ml-2', vibeStyles[vibe as keyof typeof vibeStyles] || vibeStyles.Chill)}>{vibe}</Badge>;
 }
 
+const getVenueAction = (venueType: string) => {
+    switch (venueType) {
+        case 'Restaurants':
+        case 'Sushi':
+        case 'Brunch':
+        case 'Cocktails':
+        case 'Nightlife':
+            return { text: 'Book a Table', icon: Utensils };
+        case 'Health & Fitness':
+            return { text: 'Book a Class', icon: Calendar };
+        case 'Retail':
+            return { text: 'Visit Website', icon: ShoppingBag };
+        case 'Surf':
+            return { text: 'Book a Lesson', icon: Waves };
+        case 'Vibes':
+        default:
+            return { text: 'Get Directions', icon: MapPin };
+    }
+}
+
+
 export default function VenueProfilePage({ params }: { params: { id: string } }) {
   const venue = appData.map.pins.find(p => p.slug === params.id);
 
@@ -45,6 +66,8 @@ export default function VenueProfilePage({ params }: { params: { id: string } })
   const imageId = getImageForVenue(venue.name);
   const image = PlaceHolderImages.find(img => img.id === imageId);
   const activeDeal = appData.hotItems.find(item => item.venue === venue.name && new Date(item.expiresAt).getTime() > Date.now());
+  const venueAction = getVenueAction(venue.type);
+  const ActionIcon = venueAction.icon;
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
@@ -76,8 +99,8 @@ export default function VenueProfilePage({ params }: { params: { id: string } })
                 <CardContent className="p-6">
                     <p className="text-muted-foreground">{venue.description}</p>
                     <Button className="w-full mt-4 font-bold text-lg h-12">
-                        <Utensils className="mr-2"/>
-                        Book a Table
+                        <ActionIcon className="mr-2"/>
+                        {venueAction.text}
                     </Button>
                 </CardContent>
             </Card>
