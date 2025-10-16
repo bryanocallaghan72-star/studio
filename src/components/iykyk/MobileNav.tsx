@@ -18,7 +18,7 @@ export function MobileNav() {
     { href: "/discover", icon: Compass, label: "iykyk" },
     { href: "/community", icon: Users, label: "Community" },
     { href: "/fire", icon: Flame, label: "Fire" },
-    { href: user ? `/profile/${user.uid}` : "/login", icon: User, label: "Profile" },
+    { href: "/profile/shannon", icon: User, label: "Profile" },
   ];
 
   return (

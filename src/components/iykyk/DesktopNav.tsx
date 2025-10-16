@@ -23,7 +23,7 @@ export function DesktopNav() {
     { href: "/reels", icon: PlaySquare, label: "Reels" },
     { href: "/community", icon: Users, label: "Community" },
     { href: "/fire", icon: Flame, label: "Fire" },
-    { href: user ? `/profile/${user.uid}` : "/login", icon: User, label: "Profile" },
+    { href: "/profile/shannon", icon: User, label: "Profile" },
   ];
 
   return (
