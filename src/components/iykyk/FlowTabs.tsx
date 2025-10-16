@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { Moon, Sparkles, Sun } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -24,7 +24,7 @@ const venueTypeToImageId: { [key: string]: string } = {
     'default': 'night-1'
 };
 
-const VenueCard = ({ venue }: { venue: Venue }) => {
+const VenueCard = memo(({ venue }: { venue: Venue }) => {
     const imageId = venueTypeToImageId[venue.type] || venueTypeToImageId.default;
     const image = PlaceHolderImages.find(img => img.id === imageId);
 
@@ -54,7 +54,9 @@ const VenueCard = ({ venue }: { venue: Venue }) => {
             </Card>
         </Link>
     );
-};
+});
+VenueCard.displayName = 'VenueCard';
+
 
 const getVenuesForTime = (time: 'morning' | 'night' | 'late-night') => {
     switch (time) {

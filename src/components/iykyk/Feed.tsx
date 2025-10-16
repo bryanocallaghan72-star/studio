@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,7 +17,7 @@ import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 
-const Post = ({ item }: { item: (typeof appData.feedItems)[0] }) => {
+const Post = memo(({ item }: { item: (typeof appData.feedItems)[0] }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
   
@@ -131,7 +131,9 @@ const Post = ({ item }: { item: (typeof appData.feedItems)[0] }) => {
       />
     </>
   );
-};
+});
+
+Post.displayName = 'Post';
 
 export function Feed() {
   return (
