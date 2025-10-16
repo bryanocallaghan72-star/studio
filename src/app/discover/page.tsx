@@ -29,8 +29,8 @@ export default function DiscoverPage() {
       <Header />
       <div className="flex flex-1 flex-col pb-24">
         <div className="p-4 md:p-6 text-center">
-            <h2 className="text-3xl font-bold tracking-tight">Your Cultural Concierge</h2>
-            <p className="text-muted-foreground mt-2">The real-time pulse of Bondi, curated for you.</p>
+            <h2 className="text-3xl font-bold tracking-tight">Your Lifestyle OS</h2>
+            <p className="text-muted-foreground mt-2">Shuffle plans, unlock perks, and discover Bondi in real-time.</p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 px-4 md:px-6 md:grid-cols-2">
