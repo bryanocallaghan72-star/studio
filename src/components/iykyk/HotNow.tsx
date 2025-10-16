@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Flame, Ticket } from "lucide-react";
+import { Flame, Ticket, Users } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { QRCodeDialog } from './QRCodeDialog';
@@ -116,6 +116,12 @@ export function HotNow() {
                                         <p className="text-white/90 mt-1">{item.title}: {item.description}</p>
                                     </div>
                                     <div className='mt-6'>
+                                        {item.claims && (
+                                            <div className="mb-2 flex items-center justify-center gap-2 text-sm font-semibold text-white bg-black/30 p-2 rounded-lg backdrop-blur-sm">
+                                                <Users className="h-4 w-4 text-primary" />
+                                                <span>{item.claims} claimed this!</span>
+                                            </div>
+                                        )}
                                         <div className="flex items-center justify-between rounded-lg bg-destructive/80 p-3 backdrop-blur-sm border border-destructive-foreground/30">
                                             <p className="text-sm font-medium text-destructive-foreground">Ends in:</p>
                                             <Countdown expiresAt={item.expiresAt} />
@@ -145,3 +151,5 @@ export function HotNow() {
         </>
     );
 }
+
+    

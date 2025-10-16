@@ -120,6 +120,7 @@ export const appData = {
         description: "25% off the 5pm Reformer class.",
         imageId: "fitness-1",
         expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+        claims: 12,
     },
     {
         id: 'hot-2',
@@ -129,6 +130,7 @@ export const appData = {
         imageId: "community-sushi",
         creatorId: "lucas",
         expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+        claims: 27,
     },
     {
         id: 'hot-3',
@@ -137,6 +139,7 @@ export const appData = {
         description: "Enjoy our signature cocktails. Buy one, get one free!",
         imageId: "community-sushi",
         expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
+        claims: 41,
     },
     {
         id: 'hot-4',
@@ -145,6 +148,7 @@ export const appData = {
         description: "Enjoy our signature crispy salmon rolls. Buy one, get one free!",
         imageId: "sushi-1",
         expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
+        claims: 19,
     }
   ],
   reelsData: [
@@ -701,6 +705,8 @@ export const appData = {
 
 
 
+
+    
 
     
 
