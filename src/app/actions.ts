@@ -41,7 +41,7 @@ export async function generateSurprise(): Promise<{ success?: Surprise, error?: 
       title: surpriseStop.title,
       description: surpriseStop.description,
       venue: surpriseStop.location,
-      imageHint: surpriseStop.title, // Use title as a hint
+      imageHint: surpriseStop.title, // Use title as a hint, as the Itinerary stop doesn't have an imageHint field.
     };
 
     return { success: surprise };
