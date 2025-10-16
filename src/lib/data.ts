@@ -92,14 +92,14 @@ export const appData = {
   ],
   deals: [
     {
-        id: 'deal-1',
-        title: "2-for-1 Cocktails",
+        id: 'deal-aperol',
+        title: "2-for-1 Aperol Spritz",
         venue: "Hotel Ravesis",
-        description: "Enjoy two cocktails for the price of one on weekends.",
+        description: "Enjoy two Aperol Spritz cocktails for the price of one. The perfect sunset drink!",
         imageId: "cocktail-101",
-        validity: "Sat & Sun only",
+        validity: "Fri & Sat Sunset",
         category: "Food & Drink",
-        tags: ["Weekend"]
+        tags: ["Weekend", "Sponsored"]
     },
     {
         id: 'deal-2',
@@ -496,6 +496,23 @@ export const appData = {
   ],
   mapMyDayOptions: [
     {
+      id: 'mmd-aperol',
+      title: 'The Aperol Spritz Sunset',
+      description: 'Sponsored by Aperol',
+      request: {
+        vibe: 'Aperol Spritz Sunset Vibe: Start with a scenic walk, then find the perfect spot to enjoy a refreshing Aperol Spritz as the sun goes down. End with a casual dinner.',
+        pace: 2,
+        budget: 3,
+        travelMode: 'walking',
+      },
+      mockItinerary: [
+        { time: '17:00', name: 'Bondi to Bronte Coastal Walk', notes: 'Golden hour walk.' },
+        { time: '18:00', name: 'Hotel Ravesis', notes: 'Enjoy a 2-for-1 Aperol Spritz deal.' },
+        { time: '19:30', name: 'La Piadina', notes: 'Casual and delicious Italian street food.' }
+      ],
+      curatedMessage: 'Your Aperol Spritz Sunset is ready! Take a golden hour stroll along the coast, then head to Hotel Ravesis for your 2-for-1 Aperol Spritz. Finish with some amazing Italian food at La Piadina. Enjoy the sunset!'
+    },
+    {
       id: 'mmd1',
       title: 'Tinder Date - Bondi',
       description: 'Casual cocktails to break the ice',
@@ -630,6 +647,8 @@ export const appData = {
       ],
       curatedMessage: 'Your fitness day is locked in! Smash a PT session at the outdoor gym, refuel with a protein bowl from Acai Brothers, and then catch some waves with a surf lesson. Go get \'em!'
     },
+  ],
+  groupEventsOptions: [
     {
       id: 'ge1',
       title: 'Birthday Brunch',
@@ -719,7 +738,8 @@ export const appData = {
       { id: 33, name: "Tuchuzy", slug: "tuchuzy", type: "Retail", description: "Iconic Bondi boutique with curated designer collections.", x: "55%", y: "65%", openingHours: "10am - 6pm", vibeTags: ["Designer", "Boutique", "Fashion"], currentVibe: "Chill" },
       { id: 34, name: "Venroy", slug: "venroy", type: "Retail", description: "Leisurewear for a global nomadic life. Born in Bondi.", x: "62%", y: "60%", openingHours: "10am - 6pm", vibeTags: ["Leisurewear", "Local", "Minimalist"], currentVibe: "Chill" },
       { id: 35, name: "Aquabumps", slug: "aquabumps", type: "Retail", description: "Gallery showcasing incredible surf and ocean photography.", x: "68%", y: "75%", openingHours: "10am - 5pm", vibeTags: ["Art", "Photography", "Ocean"], currentVibe: "Chill" },
-      { id: 36, name: "Bondi Markets", slug: "bondi-markets", type: "Retail", description: "Sunday markets for unique finds from local designers.", x: "25%", y: "10%", openingHours: "10am - 4pm (Sun)", vibeTags: ["Market", "Local", "Unique"], currentVibe: "Buzzing" }
+      { id: 36, name: "Bondi Markets", slug: "bondi-markets", type: "Retail", description: "Sunday markets for unique finds from local designers.", x: "25%", y: "10%", openingHours: "10am - 4pm (Sun)", vibeTags: ["Market", "Local", "Unique"], currentVibe: "Buzzing" },
+      { id: 37, name: "Bondi to Bronte Coastal Walk", slug: "bondi-to-bronte-coastal-walk", type: "Vibes", description: "One of the most scenic coastal walks in the world.", x: "10%", y: "95%", openingHours: "24/7", vibeTags: ["Walk", "Scenic", "Nature"], currentVibe: "Chill" },
     ]
   }
 };
@@ -747,3 +767,6 @@ export const appData = {
     
 
 
+
+
+    
