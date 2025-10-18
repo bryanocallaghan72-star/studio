@@ -25,7 +25,7 @@ const prompt = ai.definePrompt({
   
   - The location must be a real place in or very near Bondi.
   - The description should be short, punchy, and enticing.
-  - The imageHint should be 2-3 keywords that visually represent the activity.
+  - The imageHint should be two or three keywords that visually represent the activity.
   
   Make it something unexpected and delightful!`,
 });
