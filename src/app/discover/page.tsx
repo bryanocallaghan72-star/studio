@@ -2,7 +2,7 @@
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
 import { Card, CardDescription, CardTitle, CardContent } from "@/components/ui/card";
-import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt } from "lucide-react";
+import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { SurpriseMe } from '@/components/iykyk/SurpriseMe';
@@ -21,6 +21,7 @@ const iconMap = {
     Compass,
     Zap,
     Shirt,
+    Camera,
 };
 
 export default function DiscoverPage() {

@@ -1,5 +1,5 @@
 
-import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt } from "lucide-react";
+import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera } from "lucide-react";
 
 export const featureData = [
     {
@@ -59,11 +59,11 @@ export const featureData = [
       imageId: "stay-1",
     },
     {
-      href: "/flash-stays",
-      icon: "Zap",
-      title: "iykyk Flash Stays",
-      description: "Last-minute deals on creator-approved stays.",
+      href: "/ar",
+      icon: "Camera",
+      title: "iykyk Lens",
+      description: "The future: an AR-powered view of your city's vibe.",
       color: "text-purple-500",
-      imageId: "stay-2",
+      imageId: "ar-view",
     },
 ];

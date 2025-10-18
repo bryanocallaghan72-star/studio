@@ -247,6 +247,14 @@
       "imageHint": "markets",
       "width": 2070,
       "height": 1380
+    },
+    {
+      "id": "ar-view",
+      "description": "A person holding a phone with an AR overlay on the real world.",
+      "imageUrl": "https://images.unsplash.com/photo-1589792942453-1590155b57d2?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "augmented reality",
+      "width": 2070,
+      "height": 2588
     }
   ]
 }
