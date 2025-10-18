@@ -2,12 +2,13 @@
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
 import { Card, CardDescription, CardTitle, CardContent } from "@/components/ui/card";
-import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera } from "lucide-react";
+import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { SurpriseMe } from '@/components/iykyk/SurpriseMe';
 import { featureData } from '@/lib/features';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Button } from "@/components/ui/button";
 
 const iconMap = {
     Sparkles,
@@ -22,6 +23,7 @@ const iconMap = {
     Zap,
     Shirt,
     Camera,
+    Bed,
 };
 
 export default function DiscoverPage() {
@@ -79,6 +81,24 @@ export default function DiscoverPage() {
             <Card>
                 <div className="p-6">
                     <div className="flex items-center gap-3 mb-4">
+                        <Zap className="h-8 w-8 text-purple-500" />
+                        <h2 className="text-3xl font-bold tracking-tight">Flash Stays</h2>
+                    </div>
+                    <p className="text-muted-foreground">
+                        Last-minute deals on creator-approved stays. Book it before it's gone!
+                    </p>
+                    <Link href="/flash-stays">
+                        <Button variant="secondary" className="w-full bg-purple-500/10 text-purple-500 hover:bg-purple-500/20 mt-4">
+                            <Bed className="mr-2 h-5 w-5" />
+                            Find a Stay
+                        </Button>
+                    </Link>
+                </div>
+            </Card>
+
+            <Card>
+                <div className="p-6">
+                    <div className="flex items-center gap-3 mb-4">
                         <Gift className="h-8 w-8 text-accent" />
                         <h2 className="text-3xl font-bold tracking-tight">Surprise Me</h2>
                     </div>
@@ -86,6 +106,24 @@ export default function DiscoverPage() {
                         Unlock hidden gems and spontaneous experiences with a single tap. A new adventure awaits!
                     </p>
                     <SurpriseMe />
+                </div>
+            </Card>
+
+            <Card>
+                <div className="p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                        <Camera className="h-8 w-8 text-purple-500" />
+                        <h2 className="text-3xl font-bold tracking-tight">iykyk Lens</h2>
+                    </div>
+                    <p className="text-muted-foreground">
+                        The future: an AR-powered view of your city's vibe.
+                    </p>
+                    <Link href="/ar">
+                        <Button variant="secondary" className="w-full bg-purple-500/10 text-purple-500 hover:bg-purple-500/20 mt-4">
+                           <Sparkles className="mr-2 h-5 w-5" />
+                            Launch AR Mode
+                        </Button>
+                    </Link>
                 </div>
             </Card>
         </div>
