@@ -17,6 +17,7 @@ export async function generateSurprise(): Promise<Surprise> {
 
 const prompt = ai.definePrompt({
   name: 'generateSurprisePrompt',
+  input: { schema: z.undefined() },
   output: { schema: SurpriseSchema },
   model: googleAI.model('gemini-flash'),
   prompt: `You are a creative, hyper-local concierge for Bondi, Australia. 
