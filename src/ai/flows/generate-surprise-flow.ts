@@ -47,13 +47,13 @@ const generateSurpriseFlow = ai.defineFlow(
       },
     });
 
-    // The structured output is in response.output
-    // The raw text from the model is in response.text
-    const output = response.output;
+    // The structured output is in response.output()
+    // The raw text from the model is in response.text()
+    const output = response.output();
 
     if (!output) {
       console.error("Failed to parse AI output into SurpriseSchema.");
-      console.log("Raw AI Response Text:", response.text);
+      console.log("Raw AI Response Text:", response.text());
       // Throw an error so the calling function knows something went wrong
       throw new Error("Could not generate a valid surprise. The AI response was malformed.");
     }
