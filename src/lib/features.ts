@@ -58,4 +58,12 @@ export const featureData = [
       color: "text-sky-500",
       imageId: "stay-1",
     },
+    {
+      href: "/flash-stays",
+      icon: "Zap",
+      title: "Flash Stays",
+      description: "Last-minute deals on creator-approved stays.",
+      color: "text-purple-500",
+      imageId: "stay-2",
+    },
 ];

@@ -81,24 +81,6 @@ export default function DiscoverPage() {
             <Card>
                 <div className="p-6">
                     <div className="flex items-center gap-3 mb-4">
-                        <Zap className="h-8 w-8 text-purple-500" />
-                        <h2 className="text-3xl font-bold tracking-tight">Flash Stays</h2>
-                    </div>
-                    <p className="text-muted-foreground">
-                        Last-minute deals on creator-approved stays. Book it before it's gone!
-                    </p>
-                    <Link href="/flash-stays">
-                        <Button variant="secondary" className="w-full bg-purple-500/10 text-purple-500 hover:bg-purple-500/20 mt-4">
-                            <Bed className="mr-2 h-5 w-5" />
-                            Find a Stay
-                        </Button>
-                    </Link>
-                </div>
-            </Card>
-
-            <Card>
-                <div className="p-6">
-                    <div className="flex items-center gap-3 mb-4">
                         <Gift className="h-8 w-8 text-accent" />
                         <h2 className="text-3xl font-bold tracking-tight">Surprise Me</h2>
                     </div>
