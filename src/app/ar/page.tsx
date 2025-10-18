@@ -15,6 +15,7 @@ const arPins = appData.map.pins.slice(0, 5).map((pin, index) => ({
   id: pin.id,
   name: pin.name,
   type: pin.type,
+  slug: pin.slug,
   style: {
     top: `${15 + index * 18}%`,
     left: `${20 + (index % 2) * 40 + Math.random() * 10}%`,
@@ -39,11 +40,6 @@ export default function ARPage() {
       } catch (error) {
         console.error('Error accessing camera:', error);
         setHasCameraPermission(false);
-        toast({
-          variant: 'destructive',
-          title: 'Camera Access Denied',
-          description: 'Please enable camera permissions in your browser settings to use this feature.',
-        });
       }
     };
 
@@ -55,7 +51,7 @@ export default function ARPage() {
             stream.getTracks().forEach(track => track.stop());
         }
     }
-  }, [toast]);
+  }, []);
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-black text-white">
@@ -78,7 +74,7 @@ export default function ARPage() {
             <CameraOff className="h-4 w-4" />
             <AlertTitle>Camera Access Required</AlertTitle>
             <AlertDescription>
-              Please allow camera access in your browser to use the iykyk Lens.
+              Please allow camera access in your browser settings to use the iykyk Lens. You may need to click the lock icon in the address bar.
             </AlertDescription>
           </Alert>
         </div>
