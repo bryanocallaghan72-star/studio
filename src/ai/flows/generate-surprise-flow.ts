@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI flow for generating a single, surprising activity in Bondi.
@@ -29,6 +30,7 @@ const prompt = ai.definePrompt({
   
   Make it something unexpected and delightful!`,
 });
+
 
 const generateSurpriseFlow = ai.defineFlow(
   {
