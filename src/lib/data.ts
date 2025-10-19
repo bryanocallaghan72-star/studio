@@ -767,6 +767,9 @@ export const appData = {
       { id: 35, name: "Aquabumps", slug: "aquabumps", type: "Retail", description: "Gallery showcasing incredible surf and ocean photography.", x: "68%", y: "75%", openingHours: "10am - 5pm", vibeTags: ["Art", "Photography", "Ocean"], currentVibe: "Chill" },
       { id: 36, name: "Bondi Markets", slug: "bondi-markets", type: "Retail", description: "Sunday markets for unique finds from local designers.", x: "25%", y: "10%", openingHours: "10am - 4pm (Sun)", vibeTags: ["Market", "Local", "Unique"], currentVibe: "Buzzing" },
       { id: 37, name: "Bondi to Bronte Coastal Walk", slug: "bondi-to-bronte-coastal-walk", type: "Vibes", description: "One of the most scenic coastal walks in the world.", x: "10%", y: "95%", openingHours: "24/7", vibeTags: ["Walk", "Scenic", "Nature"], currentVibe: "Chill" },
+      { id: 38, name: "Emperor's Garden", slug: "emperors-garden", type: "Restaurants", description: "Famous for its cream puffs and authentic BBQ.", x: "85%", y: "48%", openingHours: "9am - 10pm", vibeTags: ["Chinatown", "Bakery", "BBQ", "Iconic"], currentVibe: "Packed" },
+      { id: 39, name: "Mamak", slug: "mamak", type: "Restaurants", description: "Authentic Malaysian street food with long queues.", x: "92%", y: "65%", openingHours: "11:30am - 2pm, 5:30pm - 10pm", vibeTags: ["Malaysian", "Roti", "Street Food", "Chinatown"], currentVibe: "Packed" },
+      { id: 40, name: "Market City", slug: "market-city", type: "Retail", description: "Shopping centre with factory outlets and an Asian food court.", x: "95%", y: "80%", openingHours: "10am - 7pm", vibeTags: ["Shopping", "Food Court", "Outlet", "Chinatown"], currentVibe: "Buzzing" }
     ]
   }
 };
@@ -795,6 +798,8 @@ export const appData = {
 
 
 
+
+    
 
     
 
