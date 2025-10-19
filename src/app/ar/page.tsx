@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, CameraOff, Flame, Sparkles, Tag, Layers } from 'lucide-react';
+import { ArrowLeft, CameraOff, Flame, Sparkles, Tag, Layers, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { motion } from 'framer-motion';
@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { appData } from '@/lib/data';
 import { cn } from '@/lib/utils';
 
-type LayerType = 'all' | 'fire' | 'deals';
+type LayerType = 'all' | 'fire' | 'deals' | 'drops';
 
 const getPinsForLayer = (layer: LayerType) => {
     let filteredVenues = [];
@@ -25,6 +25,18 @@ const getPinsForLayer = (layer: LayerType) => {
             const dealVenues = new Set(appData.deals.map(item => item.venue));
             filteredVenues = appData.map.pins.filter(pin => dealVenues.has(pin.name));
             break;
+        case 'drops':
+             const dropVenues = new Set(appData.arDrops.map(item => item.venue));
+             const pins = appData.map.pins.filter(pin => dropVenues.has(pin.name));
+             const dropDetails = appData.arDrops;
+             return pins.map(pin => {
+                const detail = dropDetails.find(d => d.venue === pin.name);
+                return {
+                  ...pin,
+                  name: detail?.title || pin.name,
+                  type: detail?.isSponsored ? 'Sponsored Drop' : 'Daily Drop',
+                }
+             });
         case 'all':
         default:
             filteredVenues = appData.map.pins;
@@ -56,6 +68,7 @@ export default function ARPage() {
       { id: 'all', label: 'All', icon: Layers },
       { id: 'fire', label: 'Fire', icon: Flame },
       { id: 'deals', label: 'Deals', icon: Tag },
+      { id: 'drops', label: 'Drops', icon: Gift },
   ] as const;
 
   useEffect(() => {
@@ -123,10 +136,19 @@ export default function ARPage() {
             >
               <Link href={`/venue/${pin.slug || pin.name.toLowerCase().replace(/ /g, '-')}`}>
                 <div className="group relative cursor-pointer">
-                    <div className="animate-pulse absolute -inset-2.5 rounded-full bg-primary/30 blur-lg"></div>
-                    <div className="relative rounded-full border-2 border-white/50 bg-black/60 px-4 py-2 text-center shadow-lg backdrop-blur-md transition-all group-hover:scale-110 group-hover:bg-primary">
+                    <div className={cn(
+                      "animate-pulse absolute -inset-2.5 rounded-full blur-lg",
+                      pin.type === 'Sponsored Drop' ? 'bg-purple-500/40' : 'bg-primary/30'
+                    )}></div>
+                    <div className={cn(
+                      "relative rounded-full border-2 border-white/50 bg-black/60 px-4 py-2 text-center shadow-lg backdrop-blur-md transition-all group-hover:scale-110",
+                       pin.type === 'Sponsored Drop' ? 'group-hover:bg-purple-500' : 'group-hover:bg-primary'
+                    )}>
                         <p className="font-bold text-white">{pin.name}</p>
-                        <Badge variant="secondary" className="mt-1">{pin.type}</Badge>
+                        <Badge variant={pin.type === 'Sponsored Drop' ? 'default' : 'secondary'} className={cn(
+                           "mt-1",
+                           pin.type === 'Sponsored Drop' && 'bg-purple-500 border-purple-400'
+                        )}>{pin.type}</Badge>
                     </div>
                 </div>
               </Link>
@@ -149,7 +171,8 @@ export default function ARPage() {
                             "rounded-full transition-colors h-12 w-12 flex-col gap-1 text-xs",
                             activeLayer === layer.id 
                                 ? 'bg-primary text-primary-foreground' 
-                                : 'text-white hover:bg-white/20 hover:text-white'
+                                : 'text-white hover:bg-white/20 hover:text-white',
+                            layer.id === 'drops' && activeLayer === 'drops' && 'bg-purple-500 hover:bg-purple-600 text-white',
                         )}
                     >
                        <Icon className="h-5 w-5" />
@@ -163,3 +186,6 @@ export default function ARPage() {
     </div>
   );
 }
+
+
+    

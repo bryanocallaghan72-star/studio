@@ -1,5 +1,5 @@
 
-import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt } from 'lucide-react';
+import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift } from 'lucide-react';
 
 export type Community = {
   id: string;
@@ -11,6 +11,32 @@ export type Community = {
 };
 
 export const appData = {
+  arDrops: [
+    {
+        id: 'drop-1',
+        title: "Free Iced Latte",
+        venue: "The Depot",
+        description: "Your daily pick-me-up is on us. Show this in AR mode to redeem.",
+        imageId: "coffee-1",
+        isSponsored: true,
+    },
+    {
+        id: 'drop-2',
+        title: "Priority Entry",
+        venue: "Hotel Ravesis",
+        description: "Skip the line tonight. Unlock this reward by visiting the venue in AR mode.",
+        imageId: "cocktail-101",
+        isSponsored: false,
+    },
+     {
+        id: 'drop-3',
+        title: "Free Surf Wax",
+        venue: "Lets Go Surfing",
+        description: "Grab a free block of surf wax for your next session. Only on iykyk.",
+        imageId: "surf-lesson",
+        isSponsored: true,
+    }
+  ],
   styleItems: [
     {
       id: 'style-1',
@@ -412,6 +438,7 @@ export const appData = {
   ],
   categories: {
     "All": { icon: Sparkles, color: '#f8fafc', textColor: '#0f172a' },
+    "Drops": { icon: Gift, color: '#a78bfa', textColor: '#ffffff' },
     "Brunch": { icon: Coffee, color: '#f59e0b', textColor: '#ffffff' },
     "Lunch": { icon: Utensils, color: '#14b8a6', textColor: '#ffffff' },
     "Restaurants": { icon: Utensils, color: '#3b82f6', textColor: '#ffffff' },
@@ -768,5 +795,7 @@ export const appData = {
 
 
 
+
+    
 
     
