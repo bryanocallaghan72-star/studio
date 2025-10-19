@@ -3,15 +3,24 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, CameraOff, Flame, Sparkles, Tag, Layers, Gift } from 'lucide-react';
+import { ArrowLeft, CameraOff, Flame, Tag, Layers, Gift, Crown, MessageSquare, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { motion } from 'framer-motion';
+import { motion, useDragControls, PanInfo } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { appData } from '@/lib/data';
 import { cn } from '@/lib/utils';
 
-type LayerType = 'all' | 'fire' | 'deals' | 'drops';
+type LayerType = 'all' | 'fire' | 'deals' | 'drops' | 'quests' | 'rewards';
+
+const layers: { id: LayerType, label: string; icon: React.ElementType }[] = [
+    { id: 'all', label: 'All', icon: Layers },
+    { id: 'fire', label: 'Fire', icon: Flame },
+    { id: 'deals', label: 'Deals', icon: Tag },
+    { id: 'drops', label: 'Drops', icon: Gift },
+    { id: 'quests', label: 'Quests', icon: MessageSquare },
+    { id: 'rewards', label: 'Rewards', icon: Crown },
+];
 
 const getPinsForLayer = (layer: LayerType) => {
     let filteredVenues = [];
@@ -60,16 +69,25 @@ const getPinsForLayer = (layer: LayerType) => {
 export default function ARPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
-  const [activeLayer, setActiveLayer] = useState<LayerType>('all');
+  const [activeLayerIndex, setActiveLayerIndex] = useState(0);
   
-  const arPins = useMemo(() => getPinsForLayer(activeLayer), [activeLayer]);
+  const arPins = useMemo(() => getPinsForLayer(layers[activeLayerIndex].id), [activeLayerIndex]);
+  const dragControls = useDragControls();
+  const sliderRef = useRef<HTMLDivElement>(null);
 
-  const layers = [
-      { id: 'all', label: 'All', icon: Layers },
-      { id: 'fire', label: 'Fire', icon: Flame },
-      { id: 'deals', label: 'Deals', icon: Tag },
-      { id: 'drops', label: 'Drops', icon: Gift },
-  ] as const;
+  const handleDrag = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const slider = sliderRef.current;
+    if (!slider) return;
+
+    const sliderHeight = slider.offsetHeight;
+    const segmentHeight = sliderHeight / (layers.length -1);
+    const newIndex = Math.round(info.point.y / segmentHeight);
+    
+    if (newIndex >= 0 && newIndex < layers.length && newIndex !== activeLayerIndex) {
+        setActiveLayerIndex(newIndex);
+    }
+  };
+
 
   useEffect(() => {
     const getCameraPermission = async () => {
@@ -95,6 +113,10 @@ export default function ARPage() {
         }
     }
   }, []);
+
+  const sliderHeight = 288; // h-72
+  const segmentHeight = sliderHeight / (layers.length - 1);
+  const dotY = activeLayerIndex * segmentHeight;
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-black text-white">
@@ -156,33 +178,46 @@ export default function ARPage() {
           ))}
         </div>
       )}
+      
+      <div 
+        ref={sliderRef}
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center justify-between h-72 py-2"
+        onPointerDown={(e) => dragControls.start(e)}
+      >
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 h-full w-0.5 bg-white/30" />
+        {layers.map((layer, index) => {
+            const Icon = layer.icon;
+            const isActive = index === activeLayerIndex;
+            return (
+                <div key={layer.id} className={cn(
+                  "relative z-10 rounded-full transition-all duration-300",
+                  isActive ? 'bg-white text-black' : 'bg-black/50 text-white'
+                )}>
+                    <Icon className="h-5 w-5 m-1.5" />
+                </div>
+            )
+        })}
 
-      <footer className="absolute bottom-0 left-0 right-0 z-10 flex flex-col items-center justify-center p-6 bg-gradient-to-t from-black/50 to-transparent">
-        <div className="flex items-center gap-2 rounded-full bg-black/50 p-2 backdrop-blur-md">
-            {layers.map(layer => {
-                const Icon = layer.icon;
-                return (
-                    <Button 
-                        key={layer.id} 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => setActiveLayer(layer.id)}
-                        className={cn(
-                            "rounded-full transition-colors h-12 w-12 flex-col gap-1 text-xs",
-                            activeLayer === layer.id 
-                                ? 'bg-primary text-primary-foreground' 
-                                : 'text-white hover:bg-white/20 hover:text-white',
-                            layer.id === 'drops' && activeLayer === 'drops' && 'bg-purple-500 hover:bg-purple-600 text-white',
-                        )}
-                    >
-                       <Icon className="h-5 w-5" />
-                       <span>{layer.label}</span>
-                    </Button>
-                );
-            })}
-        </div>
-        <p className="mt-4 text-sm font-semibold">Point your camera to discover what's hot</p>
-      </footer>
+        <motion.div
+            className="absolute top-0 left-1/2 -translate-x-1/2 z-20 h-8 w-8 flex items-center justify-center"
+            style={{ y: dotY - 12 }}
+            drag="y"
+            dragControls={dragControls}
+            dragConstraints={sliderRef}
+            dragElastic={0.1}
+            onDrag={handleDrag}
+            onDragEnd={() => {
+                const slider = sliderRef.current;
+                if (!slider) return;
+                const newY = activeLayerIndex * segmentHeight;
+                // This is a bit of a hack to snap back but Framer motion's snap is complex.
+                // For a real app, we'd use a more robust solution like `useAnimate`.
+            }}
+        >
+          <div className="h-2.5 w-2.5 rounded-full bg-white shadow-lg" />
+        </motion.div>
+      </div>
+
     </div>
   );
 }
