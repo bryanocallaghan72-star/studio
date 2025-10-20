@@ -1,9 +1,6 @@
 
 import type {NextConfig} from 'next';
 
-// Correctly load environment variables from .env file
-import 'dotenv/config';
-
 const nextConfig: NextConfig = {
   /* config options here */
   experimental: {
@@ -36,7 +33,8 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'https',
+        protocol: 'https'
+        ,
         hostname: 'api.dicebear.com',
         port: '',
         pathname: '/**',

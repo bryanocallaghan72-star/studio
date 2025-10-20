@@ -1,7 +1,7 @@
 
 // This file is the single source of truth for Genkit AI configuration.
 import 'server-only';
-import 'dotenv/config';
+
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
 
