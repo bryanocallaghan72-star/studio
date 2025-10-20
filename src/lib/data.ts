@@ -386,6 +386,7 @@ export const appData = {
       avatar: 'https://github.com/shannon.png',
       x: '30%',
       y: '40%',
+      activity: [{ name: 'Mon', uv: 200 }, { name: 'Tue', uv: 350 }, { name: 'Wed', uv: 300 }, { name: 'Thu', uv: 480 }, { name: 'Fri', uv: 500 }, { name: 'Sat', uv: 400 }, { name: 'Sun', uv: 600 }]
     },
     {
       id: 'alice',
@@ -394,6 +395,7 @@ export const appData = {
       avatar: 'https://github.com/alice.png',
       x: '70%',
       y: '60%',
+      activity: [{ name: 'Mon', uv: 500 }, { name: 'Tue', uv: 450 }, { name: 'Wed', uv: 600 }, { name: 'Thu', uv: 550 }, { name: 'Fri', uv: 700 }, { name: 'Sat', uv: 800 }, { name: 'Sun', uv: 750 }]
     },
     {
       id: 'lucas',
@@ -402,6 +404,7 @@ export const appData = {
       avatar: 'https://github.com/lucas.png',
       x: '80%',
       y: '20%',
+      activity: [{ name: 'Mon', uv: 400 }, { name: 'Tue', uv: 420 }, { name: 'Wed', uv: 500 }, { name: 'Thu', uv: 450 }, { name: 'Fri', uv: 600 }, { name: 'Sat', uv: 700 }, { name: 'Sun', uv: 650 }]
     },
     {
       id: 'jay',
@@ -410,6 +413,7 @@ export const appData = {
       avatar: 'https://github.com/jay.png',
       x: '45%',
       y: '75%',
+      activity: [{ name: 'Mon', uv: 300 }, { name: 'Tue', uv: 320 }, { name: 'Wed', uv: 350 }, { name: 'Thu', uv: 400 }, { name: 'Fri', uv: 450 }, { name: 'Sat', uv: 500 }, { name: 'Sun', uv: 480 }]
     },
     {
       id: 'kevin',
@@ -418,6 +422,7 @@ export const appData = {
       avatar: 'https://github.com/kevin.png',
       x: '15%',
       y: '60%',
+      activity: [{ name: 'Mon', uv: 100 }, { name: 'Tue', uv: 120 }, { name: 'Wed', uv: 110 }, { name: 'Thu', uv: 150 }, { name: 'Fri', uv: 180 }, { name: 'Sat', uv: 200 }, { name: 'Sun', uv: 190 }]
     },
     {
       id: 'bondicreator',
@@ -426,6 +431,7 @@ export const appData = {
       avatar: 'https://github.com/shadcn.png',
        x: '50%',
       y: '50%',
+      activity: [{ name: 'Mon', uv: 250 }, { name: 'Tue', uv: 280 }, { name: 'Wed', uv: 300 }, { name: 'Thu', uv: 320 }, { name: 'Fri', uv: 350 }, { name: 'Sat', uv: 400 }, { name: 'Sun', uv: 380 }]
     },
     {
       id: 'foodiegal',
@@ -434,6 +440,7 @@ export const appData = {
       avatar: 'https://github.com/foodie.png',
       x: '25%',
       y: '25%',
+      activity: [{ name: 'Mon', uv: 280 }, { name: 'Tue', uv: 300 }, { name: 'Wed', uv: 320 }, { name: 'Thu', uv: 350 }, { name: 'Fri', uv: 380 }, { name: 'Sat', uv: 420 }, { name: 'Sun', uv: 400 }]
     }
   ],
   categories: {

@@ -3,13 +3,13 @@
 
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { appData } from "@/lib/data";
 import { Code, Rss, Trophy } from "lucide-react";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 
 export default function CodePage() {
   // Sort creators by a mock 'score' or just use index for ranking display
@@ -37,20 +37,33 @@ export default function CodePage() {
 
           <div className="space-y-4 mt-8">
             {rankedCreators.map((creator, index) => (
-              <Card key={creator.id} className="group flex items-center overflow-hidden transition-all hover:shadow-xl hover:border-primary p-4 rounded-2xl border">
-                 <div className="flex items-center gap-4 w-1/5">
+              <Card key={creator.id} className="group flex items-center overflow-hidden transition-all hover:shadow-xl p-4 rounded-2xl border hover:border-primary">
+                 <div className="flex items-center gap-4 w-1/12 md:w-1/5">
                     <Trophy className={`h-6 w-6 ${getTrophyColor(index)}`} />
-                    <span className="text-2xl font-bold text-muted-foreground">#{index + 1}</span>
+                    <span className="text-2xl font-bold text-muted-foreground hidden md:inline">#{index + 1}</span>
                  </div>
-                 <Avatar className="h-16 w-16 border-4 border-background shadow-lg">
+                 <Avatar className="h-12 w-12 md:h-16 md:w-16 border-4 border-background shadow-lg">
                   <AvatarImage src={creator.avatar} alt={creator.name} />
                   <AvatarFallback>{creator.name.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div className="ml-4 flex-grow">
-                    <h3 className="text-xl font-bold">{creator.name}</h3>
+                    <h3 className="text-lg md:text-xl font-bold">{creator.name}</h3>
                     <p className="text-sm text-muted-foreground">@{creator.id}</p>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-2">
+                <div className="w-24 h-12 md:w-32 md:h-16 ml-4">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={creator.activity}>
+                            <defs>
+                                <linearGradient id={`colorUv-${index}`} x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
+                                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                                </linearGradient>
+                            </defs>
+                            <Area type="monotone" dataKey="uv" stroke="hsl(var(--primary))" strokeWidth={2} fill={`url(#colorUv-${index})`} />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                </div>
+                <div className="hidden sm:flex flex-col sm:flex-row gap-2 ml-4">
                     <Link href={`/profile/${creator.id}`}>
                         <Button variant="outline">Profile</Button>
                     </Link>
