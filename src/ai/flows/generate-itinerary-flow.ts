@@ -8,6 +8,7 @@
 
 import { ai } from '@/ai/genkit';
 import { Itinerary, ItineraryRequest, ItineraryRequestSchema, ItinerarySchema } from '@/ai/schemas';
+import { googleAI } from '@genkit-ai/google-genai';
 
 export async function generateItinerary(request: ItineraryRequest): Promise<Itinerary> {
   return generateItineraryFlow(request);
@@ -58,7 +59,16 @@ const generateItineraryFlow = ai.defineFlow(
     outputSchema: ItinerarySchema,
   },
   async (request) => {
-    const { output } = await prompt(request);
-    return output!;
+    const llmResponse = await ai.generate({
+      model: googleAI.model('gemini-1.5-flash'),
+      prompt: prompt,
+      input: request,
+    });
+
+    const output = llmResponse.output();
+    if (!output) {
+      throw new Error('AI failed to generate an itinerary.');
+    }
+    return output;
   }
 );
