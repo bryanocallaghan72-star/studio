@@ -40,7 +40,7 @@ const generateSurpriseFlow = ai.defineFlow(
   },
   async () => {
     // Get the actual GenerativeModel instance
-    const model: GenerativeModel = googleAI.model('gemini-flash');
+    const model = googleAI.model('gemini-flash');
 
     // Make the raw model call to get the text output
     const result = await model.generateContent({
