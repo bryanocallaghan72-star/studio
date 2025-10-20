@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Users, Flame, PlaySquare, User, Compass } from 'lucide-react';
+import { Home, Users, Flame, PlaySquare, User, Compass, Code } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/firebase';
 import {
@@ -21,6 +21,7 @@ export function DesktopNav() {
     { href: "/discover", icon: Compass, label: "Discover" },
     { href: "/feed", icon: Home, label: "Feed" },
     { href: "/reels", icon: PlaySquare, label: "Reels" },
+    { href: "/code", icon: Code, label: "Code" },
     { href: "/community", icon: Users, label: "Community" },
     { href: "/fire", icon: Flame, label: "Fire" },
     { href: "/profile/shannon", icon: User, label: "Profile" },

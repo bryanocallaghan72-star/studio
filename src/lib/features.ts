@@ -1,7 +1,23 @@
 
-import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed } from "lucide-react";
+import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code } from "lucide-react";
 
 export const featureData = [
+    {
+      href: "/my-day",
+      icon: "Calendar",
+      title: "iykyk My Day",
+      description: "Curated daily itinerary that you can shuffle like a playlist.",
+      color: "text-primary",
+      imageId: "community-fitness",
+    },
+     {
+      href: "/code",
+      icon: "Code",
+      title: "iykyk Code",
+      description: "Meet the creators who are the source code of Bondi's vibe.",
+      color: "text-indigo-500",
+      imageId: "hot-1",
+    },
     {
       href: "/map",
       icon: "Map",
@@ -35,14 +51,6 @@ export const featureData = [
       imageId: "community-sushi",
     },
     {
-      href: "/my-day",
-      icon: "Calendar",
-      title: "iykyk My Day",
-      description: "Curated daily itinerary that you can shuffle like a playlist.",
-      color: "text-primary",
-      imageId: "community-fitness",
-    },
-     {
       href: "/style",
       icon: "Shirt",
       title: "iykyk Style",
