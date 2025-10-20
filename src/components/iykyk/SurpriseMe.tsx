@@ -3,26 +3,111 @@
 
 import { useState, useTransition } from 'react';
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
-import { Card, CardContent } from "@/components/ui/card";
-import { Gift, Loader2 } from "lucide-react";
-import Image from "next/image";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { motion } from 'framer-motion';
 import { generateSurprise } from '@/app/actions';
 import type { Surprise } from '@/ai/schemas';
 import { useToast } from '@/hooks/use-toast';
+import { 
+  Gift, 
+  Sparkles, 
+  X, 
+  HeartHandshake, 
+  MapPin, 
+  Utensils, 
+  ShoppingCart, 
+  Wine,
+  Waves,
+  Dumbbell
+} from "lucide-react";
+import { AnimatePresence, motion } from 'framer-motion';
+
+const SurpriseMeModal = ({ isOpen, onClose, onAccept, onReshuffle, activity, isGenerating }: {
+  isOpen: boolean;
+  onClose: () => void;
+  onAccept: (activity: Surprise) => void;
+  onReshuffle: () => void;
+  activity: Surprise | null;
+  isGenerating: boolean;
+}) => {
+  if (!isOpen) return null;
+
+  const icons: { [key: string]: React.ReactNode } = {
+    'Health & Fitness': <Dumbbell size={48} className="text-pink-400" />,
+    'Brunch': <Utensils size={48} className="text-orange-400" />,
+    'Lunch': <Utensils size={48} className="text-teal-400" />,
+    'Retail': <ShoppingCart size={48} className="text-blue-400" />,
+    'Cocktails': <Wine size={48} className="text-purple-400" />,
+    'Nightlife': <Sparkles size={48} className="text-yellow-400" />,
+    'Restaurants': <Utensils size={48} className="text-red-400" />,
+    'Sushi': <MapPin size={48} className="text-green-400" />,
+    'Vibes': <Sparkles size={48} className="text-yellow-400" />,
+    'Surf': <Waves size={48} className="text-sky-400" />,
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4">
+      <motion.div 
+        className="relative bg-card text-foreground rounded-3xl shadow-2xl p-8 w-full max-w-md text-center border"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+      >
+        <button onClick={onClose} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
+          <X size={24} />
+        </button>
+        
+        <AnimatePresence mode="wait">
+          {isGenerating ? (
+            <motion.div
+              key="generating"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+                <Sparkles size={48} className="text-primary mx-auto mb-4 animate-pulse" />
+                <h2 className="text-2xl font-bold mb-2">Thinking of something...</h2>
+                <p className="text-sm text-muted-foreground">Finding the perfect vibe for you.</p>
+            </motion.div>
+          ) : activity ? (
+            <motion.div
+              key="activity"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <div className="mx-auto mb-4 w-20 h-20 bg-secondary rounded-full flex items-center justify-center">
+                {icons[activity.type] || <Sparkles size={48} className="text-primary" />}
+              </div>
+              <h2 className="text-2xl font-bold mb-2">Your next move...</h2>
+              <p className="text-lg font-semibold mb-1">{activity.name}</p>
+              <p className="text-sm text-muted-foreground mb-6">{activity.notes}</p>
+              
+              <div className="space-y-3">
+                <Button onClick={() => onAccept(activity)} className="w-full px-8 py-3 h-auto text-base rounded-full font-bold shadow-lg transform active:scale-95 transition-transform">
+                  Let's Go!
+                </Button>
+                <Button onClick={onReshuffle} variant="ghost" className="w-full px-8 py-3 h-auto rounded-full font-semibold transition-colors hover:bg-secondary">
+                  Try Again
+                </Button>
+              </div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </motion.div>
+    </div>
+  );
+};
+
 
 export function SurpriseMe() {
-    const [surprise, setSurprise] = useState<Surprise | null>(null);
     const [isPending, startTransition] = useTransition();
-    const [open, setOpen] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [surpriseActivity, setSurpriseActivity] = useState<Surprise | null>(null);
     const { toast } = useToast();
 
-    const handleSurpriseClick = () => {
-        setOpen(true);
-        // Clear previous surprise immediately
-        setSurprise(null);
+    const handleShufflePlan = () => {
+        setSurpriseActivity(null);
+        setShowModal(true);
+
         startTransition(async () => {
             const result = await generateSurprise();
             if (result.error) {
@@ -31,102 +116,46 @@ export function SurpriseMe() {
                     title: result.error.title,
                     description: result.error.message,
                 });
-                setOpen(false); // Close dialog on error
+                setShowModal(false);
             } else if (result.success) {
-                setSurprise(result.success);
+                setSurpriseActivity(result.success);
             }
         });
     };
 
-    const handleOpenChange = (isOpen: boolean) => {
-        setOpen(isOpen);
-        if (!isOpen) {
-            // Delay resetting surprise to allow for exit animation
-            setTimeout(() => {
-                setSurprise(null);
-            }, 300);
-        }
+    const handleAcceptSurprise = (activity: Surprise) => {
+        toast({
+            title: "Let's Go!",
+            description: `Get ready to check out ${activity.name}.`,
+        });
+        setShowModal(false);
+        setSurpriseActivity(null);
+        // In a real app, you'd navigate here, e.g.:
+        // router.push(`/venue/${activity.slug}`);
     };
-    
-    // Find a fallback image based on the AI-generated hint
-    const getImageForSurprise = () => {
-        if (!surprise?.imageHint) return PlaceHolderImages.find(i => i.id === 'bondi-sunset') || PlaceHolderImages[0];
-        const hint = surprise.imageHint.toLowerCase();
-        
-        // Prioritize specific hints
-        if (hint.includes('sushi')) return PlaceHolderImages.find(i => i.id === 'sushi-1');
-        if (hint.includes('cocktail') || hint.includes('bar')) return PlaceHolderImages.find(i => i.id === 'cocktail-101');
-        if (hint.includes('coffee') || hint.includes('cafe')) return PlaceHolderImages.find(i => i.id === 'coffee-1');
-        if (hint.includes('beach') || hint.includes('walk')) return PlaceHolderImages.find(i => i.id === 'coastal-walk');
-        if (hint.includes('yoga') || hint.includes('fitness') || hint.includes('pilates')) return PlaceHolderImages.find(i => i.id === 'fitness-1');
-        
-        // Fallback to a generic nice image
-        return PlaceHolderImages.find(i => i.id === 'bondi-sunset') || PlaceHolderImages[0];
-    };
-
-    const image = getImageForSurprise();
 
     return (
-        <Dialog open={open} onOpenChange={handleOpenChange}>
-            <DialogTrigger asChild>
-                <Button 
-                    variant="secondary" 
-                    className="w-full bg-accent text-accent-foreground hover:bg-accent/90 mt-4" 
-                    onClick={handleSurpriseClick}
-                    disabled={isPending}
-                >
-                    <Gift className="mr-2 h-5 w-5" />
-                    Surprise Me
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2">
-                        <Gift className="h-6 w-6 text-primary" />
-                        Surprise!
-                    </DialogTitle>
-                    <DialogDescription>
-                        {isPending ? "Thinking of something amazing..." : "You've unlocked a hidden gem."}
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="relative h-64 overflow-hidden rounded-lg">
-                    {isPending ? (
-                        <motion.div
-                            className="flex h-full items-center justify-center bg-secondary"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1, transition: { delay: 0.2 } }}
-                        >
-                            <Gift className="h-16 w-16 animate-pulse text-primary" />
-                        </motion.div>
-                    ) : surprise && (
-                        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
-                            <Card className="border-none">
-                                <CardContent className="p-0">
-                                    {image ? (
-                                        <div className="relative h-48 w-full">
-                                            <Image
-                                                src={image.imageUrl}
-                                                alt={surprise.title}
-                                                fill
-                                                className="object-cover rounded-t-lg"
-                                                data-ai-hint={surprise.imageHint}
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                                        </div>
-                                    ) : (
-                                        <div className="relative h-48 w-full bg-secondary rounded-t-lg" />
-                                    )}
-                                    <div className="p-4">
-                                        <h3 className="text-xl font-bold">{surprise.title}</h3>
-                                        <p className="text-sm text-muted-foreground mt-1">{surprise.venue}</p>
-                                        <p className="mt-2 text-sm">{surprise.description}</p>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </motion.div>
-                    )}
-                </div>
-            </DialogContent>
-        </Dialog>
+        <>
+            <Button 
+                variant="secondary" 
+                className="w-full bg-accent text-accent-foreground hover:bg-accent/90 mt-4" 
+                onClick={handleShufflePlan}
+                disabled={isPending && showModal}
+            >
+                <Gift className="mr-2 h-5 w-5" />
+                Surprise Me
+            </Button>
+
+            <AnimatePresence>
+                <SurpriseMeModal 
+                    isOpen={showModal} 
+                    onClose={() => setShowModal(false)} 
+                    onAccept={handleAcceptSurprise} 
+                    onReshuffle={handleShufflePlan} 
+                    activity={surpriseActivity} 
+                    isGenerating={isPending} 
+                />
+            </AnimatePresence>
+        </>
     );
 }
