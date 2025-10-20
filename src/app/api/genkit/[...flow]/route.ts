@@ -6,7 +6,6 @@ import {defineNextActions} from '@genkit-ai/next';
 // This is the single place where all flows should be imported for registration.
 import '@/ai/flows/generate-itinerary-flow';
 import '@/ai/flows/generate-surprise-flow';
-import '@/ai/flows/generate-yolo-flow';
 
 export const {GET, POST} = defineNextActions({
   ai,
