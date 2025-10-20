@@ -6,6 +6,9 @@ import 'dotenv/config';
 
 const nextConfig: NextConfig = {
   /* config options here */
+  experimental: {
+    instrumentationHook: true, // This line enables the instrumentation.ts file
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
