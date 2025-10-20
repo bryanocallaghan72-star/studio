@@ -1,6 +1,3 @@
-
-'use server';
-
 // This file is the single source of truth for Genkit AI configuration.
 import 'dotenv/config';
 import { genkit } from 'genkit';
