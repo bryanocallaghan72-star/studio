@@ -6,7 +6,7 @@
  * - generateItinerary - The main function to call the flow.
  */
 
-import { ai } from '@/ai/genkit';
+import { ai } from 'genkit';
 import { Itinerary, ItineraryRequest, ItineraryRequestSchema, ItinerarySchema } from '@/ai/schemas';
 
 export async function generateItinerary(request: ItineraryRequest): Promise<Itinerary> {

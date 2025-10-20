@@ -6,7 +6,7 @@
  * - generateSurprise - The main function to call the flow.
  */
 
-import { ai } from '@/ai/genkit';
+import { ai } from 'genkit';
 import { SurpriseRequestSchema, SurpriseResponse, SurpriseResponseSchema } from '@/ai/schemas';
 
 export async function generateSurprise(request: { timeOfDay: 'morning' | 'afternoon' | 'evening'; availableVenues: { name: string; type: string; }[] }): Promise<SurpriseResponse> {
