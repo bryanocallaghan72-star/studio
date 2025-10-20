@@ -18,7 +18,7 @@ const prompt = ai.definePrompt({
   name: 'generateSurprisePrompt',
   input: { schema: SurpriseRequestSchema },
   output: { schema: SurpriseResponseSchema },
-  model: googleAI.model('gemini-1.5-flash-preview-0514', { apiKey: process.env.GEMINI_API_KEY }),
+  model: googleAI.model('gemini-1.5-flash'),
   prompt: `You are a spontaneous friend who knows all the best 'iykyk' spots in Bondi. Suggest ONE surprising and fun activity for the user based on the current time of day. 
 
   You must only choose from the provided list of venues. Your response must be a valid JSON object with the keys "name" and "notes" (a short, enticing reason to go).

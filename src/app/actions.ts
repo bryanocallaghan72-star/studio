@@ -23,7 +23,8 @@ export async function generateItinerary(request: ItineraryRequest): Promise<{ su
     return { success: result };
   } catch (error) {
     console.error('Itinerary generation failed:', error);
-    return { error: { title: 'Generation Failed', message: 'Sorry, I couldn\'t generate an itinerary right now. Please try again later.' } };
+    const errorMessage = error instanceof Error ? error.message : "Sorry, I couldn't generate an itinerary right now. Please try again later.";
+    return { error: { title: 'Generation Failed', message: errorMessage } };
   }
 }
 
@@ -64,6 +65,9 @@ export async function generateSurprise(): Promise<{ success?: Surprise, error?: 
     };
   } catch (error: any) {
     console.error('Surprise generation failed:', error);
-    return { error: { title: 'Generation Failed', message: error.message || 'Sorry, I couldn\'t come up with a surprise right now. Please try again later.' } };
+    const errorMessage = error.message.includes('GEMINI_API_KEY') 
+      ? 'Please set the GEMINI_API_KEY environment variable. For more details see https://genkit.dev/docs/plugins/google-genai/'
+      : error.message || 'Sorry, I couldn\'t come up with a surprise right now. Please try again later.';
+    return { error: { title: 'Generation Failed', message: errorMessage } };
   }
 }

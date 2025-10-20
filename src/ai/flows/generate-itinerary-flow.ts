@@ -18,7 +18,7 @@ const prompt = ai.definePrompt({
   name: 'generateItineraryPrompt',
   input: { schema: ItineraryRequestSchema },
   output: { schema: ItinerarySchema },
-  model: googleAI.model('gemini-1.5-flash-preview-0514', { apiKey: process.env.GEMINI_API_KEY }),
+  model: googleAI.model('gemini-1.5-flash'),
   prompt: `You are a hyper-local concierge for Bondi, Australia, specializing in crafting perfect day plans for the iykyk app.
 
 Given a user's desired mood, generate a creative, multi-stop itinerary. The itinerary should feel authentic, local, and perfectly match the vibe.
