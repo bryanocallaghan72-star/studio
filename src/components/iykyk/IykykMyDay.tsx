@@ -11,6 +11,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { EventAndItinerarySelectionPage } from './my-day/EventAndItinerarySelectionPage';
 import { IykykMyDayItineraryPage } from './my-day/IykykMyDayItineraryPage';
 import { appData } from '@/lib/data';
+import { generateItinerary } from '@/app/actions';
+import { useToast } from '@/hooks/use-toast';
 
 export function IykykMyDay() {
     const [view, setView] = useState<'selection' | 'itinerary'>('selection');
@@ -18,6 +20,7 @@ export function IykykMyDay() {
     const [currentVibe, setCurrentVibe] = useState<any | null>(null);
     const [isConfirmationOpen, setConfirmationOpen] = useState(false);
     const [isShuffling, setIsShuffling] = useState(false);
+    const { toast } = useToast();
 
     const handleSelectVibe = (option: any) => {
         setCurrentVibe(option);
@@ -65,56 +68,41 @@ export function IykykMyDay() {
         setItinerary({ ...itinerary, stops: newStops });
     };
     
-    const handleShuffle = () => {
-        if (!itinerary) return;
+    const handleShuffle = async () => {
+        if (!itinerary || !currentVibe) return;
 
         setIsShuffling(true);
+        const heldStops = itinerary.stops.filter(s => s.isHeld);
+        const unlockedStopsCount = itinerary.stops.length - heldStops.length;
 
-        setTimeout(() => {
-            const heldStops = itinerary.stops.filter(stop => stop.isHeld);
-            const stopsToShuffle = itinerary.stops.filter(stop => !stop.isHeld);
-    
-            if (stopsToShuffle.length === 0) {
-                setIsShuffling(false);
-                return;
-            };
-    
-            const venueTypes = new Set(stopsToShuffle.map(stop => {
-                const venue = appData.map.pins.find(p => p.name === stop.location);
-                return venue?.type || 'Restaurants';
-            }));
-    
-            const replacementPool = appData.map.pins.filter(pin => 
-                venueTypes.has(pin.type) && 
-                !itinerary.stops.some(s => s.location === pin.name)
-            );
-    
-            const shuffledPool = [...replacementPool].sort(() => Math.random() - 0.5);
-    
-            const newShuffledStops = stopsToShuffle.map((oldStop) => {
-                const replacement = shuffledPool.pop();
-                if (replacement) {
-                    return {
-                        ...oldStop,
-                        title: replacement.name,
-                        location: replacement.name,
-                        description: replacement.description,
-                        isHeld: false,
-                        id: `shuffled-${replacement.name}-${Date.now()}`
-                    };
-                }
-                return oldStop;
-            });
-    
-            const finalStops = [...heldStops, ...newShuffledStops].sort((a, b) => {
-                const timeA = new Date(`1970/01/01 ${a.time.replace(/\s/g, '')}`);
-                const timeB = new Date(`1970/01/01 ${b.time.replace(/\s/g, '')}`);
-                return timeA.getTime() - timeB.getTime();
-            });
-    
-            setItinerary({ ...itinerary, stops: finalStops });
+        if (unlockedStopsCount === 0) {
             setIsShuffling(false);
-        }, 300); // Simulate a quick shuffle
+            return;
+        }
+
+        const request = {
+            ...currentVibe.request,
+            heldStops: heldStops.map(({ id, isHeld, ...rest }) => rest), // Remove client-side fields
+            numberOfNewStops: unlockedStopsCount,
+        };
+
+        const result = await generateItinerary(request);
+
+        if (result.success) {
+            // Re-add client-side IDs to new stops
+            const newStopsWithIds = result.success.stops.map((stop, index) => ({
+                ...stop,
+                id: `${stop.title}-${index}-${Date.now()}`
+            }));
+            setItinerary({ ...result.success, stops: newStopsWithIds });
+        } else if (result.error) {
+            toast({
+                variant: "destructive",
+                title: result.error.title,
+                description: result.error.message,
+            });
+        }
+        setIsShuffling(false);
     };
 
 
