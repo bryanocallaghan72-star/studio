@@ -43,18 +43,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  webpack: (config, { isServer }) => {
-    // This is to fix module resolution issues with Genkit's dependencies
-    // in a non-server environment.
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        stream: require.resolve('stream-browserify'),
-        zlib: require.resolve('browserify-zlib'),
-      };
-    }
-    return config;
-  },
 };
 
 export default nextConfig;
