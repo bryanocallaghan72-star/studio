@@ -1,4 +1,6 @@
 
+'use client';
+
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
 import { Card, CardDescription, CardTitle, CardContent } from "@/components/ui/card";
@@ -9,6 +11,9 @@ import { SurpriseMe } from '@/components/iykyk/SurpriseMe';
 import { featureData } from '@/lib/features';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from "@/components/ui/button";
+import { useTransition } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { generateYolo } from "../actions";
 
 const iconMap = {
     Sparkles,
@@ -27,6 +32,27 @@ const iconMap = {
 };
 
 export default function DiscoverPage() {
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
+
+  const handleYoloClick = () => {
+    startTransition(async () => {
+      const result = await generateYolo();
+      if (result.error) {
+        toast({
+          variant: "destructive",
+          title: result.error.title,
+          description: result.error.message,
+        });
+      } else if (result.success) {
+        toast({
+          title: "YOLO!",
+          description: `Go to ${result.success.name}. ${result.success.notes}`,
+        });
+      }
+    });
+  }
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
@@ -88,6 +114,15 @@ export default function DiscoverPage() {
                         Unlock hidden gems and spontaneous experiences with a single tap. A new adventure awaits!
                     </p>
                     <SurpriseMe />
+                    <Button 
+                      variant="outline" 
+                      className="w-full mt-2" 
+                      onClick={handleYoloClick}
+                      disabled={isPending}
+                    >
+                      <Zap className="mr-2 h-5 w-5" />
+                      YOLO (Test)
+                    </Button>
                 </div>
             </Card>
 

@@ -55,3 +55,23 @@ export const SurpriseSchema = z.object({
     type: z.string(),
 });
 export type Surprise = z.infer<typeof SurpriseSchema>;
+
+// Schema for Yolo Generation
+export const YoloRequestSchema = z.object({
+    timeOfDay: z.enum(['morning', 'afternoon', 'evening']),
+    availableVenues: z.array(VenueSchema),
+});
+export type YoloRequest = z.infer<typeof YoloRequestSchema>;
+
+export const YoloResponseSchema = z.object({
+    name: z.string().describe("The chosen venue name from the list provided."),
+    notes: z.string().describe("A short, catchy, and enticing reason for the user to go to this specific venue right now."),
+});
+export type YoloResponse = z.infer<typeof YoloResponseSchema>;
+
+export const YoloSchema = z.object({
+    name: z.string(),
+    notes: z.string(),
+    type: z.string(),
+});
+export type Yolo = z.infer<typeof YoloSchema>;
