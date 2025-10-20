@@ -8,11 +8,6 @@ import 'dotenv/config';
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
 
-// Import flows to register them with the Genkit system.
-import './flows/generate-itinerary-flow';
-import './flows/generate-surprise-flow';
-import './flows/generate-yolo-flow';
-
 // This is the single, authoritative Genkit configuration for the entire app.
 export const ai = genkit({
   plugins: [
@@ -25,3 +20,9 @@ export const ai = genkit({
   logLevel: 'debug',
   enableTracingAndMetrics: true,
 });
+
+// Import flows AFTER the ai object has been defined and exported.
+// This prevents a circular dependency error.
+import './flows/generate-itinerary-flow';
+import './flows/generate-surprise-flow';
+import './flows/generate-yolo-flow';
