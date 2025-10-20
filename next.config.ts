@@ -49,7 +49,8 @@ const nextConfig: NextConfig = {
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
-        stream: false,
+        stream: require.resolve('stream-browserify'),
+        zlib: require.resolve('browserify-zlib'),
       };
     }
     return config;
