@@ -11,17 +11,17 @@ import { Code, Rss, Trophy } from "lucide-react";
 import Link from "next/link";
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 
+// Sort creators by a mock 'score' or just use index for ranking display
+const rankedCreators = appData.creators.slice(0, 10);
+
+const getTrophyColor = (rank: number) => {
+  if (rank === 0) return "text-yellow-400";
+  if (rank === 1) return "text-gray-400";
+  if (rank === 2) return "text-orange-400";
+  return "text-muted-foreground";
+}
+
 export default function CodePage() {
-  // Sort creators by a mock 'score' or just use index for ranking display
-  const rankedCreators = appData.creators.slice(0, 10);
-
-  const getTrophyColor = (rank: number) => {
-    if (rank === 0) return "text-yellow-400";
-    if (rank === 1) return "text-gray-400";
-    if (rank === 2) return "text-orange-400";
-    return "text-muted-foreground";
-  }
-
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
