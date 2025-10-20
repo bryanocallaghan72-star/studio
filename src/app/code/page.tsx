@@ -7,10 +7,21 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { appData } from "@/lib/data";
-import { Code, Rss } from "lucide-react";
+import { Code, Rss, Trophy } from "lucide-react";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 
 export default function CodePage() {
+  // Sort creators by a mock 'score' or just use index for ranking display
+  const rankedCreators = appData.creators.slice(0, 10);
+
+  const getTrophyColor = (rank: number) => {
+    if (rank === 0) return "text-yellow-400";
+    if (rank === 1) return "text-gray-400";
+    if (rank === 2) return "text-orange-400";
+    return "text-muted-foreground";
+  }
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
@@ -20,31 +31,34 @@ export default function CodePage() {
             <Code className="h-8 w-8 text-primary" />
             <div>
               <h2 className="text-3xl font-bold tracking-tight">iykyk Code</h2>
-              <p className="text-muted-foreground">The creators, curators, and characters who are the source code of Bondi's vibe.</p>
+              <p className="text-muted-foreground">This week's top creators, ranked by their impact on Bondi's vibe.</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-            {appData.creators.map((creator) => (
-              <Card key={creator.id} className="group flex flex-col overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 rounded-2xl p-6 text-center items-center">
-                 <Avatar className="h-24 w-24 border-4 border-background shadow-lg mb-4">
+          <div className="space-y-4 mt-8">
+            {rankedCreators.map((creator, index) => (
+              <Card key={creator.id} className="group flex items-center overflow-hidden transition-all hover:shadow-xl hover:border-primary p-4 rounded-2xl border">
+                 <div className="flex items-center gap-4 w-1/5">
+                    <Trophy className={`h-6 w-6 ${getTrophyColor(index)}`} />
+                    <span className="text-2xl font-bold text-muted-foreground">#{index + 1}</span>
+                 </div>
+                 <Avatar className="h-16 w-16 border-4 border-background shadow-lg">
                   <AvatarImage src={creator.avatar} alt={creator.name} />
                   <AvatarFallback>{creator.name.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
-                <h3 className="text-xl font-bold">{creator.name}</h3>
-                <p className="text-sm text-muted-foreground">@{creator.id}</p>
-                <CardContent className="p-0 mt-4 text-center">
-                    <p className="text-muted-foreground text-sm flex-grow">{creator.bio}</p>
-                    <div className="flex gap-2 mt-4">
-                        <Link href={`/profile/${creator.id}`} className="flex-1">
-                            <Button variant="outline" className="w-full">View Profile</Button>
-                        </Link>
-                         <Button className="flex-1">
-                            <Rss className="mr-2 h-4 w-4" />
-                            Follow
-                        </Button>
-                    </div>
-                </CardContent>
+                <div className="ml-4 flex-grow">
+                    <h3 className="text-xl font-bold">{creator.name}</h3>
+                    <p className="text-sm text-muted-foreground">@{creator.id}</p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2">
+                    <Link href={`/profile/${creator.id}`}>
+                        <Button variant="outline">Profile</Button>
+                    </Link>
+                     <Button>
+                        <Rss className="mr-2 h-4 w-4" />
+                        Follow
+                    </Button>
+                </div>
               </Card>
             ))}
           </div>
