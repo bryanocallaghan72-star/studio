@@ -43,6 +43,17 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  webpack: (config, { isServer }) => {
+    // This is to fix the "Module not found: Can't resolve 'stream'" error
+    // which is a dependency of genkit's tracing system.
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        stream: false,
+      };
+    }
+    return config;
+  },
 };
 
 export default nextConfig;
