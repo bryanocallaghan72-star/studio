@@ -1,6 +1,7 @@
 
 "use server";
 
+import 'dotenv/config';
 import { generateItinerary as generateItineraryFlow } from "@/ai/flows/generate-itinerary-flow";
 import { generateSurprise as generateSurpriseFlow } from "@/ai/flows/generate-surprise-flow";
 import { Itinerary, ItineraryRequest, ItineraryRequestSchema, Surprise, SurpriseResponse } from "@/ai/schemas";
