@@ -34,7 +34,7 @@ const generateYoloFlow = ai.defineFlow(
   async (request) => {
     const { output } = await prompt(request);
     if (!output) {
-      throw new Error('AI failed to generate a YOLO response.');
+      throw new Error('AI did not return a valid YOLO response.');
     }
     return output;
   }
