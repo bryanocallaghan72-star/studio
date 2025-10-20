@@ -1,14 +1,13 @@
 
 'use server';
 
-// This file now re-exports the globally configured 'ai' instance from the dev server entry point.
-// This ensures that all parts of the application (server-side flows, API routes)
-// use the exact same, correctly configured Genkit instance.
+// This file is the single source of truth for Genkit AI configuration.
 import 'dotenv/config';
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
 
 // This is the single, authoritative Genkit configuration for the entire app.
+// It is defined and exported first, before any other files that might use it are imported.
 export const ai = genkit({
   plugins: [
     googleAI({
@@ -20,9 +19,3 @@ export const ai = genkit({
   logLevel: 'debug',
   enableTracingAndMetrics: true,
 });
-
-// Import flows AFTER the ai object has been defined and exported.
-// This prevents a circular dependency error.
-import './flows/generate-itinerary-flow';
-import './flows/generate-surprise-flow';
-import './flows/generate-yolo-flow';
