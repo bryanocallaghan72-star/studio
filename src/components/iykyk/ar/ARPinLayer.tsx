@@ -6,10 +6,6 @@ import { appData } from '@/lib/data';
 import type { LayerType } from '@/app/ar/page';
 import { ARPin, type ARPinData } from './ARPin';
 
-type ARPinLayerProps = {
-    activeLayer: LayerType;
-};
-
 const MAX_PINS_DISPLAYED = 6;
 
 function getPinsForLayer(layer: LayerType, data: typeof appData): ARPinData[] {
@@ -70,7 +66,7 @@ function getPinsForLayer(layer: LayerType, data: typeof appData): ARPinData[] {
     });
 }
 
-export function ARPinLayer({ activeLayer }: ARPinLayerProps) {
+export function ARPinLayer({ activeLayer }: { activeLayer: LayerType }) {
     const arPins = useMemo(() => getPinsForLayer(activeLayer, appData), [activeLayer]);
 
     return (
