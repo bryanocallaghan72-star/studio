@@ -16,6 +16,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'iykyk: Your real-time cultural portal to Bondi.',
   description: 'A quirky, game-like travel buddy for tourists, a monetization funnel for creators, and a discovery engine for locals.',
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
