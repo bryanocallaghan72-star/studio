@@ -1,4 +1,3 @@
-'use server';
 
 import { SurpriseResponse, SurpriseOutput } from './schemas';
 import { appData } from '@/lib/data';
