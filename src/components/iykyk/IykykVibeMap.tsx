@@ -70,7 +70,16 @@ export function IykykVibeMap() {
                 <svg width="100%" height="100%" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
                     {/* Background */}
                     <rect width="800" height="450" fill="hsl(var(--background))" />
+
+                    {/* Water */}
+                    <rect x="-10" y="-10" width="200" height="470" fill="hsl(var(--accent) / 0.3)" />
+
+                    {/* Sand */}
+                    <rect x="180" y="-10" width="100" height="470" fill="hsl(var(--primary) / 0.2)" />
                     
+                    {/* Shoreline */}
+                    <path d="M 190 0 C 170 150, 210 300, 190 450" stroke="hsl(var(--primary) / 0.4)" strokeWidth="2.5" fill="none" />
+
                     {/* Roads */}
                     <g stroke="hsl(var(--border))" strokeWidth="2" fill="none">
                         <line x1="0" y1="100" x2="800" y2="100" />
