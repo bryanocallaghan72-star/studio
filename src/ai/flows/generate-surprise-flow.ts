@@ -7,7 +7,6 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { googleAI } from '@genkit-ai/google-genai';
 import { SurpriseResponse } from '@/features/surprise/schemas';
 
 export async function generateSurpriseFlow(request: { timeOfDay: 'morning' | 'afternoon' | 'evening'; availableVenues: { name: string; type: string; }[] }): Promise<SurpriseResponse> {
@@ -20,7 +19,7 @@ export async function generateSurpriseFlow(request: { timeOfDay: 'morning' | 'af
       Available Venues: ${JSON.stringify(request.availableVenues)}`;
 
   const { text } = await ai.generate({
-      model: googleAI.model('gemini-1.5-flash'),
+      model: 'gemini-1.5-flash',
       prompt: prompt,
   });
 
