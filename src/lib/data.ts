@@ -1,5 +1,5 @@
 
-import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift } from 'lucide-react';
+import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift, UserPlus, Star } from 'lucide-react';
 
 export type Community = {
   id: string;
@@ -10,7 +10,69 @@ export type Community = {
   channels: string[];
 };
 
+export type SocialActivity = {
+    id: string;
+    title: string;
+    description: string;
+    time: string;
+    location: string;
+    creator: {
+        id: string;
+        name: string;
+        avatar: string;
+    };
+    participants: number;
+    maxParticipants: number;
+    category: keyof typeof appData.categories;
+};
+
 export const appData = {
+  socialActivities: [
+    {
+        id: 'social-1',
+        title: 'Sunrise Yoga Sesh',
+        description: 'Starting the day with good vibes and a great stretch. All levels welcome, just bring a mat and some water!',
+        time: '7:00 AM',
+        location: 'Grassy Knoll, North Bondi',
+        creator: { id: 'lucas', name: 'Lucas', avatar: 'https://github.com/lucas.png' },
+        participants: 5,
+        maxParticipants: 10,
+        category: 'Health & Fitness',
+    },
+    {
+        id: 'social-2',
+        title: 'Spikeball at 4pm',
+        description: 'Need 3 more players for some friendly but competitive spikeball this arvo. Let\'s get a game going!',
+        time: '4:00 PM',
+        location: 'Middle of Bondi Beach',
+        creator: { id: 'jay', name: 'Jay', avatar: 'https://github.com/jay.png' },
+        participants: 1,
+        maxParticipants: 4,
+        category: 'Vibes',
+    },
+    {
+        id: 'social-3',
+        title: 'Afternoon Coffee Run',
+        description: 'Heading to The Depot for a coffee break. Anyone wanna join and chat about nothing in particular?',
+        time: '2:30 PM',
+        location: 'The Depot',
+        creator: { id: 'shannon', name: 'Shannon', avatar: 'https://github.com/shannon.png' },
+        participants: 2,
+        maxParticipants: 4,
+        category: 'Brunch',
+    },
+    {
+        id: 'social-4',
+        title: 'Seeking Sushi Partner',
+        description: 'Craving some fresh sushi from Raw Bar for dinner tonight but don\'t wanna go alone. Join me!',
+        time: '7:30 PM',
+        location: 'Raw Bar',
+        creator: { id: 'alice', name: 'Alice', avatar: 'https://github.com/alice.png' },
+        participants: 1,
+        maxParticipants: 2,
+        category: 'Sushi',
+    },
+  ] as SocialActivity[],
   arDrops: [
     {
         id: 'drop-1',

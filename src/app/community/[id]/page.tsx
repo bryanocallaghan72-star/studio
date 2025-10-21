@@ -5,7 +5,7 @@ import { MobileNav } from "@/components/iykyk/MobileNav";
 import { appData } from "@/lib/data";
 import { notFound } from "next/navigation";
 
-export default function CommunityChatPage({ params }: { params: { id: string } }) {
+export default function SocialChatPage({ params }: { params: { id: string } }) {
     const community = appData.communities.find(c => c.id === params.id);
 
     if (!community) {

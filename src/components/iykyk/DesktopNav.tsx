@@ -22,7 +22,7 @@ export function DesktopNav() {
     { href: "/feed", icon: Home, label: "Feed" },
     { href: "/reels", icon: PlaySquare, label: "Reels" },
     { href: "/code", icon: Code, label: "Code" },
-    { href: "/community", icon: Users, label: "Community" },
+    { href: "/social", icon: Users, label: "Social" },
     { href: "/fire", icon: Flame, label: "Fire" },
     { href: "/profile/shannon", icon: User, label: "Profile" },
   ];
@@ -45,7 +45,7 @@ export function DesktopNav() {
                   href={link.href}
                   className={cn(
                     'flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8',
-                    pathname === link.href && 'bg-accent text-accent-foreground'
+                    (pathname.startsWith(link.href) && link.href !== '/') || (pathname === '/' && link.href === '/') ? 'bg-accent text-accent-foreground' : ''
                   )}
                 >
                   <link.icon className="h-5 w-5" />
