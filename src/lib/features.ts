@@ -16,7 +16,7 @@ export const featureData = [
       title: "iykyk Code",
       description: "Meet the creators who are the source code of Bondi's vibe.",
       color: "text-indigo-500",
-      imageId: "hot-1",
+      imageId: "ar-view",
     },
     {
       href: "/map",
