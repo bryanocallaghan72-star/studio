@@ -98,7 +98,7 @@ export function ARPinLayer({ activeLayer }: ARPinLayerProps) {
                                 </div>
                             </div>
                         </Link>
-                    </motion.motion.div>
+                    </motion.div>
                 ))}
             </AnimatePresence>
         </div>
