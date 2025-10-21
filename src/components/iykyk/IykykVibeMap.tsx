@@ -1,9 +1,9 @@
 
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Map } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ColorPinSVG } from "./ColorPinSVG";
@@ -12,9 +12,20 @@ import { appData } from "@/lib/data";
 const { categories, map: { pins: venues } } = appData;
 
 export function IykykVibeMap() {
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const initialCategory = searchParams.get('category') || 'All';
-  const [activeTab, setActiveTab] = useState(initialCategory);
+  const activeTab = searchParams.get('category') || 'All';
+
+  const handleTabChange = (category: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (category === 'All') {
+      params.delete('category');
+    } else {
+      params.set('category', category);
+    }
+    router.replace(`${pathname}?${params.toString()}`);
+  };
 
   const filteredPins = useMemo(() => {
     return venues.filter(pin => {
@@ -36,7 +47,7 @@ export function IykykVibeMap() {
             {Object.entries(categories).map(([category, {icon: Icon, color, textColor}]) => (
                 <button
                     key={category}
-                    onClick={() => setActiveTab(category)}
+                    onClick={() => handleTabChange(category)}
                     data-active={activeTab === category}
                     className={cn(
                         "flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full mx-1 transition-all duration-300 inline-flex items-center shadow-sm",
