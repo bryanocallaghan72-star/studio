@@ -40,7 +40,7 @@ export function ProfilePageClient({ uid }: { uid: string }) {
     return appData.creators.find(creator => creator.id === uid);
   }, [uid]);
 
-  // Firestore reference is now stable
+  // Firestore reference is now stable thanks to useMemoFirebase
   const userDocRef = useMemoFirebase(() => {
     if (mockUserProfile || !firestore || !uid) return null;
     return doc(firestore, 'users', uid);
