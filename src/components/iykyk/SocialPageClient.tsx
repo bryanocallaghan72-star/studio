@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { appData } from "@/lib/data";
-import { Users, UserPlus, PlusCircle, MapPin, CheckCircle, PartyPopper } from "lucide-react";
+import { Users, UserPlus, MapPin, PartyPopper, Coffee, Dumbbell, Waves, Plus } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { Badge } from "../ui/badge";
@@ -12,7 +12,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Progress } from "../ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../ui/dialog";
 import { SocialActivity } from "@/lib/data";
-import { cn } from "@/lib/utils";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { CreateActivityDialog } from "./CreateActivityDialog";
 
 const ParticipantAvatars = ({ avatars }: { avatars: string[] }) => {
     return (
@@ -41,11 +42,19 @@ const UrgencyBadge = ({ participants, maxParticipants }: { participants: number,
 export function SocialPageClient() {
     const [selectedActivity, setSelectedActivity] = useState<SocialActivity | null>(null);
     const [isJoinDialogOpen, setJoinDialogOpen] = useState(false);
+    const [isCreateDialogOpen, setCreateDialogOpen] = useState(false);
+    const [createActivityData, setCreateActivityData] = useState<{title: string; category: SocialActivity['category']} | null>(null);
+
 
     const handleAskToJoin = (activity: SocialActivity) => {
         setSelectedActivity(activity);
         setJoinDialogOpen(true);
     };
+
+    const openCreateDialog = (title: string, category: SocialActivity['category']) => {
+        setCreateActivityData({ title, category });
+        setCreateDialogOpen(true);
+    }
 
     return (
         <>
@@ -57,10 +66,28 @@ export function SocialPageClient() {
                             Join a vibe, or start one yourself.
                         </p>
                     </div>
-                    <Button>
-                        <PlusCircle className="mr-2 h-5 w-5" />
-                        Post Activity
-                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button>
+                                <Plus className="mr-2 h-5 w-5" />
+                                Post Activity
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem onClick={() => openCreateDialog('Coffee at...', 'Brunch')}>
+                                <Coffee className="mr-2" />
+                                Coffee Meetup
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => openCreateDialog('Morning Workout', 'Health & Fitness')}>
+                                <Dumbbell className="mr-2" />
+                                Workout Session
+                            </DropdownMenuItem>
+                             <DropdownMenuItem onClick={() => openCreateDialog('Beach Day', 'Vibes')}>
+                                <Waves className="mr-2" />
+                                Beach Plan
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {appData.socialActivities.map(activity => {
@@ -147,8 +174,15 @@ export function SocialPageClient() {
                     </DialogContent>
                 </Dialog>
             )}
+
+            {createActivityData && (
+                <CreateActivityDialog
+                    isOpen={isCreateDialogOpen}
+                    onOpenChange={setCreateDialogOpen}
+                    defaultTitle={createActivityData.title}
+                    defaultCategory={createActivityData.category}
+                />
+            )}
         </>
     );
 }
-
-    
