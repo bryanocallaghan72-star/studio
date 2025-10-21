@@ -1,6 +1,7 @@
+
 'use server';
 
-import { generateSurprise as generateSurpriseFlow } from "@/ai/flows/generate-surprise-flow";
+import { generateSurpriseFlow } from "@/ai/flows/generate-surprise-flow";
 import { appData } from "@/lib/data";
 import { SurpriseOutput } from "./schemas";
 import { normalizeSurprise } from "./normalize";
