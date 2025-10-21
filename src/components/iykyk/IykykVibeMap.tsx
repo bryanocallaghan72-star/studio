@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useMemo } from "react";
@@ -65,33 +64,50 @@ export function IykykVibeMap() {
             ))}
         </div>
 
-        <div className="flex-grow flex flex-col relative aspect-[16/9] md:aspect-video mt-2 rounded-lg border overflow-hidden mx-4 md:mx-6">
+        <div className="flex-grow flex flex-col relative aspect-[4/3] md:aspect-video mt-2 rounded-lg border overflow-hidden mx-4 md:mx-6">
             <div className="flex-grow bg-secondary/30 relative overflow-hidden">
-                <svg width="100%" height="100%" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                <svg width="100%" height="100%" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
                     {/* Background */}
-                    <rect width="800" height="450" fill="hsl(var(--background))" />
+                    <rect width="800" height="600" fill="hsl(var(--background))" />
 
-                    {/* Water */}
-                    <rect x="-10" y="-10" width="200" height="470" fill="hsl(var(--accent) / 0.3)" />
-
-                    {/* Sand */}
-                    <rect x="180" y="-10" width="100" height="470" fill="hsl(var(--primary) / 0.2)" />
+                    {/* Ocean - Starts far to the right at x=750 */}
+                    <rect 
+                        x="750" 
+                        y="0" 
+                        width="50" 
+                        height="600" 
+                        fill="hsl(var(--primary)/0.2)" 
+                    />
                     
-                    {/* Shoreline */}
-                    <path d="M 190 0 C 170 150, 210 300, 190 450" stroke="hsl(var(--primary) / 0.4)" strokeWidth="2.5" fill="none" />
+                    {/* Beach (Sand) - Starts just before the ocean at x=650 */}
+                    <rect 
+                        x="650" 
+                        y="0" 
+                        width="100" 
+                        height="600" 
+                        fill="hsl(var(--secondary))" 
+                    />
 
-                    {/* Roads */}
+                    {/* Wavy Shoreline Path - Starts at x=650 to align with the beach */}
+                    <path 
+                        d="M 650,0 C 640,150 660,300 650,450 C 640,525 660,550 650,600" 
+                        stroke="hsl(var(--primary)/0.3)" 
+                        strokeWidth="2" 
+                        fill="none" 
+                    />
+
+                    {/* Roads - Make sure they stop before the beach starts (e.g., at x2="650") */}
                     <g stroke="hsl(var(--border))" strokeWidth="2" fill="none">
-                        <line x1="0" y1="100" x2="800" y2="100" />
-                        <line x1="0" y1="225" x2="800" y2="225" />
-                        <line x1="0" y1="350" x2="800" y2="350" />
+                        <line x1="0" y1="150" x2="650" y2="150" />
+                        <line x1="0" y1="300" x2="650" y2="300" />
+                        <line x1="0" y1="450" x2="650" y2="450" />
                     </g>
-                    
+
                     {/* Labels */}
                     <g fontFamily="sans-serif" fill="hsl(var(--muted-foreground))" fontSize="14">
-                        <text x="730" y="95">Curlewis St</text>
-                        <text x="730" y="220">Roscoe St</text>
-                        <text x="730" y="345">Hall St</text>
+                        <text x="560" y="145">Curlewis St</text>
+                        <text x="560" y="295">Roscoe St</text>
+                        <text x="560" y="445">Hall St</text>
                     </g>
                 </svg>
                 
