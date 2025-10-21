@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { ArrowLeft, CameraOff, Flame, Tag, Layers, Gift, Crown, MessageSquare, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { motion, useDragControls, PanInfo } from 'framer-motion';
+import { motion, useDragControls, PanInfo, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { appData } from '@/lib/data';
 import { cn } from '@/lib/utils';
@@ -224,5 +224,3 @@ export default function ARPage() {
     </div>
   );
 }
-
-    
