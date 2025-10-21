@@ -59,7 +59,7 @@ export function SocialPageClient() {
                     </div>
                     <Button>
                         <PlusCircle className="mr-2 h-5 w-5" />
-                        Post Activity / Gig
+                        Post Activity
                     </Button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -71,8 +71,7 @@ export function SocialPageClient() {
                                  <CardHeader className="p-0">
                                     <div className="flex items-center justify-between mb-3">
                                         <Badge 
-                                            variant={activity.category === 'Gigs' ? 'default' : 'secondary'}
-                                            className={cn(activity.category === 'Gigs' && 'bg-emerald-500/20 text-emerald-500 border-emerald-500/30')}
+                                            variant={'secondary'}
                                         >
                                             {activity.category}
                                         </Badge>
@@ -151,3 +150,5 @@ export function SocialPageClient() {
         </>
     );
 }
+
+    

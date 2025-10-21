@@ -23,7 +23,7 @@ export type SocialActivity = {
     };
     participants: number;
     maxParticipants: number;
-    category: 'Health & Fitness' | 'Vibes' | 'Brunch' | 'Sushi' | 'Gigs';
+    category: 'Health & Fitness' | 'Vibes' | 'Brunch' | 'Sushi';
     participantAvatars: string[];
 };
 
@@ -42,18 +42,6 @@ export const appData = {
         participantAvatars: ['https://github.com/alice.png', 'https://github.com/jay.png', 'https://github.com/shannon.png', 'https://github.com/kevin.png'],
     },
     {
-        id: 'gig-1',
-        title: 'Barback Needed Tonight',
-        description: 'Busy Saturday night shift at a popular cocktail bar. Good hustle and vibes required. 8pm - 1am. $25/hr cash.',
-        time: 'Tonight, 8PM',
-        location: 'The Corner House',
-        creator: { id: 'lucas', name: 'Lucas', avatar: 'https://github.com/lucas.png' },
-        participants: 0,
-        maxParticipants: 1,
-        category: 'Gigs',
-        participantAvatars: [],
-    },
-    {
         id: 'social-2',
         title: 'Spikeball at 4pm',
         description: 'Need 3 more players for some friendly but competitive spikeball this arvo. Let\'s get a game going!',
@@ -63,18 +51,6 @@ export const appData = {
         participants: 1,
         maxParticipants: 4,
         category: 'Vibes',
-        participantAvatars: [],
-    },
-    {
-        id: 'gig-2',
-        title: 'Help at Bondi Markets',
-        description: 'Need an extra pair of hands to help set up and sell at my clothing stall this Sunday. Early start but fun day.',
-        time: 'Sunday, 6AM',
-        location: 'Bondi Markets',
-        creator: { id: 'alice', name: 'Alice', avatar: 'https://github.com/alice.png' },
-        participants: 0,
-        maxParticipants: 1,
-        category: 'Gigs',
         participantAvatars: [],
     },
     {
@@ -905,3 +881,6 @@ export const appData = {
 
 
 
+
+
+    
