@@ -12,8 +12,6 @@ export const ai = genkit({
   plugins: [
     googleAI({
       // The API key is read from the GEMINI_API_KEY environment variable.
-      // We explicitly set the default model here for all generate() calls.
-      defaultModel: 'gemini-1.5-flash',
     }),
   ],
   logLevel: 'debug',
