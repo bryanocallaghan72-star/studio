@@ -56,7 +56,7 @@ export function IykykVibeMap() {
 
         <div className="flex-grow flex flex-col relative aspect-[16/9] md:aspect-video mt-2 rounded-lg border overflow-hidden mx-4 md:mx-6">
             <div className="flex-grow bg-secondary/30 relative overflow-hidden">
-                <svg width="100%" height="100%" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
+                <svg width="100%" height="100%" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
                     {/* Background */}
                     <rect width="800" height="450" fill="hsl(var(--background))" />
                     
@@ -76,8 +76,9 @@ export function IykykVibeMap() {
                 </svg>
                 
                 {filteredPins.map(pin => (
-                  <Link key={pin.id} href={`/venue/${pin.slug}`} className="absolute group transform -translate-x-1/2 -translate-y-full cursor-pointer" style={{ left: pin.x, top: pin.y }} aria-label={`View details for ${pin.name}`}>
+                  <Link key={pin.id} href={`/venue/${pin.slug}`} className="absolute group transform -translate-x-1/2 -translate-y-full cursor-pointer" style={{ left: pin.x, top: pin.y }}>
                     <ColorPinSVG className="w-8 h-8 drop-shadow-lg transition-transform duration-200 group-hover:scale-125" color={categories[pin.type as keyof typeof categories]?.color || '#FF7F50'} />
+                    <span className="sr-only">View details for {pin.name}</span>
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 rounded-lg bg-gray-800 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 pointer-events-none">
                         {pin.name}
                     </div>
