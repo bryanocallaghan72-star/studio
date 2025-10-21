@@ -76,10 +76,12 @@ export function SocialPageClient() {
                                                 </Avatar>
                                                 <span>@{activity.creator.id}</span>
                                             </Link>
-                                            <Button className="font-semibold" size="sm" onClick={() => handleAskToJoin(activity)}>
-                                                <UserPlus className="mr-2 h-4 w-4" />
-                                                Ask to Join
-                                            </Button>
+                                            <Link href={`/social/${activity.id}`}>
+                                                <Button className="font-semibold" size="sm">
+                                                    <UserPlus className="mr-2 h-4 w-4" />
+                                                    Ask to Join
+                                                </Button>
+                                            </Link>
                                         </div>
                                     </div>
 
