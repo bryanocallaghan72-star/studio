@@ -3,21 +3,23 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, CameraOff, Flame, Layers } from 'lucide-react';
+import { ArrowLeft, Flame, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ARLayerSlider } from '@/components/iykyk/ar/ARLayerSlider';
 import { ARPinLayer } from '@/components/iykyk/ar/ARPinLayer';
 import { ARCameraFeed } from '@/components/iykyk/ar/ARCameraFeed';
+import { useCamera } from '@/hooks/useCamera';
+import { AnimatePresence } from 'framer-motion';
 
 export type LayerType = 'all' | 'fire' | 'deals' | 'drops' | 'quests' | 'rewards';
 
 export default function ARPage() {
-  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [activeLayer, setActiveLayer] = useState<LayerType>('all');
+  const { videoRef, hasCameraPermission } = useCamera();
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-black text-white">
-      <ARCameraFeed setHasCameraPermission={setHasCameraPermission} />
+      <ARCameraFeed videoRef={videoRef} hasCameraPermission={hasCameraPermission} />
       
       <header className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between p-4 bg-gradient-to-b from-black/50 to-transparent">
         <Link href="/discover" passHref>
