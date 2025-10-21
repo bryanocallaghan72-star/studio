@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo } from 'react';
@@ -13,49 +12,60 @@ type ARPinLayerProps = {
     activeLayer: LayerType;
 };
 
+function getPinsForLayer(layer: LayerType, data: typeof appData) {
+    let filteredVenues = [];
+
+    switch (layer) {
+        case 'fire':
+            const fireVenues = new Set(data.hotItems.map(item => item.venue));
+            filteredVenues = data.map.pins.filter(pin => fireVenues.has(pin.name));
+            break;
+        case 'deals':
+            const dealVenues = new Set(data.deals.map(item => item.venue));
+            filteredVenues = data.map.pins.filter(pin => dealVenues.has(pin.name));
+            break;
+        case 'drops':
+             const dropVenues = new Set(data.arDrops.map(item => item.venue));
+             const pins = data.map.pins.filter(pin => dropVenues.has(pin.name));
+             return pins.map(pin => {
+                const detail = data.arDrops.find(d => d.venue === pin.name);
+                return {
+                  ...pin,
+                  name: detail?.title || pin.name,
+                  type: detail?.isSponsored ? 'Sponsored Drop' : 'Daily Drop',
+                }
+             }).slice(0, 6).map((pin, index) => ({
+                id: pin.id,
+                name: pin.name,
+                type: pin.type,
+                slug: pin.slug,
+                style: {
+                  top: `${15 + (index % 3) * 25}%`,
+                  left: `${15 + (index % 2) * 50 + Math.random() * 10 - 5}%`,
+                  animationDelay: `${index * 0.15}s`,
+                },
+             }));
+        case 'all':
+        default:
+            filteredVenues = data.map.pins;
+            break;
+    }
+
+    return filteredVenues.slice(0, 6).map((pin, index) => ({
+      id: pin.id,
+      name: pin.name,
+      type: pin.type,
+      slug: pin.slug,
+      style: {
+        top: `${15 + (index % 3) * 25}%`,
+        left: `${15 + (index % 2) * 50 + Math.random() * 10 - 5}%`,
+        animationDelay: `${index * 0.15}s`,
+      },
+    }));
+}
+
 export function ARPinLayer({ activeLayer }: ARPinLayerProps) {
-    const arPins = useMemo(() => {
-        let filteredVenues = [];
-
-        switch (activeLayer) {
-            case 'fire':
-                const fireVenues = new Set(appData.hotItems.map(item => item.venue));
-                filteredVenues = appData.map.pins.filter(pin => fireVenues.has(pin.name));
-                break;
-            case 'deals':
-                const dealVenues = new Set(appData.deals.map(item => item.venue));
-                filteredVenues = appData.map.pins.filter(pin => dealVenues.has(pin.name));
-                break;
-            case 'drops':
-                 const dropVenues = new Set(appData.arDrops.map(item => item.venue));
-                 const pins = appData.map.pins.filter(pin => dropVenues.has(pin.name));
-                 const dropDetails = appData.arDrops;
-                 return pins.map(pin => {
-                    const detail = dropDetails.find(d => d.venue === pin.name);
-                    return {
-                      ...pin,
-                      name: detail?.title || pin.name,
-                      type: detail?.isSponsored ? 'Sponsored Drop' : 'Daily Drop',
-                    }
-                 });
-            case 'all':
-            default:
-                filteredVenues = appData.map.pins;
-                break;
-        }
-
-        return filteredVenues.slice(0, 6).map((pin, index) => ({
-          id: pin.id,
-          name: pin.name,
-          type: pin.type,
-          slug: pin.slug,
-          style: {
-            top: `${15 + (index % 3) * 25}%`,
-            left: `${15 + (index % 2) * 50 + Math.random() * 10 - 5}%`,
-            animationDelay: `${index * 0.15}s`,
-          },
-        }));
-      }, [activeLayer]);
+    const arPins = useMemo(() => getPinsForLayer(activeLayer, appData), [activeLayer]);
 
     return (
         <div className="relative z-10 h-full w-full">
@@ -88,7 +98,7 @@ export function ARPinLayer({ activeLayer }: ARPinLayerProps) {
                                 </div>
                             </div>
                         </Link>
-                    </motion.div>
+                    </motion.motion.div>
                 ))}
             </AnimatePresence>
         </div>
