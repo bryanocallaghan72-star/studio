@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useParams, notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,12 +17,16 @@ import { appData } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { EditProfileDialog } from '@/components/iykyk/EditProfileDialog';
 
-// Helper function to shuffle an array once and memoize the result
+// Helper hook to shuffle pins once on component mount
 const useShuffledPins = (pins: any[], count: number) => {
-    const shuffledPins = useMemo(() => {
+    const [shuffledPins, setShuffledPins] = useState<any[]>([]);
+
+    useEffect(() => {
+        // This logic now runs only once on the client-side after hydration
         const shuffled = [...pins].sort(() => 0.5 - Math.random());
-        return shuffled.slice(0, count);
-    }, [pins, count]);
+        setShuffledPins(shuffled.slice(0, count));
+    }, []); // Empty dependency array ensures this runs only once
+
     return shuffledPins;
 };
 
