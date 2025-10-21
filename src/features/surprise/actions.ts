@@ -25,7 +25,7 @@ export async function generateSurprise(): Promise<{ success?: SurpriseOutput, er
     // 2. Filter Venues for the AI
     const availableVenues = appData.map.pins.filter(pin => {
       const category = pin.type;
-      if (timeOfDay === 'morning' && ['Brunch', 'Health & Fitness'].includes(category)) return true;
+      if (timeOfDay === 'morning' && ['Brunch', 'Health & Fitness', 'Surf'].includes(category)) return true;
       if (timeOfDay === 'afternoon' && ['Lunch', 'Retail', 'Vibes', 'Surf'].includes(category)) return true;
       if (timeOfDay === 'evening' && ['Cocktails', 'Restaurants', 'Nightlife', 'Sushi'].includes(category)) return true;
       return false;
@@ -42,10 +42,9 @@ export async function generateSurprise(): Promise<{ success?: SurpriseOutput, er
       throw new Error('AI did not return a valid surprise stop.');
     }
 
-    // 4. Normalize the Response
-    const normalizedResponse = normalizeSurprise(rawResponse);
-    
-    return { success: normalizedResponse };
+    // 4. Normalize the Response and return
+    return { success: normalizeSurprise(rawResponse) };
+
   } catch (error: any) {
     console.error('Surprise generation failed:', error);
     const errorMessage = error.message.includes('GEMINI_API_KEY') 

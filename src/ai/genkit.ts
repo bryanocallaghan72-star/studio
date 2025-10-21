@@ -1,5 +1,6 @@
 
 // This file is the single source of truth for Genkit AI configuration.
+// It is marked as 'server-only' to prevent it from being bundled in client-side code.
 import 'server-only';
 
 import { genkit } from 'genkit';
