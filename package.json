@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --experimental-https",
+    "dev": "next dev",
     "genkit:dev": "genkit start --require dotenv/config -- tsx src/ai/dev.ts",
     "genkit:watch": "genkit start --require dotenv/config -- tsx --watch src/ai/dev.ts",
     "build": "NODE_ENV=production next build",
