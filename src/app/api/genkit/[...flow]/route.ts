@@ -1,5 +1,5 @@
 
-import { ai } from '@/ai/genkit';
+import { ai } from '@/ai/genkit.server';
 import {defineNextActions} from '@genkit-ai/next';
 
 // Import flows here to register them with the Next.js API route handler.

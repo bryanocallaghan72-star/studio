@@ -6,7 +6,7 @@
  * - generateItinerary - The main function to call the flow.
  */
 
-import { ai } from '@/ai/genkit';
+import { ai } from '@/ai/genkit.server';
 import { Itinerary, ItineraryRequest, ItineraryRequestSchema, ItinerarySchema } from '@/ai/schemas';
 
 export async function generateItinerary(request: ItineraryRequest): Promise<Itinerary> {
@@ -59,7 +59,7 @@ const generateItineraryFlow = ai.defineFlow(
   },
   async (request) => {
     const llmResponse = await ai.generate({
-      model: 'gemini-1.5-flash',
+      model: 'googleai/gemini-1.5-flash',
       prompt: prompt,
       input: request,
     });
