@@ -28,7 +28,7 @@ export function ARPin({ pin }: ARPinProps) {
       exit={{ opacity: 0, y: -20, scale: 0.8 }}
       transition={{ type: 'spring', stiffness: 100 }}
     >
-      <Link href={`/venue/${pin.slug || pin.name.toLowerCase().replace(/ /g, '-')}`}>
+      <Link href={`/venue/${pin.slug}`}>
         <div className="group relative cursor-pointer">
           <div
             className={cn(

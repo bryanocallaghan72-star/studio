@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useRef } from 'react';
@@ -32,8 +31,7 @@ export function ARLayerSlider({ activeLayer, setActiveLayer }: ARLayerSliderProp
         const slider = sliderRef.current;
         if (!slider) return;
 
-        const sliderHeight = slider.offsetHeight;
-        const segmentHeight = sliderHeight / (layers.length - 1);
+        const segmentHeight = SLIDER_HEIGHT / (layers.length - 1);
         const newIndex = Math.round(info.point.y / segmentHeight);
 
         if (newIndex >= 0 && newIndex < layers.length && layers[newIndex].id !== activeLayer) {

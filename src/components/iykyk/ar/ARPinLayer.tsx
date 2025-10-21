@@ -10,6 +10,8 @@ type ARPinLayerProps = {
     activeLayer: LayerType;
 };
 
+const MAX_PINS_DISPLAYED = 6;
+
 function getPinsForLayer(layer: LayerType, data: typeof appData): ARPinData[] {
     let filteredVenues = [];
 
@@ -32,7 +34,7 @@ function getPinsForLayer(layer: LayerType, data: typeof appData): ARPinData[] {
                   name: detail?.title || pin.name,
                   type: detail?.isSponsored ? 'Sponsored Drop' : 'Daily Drop',
                 }
-             }).slice(0, 6).map((pin, index) => {
+             }).slice(0, MAX_PINS_DISPLAYED).map((pin, index) => {
                 const horizontalJitter = (index % 4) * 5 - 10; // -10, -5, 0, 5
                 return {
                     id: pin.id,
@@ -52,7 +54,7 @@ function getPinsForLayer(layer: LayerType, data: typeof appData): ARPinData[] {
             break;
     }
 
-    return filteredVenues.slice(0, 6).map((pin, index) => {
+    return filteredVenues.slice(0, MAX_PINS_DISPLAYED).map((pin, index) => {
       const horizontalJitter = (index % 4) * 5 - 10; // -10, -5, 0, 5
       return {
         id: pin.id,
