@@ -70,7 +70,16 @@ export function IykykVibeMap() {
                     {/* Background */}
                     <rect width="800" height="600" fill="hsl(var(--background))" />
 
-                    {/* Ocean - Starts far to the right at x=750 */}
+                    {/* Beach (Sand) - Starts before the ocean at x=700 */}
+                    <rect 
+                        x="700" 
+                        y="0" 
+                        width="100" 
+                        height="600" 
+                        fill="hsl(var(--secondary))" 
+                    />
+                    
+                    {/* Ocean - Starts after the sand at x=750 */}
                     <rect 
                         x="750" 
                         y="0" 
@@ -78,36 +87,27 @@ export function IykykVibeMap() {
                         height="600" 
                         fill="hsl(var(--primary)/0.2)" 
                     />
-                    
-                    {/* Beach (Sand) - Starts just before the ocean at x=650 */}
-                    <rect 
-                        x="650" 
-                        y="0" 
-                        width="100" 
-                        height="600" 
-                        fill="hsl(var(--secondary))" 
-                    />
 
-                    {/* Wavy Shoreline Path - Starts at x=650 to align with the beach */}
+                    {/* Wavy Shoreline Path - between sand and ocean */}
                     <path 
-                        d="M 650,0 C 640,150 660,300 650,450 C 640,525 660,550 650,600" 
+                        d="M 750,0 C 740,150 760,300 750,450 C 740,525 760,550 750,600" 
                         stroke="hsl(var(--primary)/0.3)" 
                         strokeWidth="2" 
                         fill="none" 
                     />
 
-                    {/* Roads - Make sure they stop before the beach starts (e.g., at x2="650") */}
+                    {/* Roads - Make sure they stop before the beach starts (e.g., at x2="700") */}
                     <g stroke="hsl(var(--border))" strokeWidth="2" fill="none">
-                        <line x1="0" y1="150" x2="650" y2="150" />
-                        <line x1="0" y1="300" x2="650" y2="300" />
-                        <line x1="0" y1="450" x2="650" y2="450" />
+                        <line x1="0" y1="150" x2="700" y2="150" />
+                        <line x1="0" y1="300" x2="700" y2="300" />
+                        <line x1="0" y1="450" x2="700" y2="450" />
                     </g>
 
                     {/* Labels */}
                     <g fontFamily="sans-serif" fill="hsl(var(--muted-foreground))" fontSize="14">
-                        <text x="560" y="145">Curlewis St</text>
-                        <text x="560" y="295">Roscoe St</text>
-                        <text x="560" y="445">Hall St</text>
+                        <text x="610" y="145">Curlewis St</text>
+                        <text x="610" y="295">Roscoe St</text>
+                        <text x="610" y="445">Hall St</text>
                     </g>
                 </svg>
                 
