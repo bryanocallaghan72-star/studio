@@ -76,12 +76,10 @@ export function SocialPageClient() {
                                                 </Avatar>
                                                 <span>@{activity.creator.id}</span>
                                             </Link>
-                                            <Link href={`/social/${activity.id}`}>
-                                                <Button className="font-semibold" size="sm">
-                                                    <UserPlus className="mr-2 h-4 w-4" />
-                                                    Ask to Join
-                                                </Button>
-                                            </Link>
+                                            <Button className="font-semibold" size="sm" onClick={() => handleAskToJoin(activity)}>
+                                                <UserPlus className="mr-2 h-4 w-4" />
+                                                Ask to Join
+                                            </Button>
                                         </div>
                                     </div>
 
@@ -101,12 +99,16 @@ export function SocialPageClient() {
                             </div>
                             <DialogTitle className="text-2xl">You're in!</DialogTitle>
                             <DialogDescription>
-                                We've let @{selectedActivity.creator.id} know you're coming to{" "}
-                                <strong>{selectedActivity.title}</strong>. Have fun!
+                                You're joining <strong>{selectedActivity.title}</strong>. You'll now be added to a temporary chat to coordinate with the group.
                             </DialogDescription>
                         </DialogHeader>
-                        <DialogFooter>
-                             <Button variant="outline" className="w-full" onClick={() => setJoinDialogOpen(false)}>Close</Button>
+                        <DialogFooter className="flex-col gap-2">
+                             <Link href={`/social/${selectedActivity.id}`}>
+                                <Button className="w-full">
+                                    Enter Chat
+                                </Button>
+                            </Link>
+                             <Button variant="outline" className="w-full" onClick={() => setJoinDialogOpen(false)}>Cancel</Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
