@@ -3,14 +3,6 @@ import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, S
 
 export const featureData = [
     {
-      href: "/my-day",
-      icon: "Calendar",
-      title: "iykyk My Day",
-      description: "Curated daily itinerary that you can shuffle like a playlist.",
-      color: "text-primary",
-      imageId: "community-fitness",
-    },
-     {
       href: "/code",
       icon: "Code",
       title: "iykyk Code",
@@ -33,6 +25,14 @@ export const featureData = [
       description: "Discover the rhythm of your city through creators’ movements.",
       color: "text-indigo-500",
       imageId: "morning-1",
+    },
+    {
+      href: "/my-day",
+      icon: "Calendar",
+      title: "iykyk My Day",
+      description: "Curated daily itinerary that you can shuffle like a playlist.",
+      color: "text-primary",
+      imageId: "community-fitness",
     },
     {
       href: "/fire",
