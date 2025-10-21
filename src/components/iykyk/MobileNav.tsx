@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -16,7 +15,7 @@ export function MobileNav() {
     { href: "/feed", icon: Home, label: "Feed" },
     { href: "/reels", icon: PlaySquare, label: "Reels" },
     { href: "/discover", icon: Compass, label: "iykyk" },
-    { href: "/code", icon: Code, label: "Code" },
+    { href: "/social", icon: Users, label: "Social" },
     { href: "/fire", icon: Flame, label: "Fire" },
     { href: "/profile/shannon", icon: User, label: "Profile" },
   ];
