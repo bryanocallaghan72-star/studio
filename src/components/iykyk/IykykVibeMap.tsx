@@ -4,11 +4,10 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { Map, KeyRound } from "lucide-react";
+import { Map } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ColorPinSVG } from "./ColorPinSVG";
 import { appData } from "@/lib/data";
-import { Button } from "../ui/button";
 
 const { categories, map: { pins: venues } } = appData;
 
@@ -97,7 +96,7 @@ export function IykykVibeMap() {
                 </svg>
                 
                 {filteredPins.map(pin => (
-                  <Link key={pin.id} href={`/venue/${pin.slug}`} className="absolute group transform -translate-x-1/2 -translate-y-full cursor-pointer">
+                  <Link key={pin.id} href={`/venue/${pin.slug}`} className="absolute group transform -translate-x-1/2 -translate-y-full cursor-pointer" style={{ left: pin.x, top: pin.y }}>
                     <ColorPinSVG className="w-8 h-8 drop-shadow-lg transition-transform duration-200 group-hover:scale-125" color={categories[pin.type as keyof typeof categories]?.color || '#FF7F50'} />
                     <span className="sr-only">View details for {pin.name}</span>
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 rounded-lg bg-gray-800 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 pointer-events-none">
@@ -105,16 +104,6 @@ export function IykykVibeMap() {
                     </div>
                   </Link>
                 ))}
-
-                <div className="absolute bottom-4 right-4">
-                  <Button
-                    variant="secondary"
-                    className="flex h-12 w-12 flex-col items-center justify-center rounded-full bg-card/80 shadow-lg backdrop-blur-sm"
-                  >
-                    <KeyRound className="h-5 w-5" />
-                    <span className="text-xs font-semibold">Key</span>
-                  </Button>
-                </div>
             </div>
         </div>
     </section>
