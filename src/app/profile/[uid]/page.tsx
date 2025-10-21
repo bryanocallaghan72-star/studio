@@ -16,6 +16,7 @@ import { useDoc, useFirestore, useMemoFirebase, useUser } from '@/firebase';
 import { appData } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { EditProfileDialog } from '@/components/iykyk/EditProfileDialog';
+import { WithId } from '@/firebase/firestore/use-collection';
 
 // Helper hook to shuffle pins once on component mount
 const useShuffledPins = (pins: any[], count: number) => {
@@ -48,7 +49,7 @@ export default function ProfilePage() {
     return doc(firestore, 'users', uid);
   }, [firestore, uid, mockUserProfile]);
 
-  const { data: firestoreUserProfile, isLoading: isFirestoreLoading } = useDoc(userDocRef);
+  const { data: firestoreUserProfile, isLoading: isFirestoreLoading } = useDoc<WithId<{ username: string; bio?: string }>>(userDocRef);
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   
   // Combine mock and firestore user profiles
@@ -100,6 +101,7 @@ export default function ProfilePage() {
                   fill
                   className="object-cover"
                   data-ai-hint="abstract gradient"
+                  priority
                />
             </div>
             <CardContent className="p-0">
@@ -149,6 +151,7 @@ export default function ProfilePage() {
                                           fill
                                           className="object-cover w-full h-full transition-transform group-hover:scale-105"
                                           data-ai-hint={image.imageHint}
+                                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                                       />
                                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                                   </>}
