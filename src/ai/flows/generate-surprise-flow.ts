@@ -7,7 +7,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { SurpriseRequestSchema, SurpriseResponse, SurpriseResponseSchema } from '@/ai/schemas';
+import { SurpriseRequestSchema, SurpriseResponse, SurpriseResponseSchema } from '@/features/surprise/schemas';
 
 export async function generateSurprise(request: { timeOfDay: 'morning' | 'afternoon' | 'evening'; availableVenues: { name: string; type: string; }[] }): Promise<SurpriseResponse> {
   return generateSurpriseFlow(request);
@@ -34,7 +34,7 @@ const generateSurpriseFlow = ai.defineFlow(
   async (request) => {
     const { output } = await prompt(request);
     if (!output) {
-      throw new Error('AI failed to generate a surprise.');
+      throw new Error('AI did not return a valid surprise stop.');
     }
     return output;
   }

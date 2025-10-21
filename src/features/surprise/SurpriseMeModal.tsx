@@ -1,16 +1,9 @@
+'use client';
 
-"use client";
-
-import { useState, useTransition } from 'react';
 import { Button } from "@/components/ui/button";
-import { generateSurprise } from '@/app/actions';
-import type { Surprise } from '@/ai/schemas';
-import { useToast } from '@/hooks/use-toast';
 import { 
-  Gift, 
   Sparkles, 
   X, 
-  HeartHandshake, 
   MapPin, 
   Utensils, 
   ShoppingCart, 
@@ -19,13 +12,15 @@ import {
   Dumbbell
 } from "lucide-react";
 import { AnimatePresence, motion } from 'framer-motion';
+import { SurpriseOutput } from "./schemas";
+import Link from 'next/link';
 
 const SurpriseMeModal = ({ isOpen, onClose, onAccept, onReshuffle, activity, isGenerating }: {
   isOpen: boolean;
   onClose: () => void;
-  onAccept: (activity: Surprise) => void;
+  onAccept: (activity: SurpriseOutput) => void;
   onReshuffle: () => void;
-  activity: Surprise | null;
+  activity: SurpriseOutput | null;
   isGenerating: boolean;
 }) => {
   if (!isOpen) return null;
@@ -82,9 +77,11 @@ const SurpriseMeModal = ({ isOpen, onClose, onAccept, onReshuffle, activity, isG
               <p className="text-sm text-muted-foreground mb-6">{activity.notes}</p>
               
               <div className="space-y-3">
-                <Button onClick={() => onAccept(activity)} className="w-full px-8 py-3 h-auto text-base rounded-full font-bold shadow-lg transform active:scale-95 transition-transform">
-                  Let's Go!
-                </Button>
+                <Link href={`/venue/${activity.slug}`} passHref>
+                    <Button onClick={() => onAccept(activity)} className="w-full px-8 py-3 h-auto text-base rounded-full font-bold shadow-lg transform active:scale-95 transition-transform">
+                        Let's Go!
+                    </Button>
+                </Link>
                 <Button onClick={onReshuffle} variant="ghost" className="w-full px-8 py-3 h-auto rounded-full font-semibold transition-colors hover:bg-secondary">
                   Try Again
                 </Button>
@@ -97,65 +94,4 @@ const SurpriseMeModal = ({ isOpen, onClose, onAccept, onReshuffle, activity, isG
   );
 };
 
-
-export function SurpriseMe() {
-    const [isPending, startTransition] = useTransition();
-    const [showModal, setShowModal] = useState(false);
-    const [surpriseActivity, setSurpriseActivity] = useState<Surprise | null>(null);
-    const { toast } = useToast();
-
-    const handleShufflePlan = () => {
-        setSurpriseActivity(null);
-        setShowModal(true);
-
-        startTransition(async () => {
-            const result = await generateSurprise();
-            if (result.error) {
-                toast({
-                    variant: "destructive",
-                    title: result.error.title,
-                    description: result.error.message,
-                });
-                setShowModal(false);
-            } else if (result.success) {
-                setSurpriseActivity(result.success);
-            }
-        });
-    };
-
-    const handleAcceptSurprise = (activity: Surprise) => {
-        toast({
-            title: "Let's Go!",
-            description: `Get ready to check out ${activity.name}.`,
-        });
-        setShowModal(false);
-        setSurpriseActivity(null);
-        // In a real app, you'd navigate here, e.g.:
-        // router.push(`/venue/${activity.slug}`);
-    };
-
-    return (
-        <>
-            <Button 
-                variant="secondary" 
-                className="w-full bg-accent text-accent-foreground hover:bg-accent/90 mt-4" 
-                onClick={handleShufflePlan}
-                disabled={isPending && showModal}
-            >
-                <Gift className="mr-2 h-5 w-5" />
-                Surprise Me
-            </Button>
-
-            <AnimatePresence>
-                <SurpriseMeModal 
-                    isOpen={showModal} 
-                    onClose={() => setShowModal(false)} 
-                    onAccept={handleAcceptSurprise} 
-                    onReshuffle={handleShufflePlan} 
-                    activity={surpriseActivity} 
-                    isGenerating={isPending} 
-                />
-            </AnimatePresence>
-        </>
-    );
-}
+export default SurpriseMeModal;

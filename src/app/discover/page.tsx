@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Header } from "@/components/iykyk/Header";
@@ -6,12 +5,12 @@ import { MobileNav } from "@/components/iykyk/MobileNav";
 import { Card, CardDescription, CardTitle, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
-import { SurpriseMe } from '@/components/iykyk/SurpriseMe';
 import { featureData } from '@/lib/features';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from "@/components/ui/button";
 import dynamic from 'next/dynamic';
 import { LucideProps, Gift, Camera, Sparkles } from 'lucide-react';
+import { SurpriseMeButton } from "@/features/surprise/SurpriseMeButton";
 
 const iconMap = {
     Sparkles: dynamic(() => import('lucide-react').then(mod => mod.Sparkles)),
@@ -92,7 +91,7 @@ export default function DiscoverPage() {
                     <p className="text-muted-foreground">
                         Unlock hidden gems and spontaneous experiences with a single tap. A new adventure awaits!
                     </p>
-                    <SurpriseMe />
+                    <SurpriseMeButton />
                 </div>
             </Card>
 
