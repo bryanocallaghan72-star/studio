@@ -6,17 +6,28 @@ import { appData } from "@/lib/data";
 import { notFound } from "next/navigation";
 
 export default function SocialChatPage({ params }: { params: { id: string } }) {
-    const community = appData.communities.find(c => c.id === params.id);
+    const activity = appData.socialActivities.find(c => c.id === params.id);
 
-    if (!community) {
+    if (!activity) {
         notFound();
     }
+
+    // The CommunityChat component can be adapted or we can pass the activity object.
+    // For now, let's create a mock community object to satisfy its props.
+    const mockCommunity = {
+        id: activity.id,
+        name: activity.title,
+        description: activity.description,
+        category: activity.category,
+        members: activity.participants,
+        channels: ['general'],
+    };
 
     return (
         <div className="flex min-h-screen w-full flex-col bg-background">
           <Header />
           <main className="flex-1 flex flex-col pb-24">
-            <CommunityChat community={community} />
+            <CommunityChat community={mockCommunity} />
           </main>
           <MobileNav />
         </div>
