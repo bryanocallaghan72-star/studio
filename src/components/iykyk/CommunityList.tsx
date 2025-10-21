@@ -33,7 +33,7 @@ export function CommunityList() {
                                 <Badge variant="outline" className="mx-auto mb-4">
                                     {community.members} members
                                 </Badge>
-                                <Link href={`/community/${community.id}`} className="w-full">
+                                <Link href={`/social/${community.id}`} className="w-full">
                                     <Button className="w-full font-semibold">
                                         <UserPlus className="mr-2 h-4 w-4" />
                                         Join

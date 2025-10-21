@@ -493,7 +493,7 @@ export const appData = {
       avatar: 'https://github.com/shadcn.png',
        x: '50%',
       y: '50%',
-      activity: [{ name: 'Mon', uv: 250 }, { name: 'Tue', uv: 280 }, { name: 'Wed', uv: 300 }, { name: 'Thu', uv: 320 }, { name: 'Fri', uv: 350 }, { name: 'Sat', uv: 400 }, { name: 'Sun', uv: 380 }]
+      activity: [{ name: 'Mon', uv: 250 }, { name: 'Tue', uv: 280 }, { name: 'Wed', uv: 300 }, { name: 'Thu', uv: 320 }, { name: 'Fri', 'uv': 350 }, { name: 'Sat', uv: 400 }, { name: 'Sun', uv: 380 }]
     },
     {
       id: 'foodiegal',
@@ -873,3 +873,4 @@ export const appData = {
     
 
     
+

@@ -20,7 +20,7 @@ export function CommunityChat({ community }: { community: Community }) {
     return (
         <div className="flex h-full flex-col">
              <div className="flex items-center gap-4 border-b p-4">
-                 <Link href="/community">
+                 <Link href="/social">
                     <Button variant="ghost" size="icon">
                         <ArrowLeft className="h-5 w-5" />
                     </Button>
