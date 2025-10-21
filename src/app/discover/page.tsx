@@ -4,29 +4,30 @@
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
 import { Card, CardDescription, CardTitle, CardContent } from "@/components/ui/card";
-import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { SurpriseMe } from '@/components/iykyk/SurpriseMe';
 import { featureData } from '@/lib/features';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from "@/components/ui/button";
+import dynamic from 'next/dynamic';
+import { LucideProps, Gift, Camera, Sparkles } from 'lucide-react';
 
 const iconMap = {
-    Sparkles,
-    Map,
-    Flame,
-    Tag,
-    Calendar,
-    Users,
-    Gift,
-    Home,
-    Compass,
-    Zap,
-    Shirt,
-    Camera,
-    Bed,
-    Code,
+    Sparkles: dynamic(() => import('lucide-react').then(mod => mod.Sparkles)),
+    Map: dynamic(() => import('lucide-react').then(mod => mod.Map)),
+    Flame: dynamic(() => import('lucide-react').then(mod => mod.Flame)),
+    Tag: dynamic(() => import('lucide-react').then(mod => mod.Tag)),
+    Calendar: dynamic(() => import('lucide-react').then(mod => mod.Calendar)),
+    Users: dynamic(() => import('lucide-react').then(mod => mod.Users)),
+    Gift: dynamic(() => import('lucide-react').then(mod => mod.Gift)),
+    Home: dynamic(() => import('lucide-react').then(mod => mod.Home)),
+    Compass: dynamic(() => import('lucide-react').then(mod => mod.Compass)),
+    Zap: dynamic(() => import('lucide-react').then(mod => mod.Zap)),
+    Shirt: dynamic(() => import('lucide-react').then(mod => mod.Shirt)),
+    Camera: dynamic(() => import('lucide-react').then(mod => mod.Camera)),
+    Bed: dynamic(() => import('lucide-react').then(mod => mod.Bed)),
+    Code: dynamic(() => import('lucide-react').then(mod => mod.Code)),
 };
 
 export default function DiscoverPage() {
