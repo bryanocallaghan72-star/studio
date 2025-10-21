@@ -32,34 +32,40 @@ function getPinsForLayer(layer: LayerType, data: typeof appData): ARPinData[] {
                   name: detail?.title || pin.name,
                   type: detail?.isSponsored ? 'Sponsored Drop' : 'Daily Drop',
                 }
-             }).slice(0, 6).map((pin, index) => ({
-                id: pin.id,
-                name: pin.name,
-                type: pin.type,
-                slug: pin.slug,
-                style: {
-                  top: `${15 + (index % 3) * 25}%`,
-                  left: `${15 + (index % 2) * 50 + Math.random() * 10 - 5}%`,
-                  animationDelay: `${index * 0.15}s`,
-                },
-             }));
+             }).slice(0, 6).map((pin, index) => {
+                const horizontalJitter = (index % 4) * 5 - 10; // -10, -5, 0, 5
+                return {
+                    id: pin.id,
+                    name: pin.name,
+                    type: pin.type,
+                    slug: pin.slug,
+                    style: {
+                      top: `${15 + (index % 3) * 25}%`,
+                      left: `${15 + (index % 2) * 50 + horizontalJitter}%`,
+                      animationDelay: `${index * 0.15}s`,
+                    },
+                }
+             });
         case 'all':
         default:
             filteredVenues = data.map.pins;
             break;
     }
 
-    return filteredVenues.slice(0, 6).map((pin, index) => ({
-      id: pin.id,
-      name: pin.name,
-      type: pin.type,
-      slug: pin.slug,
-      style: {
-        top: `${15 + (index % 3) * 25}%`,
-        left: `${15 + (index % 2) * 50 + Math.random() * 10 - 5}%`,
-        animationDelay: `${index * 0.15}s`,
-      },
-    }));
+    return filteredVenues.slice(0, 6).map((pin, index) => {
+      const horizontalJitter = (index % 4) * 5 - 10; // -10, -5, 0, 5
+      return {
+        id: pin.id,
+        name: pin.name,
+        type: pin.type,
+        slug: pin.slug,
+        style: {
+          top: `${15 + (index % 3) * 25}%`,
+          left: `${15 + (index % 2) * 50 + horizontalJitter}%`,
+          animationDelay: `${index * 0.15}s`,
+        },
+      }
+    });
 }
 
 export function ARPinLayer({ activeLayer }: ARPinLayerProps) {
