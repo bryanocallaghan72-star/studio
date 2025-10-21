@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Map } from "lucide-react";
@@ -16,9 +16,11 @@ export function IykykVibeMap() {
   const initialCategory = searchParams.get('category') || 'All';
   const [activeTab, setActiveTab] = useState(initialCategory);
 
-  const filteredPins = venues.filter(pin => {
-    return activeTab === 'All' || pin.type === activeTab;
-  });
+  const filteredPins = useMemo(() => {
+    return venues.filter(pin => {
+      return activeTab === 'All' || pin.type === activeTab;
+    });
+  }, [activeTab]);
 
   return (
     <section>
