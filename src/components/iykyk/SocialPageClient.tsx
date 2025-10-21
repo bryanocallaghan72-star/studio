@@ -17,7 +17,7 @@ export function SocialPageClient() {
                 <div>
                     <h2 className="text-3xl font-bold tracking-tight">iykyk Social</h2>
                     <p className="text-muted-foreground mt-1">
-                        Find your people. Join an activity or create your own.
+                        Join a vibe, or start one yourself.
                     </p>
                 </div>
                 <Button>
@@ -82,4 +82,3 @@ export function SocialPageClient() {
         </section>
     );
 }
-
