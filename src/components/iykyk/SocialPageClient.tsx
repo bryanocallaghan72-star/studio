@@ -1,5 +1,5 @@
 
-"use client";
+'use client';
 
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +12,31 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Progress } from "../ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../ui/dialog";
 import { SocialActivity } from "@/lib/data";
+import { cn } from "@/lib/utils";
+
+const ParticipantAvatars = ({ avatars }: { avatars: string[] }) => {
+    return (
+        <div className="flex -space-x-2">
+            {avatars.slice(0, 3).map((avatar, index) => (
+                <Avatar key={index} className="h-6 w-6 border-2 border-card">
+                    <AvatarImage src={avatar} />
+                    <AvatarFallback>{index}</AvatarFallback>
+                </Avatar>
+            ))}
+        </div>
+    );
+};
+
+const UrgencyBadge = ({ participants, maxParticipants }: { participants: number, maxParticipants: number }) => {
+    const spotsLeft = maxParticipants - participants;
+    if (spotsLeft === 1) {
+        return <Badge variant="destructive" className="animate-pulse">1 Spot Left!</Badge>;
+    }
+    if (spotsLeft > 1 && spotsLeft / maxParticipants <= 0.25) {
+        return <Badge variant="secondary" className="bg-amber-500/20 text-amber-500 border-amber-500/30">Almost Full</Badge>
+    }
+    return null;
+}
 
 export function SocialPageClient() {
     const [selectedActivity, setSelectedActivity] = useState<SocialActivity | null>(null);
@@ -49,7 +74,7 @@ export function SocialPageClient() {
                                         <div className="text-sm font-semibold text-muted-foreground">{activity.time}</div>
                                     </div>
                                     <CardTitle>{activity.title}</CardTitle>
-                                    <CardDescription className="mt-1">{activity.description}</CardDescription>
+                                    <CardDescription className="mt-1 line-clamp-2 h-[40px]">{activity.description}</CardDescription>
                                  </CardHeader>
                                  <CardContent className="p-0 mt-4 flex-grow flex flex-col">
                                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
@@ -59,13 +84,18 @@ export function SocialPageClient() {
 
                                     <div className="flex-grow" />
 
-                                    <div className="space-y-3 mt-4">
-                                         <div>
-                                            <div className="flex justify-between items-center mb-1">
-                                                <span className="text-sm font-medium text-muted-foreground">Participants</span>
-                                                <span className="text-sm font-bold">{activity.participants}/{activity.maxParticipants}</span>
+                                    <div className="space-y-4 mt-auto">
+                                        <div>
+                                            <div className="flex justify-between items-center mb-2">
+                                                <ParticipantAvatars avatars={activity.participantAvatars} />
+                                                <UrgencyBadge participants={activity.participants} maxParticipants={activity.maxParticipants} />
                                             </div>
                                             <Progress value={progress} className="h-2"/>
+                                            <div className="flex justify-between items-center mt-1">
+                                                <span className="text-xs font-medium text-muted-foreground">
+                                                    {activity.participants}/{activity.maxParticipants} joined
+                                                </span>
+                                            </div>
                                         </div>
 
                                         <div className="flex items-center justify-between">

@@ -24,6 +24,7 @@ export type SocialActivity = {
     participants: number;
     maxParticipants: number;
     category: keyof typeof appData.categories;
+    participantAvatars: string[];
 };
 
 export const appData = {
@@ -35,9 +36,10 @@ export const appData = {
         time: '7:00 AM',
         location: 'Grassy Knoll, North Bondi',
         creator: { id: 'lucas', name: 'Lucas', avatar: 'https://github.com/lucas.png' },
-        participants: 5,
+        participants: 8,
         maxParticipants: 10,
         category: 'Health & Fitness',
+        participantAvatars: ['https://github.com/alice.png', 'https://github.com/jay.png', 'https://github.com/shannon.png', 'https://github.com/kevin.png'],
     },
     {
         id: 'social-2',
@@ -49,6 +51,7 @@ export const appData = {
         participants: 1,
         maxParticipants: 4,
         category: 'Vibes',
+        participantAvatars: [],
     },
     {
         id: 'social-3',
@@ -60,6 +63,7 @@ export const appData = {
         participants: 2,
         maxParticipants: 4,
         category: 'Brunch',
+        participantAvatars: ['https://github.com/kevin.png'],
     },
     {
         id: 'social-4',
@@ -71,6 +75,7 @@ export const appData = {
         participants: 1,
         maxParticipants: 2,
         category: 'Sushi',
+        participantAvatars: [],
     },
   ] as SocialActivity[],
   arDrops: [
@@ -873,4 +878,5 @@ export const appData = {
     
 
     
+
 
