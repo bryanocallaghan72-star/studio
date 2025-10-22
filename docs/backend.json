@@ -224,6 +224,89 @@
         "name",
         "description"
       ]
+    },
+    "SocialActivity": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Social Activity",
+      "type": "object",
+      "description": "Represents a real-time social activity or event created by a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the social activity."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the social activity (e.g., 'Spikeball at 4pm')."
+        },
+        "hostId": {
+          "type": "string",
+          "description": "The ID of the user hosting the activity."
+        },
+        "hostUsername": {
+          "type": "string",
+          "description": "The denormalized username of the host for easy display."
+        },
+        "locationText": {
+          "type": "string",
+          "description": "A descriptive location for the activity (e.g., 'Middle of Bondi Beach')."
+        },
+        "time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The scheduled time for the activity."
+        },
+        "maxParticipants": {
+          "type": "number",
+          "description": "The maximum number of participants allowed."
+        },
+        "currentParticipants": {
+          "type": "number",
+          "description": "The current count of joined participants."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the activity."
+        }
+      },
+      "required": [
+        "title",
+        "hostId",
+        "hostUsername",
+        "locationText",
+        "time",
+        "maxParticipants"
+      ]
+    },
+    "SocialParticipant": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Social Participant",
+      "type": "object",
+      "description": "Represents a user's participation status in a social activity.",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user joining or requesting to join."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "joined",
+            "requested"
+          ],
+          "description": "The participation status of the user."
+        },
+        "joinedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the user joined or requested."
+        }
+      },
+      "required": [
+        "userId",
+        "status",
+        "joinedAt"
+      ]
     }
   },
   "auth": {
@@ -317,8 +400,46 @@
             }
           ]
         }
+      },
+      {
+        "path": "/socials/{socialId}",
+        "definition": {
+          "entityName": "SocialActivity",
+          "schema": {
+            "$ref": "#/backend/entities/SocialActivity"
+          },
+          "description": "A top-level collection for user-created social activities. Allows for easy querying of all active events.",
+          "params": [
+            {
+              "name": "socialId",
+              "description": "The unique identifier for the social activity."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/socials/{socialId}/participants/{userId}",
+        "definition": {
+          "entityName": "SocialParticipant",
+          "schema": {
+            "$ref": "#/backend/entities/SocialParticipant"
+          },
+          "description": "Manages participants for a specific social activity. The document ID is the user's ID for easy lookup.",
+          "params": [
+            {
+              "name": "socialId",
+              "description": "The unique identifier for the social activity."
+            },
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user who is a participant."
+            }
+          ]
+        }
       }
     ],
-    "reasoning": "The Firestore structure is designed to support iykyk's real-time cultural portal concept. It prioritizes efficient querying for features like the 'Fire' feed by using a top-level denormalized '/deals' collection. This avoids slow, expensive 'fan-out' queries that would be required if deals were nested under each venue. Other entities like users, venues, and communities are structured for clear access patterns and scalable security rules.\n\n**Authorization Independence (Denormalization):**\n\n*   Authorization is implemented using path-based ownership for private user data and membership maps for collaborative data. Where access to a subcollection depends on attributes of a parent collection, these attributes are denormalized into the subcollection documents. This eliminates the need for `get()` calls in security rules, promoting atomic operations and simplifying debugging.\n\n**QAPs (Queryability and Security):**\n\n*   **Segregation:** Data with different security requirements is stored in separate collections. For example, user-owned data resides under `/users/{userId}`, while venue and community data are stored in top-level collections with appropriate security rules.\n*   **Membership Maps:** Communities utilize a `members` map to manage user roles, enabling secure listing of community members and controlling access to community-specific data.\n\n**Explanation of Collections:**\n\n*   `/users/{userId}`: Stores user profiles, providing a dedicated path for user-specific data and simplifying ownership-based security rules.\n*   `/venues/{venueId}`: Stores venue information as top-level entities for easy querying.\n*   `/venues/{venueId}/experiences/{experienceId}`: Stores experiences associated with a venue. The `venueId` is denormalized for authorization independence.\n*   `/deals/{dealId}`: A denormalized, top-level collection for all deals and 'Fire' items. This is crucial for the performance of the 'iykyk Fire' feed, allowing a single query to fetch all relevant, time-sensitive items across all venues.\n*   `/communities/{communityId}`: Stores community information, with a `members` map for role-based access control."
+    "reasoning": "The Firestore structure is designed to support iykyk's real-time cultural portal concept. It prioritizes efficient querying for features like the 'Fire' feed by using a top-level denormalized '/deals' collection. A new top-level '/socials' collection is added for real-time user-generated events, separating them from long-term themed communities. This allows for efficient querying of all active social gatherings. Subcollections are used for managing participants in a scalable way.\n\n**Authorization Independence (Denormalization):**\n\n*   Authorization is implemented using path-based ownership for private user data and membership maps for collaborative data. Where access to a subcollection depends on attributes of a parent collection, these attributes are denormalized into the subcollection documents. This eliminates the need for `get()` calls in security rules, promoting atomic operations and simplifying debugging.\n\n**QAPs (Queryability and Security):**\n\n*   **Segregation:** Data with different security requirements is stored in separate collections. For example, user-owned data resides under `/users/{userId}`, while venue and community data are stored in top-level collections with appropriate security rules.\n*   **Membership Maps:** Communities utilize a `members` map to manage user roles, enabling secure listing of community members and controlling access to community-specific data.\n\n**Explanation of Collections:**\n\n*   `/users/{userId}`: Stores user profiles, providing a dedicated path for user-specific data and simplifying ownership-based security rules.\n*   `/venues/{venueId}`: Stores venue information as top-level entities for easy querying.\n*   `/venues/{venueId}/experiences/{experienceId}`: Stores experiences associated with a venue. The `venueId` is denormalized for authorization independence.\n*   `/deals/{dealId}`: A denormalized, top-level collection for all deals and 'Fire' items. This is crucial for the performance of the 'iykyk Fire' feed, allowing a single query to fetch all relevant, time-sensitive items across all venues.\n*   `/communities/{communityId}`: Stores community information, with a `members` map for role-based access control.\n*   `/socials/{socialId}`: A new top-level collection for user-created, real-time social activities ('Squads'), allowing for efficient global queries on active events.\n*   `/socials/{socialId}/participants/{userId}`: A subcollection to manage requests and joined members for a social activity, enabling clear security rules for joining and viewing participants."
   }
 }
+
+    
