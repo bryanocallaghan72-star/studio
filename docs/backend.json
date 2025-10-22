@@ -370,9 +370,21 @@
             "type": "string",
             "format": "uri"
           }
+        },
+        "area": {
+          "type": "string",
+          "description": "The general area or suburb of the stay (e.g., 'Bondi', 'Manly')."
+        },
+        "latitude": {
+          "type": "number",
+          "description": "The latitude coordinate for map plotting."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "The longitude coordinate for map plotting."
         }
       },
-      "required": ["id", "title", "pricePerNight", "creatorId", "bookingUrl", "primaryImageUrl"]
+      "required": ["id", "title", "pricePerNight", "creatorId", "bookingUrl", "primaryImageUrl", "area", "latitude", "longitude"]
     },
     "SavedStay": {
       "title": "Saved Stay",
@@ -499,5 +511,3 @@
     "reasoning": "The Firestore structure is designed to support iykyk's real-time cultural portal concept. It prioritizes efficient querying for features like the 'Fire' feed by using a top-level denormalized '/deals' collection. A new top-level '/socials' collection is added for real-time user-generated events, separating them from long-term themed communities. This allows for efficient querying of all active social gatherings. Subcollections are used for managing participants in a scalable way.\n\n**Authorization Independence (Denormalization):**\n\n*   Authorization is implemented using path-based ownership for private user data and membership maps for collaborative data. Where access to a subcollection depends on attributes of a parent collection, these attributes are denormalized into the subcollection documents. This eliminates the need for `get()` calls in security rules, promoting atomic operations and simplifying debugging.\n\n**QAPs (Queryability and Security):**\n\n*   **Segregation:** Data with different security requirements is stored in separate collections. For example, user-owned data resides under `/users/{userId}`, while venue and community data are stored in top-level collections with appropriate security rules.\n*   **Membership Maps:** Communities utilize a `members` map to manage user roles, enabling secure listing of community members and controlling access to community-specific data.\n\n**Explanation of Collections:**\n\n*   `/users/{userId}`: Stores user profiles, providing a dedicated path for user-specific data and simplifying ownership-based security rules. User activity like claimed deals and joined socials are tracked in subcollections for scalability.\n*   `/venues/{venueId}`: Stores venue information as top-level entities for easy querying.\n*   `/venues/{venueId}/experiences/{experienceId}`: Stores experiences associated with a venue. The `venueId` is denormalized for authorization independence.\n*   `/deals/{dealId}`: A denormalized, top-level collection for all deals and 'Fire' items. This is crucial for the performance of the 'iykyk Fire' feed, allowing a single query to fetch all relevant, time-sensitive items across all venues.\n*   `/communities/{communityId}`: Stores community information, with a `members` map for role-based access control.\n*   `/socials/{socialId}`: A new top-level collection for user-created, real-time social activities ('Squads'), allowing for efficient global queries on active events.\n*   `/socials/{socialId}/participants/{userId}`: A subcollection to manage requests and joined members for a social activity, enabling clear security rules for joining and viewing participants."
   }
 }
-
-    
