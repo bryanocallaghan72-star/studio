@@ -346,6 +346,15 @@
         "description": { "type": "string" },
         "pricePerNight": { "type": "number" },
         "creatorId": { "type": "string" },
+        "creatorName": { 
+          "type": "string",
+          "description": "Denormalized creator name for efficient querying."
+        },
+        "creatorAvatarUrl": { 
+          "type": "string", 
+          "format": "uri",
+          "description": "Denormalized creator avatar URL for efficient querying."
+        },
         "bookingUrl": { "type": "string", "format": "uri" },
         "isFlashStay": { "type": "boolean" },
         "availableUntil": { "type": "string", "format": "date-time" }
