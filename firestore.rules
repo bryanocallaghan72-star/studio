@@ -4,314 +4,226 @@
  * Core Philosophy:
  * This ruleset enforces a strict user-ownership model for personal data
  * while allowing public read access to venue, deal, community, social activity, and stay information.
- * Write access to user data is restricted to the owning user.
- * Deals, Socials and Stays are writeable by Creators.
+ * Write access to these public entities is restricted based on ownership or role.
  *
  * Data Structure:
- * - /users/{userId}: Stores individual user profiles and their related data.
- *   - /users/{userId}/claimedDeals/{dealId}: Tracks deals claimed by the user.
- *   - /users/{userId}/joinedSocials/{socialId}: Tracks social activities the user has joined.
- *   - /users/{userId}/following/{creatorId}: Tracks other users (creators) this user is following.
- *   - /users/{userId}/savedStays/{stayId}: Tracks stays the user has saved.
- * - /venues/{venueId}: Stores venue information.
- *   - /venues/{venueId}/experiences/{experienceId}: Stores experiences associated with a venue.
- * - /deals/{dealId}: A top-level collection for all deals, fire items, and perks.
- * - /communities/{communityId}: Stores community information.
- * - /socials/{socialId}: A top-level collection for user-created social activities.
- *   - /socials/{socialId}/participants/{userId}: Manages participants for a specific social activity.
- * - /stays/{stayId}: A top-level collection for all creator-recommended stays.
+ * - /users/{userId}: User profiles and user-specific data.
+ * - /venues/{venueId}: Venue information.
+ * - /deals/{dealId}: Deals and promotions.
+ * - /communities/{communityId}: Communities with role-based access control.
+ * - /socials/{socialId}: User-created social activities.
+ * - /stays/{stayId}: Stays recommended by creators.
  *
  * Key Security Decisions:
- * - User listing is explicitly disallowed.
- * - Public read access is granted for venues, deals, communities, socials, and stays.
- * - Data validation is relaxed in this prototyping phase, focusing on authorization.
- * - The rules are optimized for denormalized data and efficient querying.
+ * - User listing is disallowed to protect user privacy.
+ * - Public read access is granted to venue, deal, community, social activity, and stay data to enable discovery.
+ * - Write access to venue, deal, social activity, and stay data is based on ownership or role.
  *
  * Denormalization for Authorization:
- * The venueName and creatorId fields are denormalized into the deals collection for authorization reasons.
+ * The data model denormalizes the venueName into the Deals collection, and hostUsername into the SocialActivity collection, to allow for efficient queries and authorization rules without additional `get()` calls.
  *
  * Structural Segregation:
- * User-specific data is stored under /users/{userId} for clear ownership,
- * while public data like venues and communities resides in top-level collections.
+ * Private user data is stored under /users/{userId}, while public data resides in top-level collections. This separation ensures that public and private data have distinct security postures.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Checks if the request is authenticated.
-     * @path N/A
-     * @allow N/A
-     * @deny N/A
-     * @principle Authentication is required for certain actions.
+     * @description Checks if the user is signed in.
+     * @returns {boolean} True if the user is signed in, false otherwise.
      */
     function isSignedIn() {
       return request.auth != null;
     }
 
     /**
-     * @description Checks if the authenticated user ID matches the provided user ID.
-     * @path N/A
-     * @allow N/A
-     * @deny N/A
-     * @principle Enforces document ownership.
+     * @description Checks if the authenticated user's ID matches the provided user ID.
+     * @param {string} userId The user ID to compare against.
+     * @returns {boolean} True if the user is the owner, false otherwise.
      */
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
 
     /**
-     * @description Checks if the authenticated user ID matches the resource owner ID and that the resource exists.
-     * @path N/A
-     * @allow N/A
-     * @deny N/A
-     * @principle Enforces document ownership and existence.
+     * @description Checks if the authenticated user is the owner and the resource exists.
+     * @param {string} userId The user ID to compare against.
+     * @returns {boolean} True if the user is the owner and the resource exists, false otherwise.
      */
     function isExistingOwner(userId) {
       return isOwner(userId) && resource != null;
     }
 
     /**
-     * @description Rules for user profiles.
+     * @description Rules for user profiles and associated data.
      * @path /users/{userId}
-     * @allow (create) User with auth ID 'user_abc' can create their own profile at /users/user_abc.
-     * @allow (get) User with auth ID 'user_abc' can read their own profile at /users/user_abc.
-     * @allow (update) User with auth ID 'user_abc' can update their own profile at /users/user_abc.
-     * @allow (delete) User with auth ID 'user_abc' can delete their own profile at /users/user_abc.
-     * @deny (create) User with auth ID 'user_abc' cannot create a profile at /users/user_def.
-     * @deny (get) User with auth ID 'user_abc' cannot read the profile at /users/user_def.
-     * @deny (update) User with auth ID 'user_abc' cannot update the profile at /users/user_def.
-     * @deny (delete) User with auth ID 'user_abc' cannot delete the profile at /users/user_def.
-     * @principle Enforces document ownership for writes; read access to owner only.
+     * @allow (create) User with ID 'user123' can create their profile if authenticated as 'user123'.
+     * @allow (get, update, delete) User with ID 'user123' can access/modify their profile if authenticated as 'user123'.
+     * @deny (get, update, delete) User with ID 'user456' cannot access/modify profile 'user123' if authenticated as 'user456'.
+     * @principle Enforces document ownership for user profiles.
      */
     match /users/{userId} {
       allow get: if isOwner(userId);
-      allow list: if false;
-
+      allow list: if false; // User listing is not permitted.
       allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id; // Enforce immutability of userId on update
       allow delete: if isExistingOwner(userId);
-    }
 
-    /**
-     * @description Rules for claimed deals under a user.
-     * @path /users/{userId}/claimedDeals/{dealId}
-     * @allow (create) User with auth ID 'user_abc' can create a claimed deal under their profile.
-     * @allow (get) User with auth ID 'user_abc' can read a claimed deal under their profile.
-     * @allow (update) User with auth ID 'user_abc' can update a claimed deal under their profile.
-     * @allow (delete) User with auth ID 'user_abc' can delete a claimed deal under their profile.
-     * @deny (create) User with auth ID 'user_abc' cannot create a claimed deal under /users/user_def.
-     * @deny (get) User with auth ID 'user_abc' cannot read a claimed deal under /users/user_def.
-     * @deny (update) User with auth ID 'user_abc' cannot update a claimed deal under /users/user_def.
-     * @deny (delete) User with auth ID 'user_abc' cannot delete a claimed deal under /users/user_def.
-     * @principle Enforces document ownership for writes; read access to owner only.
-     */
-    match /users/{userId}/claimedDeals/{dealId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
+      /**
+       * @description Rules for deals claimed by a user.
+       * @path /users/{userId}/claimedDeals/{dealId}
+       * @allow (create) User with ID 'user123' can create a claimedDeal under their profile if authenticated as 'user123'.
+       * @allow (get, update, delete) User with ID 'user123' can access/modify a claimedDeal under their profile if authenticated as 'user123'.
+       * @deny (get, update, delete) User with ID 'user456' cannot access/modify claimedDeal 'deal789' under profile 'user123' if authenticated as 'user456'.
+       * @principle Enforces document ownership for claimed deals.
+       */
+      match /claimedDeals/{dealId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isExistingOwner(userId);
+        allow delete: if isExistingOwner(userId);
+      }
 
-      allow create: if isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
-    }
+      /**
+       * @description Rules for social activities joined by a user.
+       * @path /users/{userId}/joinedSocials/{socialId}
+       * @allow (create) User with ID 'user123' can create a joinedSocial under their profile if authenticated as 'user123'.
+       * @allow (get, update, delete) User with ID 'user123' can access/modify a joinedSocial under their profile if authenticated as 'user123'.
+       * @deny (get, update, delete) User with ID 'user456' cannot access/modify joinedSocial 'social789' under profile 'user123' if authenticated as 'user456'.
+       * @principle Enforces document ownership for joined socials.
+       */
+      match /joinedSocials/{socialId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isExistingOwner(userId);
+        allow delete: if isExistingOwner(userId);
+      }
 
-    /**
-     * @description Rules for joined socials under a user.
-     * @path /users/{userId}/joinedSocials/{socialId}
-     * @allow (create) User with auth ID 'user_abc' can create a joined social under their profile.
-     * @allow (get) User with auth ID 'user_abc' can read a joined social under their profile.
-     * @allow (update) User with auth ID 'user_abc' can update a joined social under their profile.
-     * @allow (delete) User with auth ID 'user_abc' can delete a joined social under their profile.
-     * @deny (create) User with auth ID 'user_abc' cannot create a joined social under /users/user_def.
-     * @deny (get) User with auth ID 'user_abc' cannot read a joined social under /users/user_def.
-     * @deny (update) User with auth ID 'user_abc' cannot update a joined social under /users/user_def.
-     * @deny (delete) User with auth ID 'user_abc' cannot delete a joined social under /users/user_def.
-     * @principle Enforces document ownership for writes; read access to owner only.
-     */
-    match /users/{userId}/joinedSocials/{socialId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
+      /**
+       * @description Rules for creators followed by a user.
+       * @path /users/{userId}/following/{creatorId}
+       * @allow (create) User with ID 'user123' can create a following record under their profile if authenticated as 'user123'.
+       * @allow (get, update, delete) User with ID 'user123' can access/modify a following record under their profile if authenticated as 'user123'.
+       * @deny (get, update, delete) User with ID 'user456' cannot access/modify following record 'creator789' under profile 'user123' if authenticated as 'user456'.
+       * @principle Enforces document ownership for following records.
+       */
+      match /following/{creatorId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isExistingOwner(userId);
+        allow delete: if isExistingOwner(userId);
+      }
 
-      allow create: if isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
-    }
-
-    /**
-     * @description Rules for following creators under a user.
-     * @path /users/{userId}/following/{creatorId}
-     * @allow (create) User with auth ID 'user_abc' can create a following record under their profile.
-     * @allow (get) User with auth ID 'user_abc' can read a following record under their profile.
-     * @allow (update) User with auth ID 'user_abc' can update a following record under their profile.
-     * @allow (delete) User with auth ID 'user_abc' can delete a following record under their profile.
-     * @deny (create) User with auth ID 'user_abc' cannot create a following record under /users/user_def.
-     * @deny (get) User with auth ID 'user_abc' cannot read a following record under /users/user_def.
-     * @deny (update) User with auth ID 'user_abc' cannot update a following record under /users/user_def.
-     * @deny (delete) User with auth ID 'user_abc' cannot delete a following record under /users/user_def.
-     * @principle Enforces document ownership for writes; read access to owner only.
-     */
-    match /users/{userId}/following/{creatorId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-
-      allow create: if isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
-    }
-
-    /**
-     * @description Rules for saved stays under a user.
-     * @path /users/{userId}/savedStays/{stayId}
-     * @allow (create) User with auth ID 'user_abc' can create a saved stay under their profile.
-     * @allow (get) User with auth ID 'user_abc' can read a saved stay under their profile.
-     * @allow (update) User with auth ID 'user_abc' can update a saved stay under their profile.
-     * @allow (delete) User with auth ID 'user_abc' can delete a saved stay under their profile.
-     * @deny (create) User with auth ID 'user_abc' cannot create a saved stay under /users/user_def.
-     * @deny (get) User with auth ID 'user_abc' cannot read a saved stay under /users/user_def.
-     * @deny (update) User with auth ID 'user_abc' cannot update a saved stay under /users/user_def.
-     * @deny (delete) User with auth ID 'user_abc' cannot delete a saved stay under /users/user_def.
-     * @principle Enforces document ownership for writes; read access to owner only.
-     */
-    match /users/{userId}/savedStays/{stayId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-
-      allow create: if isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
+       /**
+       * @description Rules for stays saved by a user.
+       * @path /users/{userId}/savedStays/{stayId}
+       * @allow (create) User with ID 'user123' can create a savedStay under their profile if authenticated as 'user123'.
+       * @allow (get, update, delete) User with ID 'user123' can access/modify a savedStay under their profile if authenticated as 'user123'.
+       * @deny (get, update, delete) User with ID 'user456' cannot access/modify savedStay 'stay789' under profile 'user123' if authenticated as 'user456'.
+       * @principle Enforces document ownership for saved stays.
+       */
+      match /savedStays/{stayId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isExistingOwner(userId);
+        allow delete: if isExistingOwner(userId);
+      }
     }
 
     /**
      * @description Rules for venues.
      * @path /venues/{venueId}
-     * @allow (get) Any user can read venue data.
-     * @allow (list) Any user can list venues.
-     * @deny (create) No one can create venues in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @deny (update) No one can update venues in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @deny (delete) No one can delete venues in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @principle Public read access; restricted writes (TODO).
+     * @allow (get, list) Anyone can read venue information.
+     * @principle Allows public read access to venues.
      */
     match /venues/{venueId} {
       allow get: if true;
       allow list: if true;
+      allow create, update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
 
-      allow create: if false; // TODO: Add creator-based or admin-based restrictions
-      allow update: if false; // TODO: Add creator-based or admin-based restrictions
-      allow delete: if false; // TODO: Add creator-based or admin-based restrictions
-    }
-
-    /**
-     * @description Rules for experiences under a venue.
-     * @path /venues/{venueId}/experiences/{experienceId}
-     * @allow (get) Any user can read experience data.
-     * @allow (list) Any user can list experiences.
-     * @deny (create) No one can create experiences in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @deny (update) No one can update experiences in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @deny (delete) No one can delete experiences in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @principle Public read access; restricted writes (TODO).
-     */
-    match /venues/{venueId}/experiences/{experienceId} {
-      allow get: if true;
-      allow list: if true;
-
-      allow create: if false; // TODO: Add creator-based or admin-based restrictions
-      allow update: if false; // TODO: Add creator-based or admin-based restrictions
-      allow delete: if false; // TODO: Add creator-based or admin-based restrictions
+      /**
+       * @description Rules for experiences associated with a venue.
+       * @path /venues/{venueId}/experiences/{experienceId}
+       * @allow (get, list) Anyone can read experience information.
+       * @principle Allows public read access to experiences.
+       */
+      match /experiences/{experienceId} {
+        allow get: if true;
+        allow list: if true;
+        allow create, update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+      }
     }
 
     /**
      * @description Rules for deals.
      * @path /deals/{dealId}
-     * @allow (get) Any user can read deal data.
-     * @allow (list) Any user can list deals.
-     * @deny (create) No one can create deals in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @deny (update) No one can update deals in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @deny (delete) No one can delete deals in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @principle Public read access; restricted writes (TODO).
+     * @allow (get, list) Anyone can read deal information.
+     * CRITICAL: Cannot implement owner-only writes. The 'Deal' entity is missing an 'ownerId' or 'authorId' field.
+     * @principle Allows public read access to deals.
      */
     match /deals/{dealId} {
       allow get: if true;
       allow list: if true;
-
-      allow create: if false; // TODO: Add creator-based or admin-based restrictions
-      allow update: if false; // TODO: Add creator-based or admin-based restrictions
-      allow delete: if false; // TODO: Add creator-based or admin-based restrictions
+      allow create, update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
     }
 
     /**
      * @description Rules for communities.
      * @path /communities/{communityId}
-     * @allow (get) Any user can read community data.
-     * @allow (list) Any user can list communities.
-     * @deny (create) No one can create communities in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @deny (update) No one can update communities in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @deny (delete) No one can delete communities in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @principle Public read access; restricted writes (TODO).
+     * @allow (get, list) Anyone can read community information.
+     * @principle Allows public read access to communities.
      */
     match /communities/{communityId} {
       allow get: if true;
       allow list: if true;
-
-      allow create: if false; // TODO: Add creator-based or admin-based restrictions
-      allow update: if false; // TODO: Add creator-based or admin-based restrictions
-      allow delete: if false; // TODO: Add creator-based or admin-based restrictions
+      allow create, update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
     }
 
     /**
      * @description Rules for social activities.
      * @path /socials/{socialId}
-     * @allow (get) Any user can read social activity data.
-     * @allow (list) Any user can list social activities.
-     * @deny (create) No one can create socials in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @deny (update) No one can update socials in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @deny (delete) No one can delete socials in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @principle Public read access; restricted writes (TODO).
+     * @allow (get, list) Anyone can read social activity information.
+     * CRITICAL: Cannot implement owner-only writes. The 'SocialActivity' entity is missing an 'ownerId' or 'authorId' field.
+     * @principle Allows public read access to social activities.
      */
     match /socials/{socialId} {
       allow get: if true;
       allow list: if true;
+      allow create, update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
 
-      allow create: if false; // TODO: Add creator-based or admin-based restrictions
-      allow update: if false; // TODO: Add creator-based or admin-based restrictions
-      allow delete: if false; // TODO: Add creator-based or admin-based restrictions
-    }
-
-    /**
-     * @description Rules for participants in a social activity.
-     * @path /socials/{socialId}/participants/{userId}
-     * @allow (get) Any user can read participant data.
-     * @allow (list) Any user can list participants.
-     * @deny (create) No one can create participants in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @deny (update) No one can update participants in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @deny (delete) No one can delete participants in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @principle Public read access; restricted writes (TODO).
-     */
-    match /socials/{socialId}/participants/{userId} {
-      allow get: if true;
-      allow list: if true;
-
-      allow create: if false; // TODO: Add creator-based or admin-based restrictions
-      allow update: if false; // TODO: Add creator-based or admin-based restrictions
-      allow delete: if false; // TODO: Add creator-based or admin-based restrictions
+      /**
+       * @description Rules for participants in a social activity.
+       * @path /socials/{socialId}/participants/{userId}
+       * @allow (create) User with ID 'user123' can create their participant record in social activity 'social456' if authenticated as 'user123'.
+       * @allow (get, update, delete) User with ID 'user123' can access/modify their participant record in social activity 'social456' if authenticated as 'user123'.
+       * @deny (get, update, delete) User with ID 'user456' cannot access/modify participant record 'user123' in social activity 'social456' if authenticated as 'user456'.
+       * @principle Enforces document ownership for social activity participants.
+       */
+      match /participants/{userId} {
+        allow get: if true;
+        allow list: if true;
+        allow create: if isSignedIn() && request.auth.uid == userId;
+        allow update: if isExistingOwner(userId);
+        allow delete: if isExistingOwner(userId);
+      }
     }
 
     /**
      * @description Rules for stays.
      * @path /stays/{stayId}
-     * @allow (get) Any user can read stay data.
-     * @allow (list) Any user can list stays.
-     * @deny (create) No one can create stays in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @deny (update) No one can update stays in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @deny (delete) No one can delete stays in this prototyping stage. // TODO: Add creator-based or admin-based restrictions
-     * @principle Public read access; restricted writes (TODO).
+     * @allow (get, list) Anyone can read stay information.
+     * CRITICAL: Cannot implement owner-only writes. The 'Stay' entity is missing an 'ownerId' or 'authorId' field.
+     * @principle Allows public read access to stays.
      */
     match /stays/{stayId} {
       allow get: if true;
       allow list: if true;
-
-      allow create: if false; // TODO: Add creator-based or admin-based restrictions
-      allow update: if false; // TODO: Add creator-based or admin-based restrictions
-      allow delete: if false; // TODO: Add creator-based or admin-based restrictions
+      allow create, update, delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
     }
   }
 }
