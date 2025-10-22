@@ -357,9 +357,22 @@
         },
         "bookingUrl": { "type": "string", "format": "uri" },
         "isFlashStay": { "type": "boolean" },
-        "availableUntil": { "type": "string", "format": "date-time" }
+        "availableUntil": { "type": "string", "format": "date-time" },
+        "primaryImageUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "The main hero image for the stay, shown in list views."
+        },
+        "imageUrls": {
+          "type": "array",
+          "description": "An array of additional image URLs for the stay's gallery.",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
       },
-      "required": ["id", "title", "pricePerNight", "creatorId", "bookingUrl"]
+      "required": ["id", "title", "pricePerNight", "creatorId", "bookingUrl", "primaryImageUrl"]
     },
     "SavedStay": {
       "title": "Saved Stay",
