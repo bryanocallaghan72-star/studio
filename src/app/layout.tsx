@@ -27,7 +27,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-         <link rel="preload" href="/_next/static/media/24c595304859a84a-s.p.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
       </head>
       <body className={cn(inter.variable, "font-body antialiased")}>
         <FirebaseClientProvider>
