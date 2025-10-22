@@ -40,11 +40,16 @@ export function ProfilePageClient({ uid }: { uid: string }) {
     return appData.creators.find(creator => creator.id === uid);
   }, [uid]);
 
+  // Determine if a Firestore fetch should happen.
+  // This is the key fix: only fetch if the user is NOT a mock user.
+  const shouldFetchFirestore = !mockUserProfile;
+
   // Firestore reference is now stable thanks to useMemoFirebase
   const userDocRef = useMemoFirebase(() => {
-    if (mockUserProfile || !firestore || !uid) return null;
+    // Only create a reference if we should fetch.
+    if (!shouldFetchFirestore || !firestore || !uid) return null;
     return doc(firestore, 'users', uid);
-  }, [firestore, uid, mockUserProfile]);
+  }, [firestore, uid, shouldFetchFirestore]);
 
   const { data: firestoreUserProfile, isLoading: isFirestoreLoading } = useDoc<WithId<{ username: string; bio?: string }>>(userDocRef);
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
@@ -69,7 +74,8 @@ export function ProfilePageClient({ uid }: { uid: string }) {
   const userPins = useShuffledPins(appData.map.pins, 3); 
 
   const isOwner = currentUser && currentUser.uid === uid;
-  const isLoading = mockUserProfile ? false : isFirestoreLoading;
+  // Loading state is only true if we are actually fetching from Firestore.
+  const isLoading = shouldFetchFirestore ? isFirestoreLoading : false;
 
   if (isLoading) {
     return (
