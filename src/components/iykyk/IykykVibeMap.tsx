@@ -25,8 +25,10 @@ export function IykykVibeMap() {
   useEffect(() => {
     // This will run once on component mount to ensure data is in Firestore.
     // It has a check to prevent re-seeding if data already exists.
-    seedVenuesToFirestore();
-  }, []);
+    if (firestore) {
+      seedVenuesToFirestore(firestore);
+    }
+  }, [firestore]);
 
   const venuesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
