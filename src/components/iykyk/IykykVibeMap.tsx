@@ -1,20 +1,43 @@
+
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { Map } from "lucide-react";
+import { Map, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ColorPinSVG } from "./ColorPinSVG";
-import { appData } from "@/lib/data";
+import { appData, seedVenuesToFirestore } from "@/lib/data";
+import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { collection, query, where } from "firebase/firestore";
 
-const { categories, map: { pins: venues } } = appData;
+const { categories } = appData;
+
+type Venue = typeof appData.map.pins[0];
 
 export function IykykVibeMap() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('category') || 'All';
+  const firestore = useFirestore();
+
+  useEffect(() => {
+    // This will run once on component mount to ensure data is in Firestore.
+    // It has a check to prevent re-seeding if data already exists.
+    seedVenuesToFirestore();
+  }, []);
+
+  const venuesQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    const baseQuery = collection(firestore, 'venues');
+    if (activeTab === 'All') {
+      return baseQuery;
+    }
+    return query(baseQuery, where('type', '==', activeTab));
+  }, [firestore, activeTab]);
+
+  const { data: venues, isLoading } = useCollection<Venue>(venuesQuery);
 
   const handleTabChange = (category: string) => {
     const params = new URLSearchParams(searchParams);
@@ -25,12 +48,6 @@ export function IykykVibeMap() {
     }
     router.replace(`${pathname}?${params.toString()}`);
   };
-
-  const filteredPins = useMemo(() => {
-    return venues.filter(pin => {
-      return activeTab === 'All' || pin.type === activeTab;
-    });
-  }, [activeTab]);
 
   return (
     <section>
@@ -111,7 +128,13 @@ export function IykykVibeMap() {
                     </g>
                 </svg>
                 
-                {filteredPins.map(pin => (
+                {isLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-background/50">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                )}
+
+                {venues && venues.map(pin => (
                   <Link key={pin.id} href={`/venue/${pin.slug}`} className="absolute group transform -translate-x-1/2 -translate-y-full cursor-pointer" style={{ left: pin.x, top: pin.y }}>
                     <ColorPinSVG className="w-8 h-8 drop-shadow-lg transition-transform duration-200 group-hover:scale-125" color={categories[pin.type as keyof typeof categories]?.color || '#FF7F50'} />
                     <span className="sr-only">View details for {pin.name}</span>
@@ -125,3 +148,5 @@ export function IykykVibeMap() {
     </section>
   );
 }
+
+    

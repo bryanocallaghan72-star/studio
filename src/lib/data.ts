@@ -1,5 +1,7 @@
 
 import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift, UserPlus, Star } from 'lucide-react';
+import { collection, writeBatch, getDocs, getFirestore } from 'firebase/firestore';
+import { initializeFirebase } from '@/firebase';
 
 export type Community = {
   id: string;
@@ -26,6 +28,34 @@ export type SocialActivity = {
     category: 'Health & Fitness' | 'Vibes' | 'Brunch' | 'Sushi';
     participantAvatars: string[];
 };
+
+// MVP Seeding Function
+export async function seedVenuesToFirestore() {
+    const { firestore } = initializeFirebase();
+    const venuesCollection = collection(firestore, 'venues');
+    const snapshot = await getDocs(venuesCollection);
+    
+    if (!snapshot.empty) {
+        console.log('Venues collection already exists. Seeding skipped.');
+        return { success: true, message: 'Seeding skipped, venues already exist.' };
+    }
+
+    const batch = writeBatch(firestore);
+    appData.map.pins.forEach(venue => {
+        const docRef = collection(firestore, 'venues').doc(venue.slug);
+        batch.set(docRef, venue);
+    });
+
+    try {
+        await batch.commit();
+        console.log('Successfully seeded venues to Firestore.');
+        return { success: true, message: 'Successfully seeded venues to Firestore.' };
+    } catch (error) {
+        console.error('Error seeding venues:', error);
+        return { success: false, message: 'Error seeding venues.' };
+    }
+}
+
 
 export const appData = {
   socialActivities: [
@@ -882,5 +912,7 @@ export const appData = {
 
 
 
+
+    
 
     
