@@ -7,7 +7,7 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Map, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ColorPinSVG } from "./ColorPinSVG";
-import { appData, seedVenuesToFirestore } from "@/lib/data";
+import { appData } from "@/lib/data";
 import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
 import { collection, query, where } from "firebase/firestore";
 
@@ -21,14 +21,6 @@ export function IykykVibeMap() {
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('category') || 'All';
   const firestore = useFirestore();
-
-  useEffect(() => {
-    // This will run once on component mount to ensure data is in Firestore.
-    // It has a check to prevent re-seeding if data already exists.
-    if (firestore) {
-      seedVenuesToFirestore(firestore);
-    }
-  }, [firestore]);
 
   const venuesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
