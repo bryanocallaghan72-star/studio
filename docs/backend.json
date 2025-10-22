@@ -382,6 +382,13 @@
         "longitude": {
           "type": "number",
           "description": "The longitude coordinate for map plotting."
+        },
+        "tags": {
+          "type": "array",
+          "description": "An array of filterable tags (e.g., 'Pool', 'Beachfront').",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": ["id", "title", "pricePerNight", "creatorId", "bookingUrl", "primaryImageUrl", "area", "latitude", "longitude"]
