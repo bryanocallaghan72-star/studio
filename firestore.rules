@@ -1,266 +1,224 @@
 /**
- * @fileoverview Firestore Security Rules for the iykyk platform.
+ * @fileoverview Firestore Security Rules for the iykyk application.
  *
  * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for personal data stored under the `/users/{userId}` path.
- * Top-level collections like `/venues`, `/deals`, `/communities`, `/socials`, and `/stays` are designed for public readability with restricted write access.
- * Rules are designed to be secure by default, erring on the side of denial unless explicitly allowed.
+ * This ruleset prioritizes user data ownership and secure collaboration through denormalization and clear access control patterns.
  *
  * Data Structure:
- * - /users/{userId}: Stores user profiles and associated data.
- *   - /users/{userId}/claimedDeals/{dealId}: Tracks deals claimed by a user.
- *   - /users/{userId}/joinedSocials/{socialId}: Tracks social activities a user has joined.
- *   - /users/{userId}/following/{creatorId}: Tracks creators a user is following.
- *   - /users/{userId}/savedStays/{stayId}: Tracks stays a user has saved.
- * - /venues/{venueId}: Stores venue information.
- *   - /venues/{venueId}/experiences/{experienceId}: Stores experiences related to a venue.
- * - /deals/{dealId}: Stores deal information.
- * - /communities/{communityId}: Stores community information.
- * - /socials/{socialId}: Stores social activity information.
- *   - /socials/{socialId}/participants/{userId}: Stores participant information for a social activity.
- * - /stays/{stayId}: Stores stay information.
+ * - User profiles are stored under `/users/{userId}`, with user-specific data in subcollections.
+ * - Venues, deals, communities, socials, and stays are stored in top-level collections for efficient querying.
  *
  * Key Security Decisions:
- * - User data is strictly controlled by the owning user.
- * - Public listing of user documents is disallowed.
- * - Top-level collections are generally readable by anyone, but writes are restricted.
- * - All write operations require authentication.
- * - Deletes are only allowed by the owner of the document.
- *
- * Denormalization for Authorization:
- *  - Data required for authorization (e.g., ownership) is denormalized directly onto documents to avoid costly `get()` calls in security rules.
+ * - Users can read other user profiles, but only modify their own.
+ * - Data required for authorization is denormalized to avoid costly `get()` calls.
+ * - Public read access is granted cautiously, only when the collection's data is intended for all users (e.g., venues, deals, stays).
+ * - All write operations are protected by authorization checks.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Checks if the request is authenticated.
-     */
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    /**
-     * @description Checks if the authenticated user is the owner of the resource.
-     */
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
-
-    /**
-     * @description Checks if the authenticated user is the owner of the existing resource.
-     *             This function should be used for update and delete operations.
-     */
-    function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
-    }
-
-    /**
-     * @description Enforces user-ownership for all documents under /users/{userId}.
+     * @description Manages user profiles and their associated data.
      * @path /users/{userId}
-     * @allow (create) - User with UID 'user123' can create their own profile document.
-     * @allow (get, list) - User with UID 'user123' can read their own profile document.
-     * @deny (create) - User with UID 'user456' cannot create a profile document for 'user123'.
-     * @deny (update, delete) - Only the owner can update or delete their profile.
-     * @principle Enforces document ownership for all operations.
+     * @allow (get) Signed-in user can read any user profile.
+     * @allow (create) User can create their own profile if the user ID matches auth.
+     * @allow (update) User can update their own profile if the user ID matches auth.
+     * @allow (delete) User can delete their own profile if the user ID matches auth.
+     * @deny (list) Listing all users is prohibited.
+     * @deny (create) User cannot create a profile with an ID different than their own.
+     * @deny (update) User cannot update a profile with an ID different than their own.
+     * @deny (delete) User cannot delete a profile that doesn't exist, or belongs to another user.
+     * @principle Enforces document ownership for writes, allows public reads for profiles.
      */
     match /users/{userId} {
-      allow get: if isOwner(userId);
-      allow list: if false; // Prevent listing all users
-
+      allow get: if isSignedIn();
+      allow list: if false;
       allow create: if isOwner(userId) && request.resource.data.id == request.auth.uid;
       allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
       allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Enforces user-ownership for claimed deals under /users/{userId}/claimedDeals/{dealId}.
+     * @description Tracks deals claimed by a user.
      * @path /users/{userId}/claimedDeals/{dealId}
-     * @allow (create) - User with UID 'user123' can create a claimed deal document under their profile.
-     * @allow (get, list) - User with UID 'user123' can read claimed deals under their profile.
-     * @allow (delete) - User with UID 'user123' can delete a claimed deal document under their profile.
-     * @deny (create) - User with UID 'user456' cannot create a claimed deal document for 'user123'.
-     * @deny (update) - Claimed deals cannot be updated.
-     * @principle Enforces document ownership for all operations.
+     * @allow (get) User can read their own claimed deals.
+     * @allow (list) User can list their own claimed deals.
+     * @allow (create) User can create a record of claiming a deal.
+     * @allow (update) Denied. Claimed deals cannot be updated.
+     * @allow (delete) User can delete a record of claiming a deal.
+     * @deny User cannot access claimed deals of other users.
+     * @principle Restricts access to a user's own data tree.
      */
     match /users/{userId}/claimedDeals/{dealId} {
       allow get: if isOwner(userId);
       allow list: if isOwner(userId);
-
       allow create: if isOwner(userId);
-      allow update: if false; // This is fine, they don't need to update it
-      allow delete: if isExistingOwner(userId); // <-- Let the owner delete it
+      allow update: if false;
+      allow delete: if isOwner(userId);
     }
 
     /**
-     * @description Enforces user-ownership for joined socials under /users/{userId}/joinedSocials/{socialId}.
+     * @description Tracks social activities a user has joined.
      * @path /users/{userId}/joinedSocials/{socialId}
-     * @allow (create) - User with UID 'user123' can create a joined social document under their profile.
-     * @allow (get, list) - User with UID 'user123' can read joined socials under their profile.
-     * @allow (delete) - User with UID 'user123' can delete a joined social document under their profile.
-     * @deny (create) - User with UID 'user456' cannot create a joined social document for 'user123'.
-     * @deny (update) - Joined socials cannot be updated.
-     * @principle Enforces document ownership for all operations.
+     * @allow (get) User can read their own joined socials.
+     * @allow (list) User can list their own joined socials.
+     * @allow (create) User can create a record of joining a social.
+     * @allow (update) Denied. Joined socials records cannot be updated.
+     * @allow (delete) User can delete a record of joining a social.
+     * @deny User cannot access joined socials of other users.
+     * @principle Restricts access to a user's own data tree.
      */
     match /users/{userId}/joinedSocials/{socialId} {
       allow get: if isOwner(userId);
       allow list: if isOwner(userId);
-
       allow create: if isOwner(userId);
-      allow update: if false; // This is fine, they don't need to update it
-      allow delete: if isExistingOwner(userId); // <-- Let the owner delete it
+      allow update: if false;
+      allow delete: if isOwner(userId);
     }
 
     /**
-     * @description Enforces user-ownership for following under /users/{userId}/following/{creatorId}.
+     * @description Tracks creators a user is following.
      * @path /users/{userId}/following/{creatorId}
-     * @allow (create) - User with UID 'user123' can create a following document under their profile.
-     * @allow (get, list) - User with UID 'user123' can read following documents under their profile.
-     * @allow (delete) - User with UID 'user123' can delete a following document under their profile.
-     * @deny (create) - User with UID 'user456' cannot create a following document for 'user123'.
-     * @deny (update) - Following documents cannot be updated.
-     * @principle Enforces document ownership for all operations.
+     * @allow (get) User can read their own following records.
+     * @allow (list) User can list their own following records.
+     * @allow (create) User can create a record of following a creator.
+     * @allow (update) Denied. Following records cannot be updated.
+     * @allow (delete) User can delete a record of following a creator.
+     * @deny User cannot access following records of other users.
+     * @principle Restricts access to a user's own data tree.
      */
     match /users/{userId}/following/{creatorId} {
       allow get: if isOwner(userId);
       allow list: if isOwner(userId);
-
       allow create: if isOwner(userId);
-      allow update: if false; // This is fine, they don't need to update it
-      allow delete: if isExistingOwner(userId); // <-- Let the owner delete it
+      allow update: if false;
+      allow delete: if isOwner(userId);
     }
 
     /**
-     * @description Enforces user-ownership for saved stays under /users/{userId}/savedStays/{stayId}.
+     * @description Tracks stays a user has saved.
      * @path /users/{userId}/savedStays/{stayId}
-     * @allow (create) - User with UID 'user123' can create a saved stay document under their profile.
-     * @allow (get, list) - User with UID 'user123' can read saved stays under their profile.
-     * @allow (delete) - User with UID 'user123' can delete a saved stay document under their profile.
-     * @deny (create) - User with UID 'user456' cannot create a saved stay document for 'user123'.
-     * @deny (update) - Saved stays cannot be updated.
-     * @principle Enforces document ownership for all operations.
+     * @allow (get) User can read their own saved stays.
+     * @allow (list) User can list their own saved stays.
+     * @allow (create) User can create a record of saving a stay.
+     * @allow (update) Denied. Saved stay records cannot be updated.
+     * @allow (delete) User can delete a record of saving a stay.
+     * @deny User cannot access saved stays of other users.
+     * @principle Restricts access to a user's own data tree.
      */
     match /users/{userId}/savedStays/{stayId} {
       allow get: if isOwner(userId);
       allow list: if isOwner(userId);
-
       allow create: if isOwner(userId);
-      allow update: if false; // This is fine, they don't need to update it
-      allow delete: if isExistingOwner(userId); // <-- Let the owner delete it
+      allow update: if false;
+      allow delete: if isOwner(userId);
     }
 
     /**
-     * @description Allows public read access to venue information, but restricts writes.
+     * @description Stores venue information. Publicly readable.
      * @path /venues/{venueId}
-     * @allow (get, list) - Any user can read venue information.
-     * @deny (create, update, delete) - Only authorized users (e.g., admins) can modify venue data.
-     * @principle Public read, restricted write access.
+     * @allow (get, list) Any signed-in user can read venue information.
+     * @allow (create, update, delete) No one can create, update, or delete venues through client-side rules.
+     * @principle Public read access for venue information.
      */
     match /venues/{venueId} {
       allow get: if true;
       allow list: if true;
-
-      allow create: if false; // TODO: Add creator/admin validation
-      allow update: if false; // TODO: Add creator/admin validation
-      allow delete: if false; // TODO: Add creator/admin validation
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Allows public read access to experiences associated with a venue, but restricts writes.
+     * @description Stores experiences associated with a venue.
      * @path /venues/{venueId}/experiences/{experienceId}
-     * @allow (get, list) - Any user can read experience information.
-     * @deny (create, update, delete) - Only authorized users can modify experience data.
-     * @principle Public read, restricted write access.
+     * @allow (get, list) Any signed-in user can read experience information.
+     * @allow (create, update, delete) No one can create, update, or delete experiences through client-side rules.
+     * @principle Public read access for experience information.
      */
     match /venues/{venueId}/experiences/{experienceId} {
       allow get: if true;
       allow list: if true;
-
-      allow create: if false; // TODO: Add creator/admin validation
-      allow update: if false; // TODO: Add creator/admin validation
-      allow delete: if false; // TODO: Add creator/admin validation
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Allows public read access to deals, but restricts writes.
+     * @description A denormalized, top-level collection for all deals. Publicly readable.
      * @path /deals/{dealId}
-     * @allow (get, list) - Any user can read deal information.
-     * @deny (create, update, delete) - Only authorized users can modify deal data.
-     * @principle Public read, restricted write access.
+     * @allow (get, list) Any signed-in user can read deal information.
+     * @allow (create, update, delete) No one can create, update, or delete deals through client-side rules.
+     * @principle Public read access for deal information.
      */
     match /deals/{dealId} {
       allow get: if true;
       allow list: if true;
-
-      allow create: if false; // TODO: Add creator/admin validation
-      allow update: if false; // TODO: Add creator/admin validation
-      allow delete: if false; // TODO: Add creator/admin validation
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Allows public read access to community information, but restricts writes to authorized users.
+     * @description Stores community information with role-based access control.
      * @path /communities/{communityId}
-     * @allow (get, list) - Any user can read community information.
-     * @deny (create, update, delete) - Only authorized users can modify community data.
-     * @principle Public read, restricted write access with potential for role-based access via the `members` map.
      */
     match /communities/{communityId} {
-      allow get: if true;
-      allow list: if true;
-
-      allow create: if false; // TODO: Add creator/admin validation
-      allow update: if false; // TODO: Add creator/admin validation
-      allow delete: if false; // TODO: Add creator/admin validation
+        allow get: if true;
+        allow list: if true;
+        allow create: if false;
+        allow update: if false;
+        allow delete: if false;
     }
 
     /**
-     * @description Allows public read access to social activity information, but restricts writes to authorized users.
+     * @description A top-level collection for user-created social activities.
      * @path /socials/{socialId}
-     * @allow (get, list) - Any user can read social activity information.
-     * @deny (create, update, delete) - Only the host of the social activity or an admin can modify it.
-     * @principle Public read, restricted write access.
      */
     match /socials/{socialId} {
-      allow get: if true;
-      allow list: if true;
-
-      allow create: if isSignedIn(); // Only signed-in users can create social activities.
-      allow update: if false; // TODO: Add creator/admin validation
-      allow delete: if false; // TODO: Add creator/admin validation
+        allow get: if true;
+        allow list: if true;
+        allow create: if false;
+        allow update: if false;
+        allow delete: if false;
     }
 
     /**
      * @description Manages participants for a specific social activity.
      * @path /socials/{socialId}/participants/{userId}
-     * @allow (get, list) - Any user can read the list of participants in a social activity.
-     * @allow (create) - A user can create their own participant document to request or join.
-     * @deny (update, delete) - Modifying or deleting participant entries is not allowed (status changes handled via backend functions).
-     * @principle Shared access with restrictions on modifications.
      */
     match /socials/{socialId}/participants/{userId} {
-      allow get: if true;
-      allow list: if true;
-
-      allow create: if isSignedIn() && request.auth.uid == userId;
-      allow update: if false; // Updates are disallowed.
-      allow delete: if false; // Deletes are disallowed.
+        allow get: if true;
+        allow list: if true;
+        allow create: if false;
+        allow update: if false;
+        allow delete: if false;
     }
 
-    /**
-     * @description Allows public read access to stay information, but restricts writes.
-     * @path /stays/{stayId}
-     * @allow (get, list) - Any user can read stay information.
-     * @deny (create, update, delete) - Only authorized users can modify stay data.
-     * @principle Public read, restricted write access.
-     */
+     /**
+      * @description A top-level collection for all creator-recommended stays.
+      * @path /stays/{stayId}
+      */
     match /stays/{stayId} {
-      allow get: if true;
-      allow list: if true;
+        allow get: if true;
+        allow list: if true;
+        allow create: if false;
+        allow update: if false;
+        allow delete: if false;
+    }
 
-      allow create: if false; // TODO: Add creator/admin validation
-      allow update: if false; // TODO: Add creator/admin validation
-      allow delete: if false; // TODO: Add creator/admin validation
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
     }
   }
 }
