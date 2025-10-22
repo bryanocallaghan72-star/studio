@@ -2,32 +2,35 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-  
+
+    // --- Helper Functions ---
+
     /**
-     * @description Checks if a user is signed in.
+     * @description Checks if the user is authenticated.
      */
     function isSignedIn() {
       return request.auth != null;
     }
-    
+
     /**
-     * @description Checks if the user is the owner of the resource being created.
-     * Use for 'create' operations.
+     * @description Checks if the user's UID matches the given userId.
+     * This is for checking ownership on create operations.
      */
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
-    
+
     /**
-     * @description Checks if the user is the owner of the existing resource.
-     * Use for 'update' and 'delete' operations on documents that have an owner field.
+     * @description Checks if the user is the owner of an *existing* resource.
+     * This is for checking ownership on update/delete operations.
      */
-    function isExistingOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId && resource.data.id == userId;
+    function isExistingOwner(ownerId) {
+      // Check if the user is signed in, their UID matches the ownerId passed in, AND the resource exists
+      return isSignedIn() && request.auth.uid == ownerId && resource != null;
     }
 
     /**
-     * @description Checks if the user is the host of the specified social event.
+     * @description Checks if the user is the host of the specified social activity.
      * This function performs one read operation.
      */
     function isHost(socialId) {
@@ -35,123 +38,113 @@ service cloud.firestore {
       return isSignedIn() && socialDoc.data.hostId == request.auth.uid;
     }
 
-    // =====================================================================
-    // User Profiles
-    // =====================================================================
+    // --- Collection Rules ---
+
+    // /users/{userId}
+    // User profiles. Read by anyone signed in, but only writable by the owner.
     match /users/{userId} {
-      // Allow any signed-in user to READ a profile for creator features.
+      // Allow any signed-in user to READ a profile for creator features, etc.
       allow get: if isSignedIn();
-      
-      // Block anyone from LISTING all users.
+      // Block listing all users for security.
       allow list: if false;
 
-      // Write access is restricted to the owner of the profile.
-      allow create: if isOwner(userId);
-      allow update: if isOwner(userId);
-      allow delete: if isOwner(userId);
+      // Allow a user to create their own profile document.
+      allow create: if isOwner(userId) && request.resource.data.email == request.auth.token.email;
+      // Allow a user to update or delete their own profile.
+      allow update, delete: if isExistingOwner(userId);
 
-      // --- Subcollections for user-specific actions ---
+      // Subcollections for user-specific data. Only accessible by the owner.
       match /claimedDeals/{dealId} {
-        allow get: if isOwner(userId);
-        allow list: if isOwner(userId);
-        allow create: if isOwner(userId);
-        allow update: if false; // No update logic needed for this record
-        allow delete: if isOwner(userId); // User can un-claim a deal
+        allow get, list, create: if isOwner(userId);
+        allow update: if false;
+        allow delete: if isExistingOwner(userId);
       }
-      
       match /joinedSocials/{socialId} {
-        allow get: if isOwner(userId);
-        allow list: if isOwner(userId);
-        allow create: if isOwner(userId);
-        allow update: if false; // No update logic needed for this record
-        allow delete: if isOwner(userId); // User can leave a social
+        allow get, list, create: if isOwner(userId);
+        allow update: if false;
+        allow delete: if isExistingOwner(userId);
       }
-
       match /following/{creatorId} {
-        allow get: if isOwner(userId);
-        allow list: if isOwner(userId);
-        allow create: if isOwner(userId);
-        allow update: if false; // No update logic needed for this record
-        allow delete: if isOwner(userId); // User can unfollow a creator
+        allow get, list, create: if isOwner(userId);
+        allow update: if false;
+        allow delete: if isExistingOwner(userId);
       }
-
       match /savedStays/{stayId} {
-        allow get: if isOwner(userId);
-        allow list: if isOwner(userId);
-        allow create: if isOwner(userId);
-        allow update: if false; // No update logic needed for this record
-        allow delete: if isOwner(userId); // User can unsave a stay
+        allow get, list, create: if isOwner(userId);
+        allow update: if false;
+        allow delete: if isExistingOwner(userId);
       }
     }
-    
-    // =====================================================================
-    // Public & Creator-Led Collections
-    // =====================================================================
+
+    // /venues/{venueId}
+    // Public venue information. Read by anyone, writable only by creators.
+    // NOTE: This rule assumes a trusted creator model, not public edits.
     match /venues/{venueId} {
       allow get: if true;
       allow list: if true;
 
-      // Only creators can add/edit venues
-      allow create: if false; // Not allowing frontend creation for now
-      allow update: if false;
-      allow delete: if false;
-    }
-    
-    match /deals/{dealId} {
-      allow get: if true;
-      allow list: if true;
+      // For this prototype, we will not allow venue creation/updates via the client.
+      // In a real app, this would be restricted to admins or verified creators.
+      allow create, update, delete: if false;
 
-      // Only the creator who owns the deal can manage it
-      allow create: if isSignedIn() && request.resource.data.creatorId == request.auth.uid;
-      allow update: if isExistingOwner(resource.data.creatorId);
-      allow delete: if isExistingOwner(resource.data.creatorId);
-    }
-
-    match /stays/{stayId} {
-      allow get: if true;
-      allow list: if true;
-
-      // Only the creator who owns the stay can manage it
-      allow create: if isSignedIn() && request.resource.data.creatorId == request.auth.uid;
-      allow update: if isExistingOwner(resource.data.creatorId);
-      allow delete: if isExistingOwner(resource.data.creatorId);
-    }
-    
-    // =====================================================================
-    // Social & Community Collections
-    // =====================================================================
-    match /socials/{socialId} {
-      allow get: if true;
-      allow list: if true;
-      
-      // Any signed-in user can create a social event
-      allow create: if isSignedIn() && request.resource.data.hostId == request.auth.uid;
-      // Only the host can update or delete the event
-      allow update: if isExistingOwner(resource.data.hostId);
-      allow delete: if isExistingOwner(resource.data.hostId);
-      
-      // --- Subcollection for managing participants ---
-      match /participants/{userId} {
-        allow get: if true;
-        allow list: if true;
-        
-        // A user can create their own request to join.
-        allow create: if isOwner(userId);
-        // A user can update their own status (e.g. leave), OR the host can update it (e.g. accept).
-        allow update: if isOwner(userId) || isHost(socialId);
-        // A user can delete their own record, OR the host can remove them.
-        allow delete: if isOwner(userId) || isHost(socialId);
+      // Experiences are tied to venues, read-only for clients.
+      match /experiences/{experienceId} {
+        allow get, list: if true;
+        allow create, update, delete: if false;
       }
     }
 
-    match /communities/{communityId} {
-      allow get: if true;
-      allow list: if true;
+    // /deals/{dealId}
+    // Public deals. Read by anyone, writable by the creator who owns the deal.
+    match /deals/{dealId} {
+      allow get, list: if true;
 
-      // Community management is not yet implemented on the client
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
+      // A user can create a deal if they are signed in and the creatorId matches their UID.
+      allow create: if isSignedIn() && request.resource.data.creatorId == request.auth.uid;
+      // Only the original creator can update or delete their own deal.
+      allow update, delete: if isExistingOwner(resource.data.creatorId);
+    }
+    
+    // /stays/{stayId}
+    // Public stay recommendations. Read by anyone, writable by the creator.
+    match /stays/{stayId} {
+      allow get, list: if true;
+
+      // A user can create a stay recommendation if they are signed in and the creatorId matches their UID.
+      allow create: if isSignedIn() && request.resource.data.creatorId == request.auth.uid;
+      // Only the original creator can update or delete their own stay recommendation.
+      allow update, delete: if isExistingOwner(resource.data.creatorId);
+    }
+
+    // /communities/{communityId}
+    // Read-only from the client for now.
+    match /communities/{communityId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+    // /socials/{socialId}
+    // User-generated social events. Read by anyone, created by any signed-in user, managed by the host.
+    match /socials/{socialId} {
+      allow get, list: if true;
+
+      // Any signed-in user can create a social, as long as they set themselves as the host.
+      allow create: if isSignedIn() && request.resource.data.hostId == request.auth.uid;
+      // Only the original host can update or delete their event.
+      allow update, delete: if isExistingOwner(resource.data.hostId);
+
+      // /socials/{socialId}/participants/{userId}
+      // Manages who is in a social event.
+      match /participants/{userId} {
+        allow get, list: if true;
+
+        // A user can only create their own participant document (i.e., "ask to join").
+        allow create: if isOwner(userId);
+        // A user can update their own status (e.g., leave), OR the host can update their status (e.g., accept/reject).
+        allow update: if isOwner(userId) || isHost(socialId);
+        // A user can delete their own participation, OR the host can remove them.
+        allow delete: if isOwner(userId) || isHost(socialId);
+      }
     }
   }
 }
