@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { Rss, Star, MapPin, Loader2, Edit } from "lucide-react";
@@ -18,43 +18,31 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { EditProfileDialog } from '@/components/iykyk/EditProfileDialog';
 import { WithId } from '@/firebase/firestore/use-collection';
 
-// Helper hook to shuffle pins once on component mount
-const useShuffledPins = (pins: any[], count: number) => {
-    const [shuffledPins, setShuffledPins] = useState<any[]>([]);
-
-    useEffect(() => {
-        // This logic now runs only once on the client-side after hydration
-        const shuffled = [...pins].sort(() => 0.5 - Math.random());
-        setShuffledPins(shuffled.slice(0, count));
-    }, []); // Empty dependency array ensures this runs only once
-
-    return shuffledPins;
-};
-
 export function ProfilePageClient({ uid }: { uid: string }) {
   const { user: currentUser } = useUser();
   const firestore = useFirestore();
 
-  // Memoize finding the mock user profile
+  // Find the mock user profile from static data
   const mockUserProfile = useMemo(() => {
     return appData.creators.find(creator => creator.id === uid);
   }, [uid]);
 
-  // Determine if a Firestore fetch should happen.
-  // This is the key fix: only fetch if the user is NOT a mock user.
+  // Determine if a Firestore fetch should even happen.
+  // We only fetch if the `uid` doesn't match one of our hardcoded mock creators.
   const shouldFetchFirestore = !mockUserProfile;
 
-  // Firestore reference is now stable thanks to useMemoFirebase
+  // Memoize the document reference to prevent re-renders in `useDoc`.
+  // The hook will only run if `shouldFetchFirestore` is true.
   const userDocRef = useMemoFirebase(() => {
-    // Only create a reference if we should fetch.
     if (!shouldFetchFirestore || !firestore || !uid) return null;
     return doc(firestore, 'users', uid);
   }, [firestore, uid, shouldFetchFirestore]);
 
+  // Fetch the user document from Firestore if it's not a mock user.
   const { data: firestoreUserProfile, isLoading: isFirestoreLoading } = useDoc<WithId<{ username: string; bio?: string }>>(userDocRef);
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   
-  // Combine mock and firestore user profiles
+  // Combine mock and firestore user profiles for rendering
   const userProfile = useMemo(() => {
     if (mockUserProfile) {
       return {
@@ -65,16 +53,18 @@ export function ProfilePageClient({ uid }: { uid: string }) {
       };
     }
     if (firestoreUserProfile) {
+      // This is a real user from Firestore
       return { isMock: false, ...firestoreUserProfile };
     }
     return null;
   }, [mockUserProfile, firestoreUserProfile]);
   
-  // Use the optimized shuffle hook
-  const userPins = useShuffledPins(appData.map.pins, 3); 
+  // Randomly select some pins for the user's profile
+  const userPins = useMemo(() => {
+    return [...appData.map.pins].sort(() => 0.5 - Math.random()).slice(0, 3);
+  }, [uid]); // Depend on uid to reshuffle for different profiles
 
   const isOwner = currentUser && currentUser.uid === uid;
-  // Loading state is only true if we are actually fetching from Firestore.
   const isLoading = shouldFetchFirestore ? isFirestoreLoading : false;
 
   if (isLoading) {
@@ -87,8 +77,6 @@ export function ProfilePageClient({ uid }: { uid: string }) {
   }
 
   if (!userProfile) {
-    // Since this is a client component, we can't use notFound() directly.
-    // We can return a simple not found message or redirect.
     return (
        <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background">
         <h1 className="text-2xl font-bold">Profile Not Found</h1>
