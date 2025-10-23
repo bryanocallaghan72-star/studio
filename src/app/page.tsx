@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useTransition, useEffect, useState } from 'react';
@@ -24,8 +25,6 @@ const LandingPage = () => {
     });
   };
 
-  // Defer rendering until the component has mounted on the client
-  // to prevent any hydration mismatches.
   if (!isClient) {
     return (
       <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-background text-center p-4">
@@ -46,20 +45,20 @@ const LandingPage = () => {
 
     if (user) {
       return (
-        <Link href={`/profile/${user.uid}`}>
-          <Button variant="link" className="text-muted-foreground">
+        <Button asChild variant="link" className="text-muted-foreground">
+          <Link href={`/profile/${user.uid}`}>
             View Your Profile
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       );
     }
 
     return (
-      <Link href="/login">
-        <Button variant="link" className="text-muted-foreground">
+      <Button asChild variant="link" className="text-muted-foreground">
+        <Link href="/login">
           Log In or Sign Up
-        </Button>
-      </Link>
+        </Link>
+      </Button>
     );
   };
 
@@ -82,7 +81,7 @@ const LandingPage = () => {
 
         <motion.p
           className="mt-6 max-w-md text-lg text-muted-foreground"
-          initial={{ opacity: 0, y: 20 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
