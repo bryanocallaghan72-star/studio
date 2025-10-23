@@ -17,6 +17,8 @@ export function DesktopNav() {
   const pathname = usePathname();
   const { user } = useUser();
 
+  const profileHref = user ? `/profile/${user.uid}` : '/profile/shannon';
+
   const links = [
     { href: "/discover", icon: Compass, label: "Discover" },
     { href: "/feed", icon: Home, label: "Feed" },
@@ -24,7 +26,7 @@ export function DesktopNav() {
     { href: "/code", icon: Code, label: "Code" },
     { href: "/social", icon: Users, label: "Social" },
     { href: "/fire", icon: Flame, label: "Fire" },
-    { href: "/profile/shannon", icon: User, label: "Profile" },
+    { href: profileHref, icon: User, label: "Profile" },
   ];
 
   return (
@@ -45,7 +47,7 @@ export function DesktopNav() {
                   href={link.href}
                   className={cn(
                     'flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8',
-                    (pathname.startsWith(link.href) && link.href !== '/') || (pathname === '/' && link.href === '/') ? 'bg-accent text-accent-foreground' : ''
+                    (pathname.startsWith(link.href) && link.href !== '/discover') || (pathname === link.href) ? 'bg-accent text-accent-foreground' : ''
                   )}
                 >
                   <link.icon className="h-5 w-5" />
