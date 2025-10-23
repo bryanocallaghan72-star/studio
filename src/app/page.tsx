@@ -26,6 +26,7 @@ const LandingPage = () => {
   };
 
   // Defer rendering until the component has mounted on the client
+  // to prevent any hydration mismatches.
   if (!isClient) {
     return (
       <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-background text-center p-4">
@@ -46,7 +47,7 @@ const LandingPage = () => {
 
     if (user) {
       return (
-        <Link href={`/profile/${user.uid}`} passHref>
+        <Link href={`/profile/${user.uid}`}>
           <Button variant="link" className="text-muted-foreground">
             View Your Profile
           </Button>
@@ -55,7 +56,7 @@ const LandingPage = () => {
     }
 
     return (
-      <Link href="/login" passHref>
+      <Link href="/login">
         <Button variant="link" className="text-muted-foreground">
           Log In or Sign Up
         </Button>
@@ -68,7 +69,7 @@ const LandingPage = () => {
       <div className="z-10 flex flex-col items-center gap-4">
         <motion.div
           className="text-center"
-          initial={{ opacity: 0, y: -20 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
@@ -91,7 +92,7 @@ const LandingPage = () => {
 
         <motion.div
           className="flex flex-col items-center gap-4 mt-10"
-          initial={{ opacity: 0, scale: 0.8 }}
+          initial={false}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: 'spring', stiffness: 100, delay: 0.6 }}
         >
