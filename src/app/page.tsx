@@ -19,6 +19,21 @@ const LandingPage = () => {
     setIsClient(true);
   }, []);
 
+  const handleEnter = () => {
+    startTransition(() => {
+      router.push('/discover');
+    });
+  };
+
+  // Defer rendering until the component has mounted on the client
+  if (!isClient) {
+    return (
+      <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-background text-center p-4">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   const renderAuthButton = () => {
     if (isUserLoading) {
       return (
@@ -47,20 +62,6 @@ const LandingPage = () => {
       </Link>
     );
   };
-
-  const handleEnter = () => {
-    startTransition(() => {
-      router.push('/discover');
-    });
-  };
-
-  if (!isClient) {
-    return (
-       <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-background text-center p-4">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
-       </div>
-    );
-  }
 
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-background text-center p-4">
