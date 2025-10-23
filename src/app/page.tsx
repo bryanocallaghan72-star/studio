@@ -20,7 +20,7 @@ const LandingPage = () => {
   }, []);
 
   const renderAuthButton = () => {
-    if (!isClient || isUserLoading) {
+    if (isUserLoading) {
       return (
         <Button variant="link" className="text-muted-foreground" disabled>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -53,6 +53,14 @@ const LandingPage = () => {
       router.push('/discover');
     });
   };
+
+  if (!isClient) {
+    return (
+       <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-background text-center p-4">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+       </div>
+    );
+  }
 
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-background text-center p-4">
