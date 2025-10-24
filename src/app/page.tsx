@@ -11,6 +11,11 @@ import { useUser } from '@/firebase';
 
 function LandingPageContent() {
   const { user, isUserLoading } = useUser();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const renderAuthButton = () => {
     if (isUserLoading) {
@@ -31,6 +36,14 @@ function LandingPageContent() {
       </Button>
     );
   };
+
+  if (!isClient) {
+    return (
+      <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-4">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
@@ -73,19 +86,5 @@ function LandingPageContent() {
 
 
 export default function Home() {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
-    return (
-        <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-4">
-            <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        </div>
-    );
-  }
-
   return <LandingPageContent />;
 }
