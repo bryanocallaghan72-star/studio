@@ -1,4 +1,3 @@
-
 'use client';
 
 // This is a minimal, temporary page to isolate and confirm that the root route '/'
