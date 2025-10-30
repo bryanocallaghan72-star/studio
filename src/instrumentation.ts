@@ -1,7 +1,4 @@
-
-'use server';
-
-// This file is automatically run by Next.js when the server starts.
+// In src/instrumentation.ts
 
 // This export must exist
 export async function register() {
