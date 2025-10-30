@@ -411,110 +411,55 @@
     ]
   },
   "firestore": {
-    "structure": [
-      {
-        "path": "/users/{userId}",
-        "definition": {
-          "entityName": "User",
-          "schema": { "$ref": "#/backend/entities/User" },
-          "description": "Stores user profiles. Path-based ownership for user-specific data.",
-          "subcollections": [
-            {
-              "path": "claimedDeals/{dealId}",
-              "definition": {
-                "entityName": "ClaimedDeal",
-                "schema": { "$ref": "#/backend/entities/ClaimedDeal" },
-                "description": "Tracks deals claimed by the user."
-              }
-            },
-            {
-              "path": "joinedSocials/{socialId}",
-              "definition": {
-                "entityName": "JoinedSocial",
-                "schema": { "$ref": "#/backend/entities/JoinedSocial" },
-                "description": "Tracks social activities the user has joined."
-              }
-            },
-            {
-              "path": "following/{creatorId}",
-              "definition": {
-                "entityName": "Following",
-                "schema": { "$ref": "#/backend/entities/Following" },
-                "description": "Tracks other users (creators) this user is following."
-              }
-            },
-            {
-              "path": "savedStays/{stayId}",
-              "definition": {
-                "entityName": "SavedStay",
-                "schema": { "$ref": "#/backend/entities/SavedStay" },
-                "description": "Tracks stays the user has saved."
-              }
-            }
-          ]
-        }
-      },
-      {
-        "path": "/venues/{venueId}",
-        "definition": {
-          "entityName": "Venue",
-          "schema": { "$ref": "#/backend/entities/Venue" },
-          "description": "Stores venue information. Top-level entity for easy querying.",
-          "subcollections": [
-            {
-              "path": "experiences/{experienceId}",
-              "definition": {
-                "entityName": "Experience",
-                "schema": { "$ref": "#/backend/entities/Experience" },
-                "description": "Stores experiences associated with a venue."
-              }
-            }
-          ]
-        }
-      },
-      {
-        "path": "/deals/{dealId}",
-        "definition": {
-          "entityName": "Deal",
-          "schema": { "$ref": "#/backend/entities/Deal" },
-          "description": "A top-level collection for all deals, fire items, and perks. This allows for efficient global queries, like finding all active 'fire' deals, without needing to query every venue subcollection. Denormalized data like venueName is included to support this."
-        }
-      },
-      {
-        "path": "/communities/{communityId}",
-        "definition": {
-          "entityName": "Community",
-          "schema": { "$ref": "#/backend/entities/Community" },
-          "description": "Stores community information. Includes a 'members' map (uid: role) for role-based access control."
-        }
-      },
-      {
-        "path": "/socials/{socialId}",
-        "definition": {
-          "entityName": "SocialActivity",
-          "schema": { "$ref": "#/backend/entities/SocialActivity" },
-          "description": "A top-level collection for user-created social activities. Allows for easy querying of all active events.",
-          "subcollections": [
-            {
-              "path": "participants/{userId}",
-              "definition": {
-                "entityName": "SocialParticipant",
-                "schema": { "$ref": "#/backend/entities/SocialParticipant" },
-                "description": "Manages participants for a specific social activity. The document ID is the user's ID for easy lookup."
-              }
-            }
-          ]
-        }
-      },
-      {
-        "path": "/stays/{stayId}",
-        "definition": {
-          "entityName": "Stay",
-          "schema": { "$ref": "#/backend/entities/Stay" },
-          "description": "A top-level collection for all creator-recommended stays and flash stays. Allows for easy querying of all available accommodations."
-        }
-      }
-    ],
-    "reasoning": "The Firestore structure is designed to support iykyk's real-time cultural portal concept. It prioritizes efficient querying for features like the 'Fire' feed by using a top-level denormalized '/deals' collection. A new top-level '/socials' collection is added for real-time user-generated events, separating them from long-term themed communities. This allows for efficient querying of all active social gatherings. Subcollections are used for managing participants in a scalable way.\n\n**Authorization Independence (Denormalization):**\n\n*   Authorization is implemented using path-based ownership for private user data and membership maps for collaborative data. Where access to a subcollection depends on attributes of a parent collection, these attributes are denormalized into the subcollection documents. This eliminates the need for `get()` calls in security rules, promoting atomic operations and simplifying debugging.\n\n**QAPs (Queryability and Security):**\n\n*   **Segregation:** Data with different security requirements is stored in separate collections. For example, user-owned data resides under `/users/{userId}`, while venue and community data are stored in top-level collections with appropriate security rules.\n*   **Membership Maps:** Communities utilize a `members` map to manage user roles, enabling secure listing of community members and controlling access to community-specific data.\n\n**Explanation of Collections:**\n\n*   `/users/{userId}`: Stores user profiles, providing a dedicated path for user-specific data and simplifying ownership-based security rules. User activity like claimed deals and joined socials are tracked in subcollections for scalability.\n*   `/venues/{venueId}`: Stores venue information as top-level entities for easy querying.\n*   `/venues/{venueId}/experiences/{experienceId}`: Stores experiences associated with a venue. The `venueId` is denormalized for authorization independence.\n*   `/deals/{dealId}`: A denormalized, top-level collection for all deals and 'Fire' items. This is crucial for the performance of the 'iykyk Fire' feed, allowing a single query to fetch all relevant, time-sensitive items across all venues.\n*   `/communities/{communityId}`: Stores community information, with a `members` map for role-based access control.\n*   `/socials/{socialId}`: A new top-level collection for user-created, real-time social activities ('Squads'), allowing for efficient global queries on active events.\n*   `/socials/{socialId}/participants/{userId}`: A subcollection to manage requests and joined members for a social activity, enabling clear security rules for joining and viewing participants."
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Stores user profiles. Path-based ownership for user-specific data."
+    },
+    "/users/{userId}/claimedDeals/{dealId}": {
+        "schema": { "$ref": "#/entities/ClaimedDeal" },
+        "description": "Tracks deals claimed by the user."
+    },
+    "/users/{userId}/joinedSocials/{socialId}": {
+        "schema": { "$ref": "#/entities/JoinedSocial" },
+        "description": "Tracks social activities the user has joined."
+    },
+    "/users/{userId}/following/{creatorId}": {
+        "schema": { "$ref": "#/entities/Following" },
+        "description": "Tracks other users (creators) this user is following."
+    },
+    "/users/{userId}/savedStays/{stayId}": {
+        "schema": { "$ref": "#/entities/SavedStay" },
+        "description": "Tracks stays the user has saved."
+    },
+    "/venues/{venueId}": {
+      "schema": { "$ref": "#/entities/Venue" },
+      "description": "Stores venue information. Top-level entity for easy querying."
+    },
+    "/venues/{venueId}/experiences/{experienceId}": {
+      "schema": { "$ref": "#/entities/Experience" },
+      "description": "Stores experiences associated with a venue."
+    },
+    "/deals/{dealId}": {
+      "schema": { "$ref": "#/entities/Deal" },
+      "description": "A top-level collection for all deals, fire items, and perks. This allows for efficient global queries, like finding all active 'fire' deals, without needing to query every venue subcollection. Denormalized data like venueName is included to support this."
+    },
+    "/communities/{communityId}": {
+      "schema": { "$ref": "#/entities/Community" },
+      "description": "Stores community information. Includes a 'members' map (uid: role) for role-based access control."
+    },
+    "/socials/{socialId}": {
+      "schema": { "$ref": "#/entities/SocialActivity" },
+      "description": "A top-level collection for user-created social activities. Allows for easy querying of all active events."
+    },
+    "/socials/{socialId}/participants/{userId}": {
+      "schema": { "$ref": "#/entities/SocialParticipant" },
+      "description": "Manages participants for a specific social activity. The document ID is the user's ID for easy lookup."
+    },
+    "/stays/{stayId}": {
+      "schema": { "$ref": "#/entities/Stay" },
+      "description": "A top-level collection for all creator-recommended stays and flash stays. Allows for easy querying of all available accommodations."
+    }
   }
 }
+
+    
