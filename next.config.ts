@@ -30,8 +30,7 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'https'
-        ,
+        protocol: 'https',
         hostname: 'api.dicebear.com',
         port: '',
         pathname: '/**',
@@ -42,7 +41,7 @@ const nextConfig: NextConfig = {
     // This is the correct way to prevent server-only modules from being bundled on the client.
     if (!isServer) {
       config.externals = [
-        ...config.externals,
+        ...(config.externals || []),
         // The following modules are dependencies of genkit's tracing system and are not needed on the client.
         '@grpc/grpc-js', 
         'node-pty'
