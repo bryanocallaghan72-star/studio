@@ -8,6 +8,10 @@ framework: nextjs
 # for the build system to find the package.json and Next.js app.
 sourceDirectory: .
 
+# Explicitly define the installation and build commands.
+installCommand: npm ci
+buildCommand: npm run build
+
 runConfig:
   # Increase this value if you'd like to automatically spin up
   # more instances in response to increased traffic.
