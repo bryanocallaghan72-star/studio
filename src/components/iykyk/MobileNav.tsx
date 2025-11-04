@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Users, Flame, PlaySquare, User, Compass, Code } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { useUser } from "@/firebase";
+import { useUser } from "@/firebase/auth/use-user";
 
 export function MobileNav() {
   const pathname = usePathname();

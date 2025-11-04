@@ -8,7 +8,7 @@ import { ArrowRight, Sparkles, Map, Users, Gift } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useUser } from '@/firebase';
+import { useUser } from '@/firebase/auth/use-user';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 function LandingPageContent() {

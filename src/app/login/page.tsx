@@ -20,7 +20,7 @@ import {
   initiateAnonymousSignIn,
 } from '@/firebase/non-blocking-login';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@/firebase';
+import { useUser } from '@/firebase/auth/use-user';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
