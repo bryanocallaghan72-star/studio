@@ -4,10 +4,14 @@ import 'dotenv/config';
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
 
+// Make API key optional to allow for builds without the key.
+// The build server doesn't need the key, only the runtime server does.
+const geminiApiKey = process.env.GEMINI_API_KEY;
+
 export const ai = genkit({
   plugins: [
     googleAI({
-      apiKey: process.env.GEMINI_API_KEY,          // <- required
+      apiKey: geminiApiKey,
     }),
   ],
   logLevel: 'debug',

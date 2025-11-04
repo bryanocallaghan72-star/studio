@@ -13,6 +13,13 @@ import { normalizeSurprise } from "./normalize";
  * @returns A promise that resolves to an object with either a `success` or `error` property.
  */
 export async function generateSurprise(): Promise<{ success?: SurpriseOutput, error?: string }> {
+  // Explicitly check for the API key at the beginning of the action.
+  if (!process.env.GEMINI_API_KEY) {
+    const errorMessage = 'The GEMINI_API_KEY environment variable is not set. This is required for the "Surprise Me" feature. Please add it to your environment and restart the server. For more details, see https://genkit.dev/docs/plugins/google-genai/';
+    console.error(errorMessage);
+    return { error: errorMessage };
+  }
+
   try {
     // 1. Determine Time of Day
     const currentHour = new Date().getHours();
@@ -46,9 +53,7 @@ export async function generateSurprise(): Promise<{ success?: SurpriseOutput, er
 
   } catch (error: any) {
     console.error('Surprise generation failed:', error);
-    const errorMessage = error.message.includes('GEMINI_API_KEY') 
-      ? 'Please set the GEMINI_API_KEY environment variable. For more details see https://genkit.dev/docs/plugins/google-genai/'
-      : error.message || 'Sorry, I couldn\'t come up with a surprise right now. Please try again later.';
+    const errorMessage = error.message || 'Sorry, I couldn\'t come up with a surprise right now. Please try again later.';
     return { error: errorMessage };
   }
 }
