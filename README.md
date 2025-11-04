@@ -1,5 +1,20 @@
-# Firebase Studio
 
-This is a Next.js starter project in Firebase Studio.
+# iykyk Project
 
-To get started, take a look at `src/app/page.tsx`. This project is configured for Firebase App Hosting.
+This is a Next.js project bootstrapped with `create-next-app` and configured for Firebase App Hosting.
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `src/app/page.tsx`. The page auto-updates as you edit the file.
