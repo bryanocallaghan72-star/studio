@@ -1,4 +1,3 @@
-
 export const morningActivities = [
     { id: 'm1', title: "Bondi Sunrise Yoga", description: "Start your day with rejuvenating yoga on the beach.", imageId: "morning-1", tag: "Wellness" },
     { id: 'm2', title: "Bondi Sunrise Yoga 2.0", description: "Start your day with rejuvenating yoga on the beach.", imageId: "morning-1", tag: "Wellness" },

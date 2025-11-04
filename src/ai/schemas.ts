@@ -1,4 +1,3 @@
-
 import { z } from 'zod';
 
 // Schema for Itinerary Generation

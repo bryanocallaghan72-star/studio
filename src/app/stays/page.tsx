@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/iykyk/Header";
 import { StaysList } from "@/components/iykyk/StaysList";
 import { MobileNav } from "@/components/iykyk/MobileNav";

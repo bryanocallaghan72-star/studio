@@ -1,4 +1,3 @@
-
 "use client";
 
 import { IykykVibeMap } from "@/components/iykyk/IykykVibeMap";

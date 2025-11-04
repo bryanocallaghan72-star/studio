@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 
 export const ColorPinSVG = ({ className, color = 'currentColor' }: { className?: string; color?: string }) => {

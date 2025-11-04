@@ -1,4 +1,3 @@
-
 "use client";
 import { useState } from "react";
 import { PlaceHolderImages } from "@/lib/placeholder-images";

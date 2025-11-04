@@ -1,4 +1,3 @@
-
 import { ai } from '@/ai/genkit.server';
 import {defineNextActions} from '@genkit-ai/next';
 

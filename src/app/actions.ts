@@ -1,4 +1,3 @@
-
 "use server";
 
 import { generateItinerary as generateItineraryFlow } from "@/ai/flows/generate-itinerary-flow";

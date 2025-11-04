@@ -1,4 +1,3 @@
-
 // src/app/profile/[uid]/page.tsx
 import { ProfilePageClient } from '@/components/iykyk/ProfilePageClient';
 

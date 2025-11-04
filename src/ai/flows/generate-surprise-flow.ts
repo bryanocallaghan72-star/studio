@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview An AI flow for generating a single, surprising activity in Bondi.

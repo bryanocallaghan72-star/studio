@@ -1,4 +1,3 @@
-
 "use client";
 
 import { appData, type Community } from "@/lib/data";
