@@ -5,6 +5,9 @@
 # This is a crucial setting for correct routing and SSR.
 framework: nextjs
 
+# Set the source directory to the root of the repository.
+sourceDirectory: .
+
 runConfig:
   # Increase this value if you'd like to automatically spin up
   # more instances in response to increased traffic.
