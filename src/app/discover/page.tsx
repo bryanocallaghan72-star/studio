@@ -46,9 +46,9 @@ export default function DiscoverPage() {
                 const Icon = iconMap[feature.icon as keyof typeof iconMap];
 
                 return (
-                  <Link key={feature.title} href={feature.href}>
+                  <Link key={feature.title} href={feature.href} passHref>
                       <Card className="group relative w-full h-48 overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card">
-                          {image ? (
+                          {image && (
                             <>
                               <Image
                                 src={image.imageUrl}
@@ -59,8 +59,6 @@ export default function DiscoverPage() {
                               />
                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
                             </>
-                          ) : (
-                            <div className="absolute inset-0 bg-secondary" />
                           )}
                          
                           <div className="absolute bottom-0 left-0 p-6 w-full">
