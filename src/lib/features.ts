@@ -2,12 +2,12 @@ import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, S
 
 export const featureData = [
     {
-      href: "/code",
-      icon: "Code",
-      title: "iykyk Code",
-      description: "Meet the creators who are the source code of Bondi's vibe.",
-      color: "text-indigo-500",
-      imageId: "nightlife-1",
+      href: "/my-day",
+      icon: "Calendar",
+      title: "iykyk My Day",
+      description: "Curated daily itinerary that you can shuffle like a playlist.",
+      color: "text-primary",
+      imageId: "community-fitness",
     },
     {
       href: "/map",
@@ -25,15 +25,7 @@ export const featureData = [
       color: "text-indigo-500",
       imageId: "morning-1",
     },
-    {
-      href: "/my-day",
-      icon: "Calendar",
-      title: "iykyk My Day",
-      description: "Curated daily itinerary that you can shuffle like a playlist.",
-      color: "text-primary",
-      imageId: "community-fitness",
-    },
-    {
+     {
       href: "/fire",
       icon: "Flame",
       title: "iykyk Fire",
@@ -48,6 +40,14 @@ export const featureData = [
       description: "Exclusive offers and perks for locals and explorers.",
       color: "text-emerald-500",
       imageId: "community-sushi",
+    },
+     {
+      href: "/code",
+      icon: "Code",
+      title: "iykyk Code",
+      description: "Meet the creators who are the source code of Bondi's vibe.",
+      color: "text-indigo-500",
+      imageId: "nightlife-1",
     },
     {
       href: "/style",
