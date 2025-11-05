@@ -2,17 +2,15 @@
 'use client';
 
 import { Header } from "@/components/iykyk/Header";
-import { MobileNav } from "@/components/iykyk/MobileNav";
-import { Card, CardDescription, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
 import { featureData } from '@/lib/features';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from "@/components/ui/button";
 import dynamic from 'next/dynamic';
-import { LucideProps, Gift, Camera, Sparkles } from 'lucide-react';
+import { Gift, Camera, Sparkles } from 'lucide-react';
 import { SurpriseMeButton } from "@/features/surprise/SurpriseMeButton";
-import { DesktopNav } from "@/components/iykyk/DesktopNav";
 
 const iconMap = {
     Sparkles: dynamic(() => import('lucide-react').then(mod => mod.Sparkles)),
@@ -49,14 +47,13 @@ export default function DiscoverPage() {
 
                 return (
                   <Link key={feature.title} href={feature.href}>
-                      <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card h-48 flex items-center justify-center">
+                      <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card h-48 flex items-end">
                           {image ? (
                             <>
                               <Image
                                 src={image.imageUrl}
                                 alt={feature.title}
-                                width={image.width}
-                                height={image.height}
+                                fill
                                 className="absolute inset-0 object-cover w-full h-full transition-transform group-hover:scale-105"
                                 data-ai-hint={image.imageHint}
                               />
@@ -66,7 +63,7 @@ export default function DiscoverPage() {
                             <div className="absolute inset-0 bg-secondary" />
                           )}
                          
-                          <div className="relative bottom-0 left-0 p-6 w-full">
+                          <div className="relative p-6 w-full">
                              <div className="flex items-center gap-3">
                                   <div className="rounded-full bg-background/80 backdrop-blur-sm p-3">
                                      {Icon && <Icon className={`h-6 w-6 ${feature.color}`} />}

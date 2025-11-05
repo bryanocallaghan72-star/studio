@@ -31,13 +31,11 @@ export default function RootLayout({
       </head>
       <body className={cn(inter.variable, "font-body antialiased")}>
         <FirebaseClientProvider>
-          <div className="md:flex">
             <DesktopNav />
             <main className="flex-1 md:pl-16">
               {children}
             </main>
             <MobileNav />
-          </div>
           <Toaster />
         </FirebaseClientProvider>
       </body>
