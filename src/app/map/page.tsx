@@ -11,7 +11,7 @@ import { DesktopNav } from "@/components/iykyk/DesktopNav";
 function MapContent() {
   return (
     <Suspense fallback={
-        <div className="flex h-[80vh] w-full items-center justify-center bg-background">
+        <div className="flex h-[calc(100vh-10rem)] w-full items-center justify-center bg-background">
             <div className="text-center">
                 <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
                 <p className="mt-4 text-muted-foreground">Loading Vibe Map...</p>
@@ -30,7 +30,7 @@ export default function MapPage() {
         <DesktopNav />
         <main className="flex-1 md:pl-16">
           <Header />
-          <div className="flex-1 pb-24">
+          <div className="flex-1 pb-24 md:pb-0">
             <MapContent />
           </div>
         </main>
@@ -39,3 +39,4 @@ export default function MapPage() {
     </div>
   );
 }
+

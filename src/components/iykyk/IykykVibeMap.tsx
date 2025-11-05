@@ -1,18 +1,36 @@
+
 "use client";
 
-import { useMemo, useEffect } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Map, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ColorPinSVG } from "./ColorPinSVG";
 import { appData } from "@/lib/data";
 import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
 import { collection, query, where } from "firebase/firestore";
+import { GoogleMap, useJsApiLoader, MarkerF } from "@react-google-maps/api";
 
 const { categories } = appData;
+type Venue = typeof appData.map.pins[0] & { id: string, latitude: number, longitude: number };
 
-type Venue = typeof appData.map.pins[0];
+// Map container style
+const containerStyle = {
+  width: '100%',
+  height: '100%',
+};
+
+// Bondi Beach coordinates
+const center = {
+  lat: -33.891,
+  lng: 151.276
+};
+
+// Custom map styles to match the app theme
+const mapStyles = [
+  // Add custom map styles here if desired, for now using default
+];
+
 
 export function IykykVibeMap() {
   const router = useRouter();
@@ -20,6 +38,11 @@ export function IykykVibeMap() {
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('category') || 'All';
   const firestore = useFirestore();
+  
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+  });
 
   const venuesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -30,7 +53,7 @@ export function IykykVibeMap() {
     return query(baseQuery, where('type', '==', activeTab));
   }, [firestore, activeTab]);
 
-  const { data: venues, isLoading } = useCollection<Venue>(venuesQuery);
+  const { data: venues, isLoading: isLoadingVenues } = useCollection<Venue>(venuesQuery);
 
   const handleTabChange = (category: string) => {
     const params = new URLSearchParams(searchParams);
@@ -41,9 +64,20 @@ export function IykykVibeMap() {
     }
     router.replace(`${pathname}?${params.toString()}`);
   };
+  
+  const handleMarkerClick = (slug: string) => {
+    router.push(`/venue/${slug}`);
+  };
+
+  const mapOptions = useMemo(() => ({
+    disableDefaultUI: true,
+    zoomControl: true,
+    styles: mapStyles,
+  }), []);
+
 
   return (
-    <section>
+    <section className="flex flex-col h-[calc(100vh-10rem)]">
         <div className="flex items-center gap-3 mb-4 p-4 md:p-6 pb-0">
             <Map className="h-8 w-8 text-primary" />
             <h2 className="text-3xl font-bold tracking-tight">iykyk Vibe</h2>
@@ -74,72 +108,41 @@ export function IykykVibeMap() {
             ))}
         </div>
 
-        <div className="flex-grow flex flex-col relative aspect-[4/3] md:aspect-video mt-2 rounded-lg border overflow-hidden mx-4 md:mx-6">
-            <div className="flex-grow bg-secondary/30 relative overflow-hidden">
-                <svg width="100%" height="100%" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-                    {/* Background */}
-                    <rect width="800" height="600" fill="hsl(var(--background))" />
-
-                    {/* Beach (Sand) - Starts before the ocean at x=700 */}
-                    <rect 
-                        x="700" 
-                        y="0" 
-                        width="100" 
-                        height="600" 
-                        fill="hsl(var(--secondary))" 
-                    />
+        <div className="flex-grow flex flex-col relative mt-2 rounded-lg border overflow-hidden mx-4 md:mx-6">
+            {!isLoaded || isLoadingVenues ? (
+                <div className="absolute inset-0 flex items-center justify-center bg-background/50">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+            ) : (
+                <GoogleMap
+                    mapContainerStyle={containerStyle}
+                    center={center}
+                    zoom={15}
+                    options={mapOptions}
+                >
+                  {venues && venues.map(venue => {
+                    const category = categories[venue.type as keyof typeof categories];
+                    const color = category ? category.color : '#FF7F50'; // default color
+                    const pinSvg = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+                      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="${color}" /><circle cx="12" cy="10" r="3" fill="white" stroke="none"/></svg>`
+                    )}`;
                     
-                    {/* Ocean - Starts after the sand at x=750 */}
-                    <rect 
-                        x="750" 
-                        y="0" 
-                        width="50" 
-                        height="600" 
-                        fill="hsl(var(--primary)/0.2)" 
-                    />
-
-                    {/* Wavy Shoreline Path - between sand and ocean */}
-                    <path 
-                        d="M 750,0 C 740,150 760,300 750,450 C 740,525 760,550 750,600" 
-                        stroke="hsl(var(--primary)/0.3)" 
-                        strokeWidth="2" 
-                        fill="none" 
-                    />
-
-                    {/* Roads - Make sure they stop before the beach starts (e.g., at x2="700") */}
-                    <g stroke="hsl(var(--border))" strokeWidth="2" fill="none">
-                        <line x1="0" y1="150" x2="700" y2="150" />
-                        <line x1="0" y1="300" x2="700" y2="300" />
-                        <line x1="0" y1="450" x2="700" y2="450" />
-                    </g>
-
-                    {/* Labels */}
-                    <g fontFamily="sans-serif" fill="hsl(var(--muted-foreground))" fontSize="14">
-                        <text x="610" y="145">Curlewis St</text>
-                        <text x="610" y="295">Roscoe St</text>
-                        <text x="610" y="445">Hall St</text>
-                    </g>
-                </svg>
-                
-                {isLoading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-background/50">
-                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    </div>
-                )}
-
-                {venues && venues.map(pin => (
-                  <Link key={pin.id} href={`/venue/${pin.slug}`} className="absolute group transform -translate-x-1/2 -translate-y-full cursor-pointer" style={{ left: pin.x, top: pin.y }}>
-                    <ColorPinSVG className="w-8 h-8 drop-shadow-lg transition-transform duration-200 group-hover:scale-125" color={categories[pin.type as keyof typeof categories]?.color || '#FF7F50'} />
-                    <span className="sr-only">View details for {pin.name}</span>
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 rounded-lg bg-gray-800 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 pointer-events-none">
-                        {pin.name}
-                    </div>
-                  </Link>
-                ))}
-            </div>
+                    return (
+                      <MarkerF
+                        key={venue.id}
+                        position={{ lat: venue.latitude, lng: venue.longitude }}
+                        title={venue.name}
+                        onClick={() => handleMarkerClick(venue.slug)}
+                        icon={{
+                          url: pinSvg,
+                          scaledSize: new window.google.maps.Size(32, 32),
+                        }}
+                      />
+                    );
+                  })}
+                </GoogleMap>
+            )}
         </div>
     </section>
   );
 }
-
-    
