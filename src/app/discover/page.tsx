@@ -44,7 +44,7 @@ export default function DiscoverPage() {
 
                 return (
                   <Link key={feature.title} href={feature.href} passHref>
-                      <Card className="group relative w-full h-48 overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card">
+                      <Card className="group relative w-full h-40 overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card">
                           {image && (
                             <>
                               <Image
