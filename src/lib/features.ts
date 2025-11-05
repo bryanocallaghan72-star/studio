@@ -60,7 +60,7 @@ export const featureData = [
     },
     {
       href: "/stays",
-      icon: "Home",
+      icon: "Bed",
       title: "iykyk Stays",
       description: "Creator-approved Airbnb stays and local getaways.",
       color: "text-sky-500",
