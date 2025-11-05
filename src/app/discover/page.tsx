@@ -1,12 +1,10 @@
 
 'use client';
 
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import Image from "next/image";
 import { featureData } from '@/lib/features';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Gift, Camera, Sparkles, Map, Flame, Tag, Calendar, Users, Home, Compass, Zap, Shirt, Bed, Code } from 'lucide-react';
 import { SurpriseMeButton } from "@/features/surprise/SurpriseMeButton";
 
@@ -27,51 +25,33 @@ const iconMap = {
     Code,
 };
 
-export default function DiscoverPage() {
+const FeatureItem = ({ feature }: { feature: (typeof featureData)[0] }) => {
+    const Icon = iconMap[feature.icon as keyof typeof iconMap];
+    return (
+        <Link href={feature.href} passHref>
+            <div className="flex items-start gap-4 group p-2 rounded-lg hover:bg-secondary transition-colors">
+                {Icon && <Icon className={`h-7 w-7 mt-1 ${feature.color}`} />}
+                <div>
+                    <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">{feature.title}</h3>
+                    <p className="text-muted-foreground text-sm">{feature.description}</p>
+                </div>
+            </div>
+        </Link>
+    );
+};
 
+export default function DiscoverPage() {
   return (
     <div className="flex flex-1 flex-col">
-        <div className="text-center">
+        <div className="text-center mb-8">
             <h2 className="text-3xl font-bold tracking-tight">Your Cultural Concierge</h2>
             <p className="text-muted-foreground mt-2">The lifestyle OS: Shuffle plans, unlock perks, and discover Bondi in real-time.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-            {featureData.map((feature) => {
-                const image = PlaceHolderImages.find(img => img.id === feature.imageId);
-                const Icon = iconMap[feature.icon as keyof typeof iconMap];
-
-                return (
-                  <Link key={feature.title} href={feature.href} passHref>
-                      <Card className="group relative w-full h-40 overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card">
-                          {image && (
-                            <>
-                              <Image
-                                src={image.imageUrl}
-                                alt={feature.title}
-                                fill
-                                className="absolute inset-0 object-cover w-full h-full transition-transform group-hover:scale-105"
-                                data-ai-hint={image.imageHint}
-                              />
-                               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
-                            </>
-                          )}
-                         
-                          <div className="absolute bottom-0 left-0 p-6 w-full">
-                             <div className="flex items-center gap-3">
-                                  <div className="rounded-full bg-background/80 backdrop-blur-sm p-3">
-                                     {Icon && <Icon className={`h-6 w-6 ${feature.color}`} />}
-                                  </div>
-                                  <div>
-                                     <CardTitle className="text-lg text-white">{feature.title}</CardTitle>
-                                     <CardDescription className="text-white/90">{feature.description}</CardDescription>
-                                  </div>
-                              </div>
-                          </div>
-                      </Card>
-                  </Link>
-                )
-            })}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+            {featureData.map((feature) => (
+                <FeatureItem key={feature.title} feature={feature} />
+            ))}
         </div>
 
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
