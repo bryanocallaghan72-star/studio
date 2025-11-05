@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Inter } from 'next/font/google';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import { DesktopNav } from '@/components/iykyk/DesktopNav';
+import { MobileNav } from '@/components/iykyk/MobileNav';
 import { cn } from '@/lib/utils';
 
 const inter = Inter({
@@ -36,8 +37,9 @@ export default function RootLayout({
               {children}
             </main>
           </div>
+          <MobileNav />
         </FirebaseClientProvider>
-          <Toaster />
+        <Toaster />
       </body>
     </html>
   );

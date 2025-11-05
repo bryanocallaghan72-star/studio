@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -12,14 +13,25 @@ import Link from 'next/link';
 type SeedStatus = 'idle' | 'loading' | 'success' | 'skipped' | 'error';
 
 export default function AdminPage() {
-  const firestore = useFirestore();
   const [status, setStatus] = useState<SeedStatus>('idle');
   const [message, setMessage] = useState('');
+  
+  // Note: This component doesn't use useFirestore directly for seeding
+  // to avoid issues if the provider isn't available on this specific admin page.
+  // Instead, we would initialize it on demand if we had a Firestore instance.
+  // For this fix, we will assume `useFirestore` might fail and handle it gracefully.
+  let firestore: any;
+  try {
+    firestore = useFirestore();
+  } catch (e) {
+    console.warn("useFirestore could not be used, likely outside of a provider. Seeding will be disabled.");
+  }
+
 
   const handleSeedVenues = async () => {
     if (!firestore) {
       setStatus('error');
-      setMessage('Firestore is not initialized. Cannot seed data.');
+      setMessage('Firestore is not initialized. Cannot seed data. Is the page wrapped in FirebaseClientProvider?');
       return;
     }
 
@@ -89,7 +101,7 @@ export default function AdminPage() {
         <CardContent className="space-y-4">
           <Button 
             onClick={handleSeedVenues} 
-            disabled={status === 'loading'}
+            disabled={status === 'loading' || !firestore}
             className="w-full"
           >
             {status === 'loading' ? (

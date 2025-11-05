@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -9,6 +10,7 @@ import { ARPinLayer } from '@/components/iykyk/ar/ARPinLayer';
 import { ARCameraFeed } from '@/components/iykyk/ar/ARCameraFeed';
 import { useCamera } from '@/hooks/useCamera';
 import { AnimatePresence } from 'framer-motion';
+import { MobileNav } from '@/components/iykyk/MobileNav';
 
 export type LayerType = 'all' | 'fire' | 'deals' | 'drops' | 'quests' | 'rewards';
 
@@ -36,6 +38,7 @@ export default function ARPage() {
             <ARLayerSlider activeLayer={activeLayer} setActiveLayer={setActiveLayer} />
         </>
       )}
+      <MobileNav />
     </div>
   );
 }

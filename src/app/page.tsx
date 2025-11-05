@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -10,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useUser } from '@/firebase/auth/use-user';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 function LandingPageContent() {
   const { user, isUserLoading } = useUser();
@@ -121,5 +123,9 @@ function LandingPageContent() {
 }
 
 export default function Home() {
-  return <LandingPageContent />;
+  return (
+    <FirebaseClientProvider>
+      <LandingPageContent />
+    </FirebaseClientProvider>
+  );
 }

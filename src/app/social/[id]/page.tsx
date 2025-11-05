@@ -1,6 +1,8 @@
+
 import { CommunityChat } from "@/components/iykyk/CommunityChat";
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
+import { DesktopNav } from "@/components/iykyk/DesktopNav";
 import { appData } from "@/lib/data";
 import { notFound } from "next/navigation";
 
@@ -24,10 +26,15 @@ export default function SocialChatPage({ params }: { params: { id: string } }) {
 
     return (
         <div className="flex min-h-screen w-full flex-col bg-background">
-          <Header />
-          <main className="flex-1 flex flex-col pb-24">
-            <CommunityChat community={mockCommunity} />
-          </main>
+          <div className="md:flex">
+            <DesktopNav />
+            <main className="flex-1 md:pl-16">
+              <Header />
+              <div className="flex-1 flex flex-col pb-24">
+                <CommunityChat community={mockCommunity} />
+              </div>
+            </main>
+          </div>
           <MobileNav />
         </div>
       );
