@@ -1,7 +1,6 @@
 
 'use client';
 
-import { Header } from "@/components/iykyk/Header";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
@@ -32,15 +31,13 @@ const iconMap = {
 export default function DiscoverPage() {
 
   return (
-    <>
-      <Header />
-      <div className="flex flex-1 flex-col pb-24">
-        <div className="p-4 md:p-6 text-center">
+    <div className="flex flex-1 flex-col">
+        <div className="text-center">
             <h2 className="text-3xl font-bold tracking-tight">Your Cultural Concierge</h2>
             <p className="text-muted-foreground mt-2">The lifestyle OS: Shuffle plans, unlock perks, and discover Bondi in real-time.</p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 px-4 md:px-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
             {featureData.map((feature) => {
                 const image = PlaceHolderImages.find(img => img.id === feature.imageId);
                 const Icon = iconMap[feature.icon as keyof typeof iconMap];
@@ -78,7 +75,7 @@ export default function DiscoverPage() {
             })}
         </div>
 
-        <div className="px-4 md:px-6 mt-8 space-y-8">
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card>
                 <div className="p-6">
                     <div className="flex items-center gap-3 mb-4">
@@ -110,7 +107,6 @@ export default function DiscoverPage() {
                 </div>
             </Card>
         </div>
-      </div>
-    </>
+    </div>
   );
 }
