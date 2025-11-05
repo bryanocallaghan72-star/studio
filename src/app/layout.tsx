@@ -38,8 +38,8 @@ export default function RootLayout({
             </main>
           </div>
           <MobileNav />
+          <Toaster />
         </FirebaseClientProvider>
-        <Toaster />
       </body>
     </html>
   );
