@@ -36,8 +36,8 @@ export default function RootLayout({
             <main className="flex-1 md:pl-16">
               {children}
             </main>
+            <MobileNav />
           </div>
-          <MobileNav />
           <Toaster />
         </FirebaseClientProvider>
       </body>
