@@ -9,6 +9,7 @@ import { SidebarProvider, Sidebar, SidebarTrigger, SidebarContent, SidebarHeader
 import { Compass, Home, PlaySquare, Code, Users, Flame, User, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { Logo } from '@/components/iykyk/Logo';
+import { ThemeApplier } from '@/components/ThemeApplier';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -39,58 +40,60 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn(inter.variable, "font-body antialiased")}>
-        <FirebaseClientProvider>
-          <SidebarProvider>
-            <Sidebar>
-                <SidebarContent>
-                    <SidebarHeader>
-                        <div className="flex items-center gap-2">
-                           <Logo className="h-6 w-6"/>
-                           <span className="text-xl font-bold tracking-tighter text-primary">iykyk</span>
-                        </div>
-                    </SidebarHeader>
-                    <SidebarMenu>
-                        {navLinks.map((link) => (
-                            <SidebarMenuItem key={link.href}>
-                                <Link href={link.href}>
-                                    <SidebarMenuButton tooltip={link.label}>
-                                        <link.icon/>
-                                        <span>{link.label}</span>
-                                    </SidebarMenuButton>
-                                </Link>
-                            </SidebarMenuItem>
-                        ))}
-                    </SidebarMenu>
-                    <SidebarFooter>
-                       <SidebarMenu>
-                           <SidebarMenuItem>
-                               <Link href="/profile/shannon">
-                                    <SidebarMenuButton tooltip="Profile">
-                                        <User/>
-                                        <span>Profile</span>
-                                    </SidebarMenuButton>
-                                </Link>
-                           </SidebarMenuItem>
+        <ThemeApplier>
+          <FirebaseClientProvider>
+            <SidebarProvider>
+              <Sidebar>
+                  <SidebarContent>
+                      <SidebarHeader>
+                          <div className="flex items-center gap-2">
+                            <Logo className="h-6 w-6"/>
+                            <span className="text-xl font-bold tracking-tighter text-primary">iykyk</span>
+                          </div>
+                      </SidebarHeader>
+                      <SidebarMenu>
+                          {navLinks.map((link) => (
+                              <SidebarMenuItem key={link.href}>
+                                  <Link href={link.href}>
+                                      <SidebarMenuButton tooltip={link.label}>
+                                          <link.icon/>
+                                          <span>{link.label}</span>
+                                      </SidebarMenuButton>
+                                  </Link>
+                              </SidebarMenuItem>
+                          ))}
+                      </SidebarMenu>
+                      <SidebarFooter>
+                        <SidebarMenu>
                             <SidebarMenuItem>
-                               <Link href="/login">
-                                    <SidebarMenuButton tooltip="Logout">
-                                        <LogOut/>
-                                        <span>Logout</span>
-                                    </SidebarMenuButton>
-                                </Link>
-                           </SidebarMenuItem>
-                       </SidebarMenu>
-                    </SidebarFooter>
-                </SidebarContent>
-            </Sidebar>
-            <SidebarInset>
-              <div className="p-4 md:p-6">
-                {children}
-              </div>
-            </SidebarInset>
-          </SidebarProvider>
-          <Toaster />
-        </FirebaseClientProvider>
+                                <Link href="/profile/shannon">
+                                      <SidebarMenuButton tooltip="Profile">
+                                          <User/>
+                                          <span>Profile</span>
+                                      </SidebarMenuButton>
+                                  </Link>
+                            </SidebarMenuItem>
+                              <SidebarMenuItem>
+                                <Link href="/login">
+                                      <SidebarMenuButton tooltip="Logout">
+                                          <LogOut/>
+                                          <span>Logout</span>
+                                      </SidebarMenuButton>
+                                  </Link>
+                            </SidebarMenuItem>
+                        </SidebarMenu>
+                      </SidebarFooter>
+                  </SidebarContent>
+              </Sidebar>
+              <SidebarInset>
+                <div className="p-4 md:p-6">
+                  {children}
+                </div>
+              </SidebarInset>
+            </SidebarProvider>
+            <Toaster />
+          </FirebaseClientProvider>
+        </ThemeApplier>
       </body>
     </html>
   );
