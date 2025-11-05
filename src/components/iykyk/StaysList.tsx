@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -31,14 +32,14 @@ export function StaysList() {
                     </div>
                 </div>
                 
-                <div className="grid grid-cols-1 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {appData.stays.map(stay => {
                         const image = PlaceHolderImages.find(img => img.id === stay.imageId);
                         const creator = appData.creators.find(c => c.id === stay.creatorId);
                         return (
                             <Card key={stay.id} className="group relative overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 rounded-2xl">
                                 {image && (
-                                    <div className="relative h-64 w-full">
+                                    <div className="relative h-56 w-full">
                                         <Image
                                             src={image.imageUrl}
                                             alt={stay.description}
