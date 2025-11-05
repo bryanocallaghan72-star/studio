@@ -1,3 +1,4 @@
+
 import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code } from "lucide-react";
 
 export const featureData = [
