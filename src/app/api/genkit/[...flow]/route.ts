@@ -1,11 +1,13 @@
-import { ai } from '@/ai/genkit.server';
-import { defineNextActions } from '@genkit-ai/next';
+import { appRoute } from '@genkit-ai/next';
 
 // Import flows here to register them with the Next.js API route handler.
-// This is the single place where all flows should be imported for registration.
-import '@/ai/flows/generate-itinerary-flow';
-import '@/ai/flows/generate-surprise-flow';
+import { generateItinerary } from '@/ai/flows/generate-itinerary-flow';
+import { generateSurpriseFlow } from '@/ai/flows/generate-surprise-flow';
 
-export const { GET, POST } = defineNextActions({
-  ai,
+// This is a simplified approach. In a real app, you'd likely have a map
+// of flows and dynamically select them based on the request.
+// For now, we'll just export a primary one.
+// You can also export multiple routes from here.
+export const POST = appRoute({
+  flow: generateItinerary,
 });

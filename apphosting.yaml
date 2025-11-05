@@ -1,5 +1,7 @@
 # Settings to manage and configure a Firebase App Hosting backend.
 # https://firebase.google.com/docs/app-hosting/configure
+sourceDirectory: .
+framework: nextjs
 runConfig:
   minInstances: 0
-sourceDirectory: .
+  maxInstances: 1
