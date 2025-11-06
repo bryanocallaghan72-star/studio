@@ -1,7 +1,8 @@
+
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { Gift } from "lucide-react";
+import { Gift, Sparkles } from "lucide-react";
 import { AnimatePresence } from 'framer-motion';
 import { useSurpriseMe } from "./useSurpriseMe";
 import SurpriseMeModal from "./SurpriseMeModal";
@@ -18,15 +19,17 @@ export function SurpriseMeButton() {
 
     return (
         <>
-            <Button 
-                variant="secondary" 
-                className="w-full bg-accent text-accent-foreground hover:bg-accent/90 mt-4" 
+            <button
                 onClick={handleGenerate}
-                disabled={isGenerating && showModal}
+                disabled={isGenerating}
+                className="w-full flex items-center p-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-                <Gift className="mr-2 h-5 w-5" />
-                Surprise Me
-            </Button>
+                <div className="mr-6 bg-white/20 p-3 rounded-xl"><Sparkles size={32} /></div>
+                <div className="text-left">
+                    <h3 className="text-lg font-bold">Surprise Me</h3>
+                    <p className="text-sm opacity-90">{isGenerating ? 'Thinking...' : 'Shuffle a random itinerary.'}</p>
+                </div>
+            </button>
 
             <AnimatePresence>
                 <SurpriseMeModal 
