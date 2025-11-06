@@ -4,11 +4,20 @@ import { useState, useEffect } from 'react';
 
 const useTimeOfDayTheme = () => {
   const [theme, setTheme] = useState('dusk');
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    // This effect runs only on the client, after the component has mounted.
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    // This effect runs only on the client, and only after isClient is true.
+    if (!isClient) return;
+
     const getTheme = () => {
       const currentHour = new Date().getHours();
-      if (currentHour >= 5 && currentHour < 9) return 'dawn'; 
+      if (currentHour >= 5 && currentHour < 9) return 'dawn';
       if (currentHour >= 9 && currentHour < 17) return 'day';
       if (currentHour >= 17 && currentHour < 20) return 'goldenHour';
       return 'dusk';
@@ -65,7 +74,8 @@ const useTimeOfDayTheme = () => {
     for (const [key, value] of Object.entries(selectedTheme)) {
       root.style.setProperty(key, value);
     }
-  }, []);
+    
+  }, [isClient]); // This effect depends on isClient, ensuring it runs after client mount.
 
   return theme;
 };
