@@ -1,28 +1,48 @@
-
 'use client';
 
-import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
 
-/**
- * The root page of the application.
- * This component's sole purpose is to redirect the user to the main '/discover' page.
- * It displays a loading state while the redirect is in progress.
- */
-export default function RootPage() {
+export default function LandingPage() {
   const router = useRouter();
 
-  useEffect(() => {
-    router.replace('/discover');
-  }, [router]);
+  const handleEnter = () => {
+    router.push('/discover');
+  };
 
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center bg-background">
-      <div className="text-center">
-        <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
-        <p className="mt-4 text-muted-foreground">Loading your experience...</p>
-      </div>
+    <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden bg-black text-white">
+      <video
+        src="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4"
+        poster="https://images.unsplash.com/photo-1593384581543-0a96116d34b6?q=80&w=2070&auto=format&fit=crop"
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute top-0 left-0 h-full w-full object-cover"
+        data-ai-hint="Bondi sunset"
+      />
+      <div className="absolute inset-0 bg-black/50" />
+      <motion.div
+        className="relative z-10 text-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
+      >
+        <h1 className="text-6xl font-black tracking-tighter text-white md:text-8xl">
+          iykyk
+        </h1>
+        <p className="mt-2 text-lg text-white/80 md:text-xl">
+          Your Cultural Concierge for Bondi
+        </p>
+        <Button
+          onClick={handleEnter}
+          className="mt-8 h-14 rounded-full bg-white px-10 text-lg font-bold text-black shadow-lg transition-transform hover:scale-105 active:scale-95"
+        >
+          Enter Bondi
+        </Button>
+      </motion.div>
     </div>
   );
 }
