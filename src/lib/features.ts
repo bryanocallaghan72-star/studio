@@ -74,12 +74,4 @@ export const featureData = [
       color: "text-purple-500",
       imageId: "stay-2",
     },
-    {
-      href: "/ar",
-      icon: "Camera",
-      title: "iykyk Lens",
-      description: "See Bondi in a new dimension.",
-      color: "text-cyan-400",
-      imageId: "ar-view",
-    },
 ];

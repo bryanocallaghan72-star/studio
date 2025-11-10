@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from "next/link";
@@ -60,8 +59,19 @@ export default function DiscoverPage() {
             ))}
         </div>
 
-        <div className="mt-8">
+        <div className="mt-8 space-y-4">
             <SurpriseMeButton />
+            <Link href="/ar" passHref>
+                <button
+                    className="w-full flex items-center p-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                >
+                    <div className="mr-6 bg-white/20 p-3 rounded-xl"><Camera size={32} /></div>
+                    <div className="text-left">
+                        <h3 className="text-lg font-bold">iykyk Lens</h3>
+                        <p className="text-sm opacity-90">See your world differently.</p>
+                    </div>
+                </button>
+            </Link>
         </div>
     </div>
   );
