@@ -7,6 +7,7 @@ import { Inter } from 'next/font/google';
 import { FirebaseClientProvider } from '@/firebase/client-provider'; // <-- This fixes the crash
 import { DesktopNav } from '@/components/iykyk/DesktopNav';
 import { cn } from '@/lib/utils';
+import { ThemeApplier } from '@/components/ThemeApplier';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -31,12 +32,14 @@ export default function RootLayout({
       </head>
       <body className={cn(inter.variable, "font-body antialiased")}>
         <FirebaseClientProvider>
-          <div className="md:flex">
-            <DesktopNav />
-            <main className="flex-1 md:pl-16">
-              {children}
-            </main>
-          </div>
+          <ThemeApplier>
+            <div className="md:flex">
+              <DesktopNav />
+              <main className="flex-1 md:pl-16">
+                {children}
+              </main>
+            </div>
+          </ThemeApplier>
         </FirebaseClientProvider>
           <Toaster />
       </body>
