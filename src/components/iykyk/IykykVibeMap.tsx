@@ -2,7 +2,6 @@
 "use client";
 
 import { useMemo } from "react";
-import Link from "next/link";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Map, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -28,7 +27,56 @@ const center = {
 
 // Custom map styles to match the app theme
 const mapStyles = [
-  // Add custom map styles here if desired, for now using default
+    {
+        "featureType": "all",
+        "elementType": "geometry.fill",
+        "stylers": [
+            { "color": "#1e293b" }
+        ]
+    },
+    {
+        "featureType": "all",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            { "color": "#94a3b8" }
+        ]
+    },
+    {
+        "featureType": "all",
+        "elementType": "labels.text.stroke",
+        "stylers": [
+            { "color": "#1e293b" },
+            { "weight": 2 }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "geometry",
+        "stylers": [
+            { "color": "#334155" }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "geometry.fill",
+        "stylers": [
+            { "color": "#0f172a" }
+        ]
+    },
+     {
+        "featureType": "poi",
+        "elementType": "geometry.fill",
+        "stylers": [
+            { "color": "#334155" }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "elementType": "geometry",
+        "stylers": [
+            { "color": "#475569" }
+        ]
+    }
 ];
 
 
@@ -76,42 +124,40 @@ export function IykykVibeMap() {
   }), []);
 
   if (loadError) {
-    return <div className="text-destructive p-6">Error loading maps. Please check your API key.</div>;
+    return <div className="text-destructive p-6">Error loading maps. Please check your API key and ensure the Maps JavaScript API is enabled in your Google Cloud project.</div>;
   }
 
   return (
-    <section className="flex flex-col h-[calc(100vh-10rem)]">
-        <div className="flex items-center gap-3 mb-4 p-4 md:p-6 pb-0">
-            <Map className="h-8 w-8 text-primary" />
-            <h2 className="text-3xl font-bold tracking-tight">iykyk Vibe</h2>
-        </div>
-        <p className="text-muted-foreground mb-4 p-4 md:p-6 pt-2">
-            Explore Bondi's landscape. Tap a pin for more info.
-        </p>
+    <section className="flex flex-col h-full relative">
+        <div className="absolute top-0 left-0 right-0 z-10 p-4 md:p-6 space-y-4 bg-gradient-to-b from-background to-transparent">
+            <p className="text-muted-foreground">
+                Explore Bondi's landscape. Tap a pin for more info.
+            </p>
 
-        <div className="flex overflow-x-auto pb-4 px-4 md:px-6 scrollbar-hide">
-            {Object.entries(categories).map(([category, {icon: Icon, color, textColor}]) => (
-                <button
-                    key={category}
-                    onClick={() => handleTabChange(category)}
-                    data-active={activeTab === category}
-                    className={cn(
-                        "flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full mx-1 transition-all duration-300 inline-flex items-center shadow-sm",
-                        "bg-card text-foreground hover:bg-secondary",
-                        "data-[active=true]:bg-[--active-bg] data-[active=true]:text-[--active-text]"
-                    )}
-                    style={{
-                        "--active-bg": color,
-                        "--active-text": textColor,
-                    } as React.CSSProperties}
-                >
-                    <Icon className="mr-2 h-4 w-4" />
-                    {category}
-                </button>
-            ))}
+            <div className="flex overflow-x-auto pb-2 scrollbar-hide -mx-2">
+                {Object.entries(categories).map(([category, {icon: Icon, color, textColor}]) => (
+                    <button
+                        key={category}
+                        onClick={() => handleTabChange(category)}
+                        data-active={activeTab === category}
+                        className={cn(
+                            "flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full mx-1 transition-all duration-300 inline-flex items-center shadow-sm",
+                            "bg-card text-foreground hover:bg-secondary",
+                            "data-[active=true]:bg-[--active-bg] data-[active=true]:text-[--active-text]"
+                        )}
+                        style={{
+                            "--active-bg": color,
+                            "--active-text": textColor,
+                        } as React.CSSProperties}
+                    >
+                        <Icon className="mr-2 h-4 w-4" />
+                        {category}
+                    </button>
+                ))}
+            </div>
         </div>
 
-        <div className="flex-grow flex flex-col relative mt-2 rounded-lg border overflow-hidden mx-4 md:mx-6">
+        <div className="flex-grow flex flex-col relative rounded-lg overflow-hidden">
             {!isLoaded || isLoadingVenues ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/50">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />

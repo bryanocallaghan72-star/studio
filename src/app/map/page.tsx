@@ -2,11 +2,8 @@
 "use client";
 
 import { IykykVibeMap } from "@/components/iykyk/IykykVibeMap";
-import { Header } from "@/components/iykyk/Header";
-import { MobileNav } from "@/components/iykyk/MobileNav";
 import { Suspense } from "react";
 import { Loader2 } from "lucide-react";
-import { DesktopNav } from "@/components/iykyk/DesktopNav";
 
 function MapContent() {
   return (
@@ -25,18 +22,8 @@ function MapContent() {
 
 export default function MapPage() {
   return (
-    <div className="flex min-h-screen w-full flex-col bg-background">
-      <div className="md:flex">
-        <DesktopNav />
-        <main className="flex-1 md:pl-16">
-          <Header />
-          <div className="flex-1 pb-24 md:pb-0">
-            <MapContent />
-          </div>
-        </main>
+      <div className="-m-4 md:-m-6 h-[calc(100vh-4rem)]">
+        <MapContent />
       </div>
-      <MobileNav />
-    </div>
   );
 }
-

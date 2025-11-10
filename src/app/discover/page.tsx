@@ -47,7 +47,7 @@ const FeatureItem = ({ feature }: { feature: (typeof featureData)[0] }) => {
 
 export default function DiscoverPage() {
   return (
-    <div className="flex flex-1 flex-col">
+    <>
         <div className="text-left mb-8">
             <h2 className="text-3xl font-bold tracking-tight">iykyk</h2>
             <p className="text-muted-foreground mt-2">Your Cultural Concierge</p>
@@ -73,6 +73,6 @@ export default function DiscoverPage() {
                 </button>
             </Link>
         </div>
-    </div>
+    </>
   );
 }
