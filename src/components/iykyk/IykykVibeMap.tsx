@@ -39,7 +39,7 @@ export function IykykVibeMap() {
   const activeTab = searchParams.get('category') || 'All';
   const firestore = useFirestore();
   
-  const { isLoaded } = useJsApiLoader({
+  const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
   });
@@ -75,6 +75,9 @@ export function IykykVibeMap() {
     styles: mapStyles,
   }), []);
 
+  if (loadError) {
+    return <div className="text-destructive p-6">Error loading maps. Please check your API key.</div>;
+  }
 
   return (
     <section className="flex flex-col h-[calc(100vh-10rem)]">
