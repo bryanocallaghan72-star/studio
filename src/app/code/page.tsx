@@ -13,9 +13,9 @@ import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 const rankedCreators = appData.creators.slice(0, 10);
 
 const getTrophyColor = (rank: number) => {
-  if (rank === 0) return "text-yellow-400";
-  if (rank === 1) return "text-gray-400";
-  if (rank === 2) return "text-orange-400";
+  if (rank === 0) return "text-yellow-400"; // Gold
+  if (rank === 1) return "text-slate-400";  // Silver
+  if (rank === 2) return "text-orange-400"; // Bronze
   return "text-muted-foreground";
 }
 
