@@ -1,6 +1,5 @@
 'use client';
 
-import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
 import { Card, CardDescription, CardTitle, CardContent } from "@/components/ui/card";
 import Link from "next/link";
@@ -33,7 +32,7 @@ export default function DiscoverPage() {
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
-      <Header />
+      
       <div className="flex flex-1 flex-col pb-24">
         <div className="p-4 md:p-6 text-center">
             <h2 className="text-3xl font-bold tracking-tight">Your Cultural Concierge</h2>
