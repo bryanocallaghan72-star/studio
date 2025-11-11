@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -95,8 +94,8 @@ function LandingPageContent() {
                 Loading...
              </Button>
           ) : (
-            <Link href={user ? "/discover" : "/login"} passHref>
-              <Button size="lg" asChild>
+            <Link href={user ? "/discover" : "/login"} passHref legacyBehavior>
+              <Button asChild size="lg">
                 <a>
                   {user ? "Enter, you're on the list" : "Get Started"}
                   <ArrowRight className="ml-2" />
