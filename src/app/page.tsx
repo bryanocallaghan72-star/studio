@@ -1,125 +1,48 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Sparkles, Map, Users, Gift } from 'lucide-react';
-
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useUser } from '@/firebase/auth/use-user';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { motion } from 'framer-motion';
 
-function LandingPageContent() {
-  const { user, isUserLoading } = useUser();
-  const [isClient, setIsClient] = useState(false);
+export default function LandingPage() {
+  const router = useRouter();
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
-    return (
-      <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background">
-        <Sparkles className="h-12 w-12 animate-pulse text-primary" />
-      </div>
-    );
-  }
-
-  const image = PlaceHolderImages.find(p => p.id === 'bondi-sunset');
+  const handleEnter = () => {
+    router.push('/discover');
+  };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-background p-4 text-center">
-      {image && (
-        <motion.div 
-          className="absolute inset-0 z-0"
-          initial={{ scale: 1.2, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <Image
-            src={image.imageUrl}
-            alt="Sunset over Bondi Beach"
-            fill
-            className="object-cover"
-            data-ai-hint={image.imageHint}
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
-        </motion.div>
-      )}
-
-      <div className="relative z-10 flex flex-col items-center">
-        <AnimatePresence>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-          >
-            <Badge variant="secondary" className="mb-4 text-sm">
-              <Sparkles className="mr-2 h-3 w-3 text-primary" />
-              Your Real-Time Cultural Portal
-            </Badge>
-          </motion.div>
-        </AnimatePresence>
-
-        <motion.h1 
-          className="text-5xl font-black tracking-tighter text-foreground md:text-7xl"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-        >
+    <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden bg-black text-white">
+      <video
+        src="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4"
+        poster="https://images.unsplash.com/photo-1593384581543-0a96116d34b6?q=80&w=2070&auto=format&fit=crop"
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute top-0 left-0 h-full w-full object-cover"
+        data-ai-hint="Bondi sunset"
+      />
+      <div className="absolute inset-0 bg-black/50" />
+      <motion.div
+        className="relative z-10 text-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
+      >
+        <h1 className="text-6xl font-black tracking-tighter text-white md:text-8xl">
           iykyk
-        </motion.h1>
-
-        <motion.p 
-          className="mt-4 max-w-lg text-muted-foreground"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
+        </h1>
+        <p className="mt-2 text-lg text-white/80 md:text-xl">
+          Your Cultural Concierge for Bondi
+        </p>
+        <Button
+          onClick={handleEnter}
+          className="mt-8 h-14 rounded-full bg-white px-10 text-lg font-bold text-black shadow-lg transition-transform hover:scale-105 active:scale-95"
         >
-          The lifestyle OS for Bondi. Shuffle plans, unlock perks, and discover your city in real-time through the eyes of local creators.
-        </motion.p>
-
-        <motion.div
-          className="mt-8 flex flex-col gap-4 sm:flex-row"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-        >
-          {isUserLoading ? (
-             <Button size="lg" disabled>
-                <Sparkles className="mr-2 h-4 w-4 animate-spin" />
-                Loading...
-             </Button>
-          ) : (
-            <Link href={user ? "/discover" : "/login"} passHref legacyBehavior>
-              <Button asChild size="lg">
-                <a>
-                  {user ? "Enter, you're on the list" : "Get Started"}
-                  <ArrowRight className="ml-2" />
-                </a>
-              </Button>
-            </Link>
-          )}
-        </motion.div>
-
-        <motion.div 
-            className="mt-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-muted-foreground"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7, duration: 0.5 }}
-        >
-            <span className="flex items-center gap-1.5"><Map className="h-4 w-4"/> Vibe Maps</span>
-            <span className="flex items-center gap-1.5"><Users className="h-4 w-4"/> Creator-led</span>
-            <span className="flex items-center gap-1.5"><Gift className="h-4 w-4"/> Local Perks</span>
-        </motion.div>
-      </div>
+          Enter Bondi
+        </Button>
+      </motion.div>
     </div>
   );
-}
-
-export default function Home() {
-  return <LandingPageContent />;
 }
