@@ -1,10 +1,10 @@
+
 'use client';
 
 import Link from "next/link";
 import { featureData } from '@/lib/features';
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Gift, Camera, Sparkles, Map, Flame, Tag, Calendar, Users, Home, Compass, Zap, Shirt, Bed, Code } from 'lucide-react';
+import { Calendar, Map, Compass, Flame, Tag, Code, Shirt, Bed, Zap, Gift, Camera, Sparkles, Users, Home } from 'lucide-react';
 import { SurpriseMeButton } from "@/features/surprise/SurpriseMeButton";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -40,25 +40,23 @@ export default function DiscoverPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <SurpriseMeButton />
                 {featureData.map(feature => {
-                    const Icon = iconMap[feature.icon as keyof typeof iconMap] || Home;
                     const image = PlaceHolderImages.find(p => p.id === feature.imageId);
                     return (
                         <Link href={feature.href} key={feature.href}>
-                             <Card className="group w-full h-full flex flex-col md:flex-row items-center p-4 bg-secondary text-foreground rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                             <Card className="group relative w-full h-48 overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                                 {image && (
-                                    <div className="relative w-full h-40 md:w-32 md:h-full rounded-xl overflow-hidden mr-0 md:mr-6 mb-4 md:mb-0">
-                                        <Image
-                                            src={image.imageUrl}
-                                            alt={feature.title}
-                                            fill
-                                            className="object-cover"
-                                            data-ai-hint={image.imageHint}
-                                        />
-                                    </div>
+                                    <Image
+                                        src={image.imageUrl}
+                                        alt={feature.title}
+                                        fill
+                                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                        data-ai-hint={image.imageHint}
+                                    />
                                 )}
-                                <div className="text-left">
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent z-20" />
+                                <div className="absolute bottom-0 left-0 p-4 z-30 text-white">
                                     <h3 className="text-lg font-bold">{feature.title}</h3>
-                                    <p className="text-sm text-muted-foreground mt-1">{feature.description}</p>
+                                    <p className="text-sm text-white/80 mt-1">{feature.description}</p>
                                 </div>
                             </Card>
                         </Link>
