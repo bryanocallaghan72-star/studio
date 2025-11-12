@@ -8,7 +8,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-} from '@/components/ui/sidebar';
+} from '@/components/iykyk/sidebar';
 import {
   Home,
   Calendar,

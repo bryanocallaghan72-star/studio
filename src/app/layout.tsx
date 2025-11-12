@@ -1,3 +1,4 @@
+
 // In app/layout.tsx
 
 import type {Metadata} from 'next';
@@ -9,8 +10,8 @@ import { MobileNav } from '@/components/iykyk/MobileNav';
 import { cn } from '@/lib/utils';
 import { ThemeApplier } from '@/components/ThemeApplier';
 import { Header } from '@/components/iykyk/Header';
-// --- These are the new/correct imports ---
-import { Sidebar, SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
+// --- Corrected import path ---
+import { Sidebar, SidebarProvider, SidebarInset } from '@/components/iykyk/sidebar';
 import { DesktopNavContent } from '@/components/iykyk/DesktopNavContent';
 
 const inter = Inter({
