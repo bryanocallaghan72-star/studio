@@ -23,7 +23,6 @@ import {
   Sparkles,
 } from 'lucide-react';
 
-// This is the list of links from your old DesktopNav
 const navItems = [
   { href: '/discover', icon: Home, label: 'Discover' },
   { href: '/my-day', icon: Calendar, label: 'My Day' },
@@ -46,15 +45,17 @@ export function DesktopNavContent() {
     <SidebarMenu>
       {navItems.map((item) => (
         <SidebarMenuItem key={item.href}>
-          <Link href={item.href} passHref legacyBehavior>
-            <SidebarMenuButton
-              isActive={pathname === item.href}
-              tooltip={item.label}
-            >
+          {/* --- THIS IS THE CORRECTED BLOCK --- */}
+          <SidebarMenuButton
+            asChild // <-- Tells the button to pass its styles to the Link
+            isActive={pathname === item.href}
+            tooltip={item.label}
+          >
+            <Link href={item.href}>
               <item.icon className="h-5 w-5" />
-              <span>{item.label}</span>
-            </SidebarMenuButton>
-          </Link>
+            </Link>
+          </SidebarMenuButton>
+          {/* ---------------------------------- */}
         </SidebarMenuItem>
       ))}
     </SidebarMenu>
