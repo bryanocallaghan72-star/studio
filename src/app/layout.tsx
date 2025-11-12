@@ -1,15 +1,15 @@
-
 // In app/layout.tsx
 
 import type {Metadata} from 'next';
-import './globals.css'; // <-- This fixes your styling
+import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { Inter } from 'next/font/google';
-import { FirebaseClientProvider } from '@/firebase/client-provider'; // <-- This fixes the crash
+import { FirebaseClientProvider } from '@/firebase/client-provider';
 import { MobileNav } from '@/components/iykyk/MobileNav';
 import { cn } from '@/lib/utils';
 import { ThemeApplier } from '@/components/ThemeApplier';
 import { Header } from '@/components/iykyk/Header';
+// --- These are the new/correct imports ---
 import { Sidebar, SidebarProvider, SidebarInset } from '@/components/iykyk/sidebar';
 import { DesktopNavContent } from '@/components/iykyk/DesktopNavContent';
 
@@ -37,20 +37,23 @@ export default function RootLayout({
       <body className={cn(inter.variable, "font-body antialiased")}>
         <FirebaseClientProvider>
           <ThemeApplier>
+            {/* --- This is the new, correct body structure --- */}
             <SidebarProvider>
               <div className="flex min-h-screen w-full flex-col bg-background">
-                <Sidebar>
-                  <DesktopNavContent />
-                </Sidebar>
-                <SidebarInset>
-                  <main className="flex-1">
-                    <Header />
-                    <div className="flex-1 p-4 md:p-6 pb-24">
-                      {children}
-                    </div>
-                    <MobileNav />
-                  </main>
-                </SidebarInset>
+                <div className="md:flex">
+                  <Sidebar>
+                    <DesktopNavContent />
+                  </Sidebar>
+                  <SidebarInset>
+                    <main className="flex-1">
+                      <Header />
+                      <div className="flex-1 p-4 md:p-6 pb-24">
+                        {children}
+                      </div>
+                      <MobileNav /> {/* <-- Moved MobileNav here */}
+                    </main>
+                  </SidebarInset>
+                </div>
               </div>
             </SidebarProvider>
           </ThemeApplier>
