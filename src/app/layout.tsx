@@ -42,7 +42,7 @@ export default function RootLayout({
             <SidebarProvider>
               <div className="flex min-h-screen w-full flex-col bg-background">
                 <div className="md:flex">
-                  <Sidebar variant="floating" collapsible="icon">
+                  <Sidebar collapsible="icon">
                     <DesktopNavContent />
                   </Sidebar>
                   <SidebarInset>
