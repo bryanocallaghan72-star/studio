@@ -1,4 +1,3 @@
-
 // In src/components/iykyk/DesktopNavContent.tsx
 'use client';
 
@@ -50,9 +49,6 @@ export function DesktopNavContent() {
             asChild
             isActive={pathname === item.href}
             tooltip={item.label}
-            variant="outline"
-            size="icon"
-            className="rounded-full"
           >
             <Link href={item.href}>
               <item.icon className="h-5 w-5" />
