@@ -48,9 +48,9 @@ export default function RootLayout({
                     <div className="flex-1 p-4 md:p-6 pb-24">
                       {children}
                     </div>
+                    <MobileNav />
                   </main>
                 </SidebarInset>
-                <MobileNav />
               </div>
             </SidebarProvider>
           </ThemeApplier>
