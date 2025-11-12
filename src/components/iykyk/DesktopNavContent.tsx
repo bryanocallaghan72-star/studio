@@ -45,17 +45,16 @@ export function DesktopNavContent() {
     <SidebarMenu>
       {navItems.map((item) => (
         <SidebarMenuItem key={item.href}>
-          {/* --- THIS IS THE CORRECTED BLOCK --- */}
           <SidebarMenuButton
-            asChild // <-- Tells the button to pass its styles to the Link
+            asChild
             isActive={pathname === item.href}
             tooltip={item.label}
           >
             <Link href={item.href}>
               <item.icon className="h-5 w-5" />
+              <span>{item.label}</span>
             </Link>
           </SidebarMenuButton>
-          {/* ---------------------------------- */}
         </SidebarMenuItem>
       ))}
     </SidebarMenu>
