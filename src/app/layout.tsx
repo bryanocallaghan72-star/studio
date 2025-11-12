@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { ThemeApplier } from '@/components/ThemeApplier';
 import { Header } from '@/components/iykyk/Header';
 // --- These are the new/correct imports ---
-import { Sidebar, SidebarProvider, SidebarInset } from '@/components/iykyk/sidebar';
+import { Sidebar, SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { DesktopNavContent } from '@/components/iykyk/DesktopNavContent';
 
 const inter = Inter({

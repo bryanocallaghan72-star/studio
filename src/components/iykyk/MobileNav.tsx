@@ -1,16 +1,14 @@
+
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Flame,
   Map,
-  Compass,
-  Tag,
   Calendar,
-  Users,
   Home,
   MessageCircle,
+  Users,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/firebase';
@@ -20,7 +18,7 @@ const navItems = [
   { href: '/my-day', icon: Calendar, label: 'My Day' },
   { href: '/map', icon: Map, label: 'Map' },
   { href: '/feed', icon: MessageCircle, label: 'Feed' },
-  { href: '/profile', icon: Users, label: 'Profile' },
+  // The dynamic 'Profile' item is now handled separately below.
 ];
 
 export function MobileNav() {
@@ -32,23 +30,19 @@ export function MobileNav() {
     // Otherwise, link to the generic login page.
     return user ? `/profile/${user.uid}` : '/login';
   };
+  
+  const profileHref = getProfileHref();
+  const isProfileActive = pathname.startsWith('/profile');
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 p-1 backdrop-blur-sm md:hidden">
       <div className="grid h-full max-w-lg grid-cols-5 mx-auto">
         {navItems.map((item) => {
-          const href = item.label === 'Profile' ? getProfileHref() : item.href;
-          // For the profile tab, we check if the pathname starts with /profile/
-          // to correctly highlight it for any user's profile page.
-          const isActive =
-            item.label === 'Profile'
-              ? pathname.startsWith('/profile')
-              : pathname === href;
-
+          const isActive = pathname === item.href;
           return (
             <Link
               key={item.label}
-              href={href}
+              href={item.href}
               className={cn(
                 'group flex flex-col items-center justify-center p-2 rounded-lg transition-colors',
                 isActive
@@ -61,6 +55,19 @@ export function MobileNav() {
             </Link>
           );
         })}
+        {/* Render the Profile link separately to handle its dynamic href */}
+        <Link
+          href={profileHref}
+          className={cn(
+            'group flex flex-col items-center justify-center p-2 rounded-lg transition-colors',
+            isProfileActive
+              ? 'text-primary'
+              : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+          )}
+        >
+          <Users className="h-6 w-6" />
+          <span className="text-xs font-medium sr-only">Profile</span>
+        </Link>
       </div>
     </nav>
   );
