@@ -49,10 +49,13 @@ export function DesktopNavContent() {
             asChild
             isActive={pathname === item.href}
             tooltip={item.label}
+            variant="outline"
+            size="icon"
+            className="rounded-full"
           >
             <Link href={item.href}>
               <item.icon className="h-5 w-5" />
-              <span>{item.label}</span>
+              <span className="sr-only">{item.label}</span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
