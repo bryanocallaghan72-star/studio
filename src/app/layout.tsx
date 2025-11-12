@@ -39,7 +39,7 @@ export default function RootLayout({
           <ThemeApplier>
             <SidebarProvider>
               <div className="flex min-h-screen w-full flex-col bg-background">
-                <div className="md:flex">
+                <div>
                   <Sidebar>
                     <DesktopNavContent />
                   </Sidebar>
