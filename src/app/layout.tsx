@@ -6,11 +6,11 @@ import './globals.css'; // <-- This fixes your styling
 import { Toaster } from "@/components/ui/toaster";
 import { Inter } from 'next/font/google';
 import { FirebaseClientProvider } from '@/firebase/client-provider'; // <-- This fixes the crash
-import { DesktopNav } from '@/components/iykyk/DesktopNav';
 import { MobileNav } from '@/components/iykyk/MobileNav';
 import { cn } from '@/lib/utils';
 import { ThemeApplier } from '@/components/ThemeApplier';
 import { Header } from '@/components/iykyk/Header';
+import { Sidebar, SidebarProvider, SidebarInset } from '@/components/iykyk/sidebar';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -36,18 +36,24 @@ export default function RootLayout({
       <body className={cn(inter.variable, "font-body antialiased")}>
         <FirebaseClientProvider>
           <ThemeApplier>
-            <div className="flex min-h-screen w-full flex-col bg-background">
-              <div className="md:flex">
-                <DesktopNav />
-                <main className="flex-1 md:pl-16">
-                  <Header />
-                  <div className="flex-1 p-4 md:p-6 pb-24">
-                    {children}
-                  </div>
-                </main>
+            <SidebarProvider> {/* <-- 1. Add Provider wrapper */}
+              <div className="flex min-h-screen w-full flex-col bg-background">
+                <div className="md:flex">
+                  <Sidebar>
+                    {/* We will add your nav link items here next */}
+                  </Sidebar>
+                  <SidebarInset> {/* <-- 2. Wrap main content */}
+                    <main className="flex-1"> {/* <-- 3. Remove md:pl-16 */}
+                      <Header />
+                      <div className="flex-1 p-4 md:p-6 pb-24">
+                        {children}
+                      </div>
+                    </main>
+                  </SidebarInset>
+                </div>
+                <MobileNav />
               </div>
-              <MobileNav />
-            </div>
+            </SidebarProvider>
           </ThemeApplier>
         </FirebaseClientProvider>
           <Toaster />
