@@ -1,4 +1,5 @@
 
+
 import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift, UserPlus, Star } from 'lucide-react';
 import { collection, writeBatch, getDocs, doc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
@@ -218,10 +219,10 @@ export const appData = {
   ],
   deals: [
     {
-        id: 'deal-aperol',
-        title: "2-for-1 Aperol Spritz",
+        id: 'deal-patron',
+        title: "2-for-1 Patrón Margaritas",
         venue: "Hotel Ravesis",
-        description: "Enjoy two Aperol Spritz cocktails for the price of one. The perfect sunset drink!",
+        description: "Enjoy two Patrón Margaritas for the price of one. The perfect sunset drink!",
         imageId: "cocktail-101",
         validity: "Fri & Sat Sunset",
         category: "Food & Drink",
@@ -630,21 +631,21 @@ export const appData = {
   ],
   mapMyDayOptions: [
     {
-      id: 'mmd-aperol',
-      title: 'The Aperol Spritz Sunset',
-      description: 'Sponsored by Aperol',
+      id: 'mmd-patron',
+      title: 'The Patrón Margarita Sunset',
+      description: 'Sponsored by Patrón',
       request: {
-        vibe: 'Aperol Spritz Sunset Vibe: Start with a scenic walk, then find the perfect spot to enjoy a refreshing Aperol Spritz as the sun goes down. End with a casual dinner.',
+        vibe: 'A Patrón Margarita Sunset Vibe: Start with a scenic walk, then find the perfect spot to enjoy a refreshing Patrón Margarita as the sun goes down. End with a casual dinner.',
         pace: 2,
         budget: 3,
         travelMode: 'walking',
       },
       mockItinerary: [
         { time: '17:00', name: 'Bondi to Bronte Coastal Walk', notes: 'Golden hour walk.' },
-        { time: '18:00', name: 'Hotel Ravesis', notes: 'Enjoy a 2-for-1 Aperol Spritz deal.' },
+        { time: '18:00', name: 'Hotel Ravesis', notes: 'Enjoy a 2-for-1 Patrón Margarita deal.' },
         { time: '19:30', name: 'La Piadina', notes: 'Casual and delicious Italian street food.' }
       ],
-      curatedMessage: 'Your Aperol Spritz Sunset is ready! Take a golden hour stroll along the coast, then head to Hotel Ravesis for your 2-for-1 Aperol Spritz. Finish with some amazing Italian food at La Piadina. Enjoy the sunset!'
+      curatedMessage: 'Your Patrón Margarita Sunset is ready! Take a golden hour stroll along the coast, then head to Hotel Ravesis for your 2-for-1 Patrón Margarita. Finish with some amazing Italian food at La Piadina. Enjoy the sunset!'
     },
     {
       id: 'mmd1',
@@ -919,3 +920,4 @@ export const appData = {
     
 
     
+
