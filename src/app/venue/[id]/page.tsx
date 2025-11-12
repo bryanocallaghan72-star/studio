@@ -1,6 +1,5 @@
 
 
-
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
 import { appData } from "@/lib/data";
@@ -14,7 +13,6 @@ import { ArrowRight, Flame, MapPin, Ticket, Clock, TrendingUp, Info, Utensils, C
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { DesktopNav } from "@/components/iykyk/DesktopNav";
 
 const getImageForVenue = (venueName: string) => {
     const venueNameLower = venueName.toLowerCase();
@@ -74,8 +72,8 @@ export default function VenueProfilePage({ params }: { params: { id: string } })
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <div className="md:flex">
-        <DesktopNav />
-        <main className="flex-1 md:pl-16">
+        
+        <main className="flex-1">
           <Header />
           <div className="flex flex-1 flex-col pb-24">
             <div className="relative h-80 w-full">

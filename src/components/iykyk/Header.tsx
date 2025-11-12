@@ -20,7 +20,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useUser } from '@/firebase';
 import { useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
-import { DesktopNav } from './DesktopNav';
+import { DesktopNavContent } from './DesktopNavContent';
 
 export function Header() {
   const { user } = useUser();
@@ -46,7 +46,7 @@ export function Header() {
             </Button>
             </SheetTrigger>
             <SheetContent side="left" className="flex flex-col p-0">
-                <DesktopNav />
+                <DesktopNavContent />
             </SheetContent>
         </Sheet>
         
