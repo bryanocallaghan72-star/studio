@@ -48,7 +48,6 @@ export function DesktopNavContent() {
         <SidebarMenuItem key={item.href}>
           <SidebarMenuButton
             asChild
-            href={item.href}
             isActive={pathname === item.href}
             tooltip={item.label}
             variant="outline"
