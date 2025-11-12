@@ -18,7 +18,6 @@ const navItems = [
   { href: '/my-day', icon: Calendar, label: 'My Day' },
   { href: '/map', icon: Map, label: 'Map' },
   { href: '/feed', icon: MessageCircle, label: 'Feed' },
-  // The dynamic 'Profile' item is now handled separately below.
 ];
 
 export function MobileNav() {

@@ -1,3 +1,4 @@
+
 // In src/components/iykyk/DesktopNavContent.tsx
 'use client';
 
@@ -7,7 +8,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-} from '@/components/iykyk/sidebar';
+} from '@/components/ui/sidebar';
 import {
   Home,
   Calendar,
@@ -47,6 +48,7 @@ export function DesktopNavContent() {
         <SidebarMenuItem key={item.href}>
           <SidebarMenuButton
             asChild
+            href={item.href}
             isActive={pathname === item.href}
             tooltip={item.label}
             variant="outline"
