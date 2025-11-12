@@ -39,19 +39,17 @@ export default function RootLayout({
           <ThemeApplier>
             <SidebarProvider>
               <div className="flex min-h-screen w-full flex-col bg-background">
-                <div>
-                  <Sidebar>
-                    <DesktopNavContent />
-                  </Sidebar>
-                  <SidebarInset>
-                    <main className="flex-1">
-                      <Header />
-                      <div className="flex-1 p-4 md:p-6 pb-24">
-                        {children}
-                      </div>
-                    </main>
-                  </SidebarInset>
-                </div>
+                <Sidebar>
+                  <DesktopNavContent />
+                </Sidebar>
+                <SidebarInset>
+                  <main className="flex-1">
+                    <Header />
+                    <div className="flex-1 p-4 md:p-6 pb-24">
+                      {children}
+                    </div>
+                  </main>
+                </SidebarInset>
                 <MobileNav />
               </div>
             </SidebarProvider>
