@@ -1,4 +1,3 @@
-
 export type TimeBucket = 'morning' | 'day' | 'goldenHour' | 'night';
 export type Vibe = 'active' | 'chill' | 'social';
 

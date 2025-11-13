@@ -9,7 +9,7 @@ import { featureData } from '@/lib/features';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from "@/components/ui/button";
 import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code } from 'lucide-react';
-import { SurpriseMeButton } from "@/features/surprise/SurpriseMeButton";
+import { SurpriseMe } from "@/components/iykyk/SurpriseMe";
 
 const iconMap: { [key: string]: React.ElementType } = {
     Sparkles,
@@ -81,18 +81,7 @@ export default function DiscoverPage() {
         </div>
 
         <div className="px-4 md:px-6 mt-8 space-y-8">
-            <Card>
-                <div className="p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                        <Gift className="h-8 w-8 text-accent" />
-                        <h2 className="text-3xl font-bold tracking-tight">Surprise Me</h2>
-                    </div>
-                    <p className="text-muted-foreground">
-                        Unlock hidden gems and spontaneous experiences with a single tap. A new adventure awaits!
-                    </p>
-                    <SurpriseMeButton />
-                </div>
-            </Card>
+             <SurpriseMe />
 
             <Card>
                 <div className="p-6">
