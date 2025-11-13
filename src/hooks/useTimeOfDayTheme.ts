@@ -28,48 +28,99 @@ const useTimeOfDayTheme = () => {
 
     const themes = {
       dawn: {
-        '--bg-primary': '#fef3c7',
-        '--bg-secondary': '#e0f2fe',
-        '--text-primary': '#4b5563',
-        '--text-secondary': '#6b7280',
-        '--accent-primary': '#fb923c',
-        '--accent-secondary': '#67e8f9',
-        '--border-color': '#d1d5db',
-        '--gradient': 'linear-gradient(to bottom right, var(--bg-primary), var(--bg-secondary))',
+        '--background': '220 20% 98%', // Light blue-gray sky
+        '--foreground': '220 25% 20%', // Dark slate
+        '--card': '220 15% 100%', // White cards
+        '--card-foreground': '220 25% 20%',
+        '--popover': '220 15% 100%',
+        '--popover-foreground': '220 25% 20%',
+        '--primary': '30 95% 65%', // Soft orange sun
+        '--primary-foreground': '220 25% 20%',
+        '--secondary': '220 20% 95%', // Lighter blue-gray
+        '--secondary-foreground': '220 25% 20%',
+        '--muted': '220 15% 90%',
+        '--muted-foreground': '220 10% 45%',
+        '--accent': '30 90% 80%', // Lighter orange
+        '--accent-foreground': '220 25% 20%',
+        '--destructive': '0 84.2% 60.2%',
+        '--destructive-foreground': '210 40% 98%',
+        '--border': '220 15% 90%',
+        '--input': '220 15% 90%',
+        '--ring': '30 95% 65%',
       },
       day: {
-        '--bg-primary': '#ffffff',
-        '--bg-secondary': '#f0f9ff',
-        '--text-primary': '#1f2937',
-        '--text-secondary': '#4b5563',
-        '--accent-primary': '#38bdf8',
-        '--accent-secondary': '#fbbf24',
-        '--border-color': '#e5e7eb',
-        '--gradient': 'linear-gradient(to bottom, var(--bg-secondary), var(--bg-primary))',
+        '--background': '40 45% 95%', // iykyk-sand
+        '--foreground': '220 36% 10%', // iykyk-ink
+        '--card': '38 40% 86%', // iykyk-sand-deep
+        '--card-foreground': '220 36% 10%',
+        '--popover': '38 40% 86%',
+        '--popover-foreground': '220 36% 10%',
+        '--primary': '45 100% 70%', // iykyk-gold
+        '--primary-foreground': '220 36% 10%',
+        '--secondary': '38 40% 86%',
+        '--secondary-foreground': '220 36% 10%',
+        '--muted': '38 40% 86%',
+        '--muted-foreground': '220 9% 46%',
+        '--accent': '44 100% 82%', // iykyk-gold-soft
+        '--accent-foreground': '220 36% 10%',
+        '--destructive': '0 84.2% 60.2%',
+        '--destructive-foreground': '210 40% 98%',
+        '--border': '42 20% 86%',
+        '--input': '42 20% 86%',
+        '--ring': '45 100% 70%',
       },
       goldenHour: {
-        '--bg-primary': '#fff7ed',
-        '--bg-secondary': '#fff1f2',
-        '--text-primary': '#44403c',
-        '--text-secondary': '#57534e',
-        '--accent-primary': '#f59e0b',
-        '--accent-secondary': '#f472b6',
-        '--border-color': '#f3e8ff',
-        '--gradient': 'linear-gradient(to bottom right, #fde68a, #fbcfe8)',
+        '--background': '25 60% 96%', // Warm cream
+        '--foreground': '25 30% 20%', // Deep brown
+        '--card': '30 70% 90%', // Lighter cream
+        '--card-foreground': '25 30% 20%',
+        '--popover': '30 70% 90%',
+        '--popover-foreground': '25 30% 20%',
+        '--primary': '35 90% 60%', // Rich gold
+        '--primary-foreground': '25 30% 10%',
+        '--secondary': '30 70% 90%',
+        '--secondary-foreground': '25 30% 20%',
+        '--muted': '30 70% 90%',
+        '--muted-foreground': '25 20% 45%',
+        '--accent': '35 85% 80%', // Soft gold
+        '--accent-foreground': '25 30% 20%',
+        '--destructive': '0 84.2% 60.2%',
+        '--destructive-foreground': '210 40% 98%',
+        '--border': '30 50% 85%',
+        '--input': '30 50% 85%',
+        '--ring': '35 90% 60%',
       },
       dusk: {
-        '--bg-primary': '#0f172a',
-        '--bg-secondary': '#1e293b',
-        '--text-primary': '#f8fafc',
-        '--text-secondary': '#94a3b8',
-        '--accent-primary': '#fbbf24',
-        '--accent-secondary': '#22d3ee',
-        '--border-color': '#334155',
-        '--gradient': 'linear-gradient(to bottom, var(--bg-secondary), var(--bg-primary))',
+        '--background': '222.2 84% 4.9%',
+        '--foreground': '210 40% 98%',
+        '--card': '222.2 84% 4.9%',
+        '--card-foreground': '210 40% 98%',
+        '--popover': '222.2 84% 4.9%',
+        '--popover-foreground': '210 40% 98%',
+        '--primary': '210 40% 98%',
+        '--primary-foreground': '222.2 47.4% 11.2%',
+        '--secondary': '217.2 32.6% 17.5%',
+        '--secondary-foreground': '210 40% 98%',
+        '--muted': '217.2 32.6% 17.5%',
+        '--muted-foreground': '215 20.2% 65.1%',
+        '--accent': '217.2 32.6% 17.5%',
+        '--accent-foreground': '210 40% 98%',
+        '--destructive': '0 62.8% 30.6%',
+        '--destructive-foreground': '210 40% 98%',
+        '--border': '217.2 32.6% 17.5%',
+        '--input': '217.2 32.6% 17.5%',
+        '--ring': '212.7 26.8% 83.9%',
       }
     };
 
     const root = document.documentElement;
+    
+    // Clear any existing theme classes
+    root.classList.remove('theme-dawn', 'theme-day', 'theme-golden-hour', 'theme-dusk');
+
+    // Add the new theme class
+    root.classList.add(`theme-${currentTheme}`);
+    
     const selectedTheme = themes[currentTheme];
     for (const [key, value] of Object.entries(selectedTheme)) {
       root.style.setProperty(key, value);
