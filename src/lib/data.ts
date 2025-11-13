@@ -282,7 +282,7 @@ export const appData = {
     {
         id: 'hot-2',
         title: "$10 Spicy Margs",
-        venue: "LULU",
+        venue: "Lulu",
         description: "Spice up your night with our signature spicy margaritas.",
         imageId: "community-sushi",
         creatorId: "lucas",
@@ -676,7 +676,7 @@ export const appData = {
       },
       mockItinerary: [
         { time: '18:30', name: 'Lulu', notes: 'Trivia & tapas at the local.' },
-        { time: '20:00', name: 'Ravesis', notes: 'Rooftop cocktails - mingle hour.' },
+        { time: '20:00', name: 'Hotel Ravesis', notes: 'Rooftop cocktails - mingle hour.' },
         { time: '22:00', name: 'Bondi Vibes Bar', notes: 'Dancing & good energy!' }
       ],
       curatedMessage: 'Get ready to mingle! You\'re all set for trivia and tapas at Lulu, then hit the rooftop at Ravesis for some cocktails. Finish the night dancing at Bondi Vibes Bar. Have fun!'
@@ -710,7 +710,7 @@ export const appData = {
       },
       mockItinerary: [
         { time: '18:00', name: 'Totti\'s', notes: 'Reservation for an amazing meal.' },
-        { time: '19:30', name: 'Ravesis', notes: 'Rooftop drinks with an ocean view.' },
+        { time: '19:30', name: 'Hotel Ravesis', notes: 'Rooftop drinks with an ocean view.' },
         { time: '21:00', name: 'Bondi Icebergs', notes: 'Sunset walk and cocktails at the pool.' }
       ],
       curatedMessage: 'All good, you\'re booked in for a cheeky cocktail at Rum Diaries, then jump over to Totti\'s for some delicious Italian food. Finish the night at Icebergs with some wicked cocktails. You\'ve Got This!'
@@ -727,7 +727,7 @@ export const appData = {
       },
       mockItinerary: [
         { time: '18:00', name: 'Lulu', notes: 'Margaritas and shared tapas.' },
-        { time: '20:00', name: 'Ravesis', notes: 'Skyline cocktails on the rooftop.' },
+        { time: '20:00', name: 'Hotel Ravesis', notes: 'Skyline cocktails on the rooftop.' },
         { time: '22:00', name: 'Bondi Vibes Bar', notes: 'Dancing & good energy.' }
       ],
       curatedMessage: 'Your girls\' night out is all set! Start with margaritas at Lulu, then hit the rooftop at Ravesis for cocktails. Finish the night dancing at Bondi Vibes Bar. Have a blast!'
@@ -783,101 +783,32 @@ export const appData = {
       curatedMessage: 'Your fitness day is locked in! Smash a PT session at the outdoor gym, refuel with a protein bowl from Acai Brothers, and then catch some waves with a surf lesson. Go get \'em!'
     },
   ],
-  groupEventsOptions: [
-    {
-      id: 'ge1',
-      title: 'Birthday Brunch',
-      description: 'A boozy brunch for big groups. ~20 pax',
-      request: {
-        vibe: 'A boozy birthday brunch for a large group of about 20 people. Start with a great brunch spot, then an activity like a cocktail masterclass, and end with celebratory rooftop drinks.',
-        pace: 3,
-        budget: 4,
-        travelMode: 'walking',
-      },
-      mockItinerary: [
-        { time: '11:00', name: 'Harry\'s Bondi', notes: 'Ricotta hotcakes for everyone.' },
-        { time: '13:00', name: 'The Rum Diary Bar', notes: 'Cocktail masterclass for the crew.' },
-        { time: '15:00', name: 'Ravesis', notes: 'Rooftop drinks to finish the day.' }
-      ],
-      curatedMessage: 'Your birthday brunch is set! Start with hotcakes at Harry\'s, then a cocktail masterclass at The Rum Diary Bar, and finish with rooftop drinks at Ravesis. Happy birthday!'
-    },
-    {
-      id: 'ge2',
-      title: 'Staff Party',
-      description: 'Team building and celebrations. ~30 pax, $2500 budget.',
-      request: {
-        vibe: 'A staff party for about 30 people with a budget of around $2500. We need a nice dinner to start, followed by a place with live music and a great atmosphere, and a final spot for a nightcap.',
-        pace: 3,
-        budget: 5,
-        travelMode: 'uber',
-      },
-      mockItinerary: [
-        { time: '18:00', name: 'Chiswick', notes: 'Dinner reservation for the whole team.' },
-        { time: '20:30', name: 'Bondi Vibes Bar', notes: 'Live music and great vibes.' },
-        { time: '22:00', name: 'The Bucket List', notes: 'Nightcap on the beach.' }
-      ],
-      curatedMessage: 'Your staff party is on! Start with an elegant dinner at Chiswick, then head to Bondi Vibes Bar for some live music, and finish the night with a nightcap at The Bucket List. Time to celebrate!'
-    },
-    {
-      id: 'ge3',
-      title: 'Baby Shower',
-      description: 'Bites and mocktails by the beach.',
-      request: {
-        vibe: 'A classy and relaxed baby shower by the beach. Looking for a place with light bites and nice mocktails, a spot for coffee and cake, and a picturesque location for photos.',
-        pace: 1,
-        budget: 3,
-        travelMode: 'walking',
-      },
-      mockItinerary: [
-        { time: '12:00', name: 'North Bondi Fish', notes: 'Light lunch with a stunning view.' },
-        { time: '14:00', name: 'Speedo\'s Cafe', notes: 'Coffee and cake to celebrate.' },
-        { time: '16:00', name: 'Bondi Icebergs', notes: 'Photo op by the pool.' }
-      ],
-      curatedMessage: 'Your baby shower is all set! Start with a light lunch at North Bondi Fish, then coffee and cake at Speedo\'s Cafe, and finish with a photo op at Bondi Icebergs. Congratulations!'
-    },
-  ],
   map: {
     pins: [
       { id: 1, name: "Bondi Icebergs", slug: "bondi-icebergs", type: "Vibes", description: "Iconic ocean views and fine dining.", x: "80%", y: "85%", latitude: -33.8953, longitude: 151.274, openingHours: "6am - 6:30pm", vibeTags: ["Iconic", "Views", "Swim"], currentVibe: "Buzzing" },
       { id: 2, name: "Hotel Ravesis", slug: "hotel-ravesis", type: "Nightlife", description: "Stylish beachfront bar and restaurant.", x: "48%", y: "45%", latitude: -33.8913, longitude: 151.276, openingHours: "12pm - 12am", vibeTags: ["Stylish", "Rooftop", "Cocktails"], currentVibe: "Packed" },
       { id: 3, name: "The Depot", slug: "the-depot", type: "Brunch", description: "Popular spot for brunch and coffee.", x: "15%", y: "75%", latitude: -33.8943, longitude: 151.270, openingHours: "7am - 3pm", vibeTags: ["Casual", "Local Fav", "Coffee"], currentVibe: "Chill" },
-      { id: 4, name: "Bondi Beach", slug: "bondi-beach", type: "Vibes", description: "World-famous beach with golden sands and surf.", x: "80%", y: "30%", latitude: -33.8917, longitude: 151.277, openingHours: "24/7", vibeTags: ["Beach", "Surf", "Sun"], currentVibe: "Buzzing" },
       { id: 5, name: "Raw Bar", slug: "raw-bar", type: "Sushi", description: "Authentic Japanese sushi and sashimi.", x: "25%", y: "55%", latitude: -33.8895, longitude: 151.274, openingHours: "12pm - 10pm", vibeTags: ["Authentic", "Sushi", "Fresh"], currentVibe: "Buzzing" },
       { id: 6, name: "Speedo's Cafe", slug: "speedos-cafe", type: "Brunch", description: "Insta-famous colorful brunch dishes.", x: "55%", y: "30%", latitude: -33.8888, longitude: 151.277, openingHours: "7am - 4pm", vibeTags: ["Instagrammable", "Healthy", "Brunch"], currentVibe: "Packed" },
       { id: 7, name: "Totti's", slug: "tottis", type: "Restaurants", description: "Vibrant Italian restaurant with a leafy courtyard.", x: "10%", y: "85%", latitude: -33.895, longitude: 151.268, openingHours: "12pm - 11pm", vibeTags: ["Italian", "Courtyard", "Group Friendly"], currentVibe: "Packed" },
-      { id: 8, name: "Bondi Trattoria", slug: "bondi-trattoria", type: "Restaurants", description: "Classic Italian dishes with a sea view.", x: "70%", y: "60%", latitude: -33.893, longitude: 151.275, openingHours: "5pm - 10pm", vibeTags: ["Classic", "Italian", "Sea View"], currentVibe: "Chill" },
       { id: 9, name: "The Corner House", slug: "the-corner-house", type: "Cocktails", description: "Cozy bar with a great cocktail list.", x: "35%", y: "50%", latitude: -33.892, longitude: 151.271, openingHours: "4pm - 12am", vibeTags: ["Cozy", "Cocktails", "Local"], currentVibe: "Buzzing" },
       { id: 10, name: "Harry's Bondi", slug: "harrys-bondi", type: "Brunch", description: "Classic brunch fare with a modern twist.", x: "65%", y: "45%", latitude: -33.889, longitude: 151.276, openingHours: "7am - 3pm", vibeTags: ["Brunch", "Modern", "Coffee"], currentVibe: "Buzzing" },
-      { id: 11, name: "LULU", slug: "lulu-pan-asian", type: "Restaurants", description: "Modern Pan-Asian cuisine in a chic setting.", x: "20%", y: "70%", latitude: -33.8935, longitude: 151.27, openingHours: "5pm - 11pm", vibeTags: ["Pan-Asian", "Chic", "Dinner"], currentVibe: "Buzzing" },
-      { id: 12, name: "RND Izakaya", slug: "rnd-izakaya", type: "Sushi", description: "Japanese pub food and creative cocktails.", x: "40%", y: "75%", latitude: -33.894, longitude: 151.272, openingHours: "5pm - 12am", vibeTags: ["Izakaya", "Japanese", "Fun"], currentVibe: "Packed" },
-      { id: 13, name: "Luca and Luca", slug: "luca-and-luca-gelato", type: "Brunch", description: "Artisanal gelato with unique flavors.", x: "60%", y: "25%", latitude: -33.888, longitude: 151.278, openingHours: "11am - 10pm", vibeTags: ["Gelato", "Dessert", "Sweet"], currentVibe: "Chill" },
-      { id: 14, name: "Volume One", slug: "volume-one", type: "Cocktails", description: "Hidden gem for craft cocktails.", x: "30%", y: "90%", latitude: -33.896, longitude: 151.271, openingHours: "6pm - 1am", vibeTags: ["Hidden", "Craft", "Intimate"], currentVibe: "Chill" },
+      { id: 11, name: "Lulu", slug: "lulu", type: "Restaurants", description: "Modern Pan-Asian cuisine in a chic setting.", x: "20%", y: "70%", latitude: -33.8935, longitude: 151.27, openingHours: "5pm - 11pm", vibeTags: ["Pan-Asian", "Chic", "Dinner"], currentVibe: "Buzzing" },
       { id: 15, name: "Bills", slug: "bills", type: "Brunch", description: "Famous for ricotta hotcakes and scrambled eggs.", x: "15%", y: "80%", latitude: -33.891, longitude: 151.27, openingHours: "7:30am - 3pm", vibeTags: ["Iconic", "Brunch", "Hotcakes"], currentVibe: "Packed" },
       { id: 16, name: "Sean's", slug: "seans", type: "Restaurants", description: "Farm-to-table dining with ocean views.", x: "60%", y: "15%", latitude: -33.887, longitude: 151.278, openingHours: "6pm - 10pm", vibeTags: ["Farm-to-Table", "Fine Dining", "Views"], currentVibe: "Buzzing" },
       { id: 17, name: "La Piadina", slug: "la-piadina", type: "Restaurants", description: "Authentic Italian flatbread sandwiches.", x: "50%", y: "40%", latitude: -33.890, longitude: 151.273, openingHours: "11am - 9pm", vibeTags: ["Quick", "Italian", "Lunch"], currentVibe: "Chill" },
       { id: 18, name: "The Bucket List", slug: "the-bucket-list", type: "Nightlife", description: "Casual beachside bar with a lively atmosphere.", x: "75%", y: "30%", latitude: -33.890, longitude: 151.277, openingHours: "12pm - 12am", vibeTags: ["Beachy", "Casual", "Lively"], currentVibe: "Packed" },
       { id: 19, name: "Porch and Parlour", slug: "porch-and-parlour", type: "Brunch", description: "Bohemian-style cafe with healthy options.", x: "50%", y: "55%", latitude: -33.888, longitude: 151.276, openingHours: "6:30am - 3pm", vibeTags: ["Bohemian", "Healthy", "Coffee"], currentVibe: "Buzzing" },
-      { id: 20, name: "Anatomy", slug: "anatomy", type: "Health & Fitness", description: "Boutique fitness studio offering various classes.", x: "25%", y: "55%", latitude: -33.892, longitude: 151.269, openingHours: "6am - 8pm", vibeTags: ["Fitness", "Classes", "Modern"], currentVibe: "Chill" },
-      { id: 21, name: "Acai Brothers", slug: "acai-brothers", type: "Health & Fitness", description: "Superfood bar specializing in acai bowls.", x: "10%", y: "65%", latitude: -33.893, longitude: 151.269, openingHours: "7am - 5pm", vibeTags: ["Acai", "Healthy", "Quick"], currentVibe: "Buzzing" },
-      { id: 22, name: "The Rum Diary Bar", slug: "the-rum-diary-bar", type: "Cocktails", description: "Caribbean-themed bar with a wide rum selection.", x: "5%", y: "85%", latitude: -33.894, longitude: 151.267, openingHours: "5pm - 12am", vibeTags: ["Rum", "Themed", "Cozy"], currentVibe: "Chill" },
-      { id: 23, name: "Lulu", slug: "lulu", type: "Restaurants", description: "Modern Pan-Asian cuisine in a chic setting.", x: "20%", y: "70%", latitude: -33.893, longitude: 151.270, openingHours: "5pm - 11pm", vibeTags: ["Pan-Asian", "Chic", "Dinner"], currentVibe: "Packed" },
-      { id: 24, name: "Ravesis", slug: "ravesis", type: "Nightlife", description: "Stylish beachfront bar and restaurant.", x: "48%", y: "30%", latitude: -33.891, longitude: 151.276, openingHours: "12pm - 12am", vibeTags: ["Stylish", "Rooftop", "Cocktails"], currentVibe: "Packed" },
-      { id: 25, name: "Bondi Vibes Bar", slug: "bondi-vibes-bar", type: "Nightlife", description: "Live music and good vibes.", x: "35%", y: "20%", latitude: -33.890, longitude: 151.271, openingHours: "7pm - 2am", vibeTags: ["Live Music", "Vibrant", "Dancing"], currentVibe: "Packed" },
       { id: 26, name: "Fluidform Pilates", slug: "fluidform-pilates", type: "Health & Fitness", description: "Boutique pilates studio.", x: "25%", y: "55%", latitude: -33.892, longitude: 151.272, openingHours: "6am - 7pm", vibeTags: ["Pilates", "Wellness", "Modern"], currentVibe: "Chill" },
-      { id: 27, name: "Sushi-e", slug: "sushi-e", type: "Sushi", description: "High-end sushi experience.", x: "30%", y: "65%", latitude: -33.8925, longitude: 151.271, openingHours: "6pm - 11pm", vibeTags: ["Omakase", "Fine Dining", "Authentic"], currentVibe: "Buzzing" },
-      { id: 28, name: "Beach Burrito Company", slug: "beach-burrito-company", type: "Restaurants", description: "Casual Mexican food and frozen margaritas.", x: "45%", y: "55%", latitude: -33.891, longitude: 151.273, openingHours: "12pm - 10pm", vibeTags: ["Mexican", "Casual", "Margaritas"], currentVibe: "Packed" },
-      { id: 29, name: "Chiswick", slug: "chiswick", type: "Restaurants", description: "Collective dining with a seasonal menu.", x: "5%", y: "85%", latitude: -33.896, longitude: 151.266, openingHours: "12pm - 10pm", vibeTags: ["Seasonal", "Elegant", "Garden"], currentVibe: "Buzzing" },
+      { id: 29, name: "Chiswick", slug: "chiswick", type: "Restaurants", description: "Elegant garden-to-plate dining experience.", x: "5%", y: "85%", latitude: -33.896, longitude: 151.266, openingHours: "12pm - 10pm", vibeTags: ["Seasonal", "Elegant", "Garden"], currentVibe: "Buzzing" },
       { id: 30, name: "North Bondi Fish", slug: "north-bondi-fish", type: "Restaurants", description: "Fresh seafood in a relaxed setting.", x: "55%", y: "40%", latitude: -33.887, longitude: 151.277, openingHours: "12pm - 10pm", vibeTags: ["Seafood", "Beachfront", "Relaxed"], currentVibe: "Buzzing" },
       { id: 31, name: "Lets Go Surfing", slug: "lets-go-surfing", type: "Surf", description: "Learn to surf with the best in Bondi.", x: "70%", y: "10%", latitude: -33.886, longitude: 151.277, openingHours: "7am - 5pm", vibeTags: ["Surfing", "Lessons", "Beginner Friendly"], currentVibe: "Buzzing" },
-      { id: 32, name: "Bondi Beach Outdoor Gym", slug: "bondi-beach-outdoor-gym", type: "Health & Fitness", description: "Iconic outdoor gym on the beach.", x: "70%", y: "20%", latitude: -33.889, longitude: 151.278, openingHours: "24/7", vibeTags: ["Fitness", "Outdoor", "Gym"], currentVibe: "Buzzing" },
       { id: 33, name: "Tuchuzy", slug: "tuchuzy", type: "Retail", description: "Iconic Bondi boutique with curated designer collections.", x: "20%", y: "65%", latitude: -33.893, longitude: 151.271, openingHours: "10am - 6pm", vibeTags: ["Designer", "Boutique", "Fashion"], currentVibe: "Chill" },
       { id: 34, name: "Venroy", slug: "venroy", type: "Retail", description: "Leisurewear for a global nomadic life. Born in Bondi.", x: "30%", y: "60%", latitude: -33.892, longitude: 151.273, openingHours: "10am - 6pm", vibeTags: ["Leisurewear", "Local", "Minimalist"], currentVibe: "Chill" },
       { id: 35, name: "Aquabumps", slug: "aquabumps", type: "Retail", description: "Gallery showcasing incredible surf and ocean photography.", x: "5%", y: "75%", latitude: -33.894, longitude: 151.268, openingHours: "10am - 5pm", vibeTags: ["Art", "Photography", "Ocean"], currentVibe: "Chill" },
       { id: 36, name: "Bondi Markets", slug: "bondi-markets", type: "Retail", description: "Sunday markets for unique finds from local designers.", x: "70%", y: "10%", latitude: -33.890, longitude: 151.275, openingHours: "10am - 4pm (Sun)", vibeTags: ["Market", "Local", "Unique"], currentVibe: "Buzzing" },
       { id: 37, name: "Bondi to Bronte Coastal Walk", slug: "bondi-to-bronte-coastal-walk", type: "Vibes", description: "One of the most scenic coastal walks in the world.", x: "85%", y: "95%", latitude: -33.903, longitude: 151.276, openingHours: "24/7", vibeTags: ["Walk", "Scenic", "Nature"], currentVibe: "Chill" },
-      { id: 38, name: "Emperor's Garden", slug: "emperors-garden", type: "Restaurants", description: "Famous for its cream puffs and authentic BBQ.", x: "15%", y: "48%", latitude: -33.879, longitude: 151.205, openingHours: "9am - 10pm", vibeTags: ["Chinatown", "Bakery", "BBQ", "Iconic"], currentVibe: "Packed" },
-      { id: 39, name: "Mamak", slug: "mamak", type: "Restaurants", description: "Authentic Malaysian street food with long queues.", x: "8%", y: "65%", latitude: -33.878, longitude: 151.204, openingHours: "11:30am - 2pm, 5:30pm - 10pm", vibeTags: ["Malaysian", "Roti", "Street Food", "Chinatown"], currentVibe: "Packed" },
-      { id: 40, name: "Market City", slug: "market-city", type: "Retail", description: "Shopping centre with factory outlets and an Asian food court.", x: "5%", y: "80%", latitude: -33.879, longitude: 151.202, openingHours: "10am - 7pm", vibeTags: ["Shopping", "Food Court", "Outlet", "Chinatown"], currentVibe: "Buzzing" }
+      { id: 4, name: "Bondi Beach", slug: "bondi-beach", type: "Vibes", description: "World-famous beach with golden sands and surf.", x: "80%", y: "30%", latitude: -33.8917, longitude: 151.277, openingHours: "24/7", vibeTags: ["Beach", "Surf", "Sun"], currentVibe: "Buzzing" }
     ]
   }
 };
@@ -921,3 +852,6 @@ export const appData = {
 
     
 
+
+
+    
