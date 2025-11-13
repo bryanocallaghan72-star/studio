@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -19,7 +20,7 @@ const useTimeOfDayTheme = () => {
       const currentHour = new Date().getHours();
       if (currentHour >= 5 && currentHour < 9) return 'dawn';
       if (currentHour >= 9 && currentHour < 17) return 'day';
-      if (currentHour >= 17 && currentHour < 20) return 'goldenHour';
+      if (currentHour >= 17 && currentHour < 20) return 'golden-hour';
       return 'dusk';
     };
 
@@ -69,7 +70,7 @@ const useTimeOfDayTheme = () => {
         '--input': '42 20% 86%',
         '--ring': '45 100% 70%',
       },
-      goldenHour: {
+      'golden-hour': {
         '--background': '25 60% 96%', // Warm cream
         '--foreground': '25 30% 20%', // Deep brown
         '--card': '30 70% 90%', // Lighter cream
@@ -121,7 +122,7 @@ const useTimeOfDayTheme = () => {
     // Add the new theme class
     root.classList.add(`theme-${currentTheme}`);
     
-    const selectedTheme = themes[currentTheme];
+    const selectedTheme = themes[currentTheme as keyof typeof themes];
     for (const [key, value] of Object.entries(selectedTheme)) {
       root.style.setProperty(key, value);
     }
