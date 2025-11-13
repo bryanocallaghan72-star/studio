@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from "@/components/ui/button";
@@ -5,37 +6,29 @@ import {
   Sparkles, 
   X, 
   MapPin, 
-  Utensils, 
-  ShoppingCart, 
-  Wine,
-  Waves,
-  Dumbbell
+  Dumbbell,
+  Wind,
+  Users
 } from "lucide-react";
 import { AnimatePresence, motion } from 'framer-motion';
-import { SurpriseOutput } from "./schemas";
+import { SurpriseOption } from "./schemas";
 import Link from 'next/link';
 
 const SurpriseMeModal = ({ isOpen, onClose, onAccept, onReshuffle, activity, isGenerating }: {
   isOpen: boolean;
   onClose: () => void;
-  onAccept: (activity: SurpriseOutput) => void;
+  onAccept: (activity: SurpriseOption) => void;
   onReshuffle: () => void;
-  activity: SurpriseOutput | null;
+  activity: SurpriseOption | null;
   isGenerating: boolean;
 }) => {
   if (!isOpen) return null;
 
-  const icons: { [key: string]: React.ReactNode } = {
-    'Health & Fitness': <Dumbbell size={48} className="text-pink-400" />,
-    'Brunch': <Utensils size={48} className="text-orange-400" />,
-    'Lunch': <Utensils size={48} className="text-teal-400" />,
-    'Retail': <ShoppingCart size={48} className="text-blue-400" />,
-    'Cocktails': <Wine size={48} className="text-purple-400" />,
-    'Nightlife': <Sparkles size={48} className="text-yellow-400" />,
-    'Restaurants': <Utensils size={48} className="text-red-400" />,
-    'Sushi': <MapPin size={48} className="text-green-400" />,
-    'Vibes': <Sparkles size={48} className="text-yellow-400" />,
-    'Surf': <Waves size={48} className="text-sky-400" />,
+  // Map vibe to a specific icon and color
+  const vibeIcons: { [key: string]: React.ReactNode } = {
+    'active': <Dumbbell size={48} className="text-pink-400" />,
+    'chill': <Wind size={48} className="text-blue-400" />,
+    'social': <Users size={48} className="text-purple-400" />,
   };
 
   return (
@@ -70,18 +63,22 @@ const SurpriseMeModal = ({ isOpen, onClose, onAccept, onReshuffle, activity, isG
               exit={{ opacity: 0 }}
             >
               <div className="mx-auto mb-4 w-20 h-20 bg-secondary rounded-full flex items-center justify-center">
-                {icons[activity.type] || <Sparkles size={48} className="text-primary" />}
+                {vibeIcons[activity.vibe] || <Sparkles size={48} className="text-primary" />}
               </div>
-              <h2 className="text-2xl font-bold mb-2">Your next move...</h2>
-              <p className="text-lg font-semibold mb-1">{activity.name}</p>
-              <p className="text-sm text-muted-foreground mb-6">{activity.notes}</p>
+              <h2 className="text-2xl font-bold mb-2">{activity.title}</h2>
+              <p className="text-sm text-muted-foreground mb-4">{activity.description}</p>
               
+              {activity.locationHint && (
+                <div className="flex items-center justify-center gap-2 text-xs font-semibold text-muted-foreground bg-secondary/50 rounded-full px-3 py-1 mb-6">
+                    <MapPin size={12} />
+                    <span>{activity.locationHint}</span>
+                </div>
+              )}
+
               <div className="space-y-3">
-                <Link href={`/venue/${activity.slug}`} passHref>
-                    <Button onClick={() => onAccept(activity)} className="w-full px-8 py-3 h-auto text-base rounded-full font-bold shadow-lg transform active:scale-95 transition-transform">
-                        Let's Go!
-                    </Button>
-                </Link>
+                <Button onClick={() => onAccept(activity)} className="w-full px-8 py-3 h-auto text-base rounded-full font-bold shadow-lg transform active:scale-95 transition-transform">
+                    Sounds good!
+                </Button>
                 <Button onClick={onReshuffle} variant="ghost" className="w-full px-8 py-3 h-auto rounded-full font-semibold transition-colors hover:bg-secondary">
                   Try Again
                 </Button>

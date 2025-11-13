@@ -1,55 +1,35 @@
+
 'use server';
 
 import { generateSurpriseFlow } from "@/ai/flows/generate-surprise-flow";
-import { appData } from "@/lib/data";
-import { SurpriseOutput } from "./schemas";
-import { normalizeSurprise } from "./normalize";
+import { SurpriseOption, TimeBucket } from "@/lib/surprise-options";
 
 /**
  * Server action to generate a "Surprise Me" suggestion.
- * This action handles determining the time of day, filtering available venues,
- * calling the AI flow, normalizing the response, and returning a structured result.
+ * This action determines the time of day, calls the simplified flow
+ * to select a random activity from a curated list, and returns the result.
  * 
  * @returns A promise that resolves to an object with either a `success` or `error` property.
  */
-export async function generateSurprise(): Promise<{ success?: SurpriseOutput, error?: string }> {
-  // Explicitly check for the API key at the beginning of the action.
-  if (!process.env.GEMINI_API_KEY) {
-    const errorMessage = 'The GEMINI_API_KEY environment variable is not set. This is required for the "Surprise Me" feature. Please add it to your environment and restart the server. For more details, see https://genkit.dev/docs/plugins/google-genai/';
-    console.error(errorMessage);
-    return { error: errorMessage };
-  }
-
+export async function generateSurprise(): Promise<{ success?: SurpriseOption, error?: string }> {
   try {
-    // 1. Determine Time of Day
+    // 1. Determine Time of Day Bucket
     const currentHour = new Date().getHours();
-    let timeOfDay: 'morning' | 'afternoon' | 'evening';
-    if (currentHour >= 5 && currentHour < 12) timeOfDay = 'morning';
-    else if (currentHour >= 12 && currentHour < 18) timeOfDay = 'afternoon';
-    else timeOfDay = 'evening';
+    let timeBucket: TimeBucket;
+    if (currentHour >= 5 && currentHour < 12) timeBucket = 'morning';
+    else if (currentHour >= 12 && currentHour < 17) timeBucket = 'day';
+    else if (currentHour >= 17 && currentHour < 20) timeBucket = 'goldenHour';
+    else timeBucket = 'night';
 
-    // 2. Filter Venues for the AI
-    const availableVenues = appData.map.pins.filter(pin => {
-      const category = pin.type;
-      if (timeOfDay === 'morning' && ['Brunch', 'Health & Fitness', 'Surf'].includes(category)) return true;
-      if (timeOfDay === 'afternoon' && ['Lunch', 'Retail', 'Vibes', 'Surf'].includes(category)) return true;
-      if (timeOfDay === 'evening' && ['Cocktails', 'Restaurants', 'Nightlife', 'Sushi'].includes(category)) return true;
-      return false;
-    }).map(p => ({ name: p.name, type: p.type }));
-
-    if (availableVenues.length === 0) {
-      throw new Error('No available venues for the current time of day.');
-    }
-
-    // 3. Call the AI Flow
-    const rawResponse = await generateSurpriseFlow({ timeOfDay, availableVenues });
+    // 2. Call the new, simplified flow
+    const result = await generateSurpriseFlow({ timeBucket });
     
-    if (!rawResponse || !rawResponse.name) {
-      throw new Error('AI did not return a valid surprise stop.');
+    if (!result) {
+      throw new Error('The surprise generator failed to return an activity.');
     }
 
-    // 4. Normalize the Response and return
-    return { success: normalizeSurprise(rawResponse) };
+    // 3. Return the selected option directly
+    return { success: result };
 
   } catch (error: any) {
     console.error('Surprise generation failed:', error);

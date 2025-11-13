@@ -1,14 +1,15 @@
+
 'use client';
 
 import { useState, useTransition } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { generateSurprise } from './actions';
-import { SurpriseOutput } from './schemas';
+import { SurpriseOption } from './schemas';
 
 export function useSurpriseMe() {
     const [isGenerating, startTransition] = useTransition();
     const [showModal, setShowModal] = useState(false);
-    const [activity, setActivity] = useState<SurpriseOutput | null>(null);
+    const [activity, setActivity] = useState<SurpriseOption | null>(null);
     const { toast } = useToast();
 
     const handleGenerate = () => {
@@ -31,15 +32,14 @@ export function useSurpriseMe() {
         });
     };
 
-    const handleAccept = (acceptedActivity: SurpriseOutput) => {
+    const handleAccept = (acceptedActivity: SurpriseOption) => {
         toast({
             title: "Let's Go!",
-            description: `Get ready to check out ${acceptedActivity.name}.`,
+            description: `Time for a: ${acceptedActivity.title}.`,
         });
         setShowModal(false);
         setActivity(null);
-        // In a real app, you might navigate here:
-        // router.push(`/venue/${acceptedActivity.slug}`);
+        // This feature no longer links to a specific venue, so no navigation needed.
     };
 
     const handleClose = () => {
