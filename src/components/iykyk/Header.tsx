@@ -23,6 +23,7 @@ import { useUser } from '@/firebase';
 import { useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { DesktopNavContent } from './DesktopNavContent';
+import { cn } from '@/lib/utils';
 
 function HeaderClientContent() {
   const { user } = useUser();
@@ -90,7 +91,9 @@ export function Header() {
   }, []);
 
   return (
-    <header className="flex h-14 items-center gap-4 border-b bg-transparent px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
+    <header className={cn(
+      "sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur-sm sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6"
+    )}>
         <Link href="/discover" className="flex items-center gap-2 font-semibold">
           <Flame className="h-6 w-6 text-primary" />
           <span className="text-lg font-bold">iykyk</span>
