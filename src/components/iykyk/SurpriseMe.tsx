@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Sparkles, MapPin } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 
 import { getSurpriseForNow } from '@/lib/get-surprise';
 import type { SurpriseOption, Vibe } from '@/lib/surprise-options';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const VIBE_LABELS: { id: Vibe; label: string }[] = [
   { id: 'active', label: 'Active' },
@@ -15,25 +17,63 @@ const VIBE_LABELS: { id: Vibe; label: string }[] = [
   { id: 'social', label: 'Social' },
 ];
 
+
+const SurpriseMePlaceholder = () => (
+    <Card className="bg-card/80 backdrop-blur shadow-md border border-border/60">
+        <CardContent className="p-4 flex flex-col gap-3">
+             <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Surprise Me
+                    </span>
+                </div>
+                 <Skeleton className="h-5 w-20 rounded-full" />
+            </div>
+             <div className="flex gap-2 mt-1">
+                <Skeleton className="h-7 w-20 rounded-full" />
+                <Skeleton className="h-7 w-20 rounded-full" />
+                <Skeleton className="h-7 w-20 rounded-full" />
+            </div>
+            <div className="mt-3 space-y-2">
+                <Skeleton className="h-5 w-3/4" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-4/5" />
+            </div>
+             <div className="flex items-center justify-between gap-2 mt-3">
+                 <Skeleton className="h-8 w-32 rounded-md" />
+            </div>
+        </CardContent>
+    </Card>
+);
+
+
 export function SurpriseMe() {
   const [vibe, setVibe] = useState<Vibe>('chill');
-  const [current, setCurrent] = useState<SurpriseOption | null>(() =>
-    getSurpriseForNow('chill')
-  );
+  const [current, setCurrent] = useState<SurpriseOption | null>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    // This effect runs only on the client, after the component has mounted.
+    setIsClient(true);
+    setCurrent(getSurpriseForNow('chill'));
+  }, []);
 
   const handleSurprise = () => {
     const next = getSurpriseForNow(vibe);
     setCurrent(next);
   };
 
-  const hasSuggestion = !!current;
-
   const vibeLabel = useMemo(
     () => VIBE_LABELS.find((v) => v.id === vibe)?.label ?? 'Chill',
     [vibe]
   );
+  
+  if (!isClient) {
+    return <SurpriseMePlaceholder />;
+  }
 
-  if (!hasSuggestion) {
+  if (!current) {
     // Fallback if no candidates are found
     return (
       <Card className="bg-card/80 backdrop-blur shadow-md border border-border/60">
