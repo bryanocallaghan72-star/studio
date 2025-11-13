@@ -103,6 +103,7 @@ export default function DiscoverPage() {
                     <p className="text-muted-foreground">
                         The future: an AR-powered view of your city's vibe.
                     </p>
+                     <p className="text-sm font-semibold text-purple-500 mt-2">Walk to Unlock</p>
                     <Link href="/ar">
                         <Button variant="secondary" className="w-full bg-purple-500/10 text-purple-500 hover:bg-purple-500/20 mt-4">
                            <Sparkles className="mr-2 h-5 w-5" />
