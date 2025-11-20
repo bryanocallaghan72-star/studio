@@ -62,37 +62,66 @@
   }
 }
 
+/* === GOD MODE THEME ENGINE === */
 .app-theme-wrapper {
   min-height: 100vh;
-  transition: background-color 1.0s ease, color 0.5s ease;
+  width: 100%;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  transition: background-color 0.8s ease, color 0.5s ease;
 }
 
-/* DAWN */
+/* FORCE all text inside the wrapper to inherit color (overrides default blacks) */
+.app-theme-wrapper h1, 
+.app-theme-wrapper h2, 
+.app-theme-wrapper h3, 
+.app-theme-wrapper p, 
+.app-theme-wrapper span, 
+.app-theme-wrapper div {
+  /* color: var(--text-primary); */
+  transition: color 0.5s ease;
+}
+
+/* FORCE all Cards to use the theme background */
+/* We target common card classes or generic divs with backgrounds */
+.app-theme-wrapper div[class*="card"], 
+.app-theme-wrapper div[class*="Card"],
+.app-theme-wrapper section {
+  /* background-color: var(--card-bg) !important;  */
+  transition: background-color 0.8s ease;
+  /* border-color: var(--border-color); */
+}
+
+/* === THEME VARIABLES === */
+
+/* 🌅 DAWN (Morning Blue) */
 [data-theme="dawn"] {
   --bg-primary: #F0F4F8;
   --text-primary: #2D3748;
-  --accent-color: #FF9F43; 
+  --card-bg: #FFFFFF;
+  --border-color: #D1D9E6;
 }
 
-/* DAY */
+/* ☀️ DAY (Bright Sand) */
 [data-theme="day"] {
   --bg-primary: #FDFBF7; 
   --text-primary: #1A1A1A;
-  --accent-color: #FBC02D;
+  --card-bg: #FFFFFF;
+  --border-color: #EAE0D5;
 }
 
-/* GOLDEN */
+/* 🥂 GOLDEN (Warm Sunset) */
 [data-theme="golden"] {
   --bg-primary: #FFF8E1; 
-  --text-primary: #4E342E;
-  --accent-color: #FF6F00;
+  --text-primary: #5D4037; /* Warm Brown Text */
+  --card-bg: #FFFDE7;      /* Warm Cream Cards */
+  --border-color: #FFECB3;
 }
 
-/* DUSK */
+/* 🌙 DUSK (Night Mode) */
 [data-theme="dusk"] {
   --bg-primary: #050511;
-  --text-primary: #FDFBF7;
-  --accent-color: #7B61FF;
+  --text-primary: #E0E0E0;
+  --card-bg: #151520;      /* Dark Cards */
+  --border-color: #2A2A35;
 }
