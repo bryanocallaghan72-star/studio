@@ -8,11 +8,12 @@ import { Inter } from 'next/font/google';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import { MobileNav } from '@/components/iykyk/MobileNav';
 import { cn } from '@/lib/utils';
-import { ThemeApplier } from '@/components/ThemeApplier';
 import { Header } from '@/components/iykyk/Header';
 // --- Corrected import path ---
 import { Sidebar, SidebarProvider, SidebarInset } from '@/components/iykyk/sidebar';
 import { DesktopNavContent } from '@/components/iykyk/DesktopNavContent';
+import { DemoTimeProvider } from '@/context/DemoTimeContext';
+import GodModeButton from '@/components/iykyk/GodModeButton';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -37,7 +38,7 @@ export default function RootLayout({
       </head>
       <body className={cn(inter.variable, "font-body antialiased")}>
         <FirebaseClientProvider>
-          <ThemeApplier>
+          <DemoTimeProvider>
             {/* --- This is the new, correct body structure --- */}
             <SidebarProvider>
               <div className="flex min-h-screen w-full flex-col bg-background">
@@ -57,7 +58,8 @@ export default function RootLayout({
                 </div>
               </div>
             </SidebarProvider>
-          </ThemeApplier>
+            <GodModeButton />
+          </DemoTimeProvider>
         </FirebaseClientProvider>
           <Toaster />
       </body>
