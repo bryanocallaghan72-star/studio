@@ -8,29 +8,15 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Badge } from "@/components/ui/badge";
-import { appData } from '@/lib/data';
 import Link from 'next/link';
 import { DEMO_VENUES } from '@/data/DemoVenues';
 
 type Venue = typeof DEMO_VENUES[0];
 
-const venueTypeToImageId: { [key: string]: string } = {
-    'Cafe': 'coffee-1',
-    'Dining': 'sushi-1',
-    'Iconic': 'cocktail-101',
-    'Wellness': 'my-day-3',
-    'Social': 'nightlife-1',
-    'Sunset': 'fitness-1',
-    'Vibes': 'sunset-yoga',
-    'default': 'night-1'
-};
-
 const VenueCard = memo(({ venue }: { venue: Venue }) => {
-    const imageId = venueTypeToImageId[venue.category] || venueTypeToImageId.default;
-    const image = PlaceHolderImages.find(img => img.id === imageId);
-
+    
     return (
-        <Link href={`/venue/${venue.id}`}>
+        <Link href={`/venue/${venue.id.replace('venue_', '')}`}>
             <Card className="overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1">
                 {venue.image ? (
                      <div className="relative h-40 w-full">
@@ -58,37 +44,26 @@ const VenueCard = memo(({ venue }: { venue: Venue }) => {
 VenueCard.displayName = 'VenueCard';
 
 
-const getVenuesForTime = (time: 'morning' | 'night' | 'late-night' | 'golden') => {
-    switch (time) {
-        case 'morning':
-            return DEMO_VENUES.filter(p => ['Cafe', 'Wellness'].includes(p.category));
-        case 'night':
-             return DEMO_VENUES.filter(p => ['Social', 'Dining'].includes(p.category));
-        case 'golden':
-            return DEMO_VENUES.filter(p => ['Sunset', 'Iconic', 'Dining'].includes(p.category));
-        case 'late-night':
-            return DEMO_VENUES.filter(p => ['Social'].includes(p.category));
-        default:
-            return [];
-    }
+const getVenuesForTime = (time: 'morning' | 'day' | 'golden' | 'dusk') => {
+    return DEMO_VENUES.filter(p => p.vibe === time);
 };
 
-const getCurrentTimeCategory = (hour: number): 'morning' | 'night' | 'late-night' | 'golden' => {
+const getCurrentTimeCategory = (hour: number): 'morning' | 'day' | 'golden' | 'dusk' => {
     if (hour >= 5 && hour < 12) return 'morning'; 
-    if (hour >= 12 && hour < 17) return 'golden';
-    if (hour >= 17 && hour < 22) return 'night';
-    return 'late-night'; 
+    if (hour >= 12 && hour < 17) return 'day';
+    if (hour >= 17 && hour < 20) return 'golden';
+    return 'dusk'; 
 };
 
 const tabData = [
     { value: 'morning', label: 'Morning', icon: Sun, venues: getVenuesForTime('morning') },
+    { value: 'day', label: 'Day', icon: Sparkles, venues: getVenuesForTime('day') },
     { value: 'golden', label: 'Golden Hour', icon: Sparkles, venues: getVenuesForTime('golden') },
-    { value: 'night', label: 'Night', icon: Moon, venues: getVenuesForTime('night') },
-    { value: 'late-night', label: 'Late Night', icon: Sparkles, venues: getVenuesForTime('late-night') },
+    { value: 'dusk', label: 'Night', icon: Moon, venues: getVenuesForTime('dusk') },
 ];
 
 export function FlowTabs() {
-  const [activeTab, setActiveTab] = useState<'morning' | 'night' | 'late-night' | 'golden'>('morning');
+  const [activeTab, setActiveTab] = useState<'morning' | 'day' | 'golden' | 'dusk'>('morning');
 
   useEffect(() => {
     const currentHour = new Date().getHours();
