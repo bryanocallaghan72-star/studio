@@ -3,15 +3,14 @@
 
 import { useMemo } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { Map, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { appData } from "@/lib/data";
-import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
-import { collection, query, where } from "firebase/firestore";
 import { GoogleMap, useJsApiLoader, MarkerF } from "@react-google-maps/api";
+import { DEMO_VENUES } from "@/data/DemoVenues";
 
 const { categories } = appData;
-type Venue = typeof appData.map.pins[0] & { id: string, latitude: number, longitude: number };
+type Venue = typeof DEMO_VENUES[0];
 
 // Map container style
 const containerStyle = {
@@ -85,23 +84,22 @@ export function IykykVibeMap() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('category') || 'All';
-  const firestore = useFirestore();
   
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
   });
 
-  const venuesQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
-    const baseQuery = collection(firestore, 'venues');
+  const venues = useMemo(() => {
     if (activeTab === 'All') {
-      return baseQuery;
+      return DEMO_VENUES;
     }
-    return query(baseQuery, where('type', '==', activeTab));
-  }, [firestore, activeTab]);
+    // Note: The category in DEMO_VENUES might be more specific (e.g., "Cafe & Matcha")
+    // than the filter tabs ("Brunch"). A more robust implementation might use tags.
+    // For now, we'll do a simple includes check.
+    return DEMO_VENUES.filter(venue => venue.category.includes(activeTab));
+  }, [activeTab]);
 
-  const { data: venues, isLoading: isLoadingVenues } = useCollection<Venue>(venuesQuery);
 
   const handleTabChange = (category: string) => {
     const params = new URLSearchParams(searchParams);
@@ -113,8 +111,13 @@ export function IykykVibeMap() {
     router.replace(`${pathname}?${params.toString()}`);
   };
   
-  const handleMarkerClick = (slug: string) => {
-    router.push(`/venue/${slug}`);
+  const handleMarkerClick = (venueId: string) => {
+    // The demo venues have IDs like "venue_1", the dynamic route expects the slug.
+    // We'll look up the original slug from appData. This is a temporary bridge.
+    const originalVenue = appData.map.pins.find(v => v.name === DEMO_VENUES.find(dv => dv.id === venueId)?.name);
+    if (originalVenue) {
+      router.push(`/venue/${originalVenue.slug}`);
+    }
   };
 
   const mapOptions = useMemo(() => ({
@@ -126,6 +129,21 @@ export function IykykVibeMap() {
   if (loadError) {
     return <div className="text-destructive p-6">Error loading maps. Please check your API key and ensure the Maps JavaScript API is enabled in your Google Cloud project.</div>;
   }
+
+  // Simplified category mapping for demo data
+  const demoCategories = {
+    ...categories,
+    "Cafe & Matcha": categories["Brunch"],
+    "Viral Matcha": categories["Brunch"],
+    "Aesthetic Brunch": categories["Brunch"],
+    "Beach Club Vibe": categories["Vibes"],
+    "Social Dining": categories["Nightlife"],
+    "Iconic View": categories["Vibes"],
+    "Beachfront Bar": categories["Nightlife"],
+    "Sushi & Sake": categories["Sushi"],
+    "Italo Disco Dining": categories["Nightlife"],
+    "Cocktail Bar": categories["Cocktails"],
+  };
 
   return (
     <section className="flex flex-col h-full relative">
@@ -158,7 +176,7 @@ export function IykykVibeMap() {
         </div>
 
         <div className="flex-grow flex flex-col relative rounded-lg overflow-hidden">
-            {!isLoaded || isLoadingVenues ? (
+            {!isLoaded ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/50">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
@@ -170,7 +188,7 @@ export function IykykVibeMap() {
                     options={mapOptions}
                 >
                   {venues && venues.map(venue => {
-                    const category = categories[venue.type as keyof typeof categories];
+                    const category = demoCategories[venue.category as keyof typeof demoCategories] || categories.Vibes;
                     const color = category ? category.color : '#FF7F50'; // default color
                     const pinSvg = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
                       `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="${color}" /><circle cx="12" cy="10" r="3" fill="white" stroke="none"/></svg>`
@@ -179,9 +197,9 @@ export function IykykVibeMap() {
                     return (
                       <MarkerF
                         key={venue.id}
-                        position={{ lat: venue.latitude, lng: venue.longitude }}
+                        position={{ lat: venue.lat, lng: venue.lng }}
                         title={venue.name}
-                        onClick={() => handleMarkerClick(venue.slug)}
+                        onClick={() => handleMarkerClick(venue.id)}
                         icon={{
                           url: pinSvg,
                           scaledSize: new window.google.maps.Size(32, 32),
