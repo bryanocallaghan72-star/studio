@@ -6,7 +6,6 @@ import { Moon, Sparkles, Sun } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import Image from "next/image";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Badge } from "@/components/ui/badge";
 import Link from 'next/link';
 import { DEMO_VENUES } from '@/data/DemoVenues';
@@ -88,6 +87,11 @@ export function FlowTabs() {
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {tab.venues.map(venue => <VenueCard key={venue.id} venue={venue as Venue} />)}
                 </div>
+                 {tab.venues.length === 0 && (
+                    <div className="text-center py-12 text-muted-foreground">
+                        No venues match this time of day.
+                    </div>
+                )}
             </TabsContent>
         ))}
       </Tabs>

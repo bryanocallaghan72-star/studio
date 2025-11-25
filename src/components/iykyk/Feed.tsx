@@ -14,7 +14,6 @@ import {
 import { CommentSheet, type Comment } from "./CommentSheet";
 import { appData } from "@/lib/data";
 import Image from "next/image";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { DEMO_VENUES } from "@/data/DemoVenues";
 
 // Generate feed items from the new demo venues data
@@ -28,7 +27,7 @@ const feedItems = DEMO_VENUES.map((venue, index) => {
         venue: venue.name,
         description: `Checked in at ${venue.name}. The vibe is ${venue.vibe}! ${venue.category} is a must-try.`,
         // Find a suitable image, fallback to a default
-        imageId: PlaceHolderImages.find(img => img.imageHint?.includes(venue.vibe) || img.imageHint?.includes(venue.category.split(' ')[0].toLowerCase()))?.id || 'sushi-1',
+        image: venue.image || "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?q=80&w=1948&auto=format&fit=crop",
         likes: Math.floor(Math.random() * 500) + 50,
         comments: Math.floor(Math.random() * 50) + 5,
         commentData: []
@@ -52,7 +51,7 @@ const Post = memo(({ item, priority }: { item: (typeof feedItems)[0], priority?:
     setCommentCount(prev => prev + 1);
   };
 
-  const image = PlaceHolderImages.find(img => img.id === item.imageId);
+  const image = item.image;
 
   return (
     <>
@@ -94,11 +93,10 @@ const Post = memo(({ item, priority }: { item: (typeof feedItems)[0], priority?:
           {image && (
             <div className="relative aspect-square w-full">
               <Image 
-                src={image.imageUrl} 
+                src={image} 
                 alt={item.venue}
                 fill
                 className="object-cover"
-                data-ai-hint={image.imageHint}
                 priority={priority} 
               />
             </div>

@@ -46,7 +46,7 @@ export default function DiscoverPage() {
 
                 return (
                   <Link key={feature.title} href={feature.href}>
-                      <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card h-48 flex items-center justify-center">
+                      <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card h-48 flex items-end justify-start">
                           {image ? (
                             <>
                               <Image
@@ -63,7 +63,7 @@ export default function DiscoverPage() {
                             <div className="absolute inset-0 bg-secondary" />
                           )}
                          
-                          <div className="relative bottom-0 left-0 p-6 w-full">
+                          <div className="relative z-10 p-4 w-full">
                              <div className="flex items-center gap-3">
                                   <div className="rounded-full bg-background/80 backdrop-blur-sm p-3">
                                      {Icon && <Icon className={`h-6 w-6 ${feature.color}`} />}
