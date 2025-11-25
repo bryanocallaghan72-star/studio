@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { Check, Circle, Clock, CheckCircle2, MapPin, X } from 'lucide-react'; 
+import { Check, Circle, Clock, CheckCircle2, MapPin, X, ArrowLeft } from 'lucide-react'; 
 
 // --- CONFIGURATION ---
 const BINGO_ITEMS = [
@@ -12,7 +12,6 @@ const BINGO_ITEMS = [
 ];
 
 // --- SUB-COMPONENT: HARRY'S TICKET ---
-// Now accepts an 'onClose' prop to exit the screen
 function HarrysTicket({ onClose }: { onClose: () => void }) {
   const [timeLeft, setTimeLeft] = useState(900); // 15 mins
 
@@ -30,20 +29,20 @@ function HarrysTicket({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="w-full h-full bg-white rounded-xl overflow-hidden shadow-sm border border-stone-200 animate-in zoom-in duration-300 relative">
+    <div className="w-full h-full bg-white rounded-xl overflow-hidden shadow-sm border border-stone-200 animate-in zoom-in duration-300 relative flex flex-col">
       
-      {/* --- CLOSE BUTTON (ADDED) --- */}
-      <button 
-        onClick={onClose}
-        className="absolute top-4 right-4 z-50 p-1 rounded-full bg-black/10 hover:bg-black/20 text-white transition-all backdrop-blur-sm"
-      >
-        <X className="w-4 h-4" />
-      </button>
-
       {/* 1. HOLOGRAPHIC HEADER */}
-      <div className="bg-teal-800 p-6 text-center relative overflow-hidden">
+      <div className="bg-teal-800 p-6 text-center relative overflow-hidden shrink-0">
         <div className="absolute inset-0 bg-gradient-to-r from-teal-800 via-emerald-600 to-teal-800 opacity-80 animate-pulse" />
         
+        {/* Subtle Close 'X' at top right */}
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 z-50 p-1.5 rounded-full bg-black/20 hover:bg-black/30 text-white/80 transition-all backdrop-blur-md"
+        >
+          <X className="w-3 h-3" />
+        </button>
+
         <div className="relative z-10">
           <h2 className="text-white/80 text-[10px] font-bold tracking-[0.3em] uppercase mb-1">
             Official Winner
@@ -58,7 +57,7 @@ function HarrysTicket({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* 2. TICKET BODY */}
-      <div className="p-6 flex flex-col items-center text-center bg-[#FFFBEB]">
+      <div className="p-6 flex flex-col items-center text-center bg-[#FFFBEB] grow">
         
         <div className="space-y-1 mb-6">
           <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">REWARD UNLOCKED</p>
@@ -78,14 +77,25 @@ function HarrysTicket({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* 4. TIMER */}
-        <div className="flex items-center gap-2 text-red-500 font-mono text-xs font-bold animate-pulse">
+        <div className="flex items-center gap-2 text-red-500 font-mono text-xs font-bold animate-pulse mb-auto">
           <Clock className="w-3 h-3" />
           Expires in: {formatTime(timeLeft)}
         </div>
 
-        <div className="mt-6 pt-4 border-t border-stone-200/50 w-full flex items-center justify-center gap-2 text-stone-400">
-           <MapPin className="w-3 h-3" />
-           <span className="text-[10px]">2/136 Wairoa Ave, Bondi Beach</span>
+        {/* 5. FOOTER & GO BACK BUTTON */}
+        <div className="w-full pt-4 border-t border-stone-200/50 mt-4 space-y-4">
+           <div className="flex items-center justify-center gap-2 text-stone-400">
+             <MapPin className="w-3 h-3" />
+             <span className="text-[10px]">2/136 Wairoa Ave, Bondi Beach</span>
+           </div>
+
+           {/* --- THE 'GO BACK' BUTTON --- */}
+           <button 
+             onClick={onClose}
+             className="w-full flex items-center justify-center gap-2 text-stone-400 hover:text-stone-600 hover:bg-stone-100 py-2 rounded-lg transition-all text-xs font-bold uppercase tracking-widest"
+           >
+             <ArrowLeft className="w-3 h-3" /> Go Back
+           </button>
         </div>
       </div>
     </div>
@@ -98,10 +108,7 @@ export function MatchaBingoCard() {
   const [isRedeemed, setIsRedeemed] = useState(false);
 
   const toggleItem = (id: number) => {
-    // If ticket is open, don't toggle items. 
-    // But if they closed the ticket, they can interact again (or just see the list)
     if (isRedeemed) return;
-
     if (checked.includes(id)) {
       setChecked(checked.filter(i => i !== id));
     } else {
@@ -112,7 +119,6 @@ export function MatchaBingoCard() {
   const isWinner = checked.length === BINGO_ITEMS.length;
 
   // IF REDEEMED: Show the Harry's Ticket
-  // We pass a function to 'turn off' the redeemed state
   if (isRedeemed) {
     return <HarrysTicket onClose={() => setIsRedeemed(false)} />;
   }
