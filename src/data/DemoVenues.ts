@@ -71,5 +71,53 @@ export const DEMO_VENUES = [
     rating: 4.5,
     isSponsor: false,
     vibe: "golden"
+  },
+  {
+    id: 'venue_7',
+    name: "Porch and Parlour",
+    category: "Cafe",
+    address: "17/110 Ramsgate Ave, North Bondi",
+    image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=1000&auto=format&fit=crop",
+    lat: -33.8879,
+    lng: 151.2829,
+    rating: 4.6,
+    isSponsor: false,
+    vibe: "morning"
+  },
+  {
+    id: 'venue_8',
+    name: "Sean's",
+    category: "Dining",
+    address: "270 Campbell Parade, North Bondi",
+    image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1000&auto=format&fit=crop",
+    lat: -33.8874,
+    lng: 151.2825,
+    rating: 4.8,
+    isSponsor: false,
+    vibe: "golden"
+  },
+  {
+    id: 'venue_9',
+    name: "Speedo's Cafe",
+    category: "Cafe",
+    address: "126 Ramsgate Ave, North Bondi",
+    image: "https://images.unsplash.com/photo-1528207776546-365bb710ee93?q=80&w=1000&auto=format&fit=crop",
+    lat: -33.8888,
+    lng: 151.277,
+    rating: 4.5,
+    isSponsor: false,
+    vibe: "morning"
+  },
+  {
+    id: 'venue_10',
+    name: "The Bucket List",
+    category: "Social",
+    address: "Bondi Pavilion, 1 Queen Elizabeth Drive",
+    image: "https://images.unsplash.com/photo-1543007164-91f7d1d81577?q=80&w=1000&auto=format&fit=crop",
+    lat: -33.8909,
+    lng: 151.277,
+    rating: 4.3,
+    isSponsor: false,
+    vibe: "dusk"
   }
 ];
