@@ -63,17 +63,22 @@
 }
 
 /* ============================================== */
-/* === GOD MODE THEME ENGINE (UPDATED PALETTE) === */
+/* === ATMOSPHERIC GRADIENT THEMES (God Mode) === */
 /* ============================================== */
 
-/* 1. STRUCTURAL OVERRIDES (Keep this logic) */
 .app-theme-wrapper {
   width: 100%;
   min-height: 100vh;
-  background-color: var(--bg-primary) !important;
+  
+  /* IMPORTANT: Use background-image for gradients */
+  background-image: var(--bg-gradient) !important; 
+  background-size: cover;
+  background-attachment: fixed;
+  
   color: var(--text-primary) !important;
-  transition: background-color 1.0s ease, color 0.5s ease;
+  transition: background-image 1.5s ease-in-out, color 0.5s ease;
 }
+
 
 /* === TRANSPARENCY ENFORCER (Add this) === */
 /* This forces the inner app containers to be transparent so the theme background shows through */
@@ -125,62 +130,56 @@ nav, aside {
 }
 
 
-/* ============================================== */
-/* === 60-30-10 COASTAL PALETTE (NO BLACK TEXT) === */
-/* ============================================== */
+/* === NEW GRADIENT PALETTE === */
 
-/* 🌅 DAWN – 60% Ice Blue / 30% White / 10% Deep Navy */
+/* 🌅 DAWN – "Morning Mist" */
+/* Fades from Pale Sky Blue to Soft White */
 [data-theme="dawn"] {
-  --bg-primary: #F0F9FF;      /* 60%: Very Pale Ice Blue */
+  --bg-gradient: linear-gradient(180deg, #E0F2FE 0%, #FFFFFF 100%);
   
-  /* 10%: Deep Navy Ink (Replacing Black) */
-  --text-primary: #172554;    
-  --text-secondary: #64748B;  /* Soft Blue-Grey */
-
-  /* 30%: Clean White Cards */
-  --card-bg: #FFFFFF;         
-  --card-text: #172554;       
-  --border-color: #BAE6FD;    /* Soft Sky Blue Border */
+  --text-primary: #172554;    /* Deep Navy */
+  --text-secondary: #64748B;
+  
+  --card-bg: rgba(255, 255, 255, 0.8); /* Slight transparency */
+  --card-text: #172554;
+  --border-color: #BAE6FD;
 }
 
-/* ☀️ DAY – 60% Pale Yellow / 30% White / 10% Deep Teal */
+/* ☀️ DAY – "Bondi Sun" */
+/* Fades from Warm Sunshine to Pale Sand */
 [data-theme="day"] {
-  --bg-primary: #FFFBEB;      /* 60%: Pale Buttery Yellow */
+  --bg-gradient: linear-gradient(180deg, #FFFBEB 0%, #FFF7ED 100%);
   
-  /* 10%: Deep Teal/Forest (Replacing Black) */
-  --text-primary: #064E3B;    
-  --text-secondary: #657672;  
+  --text-primary: #064E3B;    /* Deep Teal */
+  --text-secondary: #657672;
 
-  /* 30%: White Cards to pop against yellow */
-  --card-bg: #FFFFFF;        
+  --card-bg: rgba(255, 255, 255, 0.9);
   --card-text: #064E3B;
-  --border-color: #FDE68A;    /* Soft Gold Border */
+  --border-color: #FDE68A;
 }
 
-/* 🥂 GOLDEN HOUR – 60% Apricot / 30% Cream / 10% Rust */
+/* 🥂 GOLDEN HOUR – "The Aperol Sunset" (Matches your Screenshot) */
+/* Fades from Warm Gold -> Peach -> Soft Rose */
 [data-theme="golden"] {
-  --bg-primary: #FFF7ED;      /* 60%: Soft Peach/Apricot */
+  --bg-gradient: linear-gradient(135deg, #FFEFBA 0%, #FFD1C1 50%, #FF9A9E 100%);
   
-  /* 10%: Burnt Sienna/Rust (Warm Brown) */
-  --text-primary: #7C2D12;    
-  --text-secondary: #9A3412;  
+  --text-primary: #6C241C;    /* Deep Merlot (No Black) */
+  --text-secondary: #9F4636;
 
-  /* 30%: Warm Cream Cards */
-  --card-bg: #FFEDD5;         
-  --card-text: #7C2D12;
-  --border-color: #FDBA74;    /* Orange Sunset Border */
+  --card-bg: rgba(255, 246, 240, 0.85); /* Semi-transparent Rose Cream */
+  --card-text: #6C241C;
+  --border-color: #FFB088;
 }
 
-/* 🌙 DUSK – 60% Midnight / 30% Navy / 10% Silver */
+/* 🌙 DUSK – "Deep Ocean" */
+/* Fades from Midnight Blue -> Deep Purple */
 [data-theme="dusk"] {
-  --bg-primary: #020617;      /* 60%: Deepest Midnight */
+  --bg-gradient: linear-gradient(180deg, #020617 0%, #172554 100%);
   
-  /* 10%: Pale Silver/White */
-  --text-primary: #F8FAFC;    
-  --text-secondary: #94A3B8;  
+  --text-primary: #F8FAFC;    /* Silver */
+  --text-secondary: #94A3B8;
 
-  /* 30%: Navy Blue Cards */
-  --card-bg: #1E293B;         
-  --card-text: #E2E8F0;       
-  --border-color: #334155;    
+  --card-bg: rgba(30, 41, 59, 0.9); /* Dark Glass */
+  --card-text: #E2E8F0;
+  --border-color: #334155;
 }
