@@ -1,123 +1,138 @@
 
 export const DEMO_VENUES = [
+  // --- MORNING / MATCHA BINGO SPOTS ---
   {
     id: 'venue_1',
     name: "Harry's Bondi",
-    category: "Cafe",
+    category: "Cafe & Matcha",
     address: "2/136 Wairoa Ave, Bondi Beach",
     image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1000&auto=format&fit=crop",
     lat: -33.8891,
     lng: 151.2736,
     rating: 4.8,
-    isSponsor: true, // The Match Bingo Sponsor
-    vibe: "morning"
+    isSponsor: true, // The "Matcha Bingo" Host
+    vibe: "morning",
+    price: "$$"
   },
   {
     id: 'venue_2',
-    name: "Raw Bar",
-    category: "Dining",
-    address: "1/136 Wairoa Ave, Bondi Beach",
-    image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=1000&auto=format&fit=crop",
-    lat: -33.8893,
-    lng: 151.2733,
-    rating: 4.9,
+    name: "Up South Bondi",
+    category: "Viral Matcha",
+    address: "249 Bondi Rd, Bondi",
+    image: "https://images.unsplash.com/photo-1615486511484-92e13b2d494c?q=80&w=1000&auto=format&fit=crop",
+    lat: -33.8930,
+    lng: 151.2650,
+    rating: 4.7,
     isSponsor: false,
-    vibe: "golden"
+    vibe: "morning",
+    price: "$$"
   },
   {
     id: 'venue_3',
-    name: "Icebergs Dining Room",
-    category: "Iconic",
-    address: "1 Notts Ave, Bondi Beach",
-    image: "https://images.unsplash.com/photo-1561579996-033100236a0c?q=80&w=1000&auto=format&fit=crop",
-    lat: -33.8965,
-    lng: 151.2748,
-    rating: 4.7,
+    name: "Bills Bondi",
+    category: "Aesthetic Brunch",
+    address: "79 Hall St, Bondi Beach",
+    image: "https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?q=80&w=1000&auto=format&fit=crop",
+    lat: -33.8905,
+    lng: 151.2700,
+    rating: 4.6,
     isSponsor: false,
-    vibe: "golden"
+    vibe: "day",
+    price: "$$$"
   },
   {
     id: 'venue_4',
-    name: "Cali Press",
-    category: "Wellness",
-    address: "2/16 Hall St, Bondi Beach",
-    image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=1000&auto=format&fit=crop",
-    lat: -33.8899,
-    lng: 151.2725,
-    rating: 4.6,
+    name: "Glory Days",
+    category: "Beach Club Vibe",
+    address: "Bondi Pavilion, Queen Elizabeth Dr",
+    image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=1000&auto=format&fit=crop",
+    lat: -33.8890,
+    lng: 151.2760,
+    rating: 4.5,
     isSponsor: false,
-    vibe: "morning"
+    vibe: "day",
+    price: "$$"
   },
+
+  // --- GOLDEN HOUR (The "Aperol" Crowd) ---
   {
     id: 'venue_5',
     name: "Totti's",
-    category: "Social",
+    category: "Social Dining",
     address: "283 Bondi Rd, Bondi",
     image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop",
     lat: -33.8945,
     lng: 151.2662,
     rating: 4.9,
     isSponsor: false,
-    vibe: "dusk"
+    vibe: "golden",
+    price: "$$$"
   },
   {
     id: 'venue_6',
-    name: "North Bondi Fish",
-    category: "Sunset",
-    address: "120 Ramsgate Ave, North Bondi",
-    image: "https://images.unsplash.com/photo-1537047902294-62a40c20a6ae?q=80&w=1000&auto=format&fit=crop",
-    lat: -33.8885,
-    lng: 151.2775,
-    rating: 4.5,
+    name: "Icebergs Dining Room",
+    category: "Iconic View",
+    address: "1 Notts Ave, Bondi Beach",
+    image: "https://images.unsplash.com/photo-1561579996-033100236a0c?q=80&w=1000&auto=format&fit=crop",
+    lat: -33.8965,
+    lng: 151.2748,
+    rating: 4.7,
     isSponsor: false,
-    vibe: "golden"
+    vibe: "golden",
+    price: "$$$$"
   },
   {
     id: 'venue_7',
-    name: "Porch and Parlour",
-    category: "Cafe",
-    address: "17/110 Ramsgate Ave, North Bondi",
-    image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=1000&auto=format&fit=crop",
-    lat: -33.8879,
-    lng: 151.2829,
+    name: "Promenade Bondi",
+    category: "Beachfront Bar",
+    address: "Shop 4/Queen Elizabeth Dr",
+    image: "https://images.unsplash.com/photo-1571762283944-580798150a58?q=80&w=1000&auto=format&fit=crop",
+    lat: -33.8895,
+    lng: 151.2765,
     rating: 4.6,
     isSponsor: false,
-    vibe: "morning"
+    vibe: "golden",
+    price: "$$$"
   },
+
+  // --- DUSK / NIGHT (The "Scene") ---
   {
     id: 'venue_8',
-    name: "Sean's",
-    category: "Dining",
-    address: "270 Campbell Parade, North Bondi",
-    image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1000&auto=format&fit=crop",
-    lat: -33.8874,
-    lng: 151.2825,
-    rating: 4.8,
+    name: "Raw Bar",
+    category: "Sushi & Sake",
+    address: "1/136 Wairoa Ave, Bondi Beach",
+    image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=1000&auto=format&fit=crop",
+    lat: -33.8893,
+    lng: 151.2733,
+    rating: 4.9,
     isSponsor: false,
-    vibe: "golden"
+    vibe: "dusk",
+    price: "$$$"
   },
   {
     id: 'venue_9',
-    name: "Speedo's Cafe",
-    category: "Cafe",
-    address: "126 Ramsgate Ave, North Bondi",
-    image: "https://images.unsplash.com/photo-1528207776546-365bb710ee93?q=80&w=1000&auto=format&fit=crop",
-    lat: -33.8888,
-    lng: 151.277,
-    rating: 4.5,
+    name: "Da Orazio",
+    category: "Italo Disco Dining",
+    address: "75-79 Hall St, Bondi Beach",
+    image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1000&auto=format&fit=crop",
+    lat: -33.8902,
+    lng: 151.2705,
+    rating: 4.8,
     isSponsor: false,
-    vibe: "morning"
+    vibe: "dusk",
+    price: "$$$"
   },
   {
     id: 'venue_10',
-    name: "The Bucket List",
-    category: "Social",
-    address: "Bondi Pavilion, 1 Queen Elizabeth Drive",
-    image: "https://images.unsplash.com/photo-1543007164-91f7d1d81577?q=80&w=1000&auto=format&fit=crop",
-    lat: -33.8909,
-    lng: 151.277,
-    rating: 4.3,
+    name: "Makaveli",
+    category: "Cocktail Bar",
+    address: "177 Glenayr Ave, Bondi Beach",
+    image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=1000&auto=format&fit=crop",
+    lat: -33.8880,
+    lng: 151.2680,
+    rating: 4.8,
     isSponsor: false,
-    vibe: "dusk"
+    vibe: "dusk",
+    price: "$$"
   }
 ];
