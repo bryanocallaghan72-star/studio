@@ -69,8 +69,8 @@ export default function DiscoverPage() {
                                      {Icon && <Icon className={`h-6 w-6 ${feature.color}`} />}
                                   </div>
                                   <div>
-                                     <CardTitle className="text-lg text-white">{feature.title}</CardTitle>
-                                     <CardDescription className="text-white/90">{feature.description}</CardDescription>
+                                     <CardTitle className="text-lg text-card-foreground">{feature.title}</CardTitle>
+                                     <CardDescription className="text-muted-foreground">{feature.description}</CardDescription>
                                   </div>
                               </div>
                           </div>
