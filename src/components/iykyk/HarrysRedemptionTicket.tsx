@@ -28,7 +28,7 @@ export function HarrysRedemptionTicket() {
         
         {/* HOLOGRAPHIC HEADER (The "Live" Element) */}
         {/* We use a moving gradient to prove it's not a screenshot */}
-        <div className="bg-gradient-to-r from-teal-700 via-emerald-600 to-teal-700 bg-[length:200%_200%] animate-[gradient-xy] p-6 text-center relative overflow-hidden">
+        <div className="bg-gradient-to-r from-teal-700 via-emerald-600 to-teal-700 bg-[length:200%_200%] animate-gradient-xy p-6 text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
           
           <h2 className="text-white text-xs font-bold tracking-[0.3em] uppercase mb-1">
