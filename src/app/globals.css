@@ -63,90 +63,88 @@
 }
 
 /* ============================================== */
-/* === GOD MODE THEME ENGINE (FIXED) === */
+/* === GOD MODE THEME ENGINE (UPDATED PALETTE) === */
 /* ============================================== */
 
+/* 1. STRUCTURAL OVERRIDES (Keep this logic) */
 .app-theme-wrapper {
   width: 100%;
   min-height: 100vh;
-  /* Apply the theme variables to the wrapper itself */
   background-color: var(--bg-primary) !important;
   color: var(--text-primary) !important;
   transition: background-color 1.0s ease, color 0.5s ease;
 }
 
-/* 1. FORCE TEXT COLORS */
-.app-theme-wrapper h1, 
-.app-theme-wrapper h2, 
-.app-theme-wrapper h3, 
-.app-theme-wrapper h4, 
-.app-theme-wrapper p, 
-.app-theme-wrapper span, 
-.app-theme-wrapper li {
+.app-theme-wrapper h1, .app-theme-wrapper h2, .app-theme-wrapper h3, 
+.app-theme-wrapper p, .app-theme-wrapper span, .app-theme-wrapper div {
   color: var(--text-primary) !important;
   transition: color 0.5s ease;
 }
 
-/* 2. FORCE CARD COLORS (The Nuclear Fix) */
+/* Override Shadcn Card Backgrounds */
 .app-theme-wrapper .bg-card {
   background-color: var(--card-bg) !important;
   border-color: var(--border-color) !important;
   transition: background-color 1.0s ease, border-color 0.5s ease;
 }
 
-/* 3. FORCE CARD TEXT */
+/* Override Shadcn Card Text */
 .app-theme-wrapper .text-card-foreground {
   color: var(--card-text) !important;
   transition: color 0.5s ease;
 }
 
-/* 4. FORCE MUTED TEXT (Subtitles) */
 .app-theme-wrapper .text-muted-foreground {
   color: var(--text-secondary) !important;
 }
 
-/* === THEME VARIABLES (HEX CODES) === */
 
-/* 🌅 DAWN (Soft Blue/Grey) */
+/* === NEW COASTAL PALETTE === */
+
+/* 🌅 DAWN – Soft, misty pre-sunrise */
 [data-theme="dawn"] {
-  --bg-primary: #F0F4F8;
-  --text-primary: #2D3748;
-  --text-secondary: #718096;
-  
-  --card-bg: #FFFFFF;
-  --card-text: #2D3748;
-  --border-color: #CBD5E0;
+  --bg-primary: #F6FFF6;      /* Very light aqua / seafoam sky */
+  --text-primary: #143542;    /* Deep teal-ink for contrast */
+  --text-secondary: #5F7C84;  /* Soft, cool secondary */
+
+  /* Card Overrides */
+  --card-bg: #FFFFFF;         
+  --card-text: #143542;       
+  --border-color: #C6FFF6;    /* Subtle aqua border shimmer */
 }
 
-/* ☀️ DAY (Your Signature Cream/Sand) */
+/* ☀️ DAY – Shimmering ocean / sky / light gold sand */
 [data-theme="day"] {
-  --bg-primary: #FDFBF7; 
-  --text-primary: #1A1A1A;
-  --text-secondary: #666666;
+  --bg-primary: #F6FFF6;      /* Light blue-tinted white */
+  --text-primary: #102538;    /* Strong but friendly navy-ink */
+  --text-secondary: #637486;  /* Muted blue-grey */
 
-  --card-bg: #FFFFFF;
-  --card-text: #1A1A1A;
-  --border-color: #EAE0D5;
+  /* Card Overrides */
+  --card-bg: #FFFFFF;        
+  --card-text: #102538;
+  --border-color: #A6FFF6;    /* Aqua shimmer border */
 }
 
-/* 🥂 GOLDEN HOUR (Warm Sunset) */
+/* 🥂 GOLDEN HOUR – Warm peach / tangerine / pink */
 [data-theme="golden"] {
-  --bg-primary: #FFF8E1; 
-  --text-primary: #4E342E;
-  --text-secondary: #8D6E63;
+  --bg-primary: #FFE9D9;      /* Soft peachy glow */
+  --text-primary: #5A2A20;    /* Rich warm brown */
+  --text-secondary: #9C5C4A;  /* Softer rose-brown */
 
-  --card-bg: #FFFDE7;       
-  --card-text: #4E342E;
-  --border-color: #FFECB3;
+  /* Card Overrides */
+  --card-bg: #FFF3E7;         /* Slightly lighter peach/cream */
+  --card-text: #5A2A20;
+  --border-color: #FFC2A1;    /* Warm, subtle peach border */
 }
 
-/* 🌙 DUSK (Deep Night Mode) */
+/* 🌙 DUSK – Beachy night: deep blues + warm sand lights */
 [data-theme="dusk"] {
-  --bg-primary: #050511;
-  --text-primary: #FDFBF7;
-  --text-secondary: #A0A0B0;
+  --bg-primary: #050511;      /* Deep night */
+  --text-primary: #FDFBF7;    /* Soft warm off-white */
+  --text-secondary: #D7AA94;  /* Warm sand-light */
 
-  --card-bg: #151520;       
-  --card-text: #E0E0E0;
-  --border-color: #2A2A35;
+  /* Card Overrides */
+  --card-bg: #1C3C6C;         /* Deep Ocean Blue (Not Black!) */
+  --card-text: #E8EDF6;       /* Softened light text */
+  --border-color: #2B4D68;    /* Darker coastal blue */
 }
