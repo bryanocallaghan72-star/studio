@@ -125,52 +125,62 @@ nav, aside {
 }
 
 
-/* === NEW COASTAL PALETTE === */
+/* ============================================== */
+/* === 60-30-10 COASTAL PALETTE (NO BLACK TEXT) === */
+/* ============================================== */
 
-/* 🌅 DAWN – Soft, misty pre-sunrise */
+/* 🌅 DAWN – 60% Ice Blue / 30% White / 10% Deep Navy */
 [data-theme="dawn"] {
-  --bg-primary: #F6FFF6;      /* Very light aqua / seafoam sky */
-  --text-primary: #143542;    /* Deep teal-ink for contrast */
-  --text-secondary: #5F7C84;  /* Soft, cool secondary */
+  --bg-primary: #F0F9FF;      /* 60%: Very Pale Ice Blue */
+  
+  /* 10%: Deep Navy Ink (Replacing Black) */
+  --text-primary: #172554;    
+  --text-secondary: #64748B;  /* Soft Blue-Grey */
 
-  /* Card Overrides */
+  /* 30%: Clean White Cards */
   --card-bg: #FFFFFF;         
-  --card-text: #143542;       
-  --border-color: #C6FFF6;    /* Subtle aqua border shimmer */
+  --card-text: #172554;       
+  --border-color: #BAE6FD;    /* Soft Sky Blue Border */
 }
 
-/* ☀️ DAY – Shimmering ocean / sky / light gold sand */
+/* ☀️ DAY – 60% Pale Yellow / 30% White / 10% Deep Teal */
 [data-theme="day"] {
-  --bg-primary: #F6FFF6;      /* Light blue-tinted white */
-  --text-primary: #102538;    /* Strong but friendly navy-ink */
-  --text-secondary: #637486;  /* Muted blue-grey */
+  --bg-primary: #FFFBEB;      /* 60%: Pale Buttery Yellow */
+  
+  /* 10%: Deep Teal/Forest (Replacing Black) */
+  --text-primary: #064E3B;    
+  --text-secondary: #657672;  
 
-  /* Card Overrides */
+  /* 30%: White Cards to pop against yellow */
   --card-bg: #FFFFFF;        
-  --card-text: #102538;
-  --border-color: #A6FFF6;    /* Aqua shimmer border */
+  --card-text: #064E3B;
+  --border-color: #FDE68A;    /* Soft Gold Border */
 }
 
-/* 🥂 GOLDEN HOUR – Warm peach / tangerine / pink */
+/* 🥂 GOLDEN HOUR – 60% Apricot / 30% Cream / 10% Rust */
 [data-theme="golden"] {
-  --bg-primary: #FFE9D9;      /* Soft peachy glow */
-  --text-primary: #5A2A20;    /* Rich warm brown */
-  --text-secondary: #9C5C4A;  /* Softer rose-brown */
+  --bg-primary: #FFF7ED;      /* 60%: Soft Peach/Apricot */
+  
+  /* 10%: Burnt Sienna/Rust (Warm Brown) */
+  --text-primary: #7C2D12;    
+  --text-secondary: #9A3412;  
 
-  /* Card Overrides */
-  --card-bg: #FFF3E7;         /* Slightly lighter peach/cream */
-  --card-text: #5A2A20;
-  --border-color: #FFC2A1;    /* Warm, subtle peach border */
+  /* 30%: Warm Cream Cards */
+  --card-bg: #FFEDD5;         
+  --card-text: #7C2D12;
+  --border-color: #FDBA74;    /* Orange Sunset Border */
 }
 
-/* 🌙 DUSK – Beachy night: deep blues + warm sand lights */
+/* 🌙 DUSK – 60% Midnight / 30% Navy / 10% Silver */
 [data-theme="dusk"] {
-  --bg-primary: #050511;      /* Deep night */
-  --text-primary: #FDFBF7;    /* Soft warm off-white */
-  --text-secondary: #D7AA94;  /* Warm sand-light */
+  --bg-primary: #020617;      /* 60%: Deepest Midnight */
+  
+  /* 10%: Pale Silver/White */
+  --text-primary: #F8FAFC;    
+  --text-secondary: #94A3B8;  
 
-  /* Card Overrides */
-  --card-bg: #1C3C6C;         /* Deep Ocean Blue (Not Black!) */
-  --card-text: #E8EDF6;       /* Softened light text */
-  --border-color: #2B4D68;    /* Darker coastal blue */
+  /* 30%: Navy Blue Cards */
+  --card-bg: #1E293B;         
+  --card-text: #E2E8F0;       
+  --border-color: #334155;    
 }
