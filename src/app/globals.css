@@ -62,66 +62,91 @@
   }
 }
 
-/* === GOD MODE THEME ENGINE === */
+/* ============================================== */
+/* === GOD MODE THEME ENGINE (FIXED) === */
+/* ============================================== */
+
 .app-theme-wrapper {
-  min-height: 100vh;
   width: 100%;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  transition: background-color 0.8s ease, color 0.5s ease;
+  min-height: 100vh;
+  /* Apply the theme variables to the wrapper itself */
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  transition: background-color 1.0s ease, color 0.5s ease;
 }
 
-/* FORCE all text inside the wrapper to inherit color (overrides default blacks) */
+/* 1. FORCE TEXT COLORS */
 .app-theme-wrapper h1, 
 .app-theme-wrapper h2, 
 .app-theme-wrapper h3, 
+.app-theme-wrapper h4, 
 .app-theme-wrapper p, 
 .app-theme-wrapper span, 
-.app-theme-wrapper div {
-  /* color: var(--text-primary); */
+.app-theme-wrapper li {
+  color: var(--text-primary) !important;
   transition: color 0.5s ease;
 }
 
-/* FORCE all Cards to use the theme background */
-/* We target common card classes or generic divs with backgrounds */
-.app-theme-wrapper div[class*="card"], 
-.app-theme-wrapper div[class*="Card"],
-.app-theme-wrapper section {
-  /* background-color: var(--card-bg) !important;  */
-  transition: background-color 0.8s ease;
-  /* border-color: var(--border-color); */
+/* 2. FORCE CARD COLORS (The Nuclear Fix) */
+.app-theme-wrapper .bg-card {
+  background-color: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+  transition: background-color 1.0s ease, border-color 0.5s ease;
 }
 
-/* === THEME VARIABLES === */
+/* 3. FORCE CARD TEXT */
+.app-theme-wrapper .text-card-foreground {
+  color: var(--card-text) !important;
+  transition: color 0.5s ease;
+}
 
-/* 🌅 DAWN (Morning Blue) */
+/* 4. FORCE MUTED TEXT (Subtitles) */
+.app-theme-wrapper .text-muted-foreground {
+  color: var(--text-secondary) !important;
+}
+
+/* === THEME VARIABLES (HEX CODES) === */
+
+/* 🌅 DAWN (Soft Blue/Grey) */
 [data-theme="dawn"] {
   --bg-primary: #F0F4F8;
   --text-primary: #2D3748;
+  --text-secondary: #718096;
+  
   --card-bg: #FFFFFF;
-  --border-color: #D1D9E6;
+  --card-text: #2D3748;
+  --border-color: #CBD5E0;
 }
 
-/* ☀️ DAY (Bright Sand) */
+/* ☀️ DAY (Your Signature Cream/Sand) */
 [data-theme="day"] {
   --bg-primary: #FDFBF7; 
   --text-primary: #1A1A1A;
+  --text-secondary: #666666;
+
   --card-bg: #FFFFFF;
+  --card-text: #1A1A1A;
   --border-color: #EAE0D5;
 }
 
-/* 🥂 GOLDEN (Warm Sunset) */
+/* 🥂 GOLDEN HOUR (Warm Sunset) */
 [data-theme="golden"] {
   --bg-primary: #FFF8E1; 
-  --text-primary: #5D4037; /* Warm Brown Text */
-  --card-bg: #FFFDE7;      /* Warm Cream Cards */
+  --text-primary: #4E342E;
+  --text-secondary: #8D6E63;
+
+  --card-bg: #FFFDE7;       
+  --card-text: #4E342E;
   --border-color: #FFECB3;
 }
 
-/* 🌙 DUSK (Night Mode) */
+/* 🌙 DUSK (Deep Night Mode) */
 [data-theme="dusk"] {
   --bg-primary: #050511;
-  --text-primary: #E0E0E0;
-  --card-bg: #151520;      /* Dark Cards */
+  --text-primary: #FDFBF7;
+  --text-secondary: #A0A0B0;
+
+  --card-bg: #151520;       
+  --card-text: #E0E0E0;
   --border-color: #2A2A35;
 }
