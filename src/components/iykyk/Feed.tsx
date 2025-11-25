@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, memo } from "react";
@@ -14,9 +15,28 @@ import { CommentSheet, type Comment } from "./CommentSheet";
 import { appData } from "@/lib/data";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { DEMO_VENUES } from "@/data/DemoVenues";
+
+// Generate feed items from the new demo venues data
+const feedItems = DEMO_VENUES.map((venue, index) => {
+    // Assign a creator cyclically
+    const creator = appData.creators[index % appData.creators.length];
+    return {
+        id: venue.id,
+        type: "photo",
+        creator: { id: creator.id, name: creator.name, avatar: creator.avatar },
+        venue: venue.name,
+        description: `Checked in at ${venue.name}. The vibe is ${venue.vibe}! ${venue.category} is a must-try.`,
+        // Find a suitable image, fallback to a default
+        imageId: PlaceHolderImages.find(img => img.imageHint?.includes(venue.vibe) || img.imageHint?.includes(venue.category.split(' ')[0].toLowerCase()))?.id || 'sushi-1',
+        likes: Math.floor(Math.random() * 500) + 50,
+        comments: Math.floor(Math.random() * 50) + 5,
+        commentData: []
+    }
+});
 
 
-const Post = memo(({ item, priority }: { item: (typeof appData.feedItems)[0], priority?: boolean }) => {
+const Post = memo(({ item, priority }: { item: (typeof feedItems)[0], priority?: boolean }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
   
@@ -137,7 +157,7 @@ Post.displayName = 'Post';
 export function Feed() {
   return (
     <div className="flex flex-col w-full space-y-4">
-      {appData.feedItems.map((item, index) => (
+      {feedItems.map((item, index) => (
         <Post key={item.id} item={item} priority={index < 2} />
       ))}
     </div>
