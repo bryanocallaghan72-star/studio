@@ -75,6 +75,32 @@
   transition: background-color 1.0s ease, color 0.5s ease;
 }
 
+/* === TRANSPARENCY ENFORCER (Add this) === */
+/* This forces the inner app containers to be transparent so the theme background shows through */
+
+html, body {
+  background-color: transparent !important;
+}
+
+/* Make the immediate children of the wrapper transparent */
+.app-theme-wrapper > div,
+.app-theme-wrapper > main,
+.app-theme-wrapper > section {
+  background-color: transparent !important;
+}
+
+/* Force specific Tailwind background utility classes to yield to our theme */
+.app-theme-wrapper .bg-background {
+  background-color: transparent !important;
+}
+
+/* Ensure the Sidebar doesn't block the theme (unless it's a Card) */
+nav, aside {
+  background-color: transparent !important;
+}
+
+/* ======================================= */
+
 .app-theme-wrapper h1, .app-theme-wrapper h2, .app-theme-wrapper h3, 
 .app-theme-wrapper p, .app-theme-wrapper span, .app-theme-wrapper div {
   color: var(--text-primary) !important;
