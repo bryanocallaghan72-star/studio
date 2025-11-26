@@ -3,13 +3,13 @@ import 'server-only';
 import 'dotenv/config';
 import { genkit, GenkitPlugin } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
-import { nextJs } from '@genkit-ai/next';
+import { next } from '@genkit-ai/next';
 
 // Make API key optional to allow for builds without the key.
 // The build server doesn't need the key, only the runtime server does.
 const geminiApiKey = process.env.GEMINI_API_KEY;
 
-export const genkitPlugin = nextJs();
+export const genkitPlugin = next();
 
 const plugins: GenkitPlugin[] = [genkitPlugin];
 
