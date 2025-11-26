@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useMemo } from "react";
@@ -93,10 +94,16 @@ export function IykykVibeMap() {
     if (activeTab === 'All') {
       return DEMO_VENUES;
     }
-    // Note: The category in DEMO_VENUES might be more specific (e.g., "Cafe & Matcha")
-    // than the filter tabs ("Brunch"). A more robust implementation might use tags.
-    // For now, we'll do a simple includes check.
-    return DEMO_VENUES.filter(venue => venue.category.includes(activeTab));
+    // This logic now correctly maps broader categories like "Brunch" to more specific ones.
+    const specificCategories: {[key: string]: string[]} = {
+        "Brunch": ["Cafe & Matcha", "Viral Matcha", "Aesthetic Brunch"],
+        "Nightlife": ["Social Dining", "Beachfront Bar", "Cocktail Bar", "Italo Disco Dining"],
+        "Vibes": ["Beach Club Vibe", "Iconic View"],
+        "Sushi": ["Sushi & Sake"],
+    };
+
+    const relevantCategories = specificCategories[activeTab] || [activeTab];
+    return DEMO_VENUES.filter(venue => relevantCategories.includes(venue.category));
   }, [activeTab]);
 
 
@@ -111,12 +118,8 @@ export function IykykVibeMap() {
   };
   
   const handleMarkerClick = (venueId: string) => {
-    // The demo venues have IDs like "venue_1", the dynamic route expects the slug.
-    // We'll look up the original slug from appData. This is a temporary bridge.
-    const originalVenue = appData.map.pins.find(v => v.name === DEMO_VENUES.find(dv => dv.id === venueId)?.name);
-    if (originalVenue) {
-      router.push(`/venue/${originalVenue.slug}`);
-    }
+    const venueSlug = venueId.replace('venue_', '');
+    router.push(`/venue/${venueSlug}`);
   };
 
   const mapOptions = useMemo(() => ({
@@ -144,6 +147,8 @@ export function IykykVibeMap() {
     "Cocktail Bar": categories["Cocktails"],
   };
 
+  const mapFilterCategories = ["All", "Brunch", "Nightlife", "Sushi", "Vibes"];
+
   return (
     <section className="flex flex-col h-full relative">
         <div className="absolute top-0 left-0 right-0 z-10 p-4 md:p-6 space-y-4 bg-gradient-to-b from-background to-transparent">
@@ -152,25 +157,31 @@ export function IykykVibeMap() {
             </p>
 
             <div className="flex overflow-x-auto pb-2 scrollbar-hide -mx-2">
-                {Object.entries(categories).map(([category, {icon: Icon, color, textColor}]) => (
-                    <button
-                        key={category}
-                        onClick={() => handleTabChange(category)}
-                        data-active={activeTab === category}
-                        className={cn(
-                            "flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full mx-1 transition-all duration-300 inline-flex items-center shadow-sm",
-                            "bg-card text-foreground hover:bg-secondary",
-                            "data-[active=true]:bg-[--active-bg] data-[active=true]:text-[--active-text]"
-                        )}
-                        style={{
-                            "--active-bg": color,
-                            "--active-text": textColor,
-                        } as React.CSSProperties}
-                    >
-                        <Icon className="mr-2 h-4 w-4" />
-                        {category}
-                    </button>
-                ))}
+                {mapFilterCategories.map((categoryKey) => {
+                    const category = categories[categoryKey as keyof typeof categories];
+                    if (!category) return null;
+                    const {icon: Icon, color, textColor} = category;
+
+                    return (
+                        <button
+                            key={categoryKey}
+                            onClick={() => handleTabChange(categoryKey)}
+                            data-active={activeTab === categoryKey}
+                            className={cn(
+                                "flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full mx-1 transition-all duration-300 inline-flex items-center shadow-sm",
+                                "bg-card text-foreground hover:bg-secondary",
+                                "data-[active=true]:bg-[--active-bg] data-[active=true]:text-[--active-text]"
+                            )}
+                            style={{
+                                "--active-bg": color,
+                                "--active-text": textColor,
+                            } as React.CSSProperties}
+                        >
+                            <Icon className="mr-2 h-4 w-4" />
+                            {categoryKey}
+                        </button>
+                    )
+                })}
             </div>
         </div>
 

@@ -5,8 +5,9 @@ import { MobileNav } from "@/components/iykyk/MobileNav";
 import { appData } from "@/lib/data";
 import { notFound } from "next/navigation";
 
-export default function SocialChatPage({ params }: { params: { id: string } }) {
-    const activity = appData.socialActivities.find(c => c.id === params.id);
+export default async function SocialChatPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const activity = appData.socialActivities.find(c => c.id === id);
 
     if (!activity) {
         notFound();

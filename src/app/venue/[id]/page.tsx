@@ -13,16 +13,27 @@ import { ArrowRight, Flame, MapPin, Ticket, Clock, TrendingUp, Info, Utensils, C
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { DEMO_VENUES } from "@/data/DemoVenues";
 
 const getImageForVenue = (venueName: string) => {
+    const venue = DEMO_VENUES.find(v => v.name === venueName);
+    if (venue?.image) {
+        return {
+            imageUrl: venue.image,
+            imageHint: venue.category,
+            width: 1000,
+            height: 1000,
+        };
+    }
     const venueNameLower = venueName.toLowerCase();
-    if (venueNameLower.includes('sushi') || venueNameLower.includes('raw bar')) return "sushi-1";
-    if (venueNameLower.includes('bar') || venueNameLower.includes('cocktail') || venueNameLower.includes('ravesis')) return "nightlife-1";
-    if (venueNameLower.includes('cafe') || venueNameLower.includes('brunch') || venueNameLower.includes('depot') || venueNameLower.includes('harry')) return "coffee-1";
-    if (venueNameLower.includes('beach')) return "hot-1";
-    if (venueNameLower.includes('totti')) return "my-day-3";
-    return "night-1";
+    if (venueNameLower.includes('sushi') || venueNameLower.includes('raw bar')) return PlaceHolderImages.find(img => img.id === 'sushi-1');
+    if (venueNameLower.includes('bar') || venueNameLower.includes('cocktail') || venueNameLower.includes('ravesis')) return PlaceHolderImages.find(img => img.id === 'nightlife-1');
+    if (venueNameLower.includes('cafe') || venueNameLower.includes('brunch') || venueNameLower.includes('depot') || venueNameLower.includes('harry')) return PlaceHolderImages.find(img => img.id === 'coffee-1');
+    if (venueNameLower.includes('beach')) return PlaceHolderImages.find(img => img.id === 'hot-1');
+    if (venueNameLower.includes('totti')) return PlaceHolderImages.find(img => img.id === 'my-day-3');
+    return PlaceHolderImages.find(img => img.id === 'night-1');
 }
+
 
 const spottedHereCreators = [appData.creators[2], appData.creators[3]]; // Lucas and Jay
 
@@ -42,6 +53,16 @@ const getVenueAction = (venueType: string) => {
         case 'Brunch':
         case 'Cocktails':
         case 'Nightlife':
+        case 'Cafe & Matcha':
+        case 'Viral Matcha':
+        case 'Aesthetic Brunch':
+        case 'Beach Club Vibe':
+        case 'Social Dining':
+        case 'Iconic View':
+        case 'Beachfront Bar':
+        case 'Sushi & Sake':
+        case 'Italo Disco Dining':
+        case 'Cocktail Bar':
             return { text: 'Book a Table', icon: Utensils };
         case 'Health & Fitness':
             return { text: 'Book a Class', icon: Calendar };
@@ -56,18 +77,28 @@ const getVenueAction = (venueType: string) => {
 }
 
 
-export default function VenueProfilePage({ params }: { params: { id: string } }) {
-  const venue = appData.map.pins.find(p => p.slug === params.id);
+export default async function VenueProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const venue = DEMO_VENUES.find(p => p.id.replace('venue_', '') === id);
 
   if (!venue) {
     notFound();
   }
 
-  const imageId = getImageForVenue(venue.name);
-  const image = PlaceHolderImages.find(img => img.id === imageId);
+  const image = getImageForVenue(venue.name);
   const activeDeal = appData.hotItems.find(item => item.venue === venue.name && new Date(item.expiresAt).getTime() > Date.now());
-  const venueAction = getVenueAction(venue.type);
+  const venueAction = getVenueAction(venue.category);
   const ActionIcon = venueAction.icon;
+
+  const mockVenue = {
+      ...venue,
+      slug: venue.id.replace('venue_', ''),
+      type: venue.category,
+      description: 'A great place in Bondi.',
+      openingHours: '9am - 10pm',
+      vibeTags: ['Popular', 'Scenic'],
+      currentVibe: venue.vibe === 'morning' ? 'Chill' : 'Buzzing'
+  }
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
@@ -80,7 +111,7 @@ export default function VenueProfilePage({ params }: { params: { id: string } })
                 {image && (
                     <Image
                         src={image.imageUrl}
-                        alt={venue.name}
+                        alt={mockVenue.name}
                         fill
                         className="object-cover"
                         data-ai-hint={image.imageHint}
@@ -89,10 +120,10 @@ export default function VenueProfilePage({ params }: { params: { id: string } })
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                 <div className="absolute bottom-0 left-0 p-4 md:p-6">
                     <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight flex items-center">
-                        {venue.name}
-                        {venue.currentVibe && <VibeIndicator vibe={venue.currentVibe} />}
+                        {mockVenue.name}
+                        {mockVenue.currentVibe && <VibeIndicator vibe={mockVenue.currentVibe} />}
                     </h1>
-                    <Badge className="mt-2" variant="secondary">{venue.type}</Badge>
+                    <Badge className="mt-2" variant="secondary">{mockVenue.type}</Badge>
                 </div>
             </div>
             
@@ -100,7 +131,7 @@ export default function VenueProfilePage({ params }: { params: { id: string } })
                 
                 <Card>
                     <CardContent className="p-6">
-                        <p className="text-muted-foreground">{venue.description}</p>
+                        <p className="text-muted-foreground">{mockVenue.description}</p>
                         <Button className="w-full mt-4 font-bold text-lg h-12">
                             <ActionIcon className="mr-2"/>
                             {venueAction.text}
@@ -134,13 +165,13 @@ export default function VenueProfilePage({ params }: { params: { id: string } })
                     <CardContent className="space-y-4">
                         <div>
                             <h4 className="font-semibold flex items-center gap-2 mb-2"><Clock size={16}/> Opening Hours</h4>
-                            <p className="text-muted-foreground">{venue.openingHours}</p>
+                            <p className="text-muted-foreground">{mockVenue.openingHours}</p>
                         </div>
-                         {venue.vibeTags && venue.vibeTags.length > 0 && (
+                         {mockVenue.vibeTags && mockVenue.vibeTags.length > 0 && (
                             <div>
                                 <h4 className="font-semibold flex items-center gap-2 mb-2"><TrendingUp size={16}/> Vibe Tags</h4>
                                  <div className="flex flex-wrap gap-2">
-                                    {venue.vibeTags.map(tag => (
+                                    {mockVenue.vibeTags.map(tag => (
                                         <Badge key={tag} variant="outline">{tag}</Badge>
                                     ))}
                                 </div>
