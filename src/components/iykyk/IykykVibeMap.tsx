@@ -24,7 +24,7 @@ const center = {
   lng: 151.276
 };
 
-// Custom map styles to match the app theme
+// Custom map styles to match the app theme - simplified for now
 const mapStyles = [
     {
         "featureType": "all",
@@ -94,7 +94,6 @@ export function IykykVibeMap() {
     if (activeTab === 'All') {
       return DEMO_VENUES;
     }
-    // This logic now correctly maps broader categories like "Brunch" to more specific ones.
     const specificCategories: {[key: string]: string[]} = {
         "Brunch": ["Cafe & Matcha", "Viral Matcha", "Aesthetic Brunch"],
         "Nightlife": ["Social Dining", "Beachfront Bar", "Cocktail Bar", "Italo Disco Dining"],
@@ -132,7 +131,6 @@ export function IykykVibeMap() {
     return <div className="text-destructive p-6">Error loading maps. Please check your API key and ensure the Maps JavaScript API is enabled in your Google Cloud project.</div>;
   }
 
-  // Simplified category mapping for demo data
   const demoCategories = {
     ...categories,
     "Cafe & Matcha": categories["Brunch"],
@@ -225,3 +223,5 @@ export function IykykVibeMap() {
     </section>
   );
 }
+
+    
