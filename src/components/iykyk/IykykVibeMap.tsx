@@ -125,8 +125,7 @@ export function IykykVibeMap() {
   const mapOptions = useMemo(() => ({
     disableDefaultUI: true,
     zoomControl: true,
-    // Disabling custom styles for now to debug
-    // styles: mapStyles,
+    styles: mapStyles,
   }), []);
 
   if (loadError) {
@@ -205,16 +204,18 @@ export function IykykVibeMap() {
                       `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="${color}" /><circle cx="12" cy="10" r="3" fill="white" stroke="none"/></svg>`
                     )}`;
                     
+                    const markerIcon: google.maps.Icon = {
+                        url: pinSvg,
+                        scaledSize: new window.google.maps.Size(32, 32),
+                    };
+
                     return (
                       <MarkerF
                         key={venue.id}
                         position={{ lat: venue.lat, lng: venue.lng }}
                         title={venue.name}
                         onClick={() => handleMarkerClick(venue.id)}
-                        icon={{
-                          url: pinSvg,
-                          scaledSize: new window.google.maps.Size(32, 32),
-                        }}
+                        icon={markerIcon}
                       />
                     );
                   })}
