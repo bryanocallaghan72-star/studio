@@ -30,21 +30,21 @@ const mapStyles = [
         "featureType": "all",
         "elementType": "geometry.fill",
         "stylers": [
-            { "color": "#1e293b" }
+            { "color": "#f5f5f5" }
         ]
     },
     {
         "featureType": "all",
         "elementType": "labels.text.fill",
         "stylers": [
-            { "color": "#94a3b8" }
+            { "color": "#616161" }
         ]
     },
     {
         "featureType": "all",
         "elementType": "labels.text.stroke",
         "stylers": [
-            { "color": "#1e293b" },
+            { "color": "#f5f5f5" },
             { "weight": 2 }
         ]
     },
@@ -52,28 +52,28 @@ const mapStyles = [
         "featureType": "road",
         "elementType": "geometry",
         "stylers": [
-            { "color": "#334155" }
+            { "color": "#ffffff" }
         ]
     },
     {
         "featureType": "water",
         "elementType": "geometry.fill",
         "stylers": [
-            { "color": "#0f172a" }
+            { "color": "#c9c9c9" }
         ]
     },
      {
         "featureType": "poi",
         "elementType": "geometry.fill",
         "stylers": [
-            { "color": "#334155" }
+            { "color": "#eeeeee" }
         ]
     },
     {
         "featureType": "transit",
         "elementType": "geometry",
         "stylers": [
-            { "color": "#475569" }
+            { "color": "#e0e0e0" }
         ]
     }
 ];
@@ -125,7 +125,8 @@ export function IykykVibeMap() {
   const mapOptions = useMemo(() => ({
     disableDefaultUI: true,
     zoomControl: true,
-    styles: mapStyles,
+    // Disabling custom styles for now to debug
+    // styles: mapStyles,
   }), []);
 
   if (loadError) {
