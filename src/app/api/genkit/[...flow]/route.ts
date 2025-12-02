@@ -1,5 +1,13 @@
-// In src/app/api/genkit/[...flow]/route.ts
+// This file is no longer used for Genkit flows,
+// as they are now called directly from Server Actions.
+// This prevents build issues with server-only packages.
 
-import { genkitPlugin } from '@/ai/genkit.server'; 
+import { NextResponse } from 'next/server';
 
-export const { GET, POST } = genkitPlugin.getHandler();
+export async function GET() {
+  return NextResponse.json({ message: 'This Genkit API route is not in use.' }, { status: 404 });
+}
+
+export async function POST() {
+  return NextResponse.json({ message: 'This Genkit API route is not in use.' }, { status: 404 });
+}
