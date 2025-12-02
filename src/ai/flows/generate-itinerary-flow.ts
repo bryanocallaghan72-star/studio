@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI flow for generating a personalized itinerary based on a user's mood.
@@ -59,11 +60,14 @@ const generateItineraryFlow = ai.defineFlow(
   async (request) => {
     const llmResponse = await ai.generate({
       model: 'googleai/gemini-1.5-flash',
-      prompt: prompt,
+      prompt: prompt.prompt,
       input: request,
+      output: {
+        schema: prompt.output.schema,
+      },
     });
-
-    const output = llmResponse.output();
+    
+    const output = llmResponse.output;
     if (!output) {
       throw new Error('AI failed to generate an itinerary.');
     }
