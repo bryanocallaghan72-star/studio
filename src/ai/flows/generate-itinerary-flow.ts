@@ -1,15 +1,21 @@
-
 'use server';
 /**
  * @fileOverview An AI flow for generating a personalized itinerary based on a user's mood.
- * 
+ *
  * - generateItinerary - The main function to call the flow.
  */
 
 import { ai } from '@/ai/genkit.server';
-import { Itinerary, ItineraryRequest, ItineraryRequestSchema, ItinerarySchema } from '@/ai/schemas';
+import {
+  Itinerary,
+  ItineraryRequest,
+  ItineraryRequestSchema,
+  ItinerarySchema,
+} from '@/ai/schemas';
 
-export async function generateItinerary(request: ItineraryRequest): Promise<Itinerary> {
+export async function generateItinerary(
+  request: ItineraryRequest
+): Promise<Itinerary> {
   return generateItineraryFlow(request);
 }
 
@@ -21,9 +27,9 @@ const prompt = ai.definePrompt({
 
 Given a user's desired mood, generate a creative, multi-stop itinerary. The itinerary should feel authentic, local, and perfectly match the vibe.
 
-- **Locations must be in or very near Bondi.**
-- **Stops should be logical in sequence and timing.**
-- **Keep descriptions short, punchy, and enticing.**
+- Locations must be in or very near Bondi.
+- Stops should be logical in sequence and timing.
+- Keep descriptions short, punchy, and enticing.
 
 {{#if surpriseMe}}
 Generate a creative and surprising single-stop itinerary. This is for a "Surprise Me" feature, so make it fun and unexpected. The response should still be a valid Itinerary object, but with only one stop in the 'stops' array. Pick a real, fun venue in Bondi. The 'title' of the main Itinerary object should be the same as the 'title' of the single stop you generate.
@@ -58,19 +64,14 @@ const generateItineraryFlow = ai.defineFlow(
     outputSchema: ItinerarySchema,
   },
   async (request) => {
-    const llmResponse = await ai.generate({
-      model: 'googleai/gemini-1.5-flash',
-      prompt: prompt.prompt,
-      input: request,
-      output: {
-        schema: prompt.output.schema,
-      },
-    });
-    
+    // ✅ Call the executable prompt directly instead of ai.generate({ ... })
+    const llmResponse = await prompt(request);
+
     const output = llmResponse.output;
     if (!output) {
       throw new Error('AI failed to generate an itinerary.');
     }
+
     return output;
   }
 );
