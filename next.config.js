@@ -48,11 +48,7 @@ const nextConfig = {
 
     return config;
   },
-  // Expose the Google Maps API key to the client-side, reading it from the
-  // App Hosting managed environment variable.
-  env: {
-    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
-  }
+  // The 'env' block has been removed to rely on default Next.js public environment variable handling.
 };
 
 module.exports = nextConfig;
