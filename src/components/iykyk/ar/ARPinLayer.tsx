@@ -30,6 +30,26 @@ export type ARPinData = {
 
 const MAX_PINS_DISPLAYED = 6;
 
+// A set of predefined, balanced positions for the pins.
+const PREDEFINED_POSITIONS = [
+    { top: '15%', left: '20%' }, // Top-left
+    { top: '20%', left: '65%' }, // Top-right
+    { top: '45%', left: '15%' }, // Mid-left
+    { top: '50%', left: '70%' }, // Mid-right
+    { top: '70%', left: '25%' }, // Bottom-left
+    { top: '65%', left: '60%' }, // Bottom-right
+];
+
+// Helper function to shuffle an array.
+const shuffleArray = <T>(array: T[]): T[] => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+};
+
 /**
  * 2. Centralized enrichment function to create a consistent ARPinData object.
  * This is now the single source of truth for pin creation.
@@ -38,10 +58,10 @@ const MAX_PINS_DISPLAYED = 6;
  * @param layer - The active layer, used for generating a unique ID.
  * @returns A fully enriched ARPinData object.
  */
-function enrichPin(rawPin: RawPin & { typeOverride?: string }, index: number, layer: LayerType): ARPinData {
-  const horizontalJitter = (index % 4) * 5 - 10; // -10, -5, 0, 5
+function enrichPin(rawPin: RawPin & { typeOverride?: string }, index: number, layer: LayerType, position: { top: string, left: string }): ARPinData {
+  const horizontalJitter = Math.floor(Math.random() * 11) - 5; // -5 to +5
+  const verticalJitter = Math.floor(Math.random() * 11) - 5;
 
-  // 4. Enforce unique pin IDs by prefixing with the layer.
   const uniqueId = `${layer}-${rawPin.id}`;
   
   let category: ARPinData['category'] = 'default';
@@ -55,7 +75,6 @@ function enrichPin(rawPin: RawPin & { typeOverride?: string }, index: number, la
     category = 'deal';
   } else if (type.toLowerCase().includes('drop')) {
     category = 'drop';
-    // Check for drop-specific details
     const dropDetail = appData.arDrops.find(d => d.venue === rawPin.name);
     if (dropDetail) {
       type = dropDetail.isSponsored ? 'Sponsored Drop' : 'Daily Drop';
@@ -77,8 +96,8 @@ function enrichPin(rawPin: RawPin & { typeOverride?: string }, index: number, la
     lat: rawPin.latitude,
     lng: rawPin.longitude,
     style: {
-      top: `${15 + (index % 3) * 25}%`,
-      left: `${15 + (index % 2) * 50 + horizontalJitter}%`,
+      top: `calc(${position.top} + ${verticalJitter}px)`,
+      left: `calc(${position.left} + ${horizontalJitter}px)`,
       animationDelay: `${index * 0.15}s`,
     },
   };
@@ -92,7 +111,7 @@ function enrichPin(rawPin: RawPin & { typeOverride?: string }, index: number, la
  * @returns An array of enriched ARPinData objects ready for rendering.
  */
 function getPinsForLayer(layer: LayerType): ARPinData[] {
-    let filteredPins: RawPin[] = [];
+    let filteredPins: (RawPin & {typeOverride?: string})[] = [];
 
     switch (layer) {
         case 'fire':
@@ -115,15 +134,24 @@ function getPinsForLayer(layer: LayerType): ARPinData[] {
              break;
         case 'all':
         default:
-            // For 'all', just use a slice of the main pins list for variety.
-            // The enrichment function will handle assigning the correct default types.
-            filteredPins = appData.map.pins;
+            const firePins = appData.hotItems.map(item => ({ ...appData.map.pins.find(p => p.name === item.venue)!, typeOverride: 'Fire' }));
+            const dealPins = appData.deals.map(item => ({ ...appData.map.pins.find(p => p.name === item.venue)!, typeOverride: 'Deals' }));
+            const dropPins = appData.arDrops.map(item => ({ ...appData.map.pins.find(p => p.name === item.venue)!, typeOverride: 'Drop' }));
+
+            // Combine and remove duplicates, keeping the more "important" type
+            const allPinsMap = new Map<string, RawPin & { typeOverride?: string }>();
+            [...firePins, ...dealPins, ...dropPins].forEach(pin => {
+                if (pin) allPinsMap.set(pin.slug, pin);
+            });
+            filteredPins = Array.from(allPinsMap.values());
             break;
     }
 
+    const shuffledPositions = shuffleArray(PREDEFINED_POSITIONS);
+
     return filteredPins
       .slice(0, MAX_PINS_DISPLAYED)
-      .map((pin, index) => enrichPin(pin, index, layer));
+      .map((pin, index) => enrichPin(pin, index, layer, shuffledPositions[index]));
 }
 
 export function ARPinLayer({ activeLayer }: { activeLayer: LayerType }) {
