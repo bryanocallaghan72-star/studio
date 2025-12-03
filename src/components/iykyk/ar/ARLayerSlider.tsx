@@ -31,11 +31,14 @@ export function ARLayerSlider({ activeLayer, setActiveLayer }: ARLayerSliderProp
         const slider = sliderRef.current;
         if (!slider) return;
 
-        // Use the y-offset within the slider constraints for more reliable indexing
-        const relativeY = info.offset.y;
-        const segmentHeight = slider.clientHeight / (layers.length);
+        const sliderBounds = slider.getBoundingClientRect();
+        // Calculate the local Y position of the drag event within the slider bounds
+        const localY = info.point.y - sliderBounds.top;
+
+        const segmentHeight = slider.clientHeight / layers.length;
         
-        let newIndex = Math.floor((relativeY + segmentHeight / 2) / segmentHeight);
+        // Determine the new index based on the local Y position
+        let newIndex = Math.floor(localY / segmentHeight);
         newIndex = Math.max(0, Math.min(layers.length - 1, newIndex)); // Clamp index
 
         const newLayer = layers[newIndex];
