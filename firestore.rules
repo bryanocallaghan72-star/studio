@@ -1,3 +1,4 @@
+
 rules_version = '2';
 
 service cloud.firestore {
@@ -146,5 +147,18 @@ service cloud.firestore {
         allow delete: if isOwner(userId) || isHost(socialId);
       }
     }
+
+    // /sliceOfLifePosts/{postId}
+    // Public stories. Read by anyone, writable by the creator.
+    match /sliceOfLifePosts/{postId} {
+        allow get, list: if true;
+        
+        // A signed-in user can create a story if the creatorId matches their UID.
+        allow create: if isSignedIn() && request.resource.data.creatorId == request.auth.uid;
+        // Only the original creator can update or delete their story.
+        allow update, delete: if isExistingOwner(resource.data.creatorId);
+    }
   }
 }
+
+    

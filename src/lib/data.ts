@@ -62,6 +62,60 @@ export const seedVenuesToFirestore = async (firestore: any) => {
 
 
 export const appData = {
+  sliceOfLifePosts: [
+    {
+      id: "sol-1",
+      creatorId: "shannon",
+      title: "My first week in Bondi",
+      description: "Just landed from Ireland and I'm already in love with this place. The sunrise swims are something else. It feels like a new beginning, you know? A bit scary, but mostly exciting. Here's to making it work.",
+      videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels_videos_2759484__2160p_.mp4",
+      thumbnailUrl: "https://images.pexels.com/videos/2759484/pexels-photo-2759484.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+      duration: 45,
+      postType: "Short Diary",
+      likes: 1200,
+      commentsCount: 88,
+      createdAt: "2024-07-21T08:00:00Z"
+    },
+    {
+      id: "sol-2",
+      creatorId: "lucas",
+      title: "The art of a perfect cocktail",
+      description: "People think it's just mixing drinks, but it's about the story. Each ingredient, each movement... it's a performance. This is my 'Map Day Story' from behind the bar at The Corner House, where I get to create a little bit of magic for people.",
+      videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-kampus-production-8569201__2160p_.mp4",
+      thumbnailUrl: "https://images.pexels.com/videos/8569201/pexels-photo-8569201.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+      duration: 112,
+      postType: "Deep Cut",
+      likes: 3400,
+      commentsCount: 230,
+      createdAt: "2024-07-20T19:30:00Z"
+    },
+    {
+      id: "sol-3",
+      creatorId: "alice",
+      title: "The set that changed everything",
+      description: "This was the night. The moment the beat dropped and I saw the whole floor moving as one. It's more than just music; it's a connection. This is my confession: I live for these moments of shared energy.",
+      videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-anastasia-shuraeva-9065353__2160p_.mp4",
+      thumbnailUrl: "https://images.pexels.com/videos/9065353/pexels-photo-9065353.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+      duration: 72,
+      postType: "Creator's Confession",
+      likes: 5600,
+      commentsCount: 451,
+      createdAt: "2024-07-19T23:00:00Z"
+    },
+    {
+      id: "sol-4",
+      creatorId: "jay",
+      title: "A single piece of sushi",
+      description: "It's not just food. It's the craft, the history, the perfect balance of texture and flavor. This one piece of otoro at Raw Bar... it was a 'Bondi Moment' that reminded me why I started this whole foodie journey.",
+      videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-koolshooters-7330559__2160p_.mp4",
+      thumbnailUrl: "https://images.pexels.com/videos/7330559/pexels-photo-7330559.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+      duration: 58,
+      postType: "Bondi Moment",
+      likes: 2800,
+      commentsCount: 154,
+      createdAt: "2024-07-18T13:00:00Z"
+    }
+  ],
   quests: [
     { id: 'quest-photo', venue: 'Bondi Beach', slug: 'bondi-beach', title: 'Bondi Photo Quest' },
     { id: 'quest-foodie', venue: 'Totti\'s', slug: 'tottis', title: 'Foodie Challenge' },
@@ -861,5 +915,7 @@ export const appData = {
     
 
 
+
+    
 
     

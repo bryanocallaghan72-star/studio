@@ -20,6 +20,7 @@ import {
   User,
   Trophy,
   Coffee,
+  BookHeart,
 } from 'lucide-react';
 import { useBondiBingoHighlight } from '@/hooks/useBondiBingoHighlight';
 import { useMatchaBingoHighlight } from '@/hooks/useMatchaBingoHighlight';
@@ -46,6 +47,7 @@ export function DesktopNavContent() {
 
   const navItems = [
     { href: '/discover', icon: Home, label: 'Discover' },
+    { href: '/slice-of-life', icon: BookHeart, label: 'Diaries' },
     { href: '/feed', icon: MessageCircle, label: 'Feed' },
     { href: '/reels', icon: PlayCircle, label: 'Reels' },
     { href: '/social', icon: Users, label: 'Social' },
@@ -100,3 +102,5 @@ export function DesktopNavContent() {
     </SidebarMenu>
   );
 }
+
+    

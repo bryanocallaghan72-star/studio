@@ -402,6 +402,30 @@
         "savedAt": { "type": "string", "format": "date-time" }
       },
       "required": ["stayId", "savedAt"]
+    },
+    "SliceOfLifePost": {
+      "title": "Slice of Life Post",
+      "type": "object",
+      "description": "Represents a single video story in the iykyk Slice of Life feed.",
+      "properties": {
+        "id": { "type": "string" },
+        "creatorId": { "type": "string", "description": "The ID of the user who created the post." },
+        "creatorName": { "type": "string", "description": "Denormalized name of the creator." },
+        "creatorAvatarUrl": { "type": "string", "format": "uri", "description": "Denormalized avatar URL of the creator." },
+        "title": { "type": "string", "description": "A short, evocative title for the story." },
+        "description": { "type": "string", "description": "A longer text description or transcript of the story." },
+        "videoUrl": { "type": "string", "format": "uri" },
+        "thumbnailUrl": { "type": "string", "format": "uri" },
+        "duration": { "type": "number", "description": "Length of the video in seconds." },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "postType": {
+          "type": "string",
+          "enum": ["Short Diary", "Deep Cut", "Map Day Story", "Local Spotlight", "Creator's Confession", "Bondi Moment"]
+        },
+        "likes": { "type": "number" },
+        "commentsCount": { "type": "number" }
+      },
+      "required": ["id", "creatorId", "creatorName", "title", "videoUrl", "thumbnailUrl", "duration", "createdAt", "postType"]
     }
   },
   "auth": {
@@ -458,6 +482,12 @@
     "/stays/{stayId}": {
       "schema": { "$ref": "#/entities/Stay" },
       "description": "A top-level collection for all creator-recommended stays and flash stays. Allows for easy querying of all available accommodations."
+    },
+    "/sliceOfLifePosts/{postId}": {
+        "schema": { "$ref": "#/entities/SliceOfLifePost" },
+        "description": "A top-level collection for all Slice of Life video stories."
     }
   }
 }
+
+    
