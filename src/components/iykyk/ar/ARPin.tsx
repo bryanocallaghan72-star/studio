@@ -3,33 +3,33 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { ColorPinSVG } from '../ColorPinSVG'; // Corrected import path
-
-export type ARPinData = {
-  id: string;
-  name: string;
-  type: string;
-  slug: string;
-  style: React.CSSProperties;
-};
+import { ColorPinSVG } from '../ColorPinSVG';
+import { ARPinData } from './ARPinLayer';
 
 const typeColorMap: Record<string, string> = {
-    'Sponsored Drop': '#a855f7', // purple-500
-    'Fire': '#f97316',           // orange-500
-    'Deals': '#22c55e',          // green-500
-    'Quests': '#eab308',         // yellow-500
-    'Default': '#8b5cf6',
+  'Sponsored Drop': '#a855f7', // purple-500
+  'Daily Drop': '#f97316',     // orange-500
+  'Fire': '#ef4444',             // red-500
+  'Deals': '#22c55e',          // green-500
+  'Quest': '#eab308',         // yellow-500
+  'Reward': '#eab308',        // yellow-500
+  'Default': '#3b82f6',         // blue-500
 };
 
-const getPinColor = (type: string) => {
-    if (type.toLowerCase().includes('drop')) return typeColorMap['Sponsored Drop'];
-    if (type.toLowerCase().includes('fire')) return typeColorMap['Fire'];
-    if (type.toLowerCase().includes('deal')) return typeColorMap['Deals'];
-    if (type.toLowerCase().includes('quest')) return typeColorMap['Quests'];
-    return typeColorMap.Default;
-}
+const getPinColor = (type: string): string => {
+  if (type.toLowerCase().includes('sponsored')) return typeColorMap['Sponsored Drop'];
+  if (type.toLowerCase().includes('daily')) return typeColorMap['Daily Drop'];
+  if (type.toLowerCase().includes('fire')) return typeColorMap['Fire'];
+  if (type.toLowerCase().includes('deal')) return typeColorMap['Deals'];
+  if (type.toLowerCase().includes('quest')) return typeColorMap['Quest'];
+  if (type.toLowerCase().includes('reward')) return typeColorMap['Reward'];
+  return typeColorMap.Default;
+};
+
+type ARPinProps = {
+  pin: ARPinData;
+};
 
 export function ARPin({ pin }: ARPinProps) {
   const pinColor = getPinColor(pin.type);
