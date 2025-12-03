@@ -19,7 +19,7 @@ export type ARPinData = {
 const MAX_PINS_DISPLAYED = 6;
 
 function getPinsForLayer(layer: LayerType, data: typeof appData): ARPinData[] {
-    let filteredVenues = [];
+    let filteredVenues: any[] = [];
 
     switch (layer) {
         case 'fire':
@@ -33,19 +33,13 @@ function getPinsForLayer(layer: LayerType, data: typeof appData): ARPinData[] {
         case 'drops':
              const dropVenues = new Set(data.arDrops.map(item => item.venue));
              const pins = data.map.pins.filter(pin => dropVenues.has(pin.name));
-             return pins.map(pin => {
+             return pins.map((pin, index) => {
                 const detail = data.arDrops.find(d => d.venue === pin.name);
+                const horizontalJitter = (index % 4) * 5 - 10;
                 return {
-                  ...pin,
-                  name: detail?.title || pin.name,
-                  type: detail?.isSponsored ? 'Sponsored Drop' : 'Daily Drop',
-                }
-             }).slice(0, MAX_PINS_DISPLAYED).map((pin, index) => {
-                const horizontalJitter = (index % 4) * 5 - 10; // -10, -5, 0, 5
-                return {
-                    id: pin.id.toString(),
-                    name: pin.name,
-                    type: pin.type,
+                    id: `drop-${pin.id}`,
+                    name: detail?.title || pin.name,
+                    type: detail?.isSponsored ? 'Sponsored Drop' : 'Daily Drop',
                     slug: pin.slug,
                     style: {
                       top: `${15 + (index % 3) * 25}%`,
@@ -53,7 +47,7 @@ function getPinsForLayer(layer: LayerType, data: typeof appData): ARPinData[] {
                       animationDelay: `${index * 0.15}s`,
                     },
                 }
-             });
+             }).slice(0, MAX_PINS_DISPLAYED);
         case 'all':
         default:
             // For 'all', let's show a mix of types for visual variety
@@ -62,16 +56,17 @@ function getPinsForLayer(layer: LayerType, data: typeof appData): ARPinData[] {
             const dropPin = data.map.pins.find(p => data.arDrops.some(item => item.venue === p.name));
 
             let mixedPins = [];
-            if (firePin) mixedPins.push({...firePin, type: 'Fire'});
-            if (dealPin) mixedPins.push({...dealPin, type: 'Deals'});
+            if (firePin) mixedPins.push({...firePin, type: 'Fire', uniqueId: `fire-${firePin.id}`});
+            if (dealPin) mixedPins.push({...dealPin, type: 'Deals', uniqueId: `deal-${dealPin.id}`});
             if (dropPin) {
                 const detail = data.arDrops.find(d => d.venue === dropPin.name);
-                mixedPins.push({...dropPin, name: detail?.title || dropPin.name, type: detail?.isSponsored ? 'Sponsored Drop' : 'Daily Drop' });
+                mixedPins.push({...dropPin, name: detail?.title || dropPin.name, type: detail?.isSponsored ? 'Sponsored Drop' : 'Daily Drop', uniqueId: `drop-${dropPin.id}` });
             }
             
             // Fill the rest with default pins if needed
-            const remainingPins = data.map.pins.filter(p => !mixedPins.some(mp => mp.id === p.id));
-            mixedPins.push(...remainingPins.slice(0, MAX_PINS_DISPLAYED - mixedPins.length).map(p => ({...p, type: p.type || 'Default'})));
+            const existingIds = new Set(mixedPins.map(p => p.id));
+            const remainingPins = data.map.pins.filter(p => !existingIds.has(p.id));
+            mixedPins.push(...remainingPins.slice(0, MAX_PINS_DISPLAYED - mixedPins.length).map(p => ({...p, type: p.type || 'Default', uniqueId: `default-${p.id}`})));
 
             filteredVenues = mixedPins;
             break;
@@ -80,7 +75,7 @@ function getPinsForLayer(layer: LayerType, data: typeof appData): ARPinData[] {
     return filteredVenues.slice(0, MAX_PINS_DISPLAYED).map((pin, index) => {
       const horizontalJitter = (index % 4) * 5 - 10; // -10, -5, 0, 5
       return {
-        id: pin.id.toString(),
+        id: pin.uniqueId || `${pin.type.toLowerCase().replace(' ','-')}-${pin.id}`,
         name: pin.name,
         type: pin.type,
         slug: pin.slug,
