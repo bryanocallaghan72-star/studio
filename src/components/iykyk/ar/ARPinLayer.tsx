@@ -132,6 +132,22 @@ function getPinsForLayer(layer: LayerType): ARPinData[] {
                .filter(pin => dropVenues.has(pin.name))
                .map(pin => ({...pin, typeOverride: 'Drop'})); // Type is further refined in enrichPin
              break;
+        case 'quests':
+            if (appData.quests) {
+                const questVenues = new Set(appData.quests.map(item => item.venue));
+                filteredPins = appData.map.pins
+                  .filter(pin => questVenues.has(pin.name))
+                  .map(pin => ({ ...pin, typeOverride: 'Quest' }));
+            }
+            break;
+        case 'rewards':
+            if (appData.rewards) {
+                const rewardVenues = new Set(appData.rewards.map(item => item.venue));
+                filteredPins = appData.map.pins
+                    .filter(pin => rewardVenues.has(pin.name))
+                    .map(pin => ({ ...pin, typeOverride: 'Reward' }));
+            }
+            break;
         case 'all':
         default:
             const firePins = appData.hotItems.map(item => ({ ...appData.map.pins.find(p => p.name === item.venue)!, typeOverride: 'Fire' }));

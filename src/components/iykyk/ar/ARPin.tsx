@@ -63,6 +63,11 @@ export function ARPin({ pin }: ARPinProps) {
                 )}
             >
                 <p className="font-bold text-white text-sm whitespace-nowrap">{pin.name}</p>
+                 {pin.distanceMeters !== undefined && (
+                    <p className="text-xs text-white/70 font-medium">
+                        {pin.isUnlocked ? 'Unlocked ✨' : `${Math.round(pin.distanceMeters)}m away`}
+                    </p>
+                )}
             </div>
         </div>
       </Link>

@@ -62,6 +62,14 @@ export const seedVenuesToFirestore = async (firestore: any) => {
 
 
 export const appData = {
+  quests: [
+    { id: 'quest-photo', venue: 'Bondi Beach', slug: 'bondi-beach', title: 'Bondi Photo Quest' },
+    { id: 'quest-foodie', venue: 'Totti\'s', slug: 'tottis', title: 'Foodie Challenge' },
+  ],
+  rewards: [
+      { id: 'reward-coffee', venue: 'The Depot', slug: 'the-depot', title: 'Free Coffee Reward' },
+      { id: 'reward-merch', venue: 'Hotel Ravesis', slug: 'hotel-ravesis', title: 'Exclusive Merch' },
+  ],
   socialActivities: [
     {
         id: 'social-1',
