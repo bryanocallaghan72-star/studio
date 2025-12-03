@@ -9,10 +9,19 @@ import { ARLayerSlider } from '@/components/iykyk/ar/ARLayerSlider';
 import { ARPinLayer } from '@/components/iykyk/ar/ARPinLayer';
 import { ARCameraFeed } from '@/components/iykyk/ar/ARCameraFeed';
 import { useCamera } from '@/hooks/useCamera';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { MobileNav } from '@/components/iykyk/MobileNav';
 
 export type LayerType = 'all' | 'fire' | 'deals' | 'drops' | 'quests' | 'rewards';
+
+const LENS_LABELS: Record<LayerType, string> = {
+  all: 'All vibes',
+  fire: 'Fire',
+  deals: 'Deals',
+  drops: 'Drops',
+  quests: 'Quests',
+  rewards: 'Rewards',
+};
 
 export default function ARPage() {
   const [activeLayer, setActiveLayer] = useState<LayerType>('all');
@@ -28,9 +37,23 @@ export default function ARPage() {
             <ArrowLeft />
           </Button>
         </Link>
-        <h1 className="text-lg font-bold">iykyk Lens</h1>
+        {/* The h1 is now replaced by the dynamic HUD */}
         <div className="w-10" />
       </header>
+
+      {/* Lens HUD */}
+      <motion.div
+        className="absolute top-4 left-1/2 -translate-x-1/2 z-20"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+      >
+        <div className="rounded-full bg-black/60 px-4 py-1.5 backdrop-blur-md border border-white/15 shadow-lg">
+          <p className="text-xs font-medium text-white/80 tracking-wide">
+            iykyk Lens · {LENS_LABELS[activeLayer]}
+          </p>
+        </div>
+      </motion.div>
 
       {hasCameraPermission === true && (
         <>
