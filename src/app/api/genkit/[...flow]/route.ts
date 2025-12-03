@@ -5,9 +5,15 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  return NextResponse.json({ message: 'This Genkit API route is not in use.' }, { status: 404 });
+  return NextResponse.json(
+    { message: 'This Genkit API route is not in use.' },
+    { status: 404 }
+  );
 }
 
 export async function POST() {
-  return NextResponse.json({ message: 'This Genkit API route is not in use.' }, { status: 404 });
+  return NextResponse.json(
+    { message: 'This Genkit API route is not in use.' },
+    { status: 404 }
+  );
 }
