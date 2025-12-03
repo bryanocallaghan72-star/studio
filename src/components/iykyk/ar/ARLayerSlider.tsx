@@ -1,7 +1,8 @@
+
 'use client';
 
 import { useRef } from 'react';
-import { motion, useDragControls, PanInfo } from 'framer-motion';
+import { motion, PanInfo } from 'framer-motion';
 import { Layers, Flame, Tag, Gift, MessageSquare, Crown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { LayerType } from '@/app/ar/page';
@@ -20,10 +21,9 @@ const layers: { id: LayerType, label: string; icon: React.ElementType }[] = [
     { id: 'rewards', label: 'Rewards', icon: Crown },
 ];
 
-const SLIDER_HEIGHT = 288; // h-72
+const SLIDER_HEIGHT = 288; // h-72, which is 18rem or 288px
 
 export function ARLayerSlider({ activeLayer, setActiveLayer }: ARLayerSliderProps) {
-    const dragControls = useDragControls();
     const sliderRef = useRef<HTMLDivElement>(null);
     const activeLayerIndex = layers.findIndex(l => l.id === activeLayer);
 
@@ -31,48 +31,59 @@ export function ARLayerSlider({ activeLayer, setActiveLayer }: ARLayerSliderProp
         const slider = sliderRef.current;
         if (!slider) return;
 
-        const segmentHeight = SLIDER_HEIGHT / (layers.length - 1);
-        const newIndex = Math.round(info.point.y / segmentHeight);
+        // Use the y-offset within the slider constraints for more reliable indexing
+        const relativeY = info.offset.y;
+        const segmentHeight = slider.clientHeight / (layers.length);
+        
+        let newIndex = Math.floor((relativeY + segmentHeight / 2) / segmentHeight);
+        newIndex = Math.max(0, Math.min(layers.length - 1, newIndex)); // Clamp index
 
-        if (newIndex >= 0 && newIndex < layers.length && layers[newIndex].id !== activeLayer) {
-            setActiveLayer(layers[newIndex].id);
+        const newLayer = layers[newIndex];
+        if (newLayer && newLayer.id !== activeLayer) {
+            setActiveLayer(newLayer.id);
         }
     };
     
-    const segmentHeight = SLIDER_HEIGHT / (layers.length - 1);
-    const dotY = activeLayerIndex * segmentHeight;
+    const segmentHeight = SLIDER_HEIGHT / layers.length;
+    const dotY = activeLayerIndex * segmentHeight + segmentHeight / 2;
 
     return (
         <div
             ref={sliderRef}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center justify-between h-72 py-2"
-            onPointerDown={(e) => dragControls.start(e)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center justify-between h-72"
         >
             <div className="absolute top-0 left-1/2 -translate-x-1/2 h-full w-0.5 bg-white/30" />
-            {layers.map((layer, index) => {
-                const Icon = layer.icon;
-                const isActive = layer.id === activeLayer;
-                return (
-                    <div key={layer.id} className={cn(
-                        "relative z-10 rounded-full transition-all duration-300",
-                        isActive ? 'bg-white text-black' : 'bg-black/50 text-white'
-                    )}>
-                        <Icon className="h-5 w-5 m-1.5" />
-                    </div>
-                )
-            })}
-
+            
             <motion.div
-                className="absolute top-0 left-1/2 -translate-x-1/2 z-20 h-8 w-8 flex items-center justify-center"
-                style={{ y: dotY - 12 }}
+                className="absolute top-0 left-1/2 -translate-x-1/2 z-20 h-8 w-8 flex items-center justify-center cursor-grab active:cursor-grabbing"
+                style={{ y: dotY - 16 }} // Center the dot on the segment
                 drag="y"
-                dragControls={dragControls}
                 dragConstraints={sliderRef}
                 dragElastic={0.1}
                 onDrag={handleDrag}
+                dragMomentum={false} // Prevents overshooting
             >
-                <div className="h-2.5 w-2.5 rounded-full bg-white shadow-lg" />
+                <div className="h-2.5 w-2.5 rounded-full bg-white shadow-lg ring-2 ring-black/30" />
             </motion.div>
+
+            <div className="relative z-10 w-full h-full flex flex-col justify-around">
+                {layers.map((layer) => {
+                    const Icon = layer.icon;
+                    const isActive = layer.id === activeLayer;
+                    return (
+                        <button
+                            key={layer.id}
+                            onClick={() => setActiveLayer(layer.id)}
+                            className={cn(
+                                "relative z-10 rounded-full transition-all duration-300 mx-auto",
+                                isActive ? 'bg-white text-black scale-110 shadow-lg' : 'bg-black/50 text-white hover:bg-white/20'
+                            )}
+                        >
+                            <Icon className="h-5 w-5 m-1.5" />
+                        </button>
+                    )
+                })}
+            </div>
         </div>
     );
 }
