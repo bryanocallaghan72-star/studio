@@ -133,66 +133,86 @@ nav, aside {
 /* === NEW GRADIENT PALETTE === */
 
 /* 🌅 DAWN – "Morning Mist" */
-/* Fades from Pale Sky Blue to Soft White */
 [data-theme="dawn"] {
   --bg-gradient: linear-gradient(180deg, #E0F2FE 0%, #FFFFFF 100%);
-  
-  --text-primary: #172554;    /* Deep Navy */
+  --text-primary: #172554;
   --text-secondary: #64748B;
-  
-  --card-bg: rgba(255, 255, 255, 0.8); /* Slight transparency */
+  --card-bg: rgba(255, 255, 255, 0.8);
   --card-text: #172554;
   --border-color: #BAE6FD;
-}
 
-/* ☀️ DAY – "Bondi Sun" */
-/* Fades from Warm Sunshine to Pale Sand */
-[data-theme="day"] {
-  --bg-gradient: linear-gradient(180deg, #FFFBEB 0%, #FFF7ED 100%);
-  
-  --text-primary: #064E3B;    /* Deep Teal */
-  --text-secondary: #657672;
-
-  --card-bg: rgba(255, 255, 255, 0.9);
-  --card-text: #064E3B;
-  --border-color: #FDE68A;
-}
-
-/* 🥂 GOLDEN HOUR – "The Aperol Sunset" (Matches your Screenshot) */
-/* Fades from Warm Gold -> Peach -> Soft Rose */
-[data-theme="golden"] {
-  --bg-gradient: linear-gradient(135deg, #FFEFBA 0%, #FFD1C1 50%, #FF9A9E 100%);
-  
-  --text-primary: #6C241C;    /* Deep Merlot (No Black) */
-  --text-secondary: #9F4636;
-
-  --card-bg: rgba(255, 246, 240, 0.85); /* Semi-transparent Rose Cream */
-  --card-text: #6C241C;
-  --border-color: #FFB088;
-}
-
-/* 🌙 DUSK – "Deep Ocean" */
-/* Fades from Midnight Blue -> Deep Purple */
-[data-theme="dusk"] {
-  --bg-gradient: linear-gradient(180deg, #020617 0%, #172554 100%);
-  
-  --text-primary: #F8FAFC;    /* Silver */
-  --text-secondary: #94A3B8;
-
-  --card-bg: rgba(30, 41, 59, 0.9); /* Dark Glass */
-  --card-text: #E2E8F0;
-  --border-color: #334155;
-}
-
-[data-theme="dawn"] {
-  --background: 200 90% 97%;
-  --foreground: 225 90% 20%;
-  --secondary-foreground: 215 18% 50%;
+  /* ShadCN Variables */
+  --background: 210 89% 95%; /* #E0F2FE */
+  --foreground: 220 60% 21%; /* #172554 */
   --card: 0 0% 100% / 0.8;
-  --border: 200 85% 90%;
+  --card-foreground: 220 60% 21%;
+  --popover: 0 0% 100% / 0.8;
+  --popover-foreground: 220 60% 21%;
+  --primary: 210 89% 95%;
+  --primary-foreground: 220 60% 21%;
+  --secondary: 216 34% 91%;
+  --secondary-foreground: 220 60% 21%;
+  --muted: 216 34% 91%;
+  --muted-foreground: 215 18% 50%; /* #64748B */
+  --accent: 210 89% 80%;
+  --accent-foreground: 220 60% 21%;
+  --border: 210 89% 93%; /* #BAE6FD */
+  --input: 210 89% 93%;
+  --ring: 220 60% 21%;
 }
 
 [data-theme="dawn"] .glass {
   background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(12px);
+}
+
+
+/* ☀️ DAY – "Bondi Sun" */
+[data-theme="day"] {
+  --bg-gradient: linear-gradient(180deg, #BEE3F8 0%, #FFFFFF 100%);
+  --text-primary: #0A2540;
+  --text-secondary: #355070;
+  --card-bg: rgba(255, 255, 255, 0.75);
+  --card-text: #0A2540;
+  --border-color: #DCEEF9;
+
+  /* ShadCN Variables */
+  --background: 207 83% 86%; /* #BEE3F8 */
+  --foreground: 212 74% 14%; /* #0A2540 */
+  --card: 0 0% 100% / 0.75;
+  --card-foreground: 212 74% 14%;
+  --popover: 0 0% 100% / 0.75;
+  --popover-foreground: 212 74% 14%;
+  --primary: 45 90% 64%; /* #F6C453 */
+  --primary-foreground: 240 0% 10%; /* #1B1B1B */
+  --secondary: 0 0% 100% / 0.6;
+  --secondary-foreground: 212 74% 14%;
+  --muted: 0 0% 100% / 0.6;
+  --muted-foreground: 212 35% 32%; /* #355070 */
+  --accent: 207 100% 77%; /* #8EC9FF */
+  --accent-foreground: 212 74% 14%;
+  --border: 207 83% 92%; /* #DCEEF9 */
+  --input: 207 83% 92%;
+  --ring: 45 90% 64%;
+}
+
+
+/* 🥂 GOLDEN HOUR – "The Aperol Sunset" */
+[data-theme="golden"] {
+  --bg-gradient: linear-gradient(135deg, #FFEFBA 0%, #FFD1C1 50%, #FF9A9E 100%);
+  --text-primary: #6C241C;
+  --text-secondary: #9F4636;
+  --card-bg: rgba(255, 246, 240, 0.85);
+  --card-text: #6C241C;
+  --border-color: #FFB088;
+}
+
+/* 🌙 DUSK – "Deep Ocean" */
+[data-theme="dusk"] {
+  --bg-gradient: linear-gradient(180deg, #020617 0%, #172554 100%);
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --card-bg: rgba(30, 41, 59, 0.9);
+  --card-text: #E2E8F0;
+  --border-color: #334155;
 }
