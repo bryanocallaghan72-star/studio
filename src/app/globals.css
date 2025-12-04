@@ -183,3 +183,16 @@ nav, aside {
   --card-text: #E2E8F0;
   --border-color: #334155;
 }
+
+[data-theme="dawn"] {
+  --background: 200 90% 97%;
+  --foreground: 225 90% 20%;
+  --secondary-foreground: 215 18% 50%;
+  --card: 0 0% 100% / 0.8;
+  --border: 200 85% 90%;
+}
+
+[data-theme="dawn"] .glass {
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+}
