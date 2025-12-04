@@ -164,7 +164,31 @@ nav, aside {
 
 /* ☀️ DAY – Ready for new palette */
 [data-theme="day"] {
+  --bg-gradient: linear-gradient(to bottom, #FFE066, #E0F2FF);
+  --text-primary: #1A1A1A;
+  --text-secondary: #4A4A4A;
+  --card-bg: rgba(255, 255, 255, 0.72);
+  --card-text: #1A1A1A;
+  --border-color: rgba(255, 224, 102, 0.25);
 
+  /* ShadCN Variables */
+  --background: 45 100% 70%; /* #FFE066 */
+  --foreground: 0 0% 10%; /* #1A1A1A */
+  --card: 0 0% 100% / 0.72;
+  --card-foreground: 0 0% 10%;
+  --popover: 0 0% 100% / 0.72;
+  --popover-foreground: 0 0% 10%;
+  --primary: 48 100% 60%; /* #FFCC33 - yellowMid */
+  --primary-foreground: 0 0% 10%; /* #1A1A1A */
+  --secondary: 205 100% 94%; /* #E0F2FF - skyLight */
+  --secondary-foreground: 0 0% 10%;
+  --muted: 205 100% 94%;
+  --muted-foreground: 0 0% 29%; /* #4A4A4A */
+  --accent: 207 100% 85%; /* #B3E5FF - sky */
+  --accent-foreground: 0 0% 10%;
+  --border: 45 100% 70% / 0.25; /* rgba(255, 224, 102, 0.25) */
+  --input: 205 100% 94%;
+  --ring: 48 100% 60%; /* yellowMid */
 }
 
 
