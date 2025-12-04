@@ -132,43 +132,8 @@ nav, aside {
 
 /* === NEW GRADIENT PALETTE === */
 
-/* 🌅 DAWN – "Morning Mist" */
+/* 🌅 DAWN – "Bondi Sun" (previously Day) */
 [data-theme="dawn"] {
-  --bg-gradient: linear-gradient(to bottom, #E0F2FE, #FFFFFF);
-  --text-primary: #172554;
-  --text-secondary: #64748B;
-  --card-bg: rgba(255, 255, 255, 0.8);
-  --card-text: #172554;
-  --border-color: #BAE6FD;
-
-  /* ShadCN Variables */
-  --background: 210 89% 97%; /* #E0F2FE - This is the top of the gradient */
-  --foreground: 220 60% 21%; /* #172554 */
-  --card: 0 0% 100% / 0.8;
-  --card-foreground: 220 60% 21%;
-  --popover: 0 0% 100% / 0.8;
-  --popover-foreground: 220 60% 21%;
-  --primary: 210 89% 95%;
-  --primary-foreground: 220 60% 21%;
-  --secondary: 216 34% 91%;
-  --secondary-foreground: 220 60% 21%;
-  --muted: 216 34% 91%;
-  --muted-foreground: 215 18% 50%; /* #64748B */
-  --accent: 210 89% 80%;
-  --accent-foreground: 220 60% 21%;
-  --border: 200 85% 90%; /* #BAE6FD */
-  --input: 210 89% 93%;
-  --ring: 220 60% 21%;
-}
-
-[data-theme="dawn"] .glass {
-  background-color: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
-}
-
-
-/* ☀️ DAY – "Bondi Sun" */
-[data-theme="day"] {
   --bg-gradient: linear-gradient(to bottom, #BEE3F8, #FFFFFF);
   --text-primary: #0A2540;
   --text-secondary: #355070;
@@ -194,6 +159,12 @@ nav, aside {
   --border: 207 83% 92%; /* #DCEEF9 */
   --input: 207 83% 92%;
   --ring: 45 90% 64%;
+}
+
+
+/* ☀️ DAY – Ready for new palette */
+[data-theme="day"] {
+
 }
 
 
