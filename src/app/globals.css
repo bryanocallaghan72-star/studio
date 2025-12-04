@@ -156,7 +156,7 @@ nav, aside {
   --muted-foreground: 215 18% 50%; /* #64748B */
   --accent: 210 89% 80%;
   --accent-foreground: 220 60% 21%;
-  --border: 210 89% 93%; /* #BAE6FD */
+  --border: 200 85% 90%; /* #BAE6FD */
   --input: 210 89% 93%;
   --ring: 220 60% 21%;
 }
@@ -199,12 +199,31 @@ nav, aside {
 
 /* 🥂 GOLDEN HOUR – "The Aperol Sunset" */
 [data-theme="golden"] {
-  --bg-gradient: linear-gradient(135deg, #FFEFBA 0%, #FFD1C1 50%, #FF9A9E 100%);
-  --text-primary: #6C241C;
-  --text-secondary: #9F4636;
-  --card-bg: rgba(255, 246, 240, 0.85);
-  --card-text: #6C241C;
-  --border-color: #FFB088;
+  --bg-gradient: linear-gradient(135deg, #FFE7D9 0%, #FFC78A 100%);
+  --text-primary: #1F2933;
+  --text-secondary: #6B4F3F;
+  --card-bg: rgba(255, 249, 240, 0.85);
+  --card-text: #1F2933;
+  --border-color: #FED7AA;
+
+  /* ShadCN Variables */
+  --background: 28 100% 95%; /* Approx #FFE7D9 */
+  --foreground: 213 27% 16%; /* #1F2933 */
+  --card: 28 100% 98% / 0.85; /* rgba(255, 249, 240, 0.85) */
+  --card-foreground: 213 27% 16%;
+  --popover: 28 100% 98% / 0.85;
+  --popover-foreground: 213 27% 16%;
+  --primary: 36 97% 75%; /* #FDBA74 */
+  --primary-foreground: 213 27% 16%;
+  --secondary: 28 100% 98% / 0.85;
+  --secondary-foreground: 213 27% 16%;
+  --muted: 28 100% 98% / 0.85;
+  --muted-foreground: 23 29% 34%; /* #6B4F3F */
+  --accent: 14 91% 54%; /* #F97316 */
+  --accent-foreground: 0 0% 100%;
+  --border: 35 97% 85%; /* #FED7AA */
+  --input: 35 97% 85%;
+  --ring: 36 97% 75%; /* #FDBA74 */
 }
 
 /* 🌙 DUSK – "Deep Ocean" */
