@@ -134,7 +134,7 @@ nav, aside {
 
 /* 🌅 DAWN – "Morning Mist" */
 [data-theme="dawn"] {
-  --bg-gradient: linear-gradient(180deg, #E0F2FE 0%, #FFFFFF 100%);
+  --bg-gradient: linear-gradient(to bottom, #E0F2FE, #FFFFFF);
   --text-primary: #172554;
   --text-secondary: #64748B;
   --card-bg: rgba(255, 255, 255, 0.8);
@@ -142,7 +142,7 @@ nav, aside {
   --border-color: #BAE6FD;
 
   /* ShadCN Variables */
-  --background: 210 89% 95%; /* #E0F2FE */
+  --background: 210 89% 97%; /* #E0F2FE - This is the top of the gradient */
   --foreground: 220 60% 21%; /* #172554 */
   --card: 0 0% 100% / 0.8;
   --card-foreground: 220 60% 21%;
@@ -169,7 +169,7 @@ nav, aside {
 
 /* ☀️ DAY – "Bondi Sun" */
 [data-theme="day"] {
-  --bg-gradient: linear-gradient(180deg, #BEE3F8 0%, #FFFFFF 100%);
+  --bg-gradient: linear-gradient(to bottom, #BEE3F8, #FFFFFF);
   --text-primary: #0A2540;
   --text-secondary: #355070;
   --card-bg: rgba(255, 255, 255, 0.75);
@@ -199,7 +199,7 @@ nav, aside {
 
 /* 🥂 GOLDEN HOUR – "The Aperol Sunset" */
 [data-theme="golden"] {
-  --bg-gradient: linear-gradient(135deg, #FFE7D9 0%, #FFC78A 100%);
+  --bg-gradient: linear-gradient(to bottom, #FFE7D9, #FFC78A);
   --text-primary: #1F2933;
   --text-secondary: #6B4F3F;
   --card-bg: rgba(255, 249, 240, 0.85);
@@ -228,10 +228,29 @@ nav, aside {
 
 /* 🌙 DUSK – "Deep Ocean" */
 [data-theme="dusk"] {
-  --bg-gradient: linear-gradient(180deg, #020617 0%, #172554 100%);
-  --text-primary: #F8FAFC;
-  --text-secondary: #94A3B8;
-  --card-bg: rgba(30, 41, 59, 0.9);
-  --card-text: #E2E8F0;
-  --border-color: #334155;
+  --bg-gradient: linear-gradient(to bottom, #3B3C99, #6A5FBF, #F8C8A8);
+  --text-primary: #F8F7F4;
+  --text-secondary: #C7C4D9;
+  --card-bg: rgba(255, 255, 255, 0.08);
+  --card-text: #F8F7F4;
+  --border-color: #948BBE;
+
+  /* ShadCN Variables */
+  --background: 239 46% 40%; /* Approx #3B3C99 */
+  --foreground: 40 33% 97%;  /* #F8F7F4 */
+  --card: 0 0% 100% / 0.08;
+  --card-foreground: 40 33% 97%;
+  --popover: 0 0% 100% / 0.1;
+  --popover-foreground: 40 33% 97%;
+  --primary: 25 100% 77%;   /* #FFB78C */
+  --primary-foreground: 239 46% 40%; /* #3B3C99 */
+  --secondary: 243 45% 56% / 0.1; /* Approx #6A5FBF with opacity */
+  --secondary-foreground: 40 33% 97%;
+  --muted: 243 45% 56% / 0.1;
+  --muted-foreground: 246 21% 82%; /* #C7C4D9 */
+  --accent: 346 100% 72%;   /* #FF6F91 */
+  --accent-foreground: 239 46% 40%; /* #3B3C99 */
+  --border: 246 21% 64%;      /* #948BBE */
+  --input: 246 21% 64%;
+  --ring: 25 100% 77%; /* #FFB78C */
 }
