@@ -118,15 +118,20 @@ const TableDropCard = ({ drop, onClaim }: { drop: TableDrop, onClaim: (drop: Tab
 
 export function Tables() {
     const [claimedDrops, setClaimedDrops] = useState<string[]>([]);
-    const [selectedDrop, setSelectedDrop] = useState<TableDrop | null>(null);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [confirmingDrop, setConfirmingDrop] = useState<TableDrop | null>(null);
+    const [successfulDrop, setSuccessfulDrop] = useState<TableDrop | null>(null);
 
-    const handleClaimDrop = (drop: TableDrop) => {
-        setClaimedDrops(prev => [...prev, drop.id]);
-        setSelectedDrop(drop);
-        setIsDialogOpen(true);
+    const handleClaimClick = (drop: TableDrop) => {
+        setConfirmingDrop(drop);
     };
 
+    const handleConfirmClaim = () => {
+        if (!confirmingDrop) return;
+        setClaimedDrops(prev => [...prev, confirmingDrop.id]);
+        setSuccessfulDrop(confirmingDrop);
+        setConfirmingDrop(null);
+    };
+    
     const liveDrops = appData.tableDrops
         .filter(drop => new Date(drop.expiresAt).getTime() > Date.now())
         .map(drop => ({ ...drop, hasUserClaimed: claimedDrops.includes(drop.id) }))
@@ -154,7 +159,7 @@ export function Tables() {
                         {favoriteDrops.length > 0 ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 {favoriteDrops.map(drop => (
-                                    <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimDrop} />
+                                    <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} />
                                 ))}
                             </div>
                         ) : (
@@ -168,7 +173,7 @@ export function Tables() {
                          {liveDrops.length > 0 ? (
                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 {liveDrops.map(drop => (
-                                    <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimDrop} />
+                                    <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} />
                                 ))}
                             </div>
                          ) : (
@@ -180,21 +185,53 @@ export function Tables() {
                 </Tabs>
             </section>
             
-            {selectedDrop && (
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            {/* Confirmation Modal */}
+            {confirmingDrop && (
+                <Dialog open={!!confirmingDrop} onOpenChange={() => setConfirmingDrop(null)}>
                     <DialogContent>
-                        <DialogHeader className="items-center text-center">
-                            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 mb-2">
-                                <CheckCircle className="h-6 w-6 text-green-600" />
-                            </div>
-                            <DialogTitle className="text-2xl">Table Claimed!</DialogTitle>
+                        <DialogHeader>
+                            <DialogTitle>Claim this table?</DialogTitle>
                             <DialogDescription>
-                                You're all set! Your table for {selectedDrop.partySize} at {selectedDrop.venueName} is confirmed.
+                                You are about to claim a table for {confirmingDrop.partySize} at <strong>{confirmingDrop.venueName}</strong> from {new Date(confirmingDrop.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.
+                                {confirmingDrop.priceToClaimCents > 0 && ` A fee of $${confirmingDrop.priceToClaimCents / 100} will be charged.`}
                             </DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
-                             <Button variant="outline" className="w-full" onClick={() => setIsDialogOpen(false)}>Done</Button>
+                            <Button variant="outline" onClick={() => setConfirmingDrop(null)}>Cancel</Button>
+                            <Button onClick={handleConfirmClaim}>Confirm</Button>
                         </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            )}
+
+            {/* Success "Golden Ticket" Modal */}
+            {successfulDrop && (
+                <Dialog open={!!successfulDrop} onOpenChange={() => setSuccessfulDrop(null)}>
+                    <DialogContent className="p-0 border-0 bg-transparent shadow-none max-w-sm">
+                       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-yellow-300 to-amber-500 shadow-2xl border border-amber-300 text-black">
+                         <div className="p-8 flex flex-col items-center text-center">
+                            <CheckCircle className="h-16 w-16 text-white mb-4" />
+                            <h2 className="text-2xl font-bold tracking-tight">Table Claimed!</h2>
+                            <p className="font-semibold mt-2">You claimed a table at</p>
+                            <p className="text-3xl font-bold">{successfulDrop.venueName}</p>
+                            
+                            <div className="my-6 w-full space-y-2 text-left bg-black/5 p-4 rounded-lg">
+                                <p><strong>Party Size:</strong> {successfulDrop.partySize}</p>
+                                <p><strong>Time:</strong> {new Date(successfulDrop.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                <p className="font-semibold">Please arrive by {new Date(new Date(successfulDrop.startTime).getTime() + 15 * 60000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                            </div>
+
+                            {/* Placeholder for QR Code */}
+                            <div className="bg-white p-3 rounded-lg shadow-inner">
+                                <svg width="128" height="128" viewBox="0 0 100 100"><path fill="#000" d="M0 0h30v30H0z m10 10h10v10H10zM70 0h30v30H70z m10 10h10v10H80zM0 70h30v30H0z m10 10h10v10H10zM40 0h10v10H40z m20 0h10v10H60zM40 20h10v10H40z m20 10h10v10H60z m-30 10h10v10H30z m30 0h10v10H60z m-20 0h10v10H40zM30 50h10v10H30z m20 0h10v10H50zM70 40h10v10H70z m10 10h10v10H80z m-10 10h10v10H70z m10 10h10v10H80zM40 70h10v10H40z m20 0h10v10H60z m-30 20h10v10H30z m30 0h10v10H60z m-20 0h10v10H40z"/></svg>
+                            </div>
+                            
+                            <p className="text-xs mt-4 opacity-70">Show this screen upon arrival.</p>
+                         </div>
+                         <DialogFooter className="p-4 bg-black/10">
+                            <Button className="w-full bg-white text-black hover:bg-white/90" onClick={() => setSuccessfulDrop(null)}>Done</Button>
+                         </DialogFooter>
+                       </div>
                     </DialogContent>
                 </Dialog>
             )}
