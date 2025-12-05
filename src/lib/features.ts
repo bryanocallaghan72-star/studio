@@ -1,5 +1,5 @@
 
-import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code } from "lucide-react";
+import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code, Utensils } from "lucide-react";
 
 export const featureData = [
     {
@@ -73,5 +73,13 @@ export const featureData = [
       description: "Last-minute deals on creator-approved stays.",
       color: "text-purple-500",
       imageId: "stay-2",
+    },
+    {
+      href: "/tables",
+      icon: "Utensils",
+      title: "iykyk Tables",
+      description: "Claim last-minute tables at your favorite spots.",
+      color: "text-amber-500",
+      imageId: "my-day-3",
     },
 ];

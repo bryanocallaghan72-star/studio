@@ -30,6 +30,28 @@ export type SocialActivity = {
     participantAvatars: string[];
 };
 
+export interface TableDrop {
+  id: string;
+  venueId: string;
+  venueName: string;
+  venueImageUrl: string;
+  tableLabel?: string;
+  partySize: number;
+  startTime: string;
+  endTime: string;
+  expiresAt: string;
+  priceToClaimCents: number;
+  currency: string;
+  creatorPickHandle?: string;
+  creatorAvatarUrl?: string;
+  isFavoriteVenue?: boolean;
+  hasUserClaimed?: boolean;
+  location: {
+    lat: number;
+    lng: number;
+  };
+}
+
 // MVP Seeding Function
 export const seedVenuesToFirestore = async (firestore: any) => {
     if (!firestore) {
@@ -62,6 +84,69 @@ export const seedVenuesToFirestore = async (firestore: any) => {
 
 
 export const appData = {
+  tableDrops: [
+    {
+      id: 'drop-tottis-1',
+      venueId: 'tottis',
+      venueName: "Totti's",
+      venueImageUrl: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1974&auto=format&fit=crop',
+      tableLabel: 'Courtyard Spot',
+      partySize: 2,
+      startTime: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
+      endTime: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(),
+      expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+      priceToClaimCents: 1000,
+      currency: 'AUD',
+      creatorPickHandle: 'lucas',
+      isFavoriteVenue: true,
+      location: { lat: -33.895, lng: 151.268 },
+    },
+    {
+      id: 'drop-rawbar-1',
+      venueId: 'raw-bar',
+      venueName: 'Raw Bar',
+      venueImageUrl: 'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?q=80&w=1948&auto=format&fit=crop',
+      tableLabel: 'Window Seat',
+      partySize: 2,
+      startTime: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+      endTime: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
+      expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+      priceToClaimCents: 0,
+      currency: 'AUD',
+      creatorPickHandle: 'jay',
+      isFavoriteVenue: true,
+      location: { lat: -33.8895, lng: 151.274 },
+    },
+    {
+      id: 'drop-ravesis-1',
+      venueId: 'hotel-ravesis',
+      venueName: 'Hotel Ravesis',
+      venueImageUrl: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1974&auto=format&fit=crop',
+      tableLabel: 'Balcony View',
+      partySize: 4,
+      startTime: new Date(Date.now() + 0.5 * 60 * 60 * 1000).toISOString(),
+      endTime: new Date(Date.now() + 2.5 * 60 * 60 * 1000).toISOString(),
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+      priceToClaimCents: 500,
+      currency: 'AUD',
+      isFavoriteVenue: false,
+      location: { lat: -33.8913, lng: 151.276 },
+    },
+    {
+        id: 'drop-lulu-1',
+        venueId: 'lulu',
+        venueName: 'Lulu',
+        venueImageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop',
+        partySize: 2,
+        startTime: new Date(Date.now() + 1.5 * 60 * 60 * 1000).toISOString(),
+        endTime: new Date(Date.now() + 3.5 * 60 * 60 * 1000).toISOString(),
+        expiresAt: new Date(Date.now() + 45 * 60 * 1000).toISOString(),
+        priceToClaimCents: 0,
+        currency: 'AUD',
+        isFavoriteVenue: true,
+        location: { lat: -33.8935, lng: 151.27 },
+      },
+  ] as TableDrop[],
   sliceOfLifePosts: [
     {
       id: "sol-1",
