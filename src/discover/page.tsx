@@ -8,7 +8,7 @@ import Image from "next/image";
 import { featureData } from '@/lib/features';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from "@/components/ui/button";
-import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code, Utensils } from 'lucide-react';
+import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code, Utensils, Star } from 'lucide-react';
 import { SurpriseMe } from "@/components/iykyk/SurpriseMe";
 
 const iconMap: { [key: string]: React.ElementType } = {
@@ -27,6 +27,7 @@ const iconMap: { [key: string]: React.ElementType } = {
     Bed,
     Code,
     Utensils,
+    Star,
 };
 
 export default function DiscoverPage() {

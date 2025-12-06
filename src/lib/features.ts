@@ -1,5 +1,5 @@
 
-import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code, Utensils } from "lucide-react";
+import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code, Utensils, Star } from "lucide-react";
 
 export const featureData = [
     {
@@ -25,6 +25,14 @@ export const featureData = [
       description: "Discover the rhythm of your city through creators’ movements.",
       color: "text-indigo-500",
       imageId: "morning-1",
+    },
+    {
+      href: "/alignment",
+      icon: "Star",
+      title: "iykyk Alignment",
+      description: "Daily energy cards and Bondi rituals for serendipity and intuition.",
+      color: "text-purple-500",
+      imageId: "night-2",
     },
      {
       href: "/fire",
