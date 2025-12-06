@@ -1,5 +1,5 @@
 
-import { Sun, Waves, Leaf, Flame, Users, Wind, type LucideIcon } from 'lucide-react';
+import { Sun, Waves, Leaf, Flame, Users, Wind, Sparkles, type LucideIcon } from 'lucide-react';
 
 export type CardEnergyType = 'water' | 'fire' | 'earth' | 'air' | 'social' | 'calm';
 
