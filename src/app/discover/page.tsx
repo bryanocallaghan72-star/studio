@@ -67,18 +67,25 @@ export default function DiscoverPage() {
                          
                           <div className="relative z-10 p-4 w-full">
                              <div className="flex items-center gap-3">
-                                  <div className="rounded-full bg-background/80 backdrop-blur-sm p-3">
-                                     {Icon && <Icon className={`h-6 w-6 ${feature.color}`} />}
+                                  <div className="rounded-full bg-black/30 backdrop-blur-sm p-3">
+                                     {Icon && <Icon className="h-6 w-6" style={{ color: '#FFF6C2' }} />}
                                   </div>
                                   <div>
                                      <CardTitle 
-                                        className="text-lg" 
-                                        style={{ color: '#FFF6C2', textShadow: '0 1px 3px rgba(0,0,0,0.4)' }}
+                                        className="text-lg font-semibold" 
+                                        style={{ 
+                                          color: '#FFF6C2',
+                                          textShadow: '0 1px 3px rgba(0,0,0,0.6)' 
+                                        }}
                                      >
                                         {feature.title}
                                      </CardTitle>
                                      <CardDescription 
-                                        style={{ color: '#FFF6C2', opacity: 0.85, textShadow: '0 1px 2px rgba(0,0,0,0.35)' }}
+                                        style={{
+                                          color: '#FFF6C2',
+                                          opacity: 0.75,
+                                          textShadow: '0 1px 2px rgba(0,0,0,0.5)'
+                                        }}
                                      >
                                         {feature.description}
                                      </CardDescription>
