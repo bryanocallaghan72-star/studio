@@ -33,7 +33,7 @@ const iconMap: { [key: string]: React.ElementType } = {
 export default function DiscoverPage() {
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-background">
+    <div className="discover-text-override flex min-h-screen w-full flex-col bg-background">
       
       <div className="flex flex-1 flex-col pb-24">
         <div className="p-4 md:p-6 text-center">
@@ -68,17 +68,16 @@ export default function DiscoverPage() {
                           <div className="relative z-10 p-4 w-full">
                              <div className="flex items-center gap-3">
                                   <div className="rounded-full bg-black/30 backdrop-blur-sm p-3">
-                                     {Icon && <Icon className="h-6 w-6" style={{ color: '#FFF6C2' }} />}
+                                     {Icon && <Icon className="h-6 w-6" />}
                                   </div>
                                   <div>
                                      <CardTitle
-                                        className="text-lg font-semibold"
-                                        style={{ color: "#FFF6C2", textShadow: "0 1px 3px rgba(0,0,0,0.55)" }}
+                                        className="card-title text-lg font-semibold"
                                       >
                                         {feature.title}
                                       </CardTitle>
                                      <CardDescription
-                                        style={{ color: "#FFF6C2", opacity: 0.9, textShadow: "0 1px 3px rgba(0,0,0,0.45)" }}
+                                        className="card-description"
                                       >
                                         {feature.description}
                                       </CardDescription>
