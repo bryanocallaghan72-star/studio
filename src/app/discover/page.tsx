@@ -68,7 +68,7 @@ export default function DiscoverPage() {
                           <div className="relative z-10 p-4 w-full">
                              <div className="flex items-center gap-3">
                                   <div className="rounded-full bg-black/30 backdrop-blur-sm p-3">
-                                     {Icon && <Icon className="h-6 w-6" />}
+                                     {Icon && <Icon className="h-6 w-6 text-[#FFF6C2]" />}
                                   </div>
                                   <div>
                                      <CardTitle
