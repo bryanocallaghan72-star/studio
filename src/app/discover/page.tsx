@@ -71,24 +71,17 @@ export default function DiscoverPage() {
                                      {Icon && <Icon className="h-6 w-6" style={{ color: '#FFF6C2' }} />}
                                   </div>
                                   <div>
-                                     <CardTitle 
-                                        className="text-lg font-semibold" 
-                                        style={{ 
-                                          color: '#FFF6C2',
-                                          textShadow: '0 1px 3px rgba(0,0,0,0.6)' 
-                                        }}
-                                     >
+                                     <CardTitle
+                                        className="text-lg font-semibold"
+                                        style={{ color: "#FFF6C2", textShadow: "0 1px 3px rgba(0,0,0,0.55)" }}
+                                      >
                                         {feature.title}
-                                     </CardTitle>
-                                     <CardDescription 
-                                        style={{
-                                          color: '#FFF6C2',
-                                          opacity: 0.75,
-                                          textShadow: '0 1px 2px rgba(0,0,0,0.5)'
-                                        }}
-                                     >
+                                      </CardTitle>
+                                     <CardDescription
+                                        style={{ color: "#FFF6C2", opacity: 0.9, textShadow: "0 1px 3px rgba(0,0,0,0.45)" }}
+                                      >
                                         {feature.description}
-                                     </CardDescription>
+                                      </CardDescription>
                                   </div>
                               </div>
                           </div>
