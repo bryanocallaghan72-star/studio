@@ -7,7 +7,7 @@ import Image from "next/image";
 import { featureData } from '@/lib/features';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from "@/components/ui/button";
-import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code } from 'lucide-react';
+import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code, Utensils, Star } from 'lucide-react';
 import { SurpriseMe } from "@/components/iykyk/SurpriseMe";
 
 const iconMap: { [key: string]: React.ElementType } = {
@@ -25,6 +25,8 @@ const iconMap: { [key: string]: React.ElementType } = {
     Camera,
     Bed,
     Code,
+    Utensils,
+    Star,
 };
 
 export default function DiscoverPage() {
@@ -68,8 +70,8 @@ export default function DiscoverPage() {
                                      {Icon && <Icon className={`h-6 w-6 ${feature.color}`} />}
                                   </div>
                                   <div>
-                                     <CardTitle className="text-lg text-card-foreground">{feature.title}</CardTitle>
-                                     <CardDescription className="text-muted-foreground">{feature.description}</CardDescription>
+                                     <CardTitle className="text-lg text-[#FFF6C2]">{feature.title}</CardTitle>
+                                     <CardDescription className="text-[#FFF6C2]/85">{feature.description}</CardDescription>
                                   </div>
                               </div>
                           </div>
