@@ -1,3 +1,4 @@
+
 'use client';
 
 import { MobileNav } from "@/components/iykyk/MobileNav";
@@ -70,8 +71,17 @@ export default function DiscoverPage() {
                                      {Icon && <Icon className={`h-6 w-6 ${feature.color}`} />}
                                   </div>
                                   <div>
-                                     <CardTitle className="text-lg text-[#FFF6C2]">{feature.title}</CardTitle>
-                                     <CardDescription className="text-[#FFF6C2]/85">{feature.description}</CardDescription>
+                                     <CardTitle 
+                                        className="text-lg" 
+                                        style={{ color: '#FFF6C2', textShadow: '0 1px 3px rgba(0,0,0,0.4)' }}
+                                     >
+                                        {feature.title}
+                                     </CardTitle>
+                                     <CardDescription 
+                                        style={{ color: '#FFF6C2', opacity: 0.85, textShadow: '0 1px 2px rgba(0,0,0,0.35)' }}
+                                     >
+                                        {feature.description}
+                                     </CardDescription>
                                   </div>
                               </div>
                           </div>
