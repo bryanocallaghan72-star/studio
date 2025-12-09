@@ -38,11 +38,11 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     }, [isClient, expiresAt]);
 
     if (!isClient) {
-        return <span className="font-mono text-lg font-semibold text-background">Loading...</span>;
+        return <span className="font-mono text-lg font-semibold text-white">Loading...</span>;
     }
 
     if (timeLeft <= 0) {
-        return <span className="font-mono text-lg font-bold text-destructive-foreground">ENDED</span>;
+        return <span className="font-mono text-lg font-bold text-white">ENDED</span>;
     }
 
     const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
@@ -50,7 +50,7 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     const seconds = Math.floor((timeLeft / 1000) % 60);
 
     return (
-        <span className="font-mono text-lg font-semibold text-background">
+        <span className="font-mono text-lg font-semibold text-white">
             {String(hours).padStart(2, '0')}:{String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
         </span>
     );
@@ -94,12 +94,12 @@ const TableDropCard = ({ drop, onClaim }: { drop: TableDrop, onClaim: (drop: Tab
                             </div>
                         )}
                     </div>
-                    <h3 className="text-2xl font-bold leading-tight">{drop.venueName}{drop.tableLabel && ` – ${drop.tableLabel}`}</h3>
+                    <h3 className="text-2xl font-bold leading-tight text-white" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.55)" }}>{drop.venueName}{drop.tableLabel && ` – ${drop.tableLabel}`}</h3>
                     <p className="text-white/90 mt-1">Table for {drop.partySize} • {startTime} – {endTime}</p>
                 </div>
                 <div className='mt-6'>
                     <div className="flex items-center justify-between rounded-lg bg-destructive/80 p-3 backdrop-blur-sm border border-destructive-foreground/30">
-                        <p className="text-sm font-medium text-destructive-foreground">Drop expires in:</p>
+                        <p className="text-sm font-medium text-white/90">Drop expires in:</p>
                         <Countdown expiresAt={drop.expiresAt} />
                     </div>
                     <Button
