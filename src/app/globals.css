@@ -194,7 +194,7 @@ nav, aside {
 
 /* 🥂 GOLDEN HOUR – "Bondi Therapy" */
 [data-theme="golden"] {
-  --bg-gradient: linear-gradient(to bottom, #f7a77b, #d45c55, #2c1f4a);
+  --bg-gradient: linear-gradient(to bottom, #2c1f4a, #d45c55, #f7a77b);
   --text-primary: #FFFFFF;
   --text-secondary: #E5E0FF;
   --card-bg: rgba(255, 255, 255, 0.08);
@@ -250,14 +250,36 @@ nav, aside {
   --ring: 25 100% 77%; /* #FFB78C */
 }
 
-.discover-text-override .text-muted-foreground,
-.discover-text-override .card-title,
-.discover-text-override .card-description {
+/* Text Overrides for Discover page */
+[data-theme="golden"] .discover-text-override .card-title,
+[data-theme="golden"] .discover-text-override .card-description,
+[data-theme="golden"] .discover-text-override .icon-color,
+[data-theme="dusk"] .discover-text-override .card-title,
+[data-theme="dusk"] .discover-text-override .card-description,
+[data-theme-dusk] .discover-text-override .icon-color {
   color: #FFF6C2 !important;
   text-shadow: 0 1px 3px rgba(0,0,0,0.55) !important;
 }
 
-.discover-text-override h2 {
-  color: #FFF6C2 !important;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.55) !important;
+[data-theme="dawn"] .discover-text-override .card-title,
+[data-theme="dawn"] .discover-text-override .card-description,
+[data-theme="dawn"] .discover-text-override .icon-color,
+[data-theme="day"] .discover-text-override .card-title,
+[data-theme="day"] .discover-text-override .card-description,
+[data-theme="day"] .discover-text-override .icon-color {
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.45) !important;
+}
+
+[data-theme="day"] .discover-text-override .card-description,
+[data-theme="dawn"] .discover-text-override .card-description {
+  opacity: 0.9 !important;
+}
+
+
+/* Global override for page titles on themed backgrounds */
+.discover-text-override h2,
+.discover-text-override > .text-muted-foreground {
+  color: var(--text-primary) !important;
+  text-shadow: none !important;
 }
