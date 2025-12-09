@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import type { DEMO_VENUES } from '@/data/DemoVenues';
 import { BookingConfirmationDialog } from './BookingConfirmationDialog';
+import { Input } from '@/components/ui/input';
 
 type Venue = (typeof DEMO_VENUES)[0];
 
