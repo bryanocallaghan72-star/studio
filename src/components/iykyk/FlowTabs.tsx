@@ -2,17 +2,41 @@
 "use client";
 
 import { useState, useEffect, memo } from 'react';
-import { Moon, Sparkles, Sun } from "lucide-react";
+import { Moon, Sparkles, Sun, MapPin } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import Link from 'next/link';
 import { DEMO_VENUES } from '@/data/DemoVenues';
+import { useRouter } from 'next/navigation';
 
 type Venue = typeof DEMO_VENUES[0];
 
 const VenueCard = memo(({ venue }: { venue: Venue }) => {
+    const router = useRouter();
+
+    const handleMapClick = (e: React.MouseEvent) => {
+        e.stopPropagation(); // Prevent the main card link from firing
+        e.preventDefault(); // Prevent default link behavior
+
+        // Find the broader category for the map filter
+        const categoryMap: { [key: string]: string } = {
+            "Cafe & Matcha": "Brunch",
+            "Viral Matcha": "Brunch",
+            "Aesthetic Brunch": "Brunch",
+            "Social Dining": "Nightlife",
+            "Beach Club Vibe": "Vibes",
+            "Iconic View": "Vibes",
+            "Beachfront Bar": "Nightlife",
+            "Sushi & Sake": "Sushi",
+            "Italo Disco Dining": "Nightlife",
+            "Cocktail Bar": "Nightlife",
+        };
+        const mapCategory = categoryMap[venue.category] || 'All';
+
+        router.push(`/map?category=${mapCategory}`);
+    };
     
     return (
         <Link href={`/venue/${venue.id.replace('venue_', '')}`}>
@@ -30,11 +54,18 @@ const VenueCard = memo(({ venue }: { venue: Venue }) => {
                     <div className="relative h-40 w-full bg-secondary" />
                 )}
                 <CardHeader>
-                    <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg">{venue.name}</CardTitle>
+                    <div className="flex items-start justify-between gap-2">
+                        <div>
+                            <CardTitle className="text-lg">{venue.name}</CardTitle>
+                            <CardDescription>{venue.address}</CardDescription>
+                        </div>
+                        <button onClick={handleMapClick} className="p-2 rounded-full hover:bg-secondary transition-colors flex-shrink-0">
+                            <MapPin className="h-5 w-5 text-muted-foreground" />
+                        </button>
+                    </div>
+                     <div className="flex pt-2">
                         <Badge variant="outline" className="border-accent text-accent">{venue.category}</Badge>
                     </div>
-                    <CardDescription>{venue.address}</CardDescription>
                 </CardHeader>
             </Card>
         </Link>
