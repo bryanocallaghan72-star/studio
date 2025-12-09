@@ -52,6 +52,24 @@ export interface TableDrop {
   };
 }
 
+export interface ClassDrop {
+  id: string;
+  venueId: string;
+  venueName: string;
+  className: string;
+  classImageUrl: string;
+  spotsAvailable: number;
+  startTime: string;
+  expiresAt: string;
+  instructorHandle?: string;
+  isFavoriteVenue?: boolean;
+  hasUserClaimed?: boolean;
+  location: {
+    lat: number;
+    lng: number;
+  };
+}
+
 // MVP Seeding Function
 export const seedVenuesToFirestore = async (firestore: any) => {
     if (!firestore) {
@@ -84,6 +102,46 @@ export const seedVenuesToFirestore = async (firestore: any) => {
 
 
 export const appData = {
+  classDrops: [
+    {
+      id: 'class-ff-1',
+      venueId: 'fluidform-pilates',
+      venueName: "Fluidform Pilates",
+      className: "Reformer Fundamentals",
+      classImageUrl: 'https://images.unsplash.com/photo-1571942674917-263a2a911765?q=80&w=2070&auto=format&fit=crop',
+      spotsAvailable: 2,
+      startTime: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
+      expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+      instructorHandle: 'shannon',
+      isFavoriteVenue: true,
+      location: { lat: -33.892, lng: 151.272 },
+    },
+    {
+      id: 'class-lgs-1',
+      venueId: 'lets-go-surfing',
+      venueName: 'Lets Go Surfing',
+      className: "Beginner's Surf Lesson",
+      classImageUrl: 'https://images.unsplash.com/photo-1582693529341-3cf9472e3895?q=80&w=2070&auto=format&fit=crop',
+      spotsAvailable: 3,
+      startTime: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+      expiresAt: new Date(Date.now() + 45 * 60 * 1000).toISOString(),
+      isFavoriteVenue: true,
+      location: { lat: -33.886, lng: 151.277 },
+    },
+    {
+      id: 'class-yoga-1',
+      venueId: 'yoga-by-the-sea',
+      venueName: 'Yoga by the Sea',
+      className: "Sunrise Vinyasa Flow",
+      classImageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2120&auto=format&fit=crop',
+      spotsAvailable: 1,
+      startTime: new Date(Date.now() + 0.5 * 60 * 60 * 1000).toISOString(),
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+      instructorHandle: 'alice',
+      isFavoriteVenue: false,
+      location: { lat: -33.89, lng: 151.278 },
+    },
+  ] as ClassDrop[],
   tableDrops: [
     {
       id: 'drop-tottis-1',
@@ -437,22 +495,22 @@ export const appData = {
         claims: 27,
     },
     {
-        id: 'hot-3',
-        title: "2 for 1 Cocktails",
-        venue: "Raw Bar",
-        description: "Enjoy our signature cocktails. Buy one, get one free!",
-        imageId: "community-sushi",
-        expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
-        claims: 41,
+      id: 'hot-3',
+      title: "2 for 1 Cocktails",
+      venue: "Raw Bar",
+      description: "Enjoy our signature cocktails. Buy one, get one free!",
+      imageId: "community-sushi",
+      expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
+      claims: 41,
     },
     {
-        id: 'hot-4',
-        title: "2-for-1 Crispy Salmon Rolls",
-        venue: "Raw Bar",
-        description: "Enjoy our signature crispy salmon rolls. Buy one, get one free!",
-        imageId: "sushi-1",
-        expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
-        claims: 19,
+      id: 'hot-4',
+      title: "2-for-1 Crispy Salmon Rolls",
+      venue: "Raw Bar",
+      description: "Enjoy our signature crispy salmon rolls. Buy one, get one free!",
+      imageId: "sushi-1",
+      expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
+      claims: 19,
     }
   ],
   reelsData: [
@@ -1005,3 +1063,6 @@ export const appData = {
 
     
 
+
+
+    
