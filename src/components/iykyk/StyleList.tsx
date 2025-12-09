@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Shirt, CheckCircle, Ticket } from "lucide-react";
+import { Shirt, CheckCircle, Ticket, MapPin } from "lucide-react";
 import Image from "next/image";
 import { appData } from '@/lib/data';
 import type { StyleDrop } from '@/lib/data';
@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Skeleton } from '@/components/ui/skeleton';
 import { QRCodeSVG } from './QRCodeSVG';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
@@ -60,8 +61,15 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
 
 const StyleDropCard = ({ drop, onClaim }: { drop: StyleDrop, onClaim: (drop: StyleDrop) => void }) => {
     const creator = drop.creatorPickHandle ? appData.creators.find(c => c.id === drop.creatorPickHandle) : null;
+    const router = useRouter();
 
     const handleClaim = () => onClaim(drop);
+
+    const handleMapClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        router.push(`/map?venue=${drop.slug}`);
+    };
 
     return (
         <Card key={drop.id} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-rose-500">
@@ -92,10 +100,17 @@ const StyleDropCard = ({ drop, onClaim }: { drop: StyleDrop, onClaim: (drop: Sty
                             </Link>
                         )}
                     </div>
-                     <h3 className="text-2xl font-bold leading-tight text-white" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.55)" }}>
-                        {drop.title} at {drop.venueName}
-                    </h3>
-                    <p className="text-white/90 mt-1 line-clamp-2">{drop.description}</p>
+                     <div className="flex justify-between items-start">
+                        <div>
+                            <h3 className="text-2xl font-bold leading-tight text-white" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.55)" }}>
+                                {drop.title} at {drop.venueName}
+                            </h3>
+                            <p className="text-white/90 mt-1 line-clamp-2">{drop.description}</p>
+                        </div>
+                        <Button variant="ghost" size="icon" className="text-white/80 hover:text-white" onClick={handleMapClick}>
+                            <MapPin className="h-6 w-6" />
+                        </Button>
+                     </div>
                 </div>
                 <div className='mt-6'>
                     <div className="flex items-center justify-between rounded-lg bg-rose-600/80 p-3 backdrop-blur-sm border border-white/30">

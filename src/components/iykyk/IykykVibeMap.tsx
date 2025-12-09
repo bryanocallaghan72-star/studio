@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -19,7 +19,7 @@ const containerStyle = {
 };
 
 // Bondi Beach coordinates
-const center = {
+const defaultCenter = {
   lat: -33.891,
   lng: 151.276
 };
@@ -55,16 +55,36 @@ export function IykykVibeMap() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('category') || 'All';
+  const venueSlug = searchParams.get('venue');
   
+  const [center, setCenter] = useState(defaultCenter);
+
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
   });
 
+  useEffect(() => {
+    if (venueSlug) {
+      const venue = DEMO_VENUES.find(v => v.id.replace('venue_', '') === venueSlug);
+      if (venue) {
+        setCenter({ lat: venue.lat, lng: venue.lng });
+      }
+    } else {
+      setCenter(defaultCenter);
+    }
+  }, [venueSlug]);
+
   const venues = useMemo(() => {
-    if (activeTab === 'All') {
+    if (activeTab === 'All' && !venueSlug) {
       return DEMO_VENUES;
     }
+    
+    if (venueSlug) {
+        const venue = DEMO_VENUES.find(v => v.id.replace('venue_', '') === venueSlug);
+        return venue ? [venue] : [];
+    }
+
     const specificCategories: {[key: string]: string[]} = {
         "Brunch": ["Cafe & Matcha", "Viral Matcha", "Aesthetic Brunch"],
         "Nightlife": ["Social Dining", "Beachfront Bar", "Cocktail Bar", "Italo Disco Dining"],
@@ -74,22 +94,20 @@ export function IykykVibeMap() {
 
     const relevantCategories = specificCategories[activeTab] || [activeTab];
     return DEMO_VENUES.filter(venue => relevantCategories.includes(venue.category));
-  }, [activeTab]);
+  }, [activeTab, venueSlug]);
 
 
   const handleTabChange = (category: string) => {
-    const params = new URLSearchParams(searchParams);
-    if (category === 'All') {
-      params.delete('category');
-    } else {
+    const params = new URLSearchParams();
+    if (category !== 'All') {
       params.set('category', category);
     }
     router.replace(`${pathname}?${params.toString()}`);
   };
   
   const handleMarkerClick = (venueId: string) => {
-    const venueSlug = venueId.replace('venue_', '');
-    router.push(`/venue/${venueSlug}`);
+    const slug = venueId.replace('venue_', '');
+    router.push(`/venue/${slug}`);
   };
 
   const mapOptions = useMemo(() => ({
@@ -163,7 +181,7 @@ export function IykykVibeMap() {
                 <GoogleMap
                     mapContainerStyle={containerStyle}
                     center={center}
-                    zoom={15}
+                    zoom={venueSlug ? 17 : 15}
                     options={mapOptions}
                 >
                   {venues && venues.map(venue => {
