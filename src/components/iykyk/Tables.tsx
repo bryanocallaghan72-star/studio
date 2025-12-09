@@ -12,6 +12,7 @@ import type { TableDrop } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
@@ -58,8 +59,16 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
 
 const TableDropCard = ({ drop, onClaim }: { drop: TableDrop, onClaim: (drop: TableDrop) => void }) => {
     const creator = drop.creatorPickHandle ? appData.creators.find(c => c.id === drop.creatorPickHandle) : null;
-    const startTime = new Date(drop.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const endTime = new Date(drop.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const [formattedTimes, setFormattedTimes] = useState<{ start: string; end: string } | null>(null);
+
+    useEffect(() => {
+        // Format times on the client to avoid hydration mismatch
+        setFormattedTimes({
+            start: new Date(drop.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            end: new Date(drop.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        });
+    }, [drop.startTime, drop.endTime]);
+
 
     const handleClaim = () => {
         onClaim(drop);
@@ -80,7 +89,7 @@ const TableDropCard = ({ drop, onClaim }: { drop: TableDrop, onClaim: (drop: Tab
             <CardContent className="relative z-10 flex flex-col justify-end h-full p-6 text-white min-h-[300px]">
                 <div>
                     <div className="flex items-center justify-between mb-2">
-                        <Badge variant="destructive" className="flex items-center gap-2 w-min whitespace-nowrap">
+                        <Badge variant="destructive" className="flex items-center gap-2 w-min whitespace-nowrap text-white">
                             <Utensils className="h-4 w-4" />
                             <span>DROP</span>
                         </Badge>
@@ -94,8 +103,14 @@ const TableDropCard = ({ drop, onClaim }: { drop: TableDrop, onClaim: (drop: Tab
                             </div>
                         )}
                     </div>
-                    <h3 className="text-2xl font-bold leading-tight text-white" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.55)" }}>{drop.venueName}{drop.tableLabel && ` – ${drop.tableLabel}`}</h3>
-                    <p className="text-white/90 mt-1">Table for {drop.partySize} • {startTime} – {endTime}</p>
+                    <h3 className="text-2xl font-bold leading-tight text-white" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.55)" }}>
+                        {drop.venueName}{drop.tableLabel && ` – ${drop.tableLabel}`}
+                    </h3>
+                    {formattedTimes ? (
+                         <p className="text-white/90 mt-1">Table for {drop.partySize} • {formattedTimes.start} – {formattedTimes.end}</p>
+                    ) : (
+                        <Skeleton className="h-5 w-48 mt-1 bg-white/20" />
+                    )}
                 </div>
                 <div className='mt-6'>
                     <div className="flex items-center justify-between rounded-lg bg-destructive/80 p-3 backdrop-blur-sm border border-destructive-foreground/30">
@@ -116,10 +131,23 @@ const TableDropCard = ({ drop, onClaim }: { drop: TableDrop, onClaim: (drop: Tab
     );
 };
 
+const TablesSkeleton = () => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+        <Skeleton className="h-[350px] w-full rounded-2xl" />
+        <Skeleton className="h-[350px] w-full rounded-2xl" />
+    </div>
+);
+
+
 export function Tables() {
     const [claimedDrops, setClaimedDrops] = useState<string[]>([]);
     const [confirmingDrop, setConfirmingDrop] = useState<TableDrop | null>(null);
     const [successfulDrop, setSuccessfulDrop] = useState<TableDrop | null>(null);
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     const handleClaimClick = (drop: TableDrop) => {
         setConfirmingDrop(drop);
@@ -150,39 +178,41 @@ export function Tables() {
                     </div>
                 </div>
 
-                <Tabs defaultValue="live" className="w-full mt-4">
-                    <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="hit-list">My Hit List</TabsTrigger>
-                        <TabsTrigger value="live">Live Drops</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="hit-list" className="mt-6">
-                        {favoriteDrops.length > 0 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                {favoriteDrops.map(drop => (
-                                    <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} />
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center py-20">
-                                <p className="text-muted-foreground">No drops from your hit list yet.</p>
-                                <p className="text-sm text-muted-foreground/80 mt-2">Add favourites in Vibe, Fire or the map to see their tables here.</p>
-                            </div>
-                        )}
-                    </TabsContent>
-                    <TabsContent value="live" className="mt-6">
-                         {liveDrops.length > 0 ? (
-                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                {liveDrops.map(drop => (
-                                    <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} />
-                                ))}
-                            </div>
-                         ) : (
-                            <div className="text-center py-20">
-                                <p className="text-muted-foreground">No live drops right now. Check back soon!</p>
-                            </div>
-                         )}
-                    </TabsContent>
-                </Tabs>
+                {!isClient ? <TablesSkeleton /> : (
+                    <Tabs defaultValue="live" className="w-full mt-4">
+                        <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="hit-list">My Hit List</TabsTrigger>
+                            <TabsTrigger value="live">Live Drops</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="hit-list" className="mt-6">
+                            {favoriteDrops.length > 0 ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    {favoriteDrops.map(drop => (
+                                        <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} />
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-20">
+                                    <p className="text-muted-foreground">No drops from your hit list yet.</p>
+                                    <p className="text-sm text-muted-foreground/80 mt-2">Add favourites in Vibe, Fire or the map to see their tables here.</p>
+                                </div>
+                            )}
+                        </TabsContent>
+                        <TabsContent value="live" className="mt-6">
+                            {liveDrops.length > 0 ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    {liveDrops.map(drop => (
+                                        <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} />
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-20">
+                                    <p className="text-muted-foreground">No live drops right now. Check back soon!</p>
+                                </div>
+                            )}
+                        </TabsContent>
+                    </Tabs>
+                )}
             </section>
             
             {/* Confirmation Modal */}
@@ -238,3 +268,5 @@ export function Tables() {
         </>
     );
 }
+
+    
