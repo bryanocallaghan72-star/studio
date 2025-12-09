@@ -194,5 +194,3 @@ export function IykykVibeMap() {
     </section>
   );
 }
-
-    
