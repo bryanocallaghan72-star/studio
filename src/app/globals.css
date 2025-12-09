@@ -192,33 +192,33 @@ nav, aside {
 }
 
 
-/* 🥂 GOLDEN HOUR – "The Aperol Sunset" */
+/* 🥂 GOLDEN HOUR – "Bondi Therapy" */
 [data-theme="golden"] {
-  --bg-gradient: linear-gradient(to bottom, #FFE7D9, #FFC78A);
-  --text-primary: #1F2933;
-  --text-secondary: #6B4F3F;
-  --card-bg: rgba(255, 249, 240, 0.85);
-  --card-text: #1F2933;
-  --border-color: #FED7AA;
+  --bg-gradient: linear-gradient(to bottom, #2c1f4a, #d45c55, #f7a77b);
+  --text-primary: #FFFFFF;
+  --text-secondary: #E5E0FF;
+  --card-bg: rgba(255, 255, 255, 0.08);
+  --card-text: #FFFFFF;
+  --border-color: #A384A9;
 
   /* ShadCN Variables */
-  --background: 28 100% 95%; /* Approx #FFE7D9 */
-  --foreground: 213 27% 16%; /* #1F2933 */
-  --card: 28 100% 98% / 0.85; /* rgba(255, 249, 240, 0.85) */
-  --card-foreground: 213 27% 16%;
-  --popover: 28 100% 98% / 0.85;
-  --popover-foreground: 213 27% 16%;
-  --primary: 36 97% 75%; /* #FDBA74 */
-  --primary-foreground: 213 27% 16%;
-  --secondary: 28 100% 98% / 0.85;
-  --secondary-foreground: 213 27% 16%;
-  --muted: 28 100% 98% / 0.85;
-  --muted-foreground: 23 29% 34%; /* #6B4F3F */
-  --accent: 14 91% 54%; /* #F97316 */
+  --background: 257 41% 21%; /* Approx #2c1f4a */
+  --foreground: 0 0% 100%;    /* #FFFFFF */
+  --card: 0 0% 100% / 0.08;
+  --card-foreground: 0 0% 100%;
+  --popover: 0 0% 100% / 0.1;
+  --popover-foreground: 0 0% 100%;
+  --primary: 25 89% 75%; /* #f7a77b */
+  --primary-foreground: 257 41% 21%; /* #2c1f4a */
+  --secondary: 0 0% 100% / 0.05;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 0 0% 100% / 0.05;
+  --muted-foreground: 250 100% 94%; /* #E5E0FF */
+  --accent: 4 60% 58%; /* #d45c55 */
   --accent-foreground: 0 0% 100%;
-  --border: 35 97% 85%; /* #FED7AA */
-  --input: 35 97% 85%;
-  --ring: 36 97% 75%; /* #FDBA74 */
+  --border: 290 18% 60%; /* #A384A9 */
+  --input: 290 18% 60%;
+  --ring: 25 89% 75%; /* #f7a77b */
 }
 
 /* 🌙 DUSK – "Deep Ocean" */
