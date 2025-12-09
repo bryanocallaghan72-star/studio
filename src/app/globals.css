@@ -250,13 +250,14 @@ nav, aside {
   --ring: 25 100% 77%; /* #FFB78C */
 }
 
-.discover-text-override h1,
-.discover-text-override h2,
-.discover-text-override h3,
-.discover-text-override p,
-.discover-text-override span,
+.discover-text-override .text-muted-foreground,
 .discover-text-override .card-title,
 .discover-text-override .card-description {
+  color: #FFF6C2 !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.55) !important;
+}
+
+.discover-text-override h2 {
   color: #FFF6C2 !important;
   text-shadow: 0 1px 3px rgba(0,0,0,0.55) !important;
 }
