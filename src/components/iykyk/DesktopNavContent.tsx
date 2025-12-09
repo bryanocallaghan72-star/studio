@@ -21,6 +21,7 @@ import {
   Trophy,
   Coffee,
   BookHeart,
+  Dumbbell,
 } from 'lucide-react';
 import { useBondiBingoHighlight } from '@/hooks/useBondiBingoHighlight';
 import { useMatchaBingoHighlight } from '@/hooks/useMatchaBingoHighlight';
@@ -52,6 +53,7 @@ export function DesktopNavContent() {
     { href: '/reels', icon: PlayCircle, label: 'Reels' },
     { href: '/social', icon: Users, label: 'Social' },
     { href: '/fire', icon: Flame, label: 'Fire' },
+    { href: '/active', icon: Dumbbell, label: 'Active' },
     { href: '/bingo', icon: Trophy, label: 'Bondi Bingo', isHighlighted: isBondiBingoLive, highlightClass: 'shadow-[0_0_15px_hsl(var(--primary))]' },
     { href: '/bingo?game=matcha-ultra-bondi', icon: Coffee, label: 'Matcha Bingo', isHighlighted: isMatchaBingoLive, highlightClass: 'shadow-[0_0_15px_rgba(134,239,172,0.8)]' },
     // Use a unique key for the profile item to avoid conflicts
@@ -102,5 +104,3 @@ export function DesktopNavContent() {
     </SidebarMenu>
   );
 }
-
-    

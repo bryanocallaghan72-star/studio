@@ -13,6 +13,7 @@ import {
   Trophy,
   Coffee,
   BookHeart,
+  Dumbbell,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/firebase';
@@ -26,6 +27,7 @@ const navItems = [
   { href: '/reels', icon: PlayCircle, label: 'Reels' },
   { href: '/social', icon: Users, label: 'Social' },
   { href: '/fire', icon: Flame, label: 'Fire' },
+  { href: '/active', icon: Dumbbell, label: 'Active' },
 ];
 
 export function MobileNav() {
@@ -45,7 +47,7 @@ export function MobileNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 p-1 backdrop-blur-sm md:hidden">
-      <div className="grid h-full max-w-lg grid-cols-9 mx-auto">
+      <div className="grid h-full max-w-lg grid-cols-10 mx-auto">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -119,5 +121,3 @@ export function MobileNav() {
     </nav>
   );
 }
-
-    

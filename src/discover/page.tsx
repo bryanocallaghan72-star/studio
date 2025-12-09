@@ -8,7 +8,7 @@ import Image from "next/image";
 import { featureData } from '@/lib/features';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from "@/components/ui/button";
-import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code, Utensils, Star } from 'lucide-react';
+import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code, Utensils, Star, Dumbbell } from 'lucide-react';
 import { SurpriseMe } from "@/components/iykyk/SurpriseMe";
 
 const iconMap: { [key: string]: React.ElementType } = {
@@ -28,12 +28,13 @@ const iconMap: { [key: string]: React.ElementType } = {
     Code,
     Utensils,
     Star,
+    Dumbbell,
 };
 
 export default function DiscoverPage() {
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-background">
+    <div className="discover-text-override flex min-h-screen w-full flex-col bg-background">
       
       <div className="flex flex-1 flex-col pb-24">
         <div className="p-4 md:p-6 text-center">
@@ -67,12 +68,20 @@ export default function DiscoverPage() {
                          
                           <div className="relative z-10 p-4 w-full">
                              <div className="flex items-center gap-3">
-                                  <div className="rounded-full bg-background/80 backdrop-blur-sm p-3">
-                                     {Icon && <Icon className={`h-6 w-6 ${feature.color}`} />}
+                                  <div className="rounded-full bg-black/30 backdrop-blur-sm p-3">
+                                     {Icon && <Icon className="h-6 w-6 icon-color" />}
                                   </div>
                                   <div>
-                                     <CardTitle className="text-lg text-card-foreground">{feature.title}</CardTitle>
-                                     <CardDescription className="text-muted-foreground">{feature.description}</CardDescription>
+                                     <CardTitle
+                                        className="card-title text-lg font-semibold"
+                                      >
+                                        {feature.title}
+                                      </CardTitle>
+                                     <CardDescription
+                                        className="card-description"
+                                      >
+                                        {feature.description}
+                                      </CardDescription>
                                   </div>
                               </div>
                           </div>

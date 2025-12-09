@@ -1,5 +1,5 @@
 
-import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code, Utensils, Star } from "lucide-react";
+import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code, Utensils, Star, Dumbbell } from "lucide-react";
 
 export const featureData = [
     {
@@ -33,6 +33,14 @@ export const featureData = [
       description: "Daily energy cards and Bondi rituals for serendipity and intuition.",
       color: "text-purple-500",
       imageId: "night-2",
+    },
+    {
+      href: "/active",
+      icon: "Dumbbell",
+      title: "iykyk Active",
+      description: "Find your flow with local studios, classes, and wellness.",
+      color: "text-pink-500",
+      imageId: "fitness-1",
     },
      {
       href: "/fire",
