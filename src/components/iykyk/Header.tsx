@@ -94,8 +94,9 @@ export function Header() {
     <header className={cn(
       "sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur-sm sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6"
     )}>
-        <Link href="/discover" className="flex items-center gap-2 font-semibold">
-          <Logo variant="lockup" size={28} />
+        <Link href="/discover" className="flex items-center gap-2 font-semibold mr-auto">
+          <Logo variant="mark" size={28} />
+          <span className="text-xl font-bold tracking-tight">iykyk</span>
         </Link>
         {isClient && <HeaderClientContent />}
     </header>
