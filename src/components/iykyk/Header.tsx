@@ -95,8 +95,7 @@ export function Header() {
       "sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur-sm sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6"
     )}>
         <Link href="/discover" className="flex items-center gap-2 font-semibold">
-          <Logo />
-          <span className="text-lg font-bold">iykyk</span>
+          <Logo variant="lockup" size={28} />
         </Link>
         {isClient && <HeaderClientContent />}
     </header>
