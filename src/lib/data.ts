@@ -70,6 +70,21 @@ export interface ClassDrop {
   };
 }
 
+export interface StyleDrop {
+  id: string;
+  venueName: string; // Boutique or brand name
+  venueImageUrl: string;
+  title: string;
+  description: string;
+  expiresAt: string;
+  priceToClaimCents: number;
+  currency: string;
+  creatorPickHandle?: string;
+  hasUserClaimed?: boolean;
+  slug: string;
+}
+
+
 // MVP Seeding Function
 export const seedVenuesToFirestore = async (firestore: any) => {
     if (!firestore) {
@@ -102,6 +117,44 @@ export const seedVenuesToFirestore = async (firestore: any) => {
 
 
 export const appData = {
+  styleDrops: [
+    {
+      id: 'style-drop-1',
+      venueName: 'Tuchuzy',
+      venueImageUrl: 'https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=2071&auto=format&fit=crop',
+      title: 'Private Access: Sample Sale',
+      description: 'Get first look at the Tuchuzy sample sale before it opens to the public. Limited spots.',
+      expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+      priceToClaimCents: 1000,
+      currency: 'AUD',
+      creatorPickHandle: 'alice',
+      slug: 'tuchuzy',
+    },
+    {
+      id: 'style-drop-2',
+      venueName: 'Venroy',
+      venueImageUrl: 'https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?q=80&w=2500&auto=format&fit=crop',
+      title: '25% Off New Season Linen',
+      description: 'Exclusive discount on the latest collection of Venroy\'s signature linen wear.',
+      expiresAt: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
+      priceToClaimCents: 0,
+      currency: 'AUD',
+      creatorPickHandle: 'lucas',
+      slug: 'venroy',
+    },
+    {
+      id: 'style-drop-3',
+      venueName: 'Aquabumps',
+      venueImageUrl: 'https://images.unsplash.com/photo-1534279435138-3e414156d05f?q=80&w=2070&auto=format&fit=crop',
+      title: 'Signed Mini-Print',
+      description: 'Claim a free, signed mini-print from photographer Eugene Tan. Today only.',
+      expiresAt: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString(),
+      priceToClaimCents: 0,
+      currency: 'AUD',
+      creatorPickHandle: 'shannon',
+      slug: 'aquabumps',
+    },
+  ] as StyleDrop[],
   classDrops: [
     {
       id: 'class-ff-1',
