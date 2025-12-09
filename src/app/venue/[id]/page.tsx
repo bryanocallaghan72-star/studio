@@ -1,9 +1,11 @@
 
 
+'use client';
+
+import { useState } from "react";
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
-import { appData } from "@/lib/data";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +16,8 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { DEMO_VENUES } from "@/data/DemoVenues";
+import { appData } from "@/lib/data";
+import { BookingSheet } from "@/components/iykyk/BookingSheet";
 
 const getImageForVenue = (venueName: string) => {
     const venue = DEMO_VENUES.find(v => v.name === venueName);
@@ -34,7 +38,6 @@ const getImageForVenue = (venueName: string) => {
     return PlaceHolderImages.find(img => img.id === 'night-1');
 }
 
-
 const spottedHereCreators = [appData.creators[2], appData.creators[3]]; // Lucas and Jay
 
 const VibeIndicator = ({ vibe }: { vibe: string }) => {
@@ -50,6 +53,7 @@ const getVenueAction = (venueType: string) => {
     switch (venueType) {
         case 'Restaurants':
         case 'Sushi':
+        case 'Sushi & Sake':
         case 'Brunch':
         case 'Cocktails':
         case 'Nightlife':
@@ -60,47 +64,59 @@ const getVenueAction = (venueType: string) => {
         case 'Social Dining':
         case 'Iconic View':
         case 'Beachfront Bar':
-        case 'Sushi & Sake':
         case 'Italo Disco Dining':
         case 'Cocktail Bar':
-            return { text: 'Book a Table', icon: Utensils };
+            return { text: 'Book a Table', icon: Utensils, bookable: true };
         case 'Health & Fitness':
-            return { text: 'Book a Class', icon: Calendar };
+            return { text: 'Book a Class', icon: Calendar, bookable: false };
         case 'Retail':
-            return { text: 'Visit Website', icon: ShoppingBag };
+            return { text: 'Visit Website', icon: ShoppingBag, bookable: false };
         case 'Surf':
-            return { text: 'Book a Lesson', icon: Waves };
+            return { text: 'Book a Lesson', icon: Waves, bookable: false };
         case 'Vibes':
         default:
-            return { text: 'Get Directions', icon: MapPin };
+            return { text: 'Get Directions', icon: MapPin, bookable: false };
     }
 }
 
+export default function VenueProfilePage() {
+    const params = useParams();
+    const id = params.id as string;
+    const [isBookingSheetOpen, setIsBookingSheetOpen] = useState(false);
+    
+    const venue = DEMO_VENUES.find(p => p.id.replace('venue_', '') === id);
 
-export default async function VenueProfilePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const venue = DEMO_VENUES.find(p => p.id.replace('venue_', '') === id);
+    if (!venue) {
+        notFound();
+    }
 
-  if (!venue) {
-    notFound();
-  }
+    const image = getImageForVenue(venue.name);
+    const activeDeal = appData.hotItems.find(item => item.venue === venue.name && new Date(item.expiresAt).getTime() > Date.now());
+    const venueAction = getVenueAction(venue.category);
+    const ActionIcon = venueAction.icon;
 
-  const image = getImageForVenue(venue.name);
-  const activeDeal = appData.hotItems.find(item => item.venue === venue.name && new Date(item.expiresAt).getTime() > Date.now());
-  const venueAction = getVenueAction(venue.category);
-  const ActionIcon = venueAction.icon;
+    const mockVenue = {
+        ...venue,
+        slug: venue.id.replace('venue_', ''),
+        type: venue.category,
+        description: 'A great place in Bondi.',
+        openingHours: '9am - 10pm',
+        vibeTags: ['Popular', 'Scenic'],
+        currentVibe: venue.vibe === 'morning' ? 'Chill' : 'Buzzing'
+    }
+    
+    const handleBookClick = () => {
+        if (venueAction.bookable) {
+            setIsBookingSheetOpen(true);
+        } else {
+            // Handle other actions like 'Get Directions' or 'Visit Website'
+            console.log("Action:", venueAction.text);
+        }
+    };
 
-  const mockVenue = {
-      ...venue,
-      slug: venue.id.replace('venue_', ''),
-      type: venue.category,
-      description: 'A great place in Bondi.',
-      openingHours: '9am - 10pm',
-      vibeTags: ['Popular', 'Scenic'],
-      currentVibe: venue.vibe === 'morning' ? 'Chill' : 'Buzzing'
-  }
 
   return (
+    <>
     <div className="flex min-h-screen w-full flex-col bg-background">
       <div className="md:flex">
         
@@ -132,7 +148,7 @@ export default async function VenueProfilePage({ params }: { params: Promise<{ i
                 <Card>
                     <CardContent className="p-6">
                         <p className="text-muted-foreground">{mockVenue.description}</p>
-                        <Button className="w-full mt-4 font-bold text-lg h-12">
+                        <Button className="w-full mt-4 font-bold text-lg h-12" onClick={handleBookClick}>
                             <ActionIcon className="mr-2"/>
                             {venueAction.text}
                         </Button>
@@ -214,5 +230,11 @@ export default async function VenueProfilePage({ params }: { params: Promise<{ i
       </div>
       <MobileNav />
     </div>
+    <BookingSheet 
+        isOpen={isBookingSheetOpen}
+        onOpenChange={setIsBookingSheetOpen}
+        venue={venue}
+    />
+    </>
   );
 }
