@@ -194,7 +194,7 @@ nav, aside {
 
 /* 🥂 GOLDEN HOUR – "Bondi Therapy" */
 [data-theme="golden"] {
-  --bg-gradient: linear-gradient(to bottom, #2c1f4a, #d45c55, #f7a77b);
+  --bg-gradient: linear-gradient(to bottom, #f7a77b, #d45c55, #2c1f4a);
   --text-primary: #FFFFFF;
   --text-secondary: #E5E0FF;
   --card-bg: rgba(255, 255, 255, 0.08);
@@ -202,7 +202,7 @@ nav, aside {
   --border-color: #A384A9;
 
   /* ShadCN Variables */
-  --background: 257 41% 21%; /* Approx #2c1f4a */
+  --background: 25 89% 75%; /* Approx #f7a77b */
   --foreground: 0 0% 100%;    /* #FFFFFF */
   --card: 0 0% 100% / 0.08;
   --card-foreground: 0 0% 100%;
