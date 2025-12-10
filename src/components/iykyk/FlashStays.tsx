@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -13,6 +14,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
 import Link from 'next/link';
 import { CheckCircle, CalendarPlus } from 'lucide-react';
+import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
+import { doc, collection } from 'firebase/firestore';
 
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
@@ -62,10 +65,39 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
 export function FlashStays() {
     const [selectedStay, setSelectedStay] = useState<(typeof appData.stays)[0] | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const firestore = useFirestore();
+    const { user } = useUser();
 
     const handleBookNow = (stay: (typeof appData.stays)[0]) => {
         setSelectedStay(stay);
         setIsDialogOpen(true);
+
+        if (!user || !firestore) return;
+
+        // Log the claim for the user
+        const claimedDealRef = doc(firestore, 'users', user.uid, 'claimedDeals', stay.id);
+        const claimData = {
+            itemId: stay.id,
+            itemTitle: stay.title,
+            itemType: 'stay',
+            venueName: stay.title, // For stays, venue is the stay itself
+            creatorId: stay.creatorId || null,
+            claimedAt: new Date().toISOString(),
+        };
+        setDocumentNonBlocking(claimedDealRef, claimData, { merge: true });
+
+        // If there's a creator, log the influenced action
+        if (stay.creatorId) {
+            const influenceRef = doc(collection(firestore, 'users', stay.creatorId, 'influencedActions'));
+            const influenceData = {
+                actionId: influenceRef.id,
+                userId: user.uid,
+                actionType: 'bookStay',
+                itemId: stay.id,
+                timestamp: new Date().toISOString(),
+            };
+            setDocumentNonBlocking(influenceRef, influenceData, { merge: true });
+        }
     };
 
     const activeStays = appData.stays.filter(item => item.endsIn && new Date(Date.now() + item.endsIn).getTime() > Date.now());
@@ -127,6 +159,7 @@ export function FlashStays() {
                                             variant="secondary" 
                                             className="w-full mt-3 font-bold"
                                             onClick={() => handleBookNow(stay)}
+                                            disabled={!user}
                                         >
                                             <Bed className="mr-2 h-5 w-5"/>
                                             Book Stay

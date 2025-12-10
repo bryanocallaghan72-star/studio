@@ -13,6 +13,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
+import { doc, collection } from 'firebase/firestore';
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
@@ -59,8 +61,9 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
 
 
 const ClassDropCard = ({ drop, onClaim }: { drop: ClassDrop, onClaim: (drop: ClassDrop) => void }) => {
-    const instructor = drop.instructorHandle ? appData.creators.find(c => c.id === drop.instructorHandle) : null;
+    const creator = drop.instructorHandle ? appData.creators.find(c => c.id === drop.instructorHandle) : null;
     const [formattedTime, setFormattedTime] = useState<string | null>(null);
+    const { user } = useUser();
 
      useEffect(() => {
         setFormattedTime(new Date(drop.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
@@ -87,13 +90,13 @@ const ClassDropCard = ({ drop, onClaim }: { drop: ClassDrop, onClaim: (drop: Cla
                             <Zap className="h-4 w-4" />
                             <span>DROP</span>
                         </Badge>
-                         {instructor && (
+                         {creator && (
                             <div className='flex items-center gap-2 text-xs font-semibold bg-black/30 backdrop-blur-sm p-1 rounded-full'>
                                 <Avatar className="h-6 w-6">
-                                    <AvatarImage src={instructor.avatar} alt={instructor.name} />
-                                    <AvatarFallback>{instructor.name.charAt(0)}</AvatarFallback>
+                                    <AvatarImage src={creator.avatar} alt={creator.name} />
+                                    <AvatarFallback>{creator.name.charAt(0)}</AvatarFallback>
                                 </Avatar>
-                                <span>with @{instructor.id}</span>
+                                <span>with @{creator.id}</span>
                             </div>
                         )}
                     </div>
@@ -114,7 +117,7 @@ const ClassDropCard = ({ drop, onClaim }: { drop: ClassDrop, onClaim: (drop: Cla
                     <Button
                         className="w-full mt-3 font-bold bg-white text-black hover:bg-gray-200"
                         onClick={handleClaim}
-                        disabled={drop.hasUserClaimed}
+                        disabled={drop.hasUserClaimed || !user}
                     >
                         {drop.hasUserClaimed ? 'Claimed' : 'Claim Spot'}
                     </Button>
@@ -136,6 +139,8 @@ export function ActivePage() {
     const [confirmingDrop, setConfirmingDrop] = useState<ClassDrop | null>(null);
     const [successfulDrop, setSuccessfulDrop] = useState<ClassDrop | null>(null);
     const [isClient, setIsClient] = useState(false);
+    const firestore = useFirestore();
+    const { user } = useUser();
 
     useEffect(() => {
         setIsClient(true);
@@ -144,10 +149,36 @@ export function ActivePage() {
     const handleClaimClick = (drop: ClassDrop) => setConfirmingDrop(drop);
 
     const handleConfirmClaim = () => {
-        if (!confirmingDrop) return;
-        setClaimedDrops(prev => [...prev, confirmingDrop.id]);
+        if (!confirmingDrop || !user || !firestore) return;
+        
+        setClaimedDrops(prev => [...prev, confirmingDrop!.id]);
         setSuccessfulDrop(confirmingDrop);
         setConfirmingDrop(null);
+
+        // Log the claim for the user
+        const claimedDealRef = doc(firestore, 'users', user.uid, 'claimedDeals', confirmingDrop.id);
+        const claimData = {
+            itemId: confirmingDrop.id,
+            itemTitle: `${confirmingDrop.className} at ${confirmingDrop.venueName}`,
+            itemType: 'active',
+            venueName: confirmingDrop.venueName,
+            creatorId: confirmingDrop.instructorHandle || null,
+            claimedAt: new Date().toISOString(),
+        };
+        setDocumentNonBlocking(claimedDealRef, claimData, { merge: true });
+        
+        // Log influence for instructor
+        if (confirmingDrop.instructorHandle) {
+            const influenceRef = doc(collection(firestore, 'users', confirmingDrop.instructorHandle, 'influencedActions'));
+            const influenceData = {
+                actionId: influenceRef.id,
+                userId: user.uid,
+                actionType: 'claimDeal',
+                itemId: confirmingDrop.id,
+                timestamp: new Date().toISOString(),
+            };
+            setDocumentNonBlocking(influenceRef, influenceData, { merge: true });
+        }
     };
     
     const liveDrops = appData.classDrops
@@ -243,5 +274,3 @@ export function ActivePage() {
         </>
     );
 }
-
-    

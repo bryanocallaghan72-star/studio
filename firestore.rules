@@ -56,24 +56,27 @@ service cloud.firestore {
 
       // Subcollections for user-specific data. Only accessible by the owner.
       match /claimedDeals/{dealId} {
-        allow get, list, create: if isOwner(userId);
-        allow update: if false;
-        allow delete: if isExistingOwner(userId);
+        allow get, list, create, delete: if isOwner(userId);
+        allow update: if false; // These are immutable logs
+      }
+       match /influencedActions/{actionId} {
+        // Any signed-in user can create a record here, representing influence.
+        // Reading is restricted to the creator (owner of this subcollection).
+        allow get, list, delete: if isOwner(userId);
+        allow create: if isSignedIn();
+        allow update: if false; // Immutable logs
       }
       match /joinedSocials/{socialId} {
-        allow get, list, create: if isOwner(userId);
+        allow get, list, create, delete: if isOwner(userId);
         allow update: if false;
-        allow delete: if isExistingOwner(userId);
       }
       match /following/{creatorId} {
-        allow get, list, create: if isOwner(userId);
+        allow get, list, create, delete: if isOwner(userId);
         allow update: if false;
-        allow delete: if isExistingOwner(userId);
       }
       match /savedStays/{stayId} {
-        allow get, list, create: if isOwner(userId);
+        allow get, list, create, delete: if isOwner(userId);
         allow update: if false;
-        allow delete: if isExistingOwner(userId);
       }
     }
 
@@ -81,8 +84,7 @@ service cloud.firestore {
     // Public venue information. Read by anyone, writable only by creators.
     // NOTE: This rule assumes a trusted creator model, not public edits.
     match /venues/{venueId} {
-      allow get: if true;
-      allow list: if true;
+      allow get, list: if true;
 
       // For this prototype, we will not allow venue creation/updates via the client.
       // In a real app, this would be restricted to admins or verified creators.
@@ -160,5 +162,3 @@ service cloud.firestore {
     }
   }
 }
-
-    

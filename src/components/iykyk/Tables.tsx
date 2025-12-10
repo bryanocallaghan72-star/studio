@@ -13,6 +13,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
+import { doc, collection } from 'firebase/firestore';
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
@@ -60,6 +62,7 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
 const TableDropCard = ({ drop, onClaim }: { drop: TableDrop, onClaim: (drop: TableDrop) => void }) => {
     const creator = drop.creatorPickHandle ? appData.creators.find(c => c.id === drop.creatorPickHandle) : null;
     const [formattedTimes, setFormattedTimes] = useState<{ start: string; end: string } | null>(null);
+    const { user } = useUser();
 
     useEffect(() => {
         // Format times on the client to avoid hydration mismatch
@@ -120,7 +123,7 @@ const TableDropCard = ({ drop, onClaim }: { drop: TableDrop, onClaim: (drop: Tab
                     <Button
                         className="w-full mt-3 font-bold"
                         onClick={handleClaim}
-                        disabled={drop.hasUserClaimed}
+                        disabled={drop.hasUserClaimed || !user}
                     >
                         {drop.hasUserClaimed ? 'Claimed' : 
                          drop.priceToClaimCents > 0 ? `Claim Table ($${drop.priceToClaimCents / 100})` : 'Claim Table'}
@@ -144,6 +147,8 @@ export function Tables() {
     const [confirmingDrop, setConfirmingDrop] = useState<TableDrop | null>(null);
     const [successfulDrop, setSuccessfulDrop] = useState<TableDrop | null>(null);
     const [isClient, setIsClient] = useState(false);
+    const firestore = useFirestore();
+    const { user } = useUser();
 
     useEffect(() => {
         setIsClient(true);
@@ -154,10 +159,37 @@ export function Tables() {
     };
 
     const handleConfirmClaim = () => {
-        if (!confirmingDrop) return;
-        setClaimedDrops(prev => [...prev, confirmingDrop.id]);
+        if (!confirmingDrop || !user || !firestore) return;
+
+        // Optimistically update UI
+        setClaimedDrops(prev => [...prev, confirmingDrop!.id]);
         setSuccessfulDrop(confirmingDrop);
         setConfirmingDrop(null);
+
+        // Log claim for user
+        const claimedDealRef = doc(firestore, 'users', user.uid, 'claimedDeals', confirmingDrop.id);
+        const claimData = {
+            itemId: confirmingDrop.id,
+            itemTitle: `Table at ${confirmingDrop.venueName}`,
+            itemType: 'table',
+            venueName: confirmingDrop.venueName,
+            creatorId: confirmingDrop.creatorPickHandle || null,
+            claimedAt: new Date().toISOString(),
+        };
+        setDocumentNonBlocking(claimedDealRef, claimData, { merge: true });
+
+        // Log influence for creator
+        if (confirmingDrop.creatorPickHandle) {
+            const influenceRef = doc(collection(firestore, 'users', confirmingDrop.creatorPickHandle, 'influencedActions'));
+            const influenceData = {
+                actionId: influenceRef.id,
+                userId: user.uid,
+                actionType: 'claimDeal',
+                itemId: confirmingDrop.id,
+                timestamp: new Date().toISOString(),
+            };
+            setDocumentNonBlocking(influenceRef, influenceData, { merge: true });
+        }
     };
     
     const liveDrops = appData.tableDrops
@@ -268,5 +300,3 @@ export function Tables() {
         </>
     );
 }
-
-    

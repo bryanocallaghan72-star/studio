@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -10,6 +11,8 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { QRCodeDialog } from './QRCodeDialog';
 import { appData } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
+import { doc, collection } from 'firebase/firestore';
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
@@ -58,10 +61,39 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
 export function HotNow() {
     const [selectedDeal, setSelectedDeal] = useState<(typeof appData.hotItems)[0] | null>(null);
     const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
+    const firestore = useFirestore();
+    const { user } = useUser();
 
     const handleClaimPerk = (item: (typeof appData.hotItems)[0]) => {
         setSelectedDeal(item);
         setIsQRDialogOpen(true);
+
+        if (!user || !firestore) return;
+
+        // Log the claim for the user
+        const claimedDealRef = doc(firestore, 'users', user.uid, 'claimedDeals', item.id);
+        const claimData = {
+            itemId: item.id,
+            itemTitle: item.title,
+            itemType: 'fire',
+            venueName: item.venue,
+            creatorId: item.creatorId || null,
+            claimedAt: new Date().toISOString(),
+        };
+        setDocumentNonBlocking(claimedDealRef, claimData, { merge: true });
+
+        // If there's a creator, log the influenced action
+        if (item.creatorId) {
+            const influenceRef = doc(collection(firestore, 'users', item.creatorId, 'influencedActions'));
+            const influenceData = {
+                actionId: influenceRef.id,
+                userId: user.uid,
+                actionType: 'claimDeal',
+                itemId: item.id,
+                timestamp: new Date().toISOString(),
+            };
+            setDocumentNonBlocking(influenceRef, influenceData, { merge: true });
+        }
     };
 
     const activeItems = appData.hotItems.filter(item => new Date(item.expiresAt).getTime() > Date.now());
@@ -129,6 +161,7 @@ export function HotNow() {
                                             variant="secondary" 
                                             className="w-full mt-3 font-bold"
                                             onClick={() => handleClaimPerk(item)}
+                                            disabled={!user}
                                         >
                                             <Ticket className="mr-2 h-5 w-5"/>
                                             Claim Perk
@@ -150,5 +183,3 @@ export function HotNow() {
         </>
     );
 }
-
-    

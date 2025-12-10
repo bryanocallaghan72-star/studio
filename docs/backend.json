@@ -308,12 +308,29 @@
     "ClaimedDeal": {
       "title": "Claimed Deal",
       "type": "object",
-      "description": "A record of a user claiming a deal.",
+      "description": "A record of a user claiming a deal, drop, or perk.",
       "properties": {
-        "dealId": { "type": "string" },
+        "itemId": { "type": "string", "description": "The ID of the original deal, drop, or fire item." },
+        "itemTitle": { "type": "string", "description": "Denormalized title of the item." },
+        "itemType": { "type": "string", "enum": ["fire", "deal", "table", "active", "style", "stay"] },
+        "venueName": { "type": "string", "description": "Denormalized name of the venue." },
+        "creatorId": { "type": "string", "description": "The ID of the creator who influenced this claim, if any." },
         "claimedAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["dealId", "claimedAt"]
+      "required": ["itemId", "itemTitle", "itemType", "venueName", "claimedAt"]
+    },
+    "InfluencedAction": {
+        "title": "Influenced Action",
+        "type": "object",
+        "description": "A record of an action taken by a user that was influenced by a creator.",
+        "properties": {
+            "actionId": { "type": "string", "description": "A unique ID for this specific influenced action." },
+            "userId": { "type": "string", "description": "The ID of the user who took the action." },
+            "actionType": { "type": "string", "enum": ["claimDeal", "bookStay", "joinSocial"] },
+            "itemId": { "type": "string", "description": "The ID of the item related to the action (e.g., dealId, stayId)." },
+            "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "required": ["actionId", "userId", "actionType", "itemId", "timestamp"]
     },
     "JoinedSocial": {
       "title": "Joined Social",
@@ -441,7 +458,11 @@
     },
     "/users/{userId}/claimedDeals/{dealId}": {
         "schema": { "$ref": "#/entities/ClaimedDeal" },
-        "description": "Tracks deals claimed by the user."
+        "description": "Tracks deals, drops, and perks claimed by the user. The document ID is the original item ID."
+    },
+    "/users/{creatorId}/influencedActions/{actionId}": {
+        "schema": { "$ref": "#/entities/InfluencedAction" },
+        "description": "A log of actions that this creator influenced. Allows for calculating creator impact."
     },
     "/users/{userId}/joinedSocials/{socialId}": {
         "schema": { "$ref": "#/entities/JoinedSocial" },
@@ -489,5 +510,3 @@
     }
   }
 }
-
-    
