@@ -117,12 +117,9 @@ export default function VenueProfilePage() {
 
   return (
     <>
-    <div className="flex min-h-screen w-full flex-col bg-background">
-      <div className="md:flex">
-        
+    <div className="flex min-h-screen w-full flex-col bg-background pb-24">
+        <Header />
         <main className="flex-1">
-          <Header />
-          <div className="flex flex-1 flex-col pb-24">
             <div className="relative h-80 w-full">
                 {image && (
                     <Image
@@ -131,6 +128,7 @@ export default function VenueProfilePage() {
                         fill
                         className="object-cover"
                         data-ai-hint={image.imageHint}
+                        priority
                     />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
@@ -225,10 +223,7 @@ export default function VenueProfilePage() {
                 </Card>
 
             </div>
-          </div>
         </main>
-      </div>
-      <MobileNav />
     </div>
     <BookingSheet 
         isOpen={isBookingSheetOpen}
