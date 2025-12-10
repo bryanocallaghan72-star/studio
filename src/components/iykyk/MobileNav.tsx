@@ -6,13 +6,11 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import {
   Home,
   MessageCircle,
-  PlayCircle,
   Users,
   Flame,
   User,
   Trophy,
   Coffee,
-  BookHeart,
   Dumbbell,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -22,9 +20,7 @@ import { useMatchaBingoHighlight } from '@/hooks/useMatchaBingoHighlight';
 
 const navItems = [
   { href: '/discover', icon: Home, label: 'Discover' },
-  { href: '/slice-of-life', icon: BookHeart, label: 'Diaries' },
   { href: '/feed', icon: MessageCircle, label: 'Feed' },
-  { href: '/reels', icon: PlayCircle, label: 'Reels' },
   { href: '/social', icon: Users, label: 'Social' },
   { href: '/fire', icon: Flame, label: 'Fire' },
   { href: '/active', icon: Dumbbell, label: 'Active' },
@@ -47,7 +43,7 @@ export function MobileNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 p-1 backdrop-blur-sm md:hidden">
-      <div className="grid h-full max-w-lg grid-cols-10 mx-auto">
+      <div className="grid h-full max-w-lg grid-cols-8 mx-auto">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (

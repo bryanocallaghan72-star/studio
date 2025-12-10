@@ -14,13 +14,11 @@ import {
 import {
   Home,
   MessageCircle,
-  PlayCircle,
   Users,
   Flame,
   User,
   Trophy,
   Coffee,
-  BookHeart,
   Dumbbell,
 } from 'lucide-react';
 import { useBondiBingoHighlight } from '@/hooks/useBondiBingoHighlight';
@@ -48,9 +46,7 @@ export function DesktopNavContent() {
 
   const navItems = [
     { href: '/discover', icon: Home, label: 'Discover' },
-    { href: '/slice-of-life', icon: BookHeart, label: 'Diaries' },
     { href: '/feed', icon: MessageCircle, label: 'Feed' },
-    { href: '/reels', icon: PlayCircle, label: 'Reels' },
     { href: '/social', icon: Users, label: 'Social' },
     { href: '/fire', icon: Flame, label: 'Fire' },
     { href: '/active', icon: Dumbbell, label: 'Active' },

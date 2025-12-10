@@ -1,5 +1,6 @@
 
 
+
 import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift, UserPlus, Star } from 'lucide-react';
 import { collection, writeBatch, getDocs, doc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
@@ -115,8 +116,106 @@ export const seedVenuesToFirestore = async (firestore: any) => {
     }
 }
 
+// Raw data for different content types
+const rawPhotoPosts = [
+  {
+      id: 6,
+      type: "photo",
+      creator: { id: "alice", name: "alice", avatar: "https://github.com/alice.png" },
+      venue: "Tuchuzy",
+      description: "Obsessed with the new collection at Tuchuzy. The perfect spot for finding designer gems. ✨ #iykykstyle #bondifashion",
+      imageId: "style-1",
+      likes: 621,
+      comments: 68,
+      commentData: []
+  },
+  {
+      id: 1,
+      type: "photo",
+      creator: { id: "jay", name: "jay", avatar: "https://github.com/jay.png" },
+      venue: "Raw Bar",
+      description: "Finally found the best sushi in Bondi. That crispy salmon roll is a game changer. 🍣",
+      imageId: "sushi-1",
+      likes: 245,
+      comments: 34,
+      commentData: [
+        { author: "alice", text: "Omg looks amazing!" },
+        { author: "lucas", text: "You have to try their spicy tuna next time." },
+      ]
+  },
+  {
+      id: 2,
+      type: "photo",
+      creator: { id: "alice", name: "alice", avatar: "https://github.com/alice.png" },
+      venue: "Hotel Ravesis",
+      description: "Sunset vibes and perfect cocktails. My kind of Tuesday.",
+      imageId: "community-sushi",
+      likes: 482,
+      comments: 51,
+      commentData: []
+  },
+];
+
+const rawReelPosts = [
+    {
+      id: 1,
+      creator: { name: "jay", avatar: "https://github.com/jay.png" },
+      description: "Can't get enough of this place #sushi #bondi",
+      imageId: "sushi-1",
+      videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4",
+      likes: 12500,
+      comments: 789,
+      commentData: []
+    },
+    {
+        id: 2,
+        creator: { name: "alice", avatar: "https://github.com/alice.png" },
+        description: "Perfect cocktails for a perfect night",
+        imageId: "community-sushi",
+        videoUrl: "https://test-videos.co.uk/vids/elephantsdream/mp4/h264/720/Elephants_Dream_720_10s_1MB.mp4",
+        likes: 8300,
+        comments: 452,
+        commentData: []
+    },
+];
+
+const rawSliceOfLifePosts = [
+    {
+      id: "sol-1",
+      creatorId: "shannon",
+      title: "My first week in Bondi",
+      description: "Just landed from Ireland and I'm already in love with this place. The sunrise swims are something else. It feels like a new beginning, you know? A bit scary, but mostly exciting. Here's to making it work.",
+      videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels_videos_2759484__2160p_.mp4",
+      thumbnailUrl: "https://images.pexels.com/videos/2759484/pexels-photo-2759484.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+      duration: 45,
+      postType: "Short Diary",
+      likes: 1200,
+      commentsCount: 88,
+      createdAt: "2024-07-21T08:00:00Z"
+    },
+    {
+      id: "sol-2",
+      creatorId: "lucas",
+      title: "The art of a perfect cocktail",
+      description: "People think it's just mixing drinks, but it's about the story. Each ingredient, each movement... it's a performance. This is my 'Map Day Story' from behind the bar at The Corner House, where I get to create a little bit of magic for people.",
+      videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-kampus-production-8569201__2160p_.mp4",
+      thumbnailUrl: "https://images.pexels.com/videos/8569201/pexels-photo-8569201.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+      duration: 112,
+      postType: "Deep Cut",
+      likes: 3400,
+      commentsCount: 230,
+      createdAt: "2024-07-20T19:30:00Z"
+    },
+];
+
+const unifiedFeedItems = [
+  ...rawPhotoPosts.map(p => ({ ...p, type: 'photo' as const })),
+  ...rawReelPosts.map(r => ({ ...r, type: 'reel' as const, id: `reel-${r.id}` })),
+  ...rawSliceOfLifePosts.map(s => ({ ...s, type: 'story' as const, creator: { id: s.creatorId, name: s.creatorId, avatar: `https://github.com/${s.creatorId}.png` } })),
+].sort(() => Math.random() - 0.5); // Shuffle for variety
 
 export const appData = {
+  feedItems: unifiedFeedItems,
   styleDrops: [
     {
       id: 'style-drop-1',
@@ -258,60 +357,7 @@ export const appData = {
         location: { lat: -33.8935, lng: 151.27 },
       },
   ] as TableDrop[],
-  sliceOfLifePosts: [
-    {
-      id: "sol-1",
-      creatorId: "shannon",
-      title: "My first week in Bondi",
-      description: "Just landed from Ireland and I'm already in love with this place. The sunrise swims are something else. It feels like a new beginning, you know? A bit scary, but mostly exciting. Here's to making it work.",
-      videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels_videos_2759484__2160p_.mp4",
-      thumbnailUrl: "https://images.pexels.com/videos/2759484/pexels-photo-2759484.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-      duration: 45,
-      postType: "Short Diary",
-      likes: 1200,
-      commentsCount: 88,
-      createdAt: "2024-07-21T08:00:00Z"
-    },
-    {
-      id: "sol-2",
-      creatorId: "lucas",
-      title: "The art of a perfect cocktail",
-      description: "People think it's just mixing drinks, but it's about the story. Each ingredient, each movement... it's a performance. This is my 'Map Day Story' from behind the bar at The Corner House, where I get to create a little bit of magic for people.",
-      videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-kampus-production-8569201__2160p_.mp4",
-      thumbnailUrl: "https://images.pexels.com/videos/8569201/pexels-photo-8569201.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-      duration: 112,
-      postType: "Deep Cut",
-      likes: 3400,
-      commentsCount: 230,
-      createdAt: "2024-07-20T19:30:00Z"
-    },
-    {
-      id: "sol-3",
-      creatorId: "alice",
-      title: "The set that changed everything",
-      description: "This was the night. The moment the beat dropped and I saw the whole floor moving as one. It's more than just music; it's a connection. This is my confession: I live for these moments of shared energy.",
-      videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-anastasia-shuraeva-9065353__2160p_.mp4",
-      thumbnailUrl: "https://images.pexels.com/videos/9065353/pexels-photo-9065353.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-      duration: 72,
-      postType: "Creator's Confession",
-      likes: 5600,
-      commentsCount: 451,
-      createdAt: "2024-07-19T23:00:00Z"
-    },
-    {
-      id: "sol-4",
-      creatorId: "jay",
-      title: "A single piece of sushi",
-      description: "It's not just food. It's the craft, the history, the perfect balance of texture and flavor. This one piece of otoro at Raw Bar... it was a 'Bondi Moment' that reminded me why I started this whole foodie journey.",
-      videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-koolshooters-7330559__2160p_.mp4",
-      thumbnailUrl: "https://images.pexels.com/videos/7330559/pexels-photo-7330559.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-      duration: 58,
-      postType: "Bondi Moment",
-      likes: 2800,
-      commentsCount: 154,
-      createdAt: "2024-07-18T13:00:00Z"
-    }
-  ],
+  sliceOfLifePosts: rawSliceOfLifePosts,
   quests: [
     { id: 'quest-photo', venue: 'Bondi Beach', slug: 'bondi-beach', title: 'Bondi Photo Quest' },
     { id: 'quest-foodie', venue: 'Totti\'s', slug: 'tottis', title: 'Foodie Challenge' },
@@ -566,177 +612,7 @@ export const appData = {
       claims: 19,
     }
   ],
-  reelsData: [
-    {
-      id: 1,
-      creator: {
-        name: "jay",
-        avatar: "https://github.com/jay.png",
-      },
-      description: "Can't get enough of this place #sushi #bondi",
-      imageId: "sushi-1",
-      videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4",
-      likes: 12500,
-      comments: 789,
-      commentData: []
-    },
-    {
-        id: 2,
-        creator: {
-            name: "alice",
-            avatar: "https://github.com/alice.png",
-        },
-        description: "Perfect cocktails for a perfect night",
-        imageId: "community-sushi",
-        videoUrl: "https://test-videos.co.uk/vids/elephantsdream/mp4/h264/720/Elephants_Dream_720_10s_1MB.mp4",
-        likes: 8300,
-        comments: 452,
-        commentData: []
-    },
-    {
-      id: 3,
-      creator: {
-        name: "SunsetChaser",
-        avatar: "https://github.com/sunset.png",
-      },
-      description: "Bondi, you have my heart ❤️",
-      imageId: "morning-1",
-      videoUrl: "https://test-videos.co.uk/vids/sintel/mp4/h264/720/Sintel_720_10s_1MB.mp4",
-      likes: 15200,
-      comments: 876,
-      commentData: []
-    },
-    {
-      id: 4,
-      creator: {
-          name: "SunsetChaser",
-          avatar: "https://github.com/sunset.png",
-      },
-      description: "Summertime heats with deep house beats",
-      imageId: "bondi-sunset",
-      videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4",
-      likes: 21300,
-      comments: 952,
-      commentData: []
-    },
-    {
-        id: 5,
-        creator: {
-            name: "shannon",
-            avatar: "https://github.com/shannon.png",
-        },
-        description: "Breakfast of champions!",
-        imageId: "ricotta-hotcakes",
-        videoUrl: "https://test-videos.co.uk/vids/elephantsdream/mp4/h264/70/Elephants_Dream_720_10s_1MB.mp4",
-        likes: 9800,
-        comments: 633,
-        commentData: []
-    }
-  ],
-  feedItems: [
-    {
-      id: 6,
-      type: "photo",
-      creator: { id: "alice", name: "alice", avatar: "https://github.com/alice.png" },
-      venue: "Tuchuzy",
-      description: "Obsessed with the new collection at Tuchuzy. The perfect spot for finding designer gems. ✨ #iykykstyle #bondifashion",
-      imageId: "style-1",
-      likes: 621,
-      comments: 68,
-      commentData: []
-    },
-    {
-      id: 7,
-      type: "photo",
-      creator: { id: "lucas", name: "lucas", avatar: "https://github.com/lucas.png" },
-      venue: "Venroy",
-      description: "Living in this new set from Venroy. The ultimate in Bondi leisurewear. 🌊 #venroy #bondi #localbrand",
-      imageId: "style-2",
-      likes: 734,
-      comments: 72,
-      commentData: []
-    },
-    {
-      id: 8,
-      type: "photo",
-      creator: { id: "shannon", name: "shannon", avatar: "https://github.com/shannon.png" },
-      venue: "Aquabumps",
-      description: "Getting lost in the waves at the Aquabumps gallery. Eugene's work is just breathtaking. 📷 #art #wavephotography",
-      imageId: "waves-1",
-      likes: 412,
-      comments: 45,
-      commentData: []
-    },
-    {
-      id: 9,
-      type: "photo",
-      creator: { id: "jay", name: "jay", avatar: "https://github.com/jay.png" },
-      venue: "Bondi Markets",
-      description: "Sunday well spent digging for treasure at Bondi Markets. Scored some amazing vintage finds! #bondimarkets #supportlocal",
-      imageId: "markets-1",
-      likes: 550,
-      comments: 59,
-      commentData: []
-    },
-    {
-      id: 1,
-      type: "photo",
-      creator: { id: "jay", name: "jay", avatar: "https://github.com/jay.png" },
-      venue: "Raw Bar",
-      description: "Finally found the best sushi in Bondi. That crispy salmon roll is a game changer. 🍣",
-      imageId: "sushi-1",
-      likes: 245,
-      comments: 34,
-      commentData: [
-        { author: "alice", text: "Omg looks amazing!" },
-        { author: "lucas", text: "You have to try their spicy tuna next time." },
-      ]
-    },
-    {
-      id: 2,
-      type: "photo",
-      creator: { id: "alice", name: "alice", avatar: "https://github.com/alice.png" },
-      venue: "Hotel Ravesis",
-      description: "Sunset vibes and perfect cocktails. My kind of Tuesday.",
-      imageId: "community-sushi",
-      likes: 482,
-      comments: 51,
-      commentData: []
-    },
-    {
-      id: 3,
-      type: "photo",
-      creator: { id: "shannon", name: "shannon", avatar: "https://github.com/shannon.png" },
-      venue: "The Depot",
-      description: "Found the best cure for a rainy day in Bondi... coffee and lots of it!",
-      imageId: "coffee-1",
-      likes: 198,
-      comments: 22,
-      commentData: []
-    },
-    {
-      id: 4,
-      type: "photo",
-      creator: { id: "lucas", name: "lucas", avatar: "https://github.com/lucas.png" },
-      venue: "Bondi Beach",
-      description: "Another beautiful start to the day! 🧘‍♀️",
-      imageId: "morning-1",
-      likes: 501,
-      comments: 67,
-      commentData: []
-    },
-    {
-      id: 5,
-      type: "photo",
-      creator: { id: "foodiegal", name: "foodiegal", avatar: "https://github.com/foodie.png" },
-      venue: "Bondi Beach",
-      description: "wow sunset Yoga",
-      imageId: "sunset-yoga",
-      likes: 1204,
-      comments: 132,
-      commentData: []
-    }
-  ],
+  reelsData: rawReelPosts,
   creators: [
     {
       id: 'shannon',
