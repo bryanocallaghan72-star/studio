@@ -1,6 +1,7 @@
 
 
 
+
 import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift, UserPlus, Star } from 'lucide-react';
 import { collection, writeBatch, getDocs, doc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
@@ -212,7 +213,7 @@ const unifiedFeedItems = [
   ...rawPhotoPosts.map(p => ({ ...p, type: 'photo' as const })),
   ...rawReelPosts.map(r => ({ ...r, type: 'reel' as const, id: `reel-${r.id}` })),
   ...rawSliceOfLifePosts.map(s => ({ ...s, type: 'story' as const, creator: { id: s.creatorId, name: s.creatorId, avatar: `https://github.com/${s.creatorId}.png` } })),
-].sort(() => Math.random() - 0.5); // Shuffle for variety
+];
 
 export const appData = {
   feedItems: unifiedFeedItems,
