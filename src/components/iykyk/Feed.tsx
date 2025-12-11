@@ -112,113 +112,57 @@ const PhotoPost = memo(({ item, priority }: { item: any, priority?: boolean }) =
 PhotoPost.displayName = 'PhotoPost';
 
 
-const ReelPost = memo(({ item, priority }: { item: any, priority?: boolean }) => {
-    const [isLiked, setIsLiked] = useState(false);
-    const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
-    const likeCount = isLiked ? item.likes + 1 : item.likes;
-    const image = PlaceHolderImages.find(img => img.id === item.imageId);
-
-    return (
-    <>
-      <Card className="w-full max-w-lg mx-auto rounded-none border-x-0 border-t-0 sm:rounded-lg sm:border overflow-hidden">
-        <div className="relative aspect-[9/16] w-full">
-            <video 
-                src={item.videoUrl}
-                poster={image?.imageUrl}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            <div className="absolute bottom-0 left-0 p-4 text-white w-full z-10">
-                <div className="flex items-center gap-3 mb-2">
-                    <Avatar className="h-10 w-10 border-2 border-white">
-                        <AvatarImage src={item.creator.avatar} />
-                        <AvatarFallback>{item.creator.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <p className="font-semibold">{item.creator.name}</p>
-                </div>
-                <p className="text-sm">{item.description}</p>
-            </div>
-             <div className="absolute bottom-4 right-2 flex flex-col items-center gap-5 text-white z-10">
-                <button className="flex flex-col items-center" onClick={() => setIsLiked(!isLiked)}>
-                    <Heart className={`h-8 w-8 transition-all ${ isLiked ? "text-red-500 fill-current" : ""}`} />
-                    <span className="text-xs font-semibold">{formatLikes(likeCount)}</span>
-                </button>
-                <button className="flex flex-col items-center" onClick={() => setIsCommentSheetOpen(true)}>
-                    <MessageCircle className="h-8 w-8"/>
-                    <span className="text-xs font-semibold">{item.comments}</span>
-                </button>
-                <button><Send className="h-8 w-8"/></button>
-            </div>
-        </div>
-      </Card>
-      <CommentSheet 
-        isOpen={isCommentSheetOpen}
-        onOpenChange={setIsCommentSheetOpen}
-        comments={item.commentData}
-        commentCount={item.comments}
-        onPostComment={() => {}}
-    />
-    </>
-    )
-});
-ReelPost.displayName = 'ReelPost';
-
 const StoryPost = memo(({ item, priority }: { item: any, priority?: boolean }) => {
     const [isLiked, setIsLiked] = useState(false);
     const likeCount = isLiked ? item.likes + 1 : item.likes;
 
     return (
        <Card className="w-full max-w-lg mx-auto rounded-none border-x-0 border-t-0 sm:rounded-lg sm:border overflow-hidden">
-          <div className="relative aspect-[9/16] w-full bg-black">
-              <Image 
-                  src={item.thumbnailUrl}
-                  alt={item.title}
-                  fill
-                  className="object-cover opacity-60"
-                  priority={priority}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/50" />
-              
-              <div className="absolute inset-0 flex flex-col justify-end p-6 text-white z-10">
-                  <div className="space-y-3">
-                      <Badge variant="secondary" className="w-fit bg-white/20 border-white/30 text-white backdrop-blur-md">
-                          <BookHeart className="h-4 w-4 mr-2"/>
-                          {item.postType}
-                      </Badge>
-                      <h2 className="text-3xl font-bold tracking-tight">{item.title}</h2>
-                      <div className="flex items-center gap-3">
-                          {item.creator && (
-                              <Link href={`/profile/${item.creator.id}`} className="flex items-center gap-3 group">
-                                  <Avatar className="h-10 w-10 border-2 border-white/50 group-hover:border-white transition-colors">
-                                      <AvatarImage src={item.creator.avatar} />
-                                      <AvatarFallback>{item.creator.name.charAt(0)}</AvatarFallback>
-                                  </Avatar>
-                                  <span className="font-semibold group-hover:underline">@{item.creator.name}</span>
-                              </Link>
-                          )}
-                      </div>
-                      <p className="text-white/80 text-base leading-relaxed line-clamp-3">
-                          {item.description}
-                      </p>
-                  </div>
-              </div>
+          <Link href={`/slice-of-life/${item.id}`}>
+            <div className="relative aspect-[9/16] w-full bg-black cursor-pointer">
+                <Image 
+                    src={item.thumbnailUrl}
+                    alt={item.title}
+                    fill
+                    className="object-cover opacity-60"
+                    priority={priority}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/50" />
+                
+                <div className="absolute inset-0 flex flex-col justify-end p-6 text-white z-10">
+                    <div className="space-y-3">
+                        <Badge variant="secondary" className="w-fit bg-white/20 border-white/30 text-white backdrop-blur-md">
+                            <BookHeart className="h-4 w-4 mr-2"/>
+                            {item.postType}
+                        </Badge>
+                        <h2 className="text-3xl font-bold tracking-tight">{item.title}</h2>
+                        <div className="flex items-center gap-3">
+                            {item.creator && (
+                                <div className="flex items-center gap-3 group">
+                                    <Avatar className="h-10 w-10 border-2 border-white/50 transition-colors">
+                                        <AvatarImage src={item.creator.avatar} />
+                                        <AvatarFallback>{item.creator.name.charAt(0)}</AvatarFallback>
+                                    </Avatar>
+                                    <span className="font-semibold">@{item.creator.name}</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
 
-               <div className="absolute bottom-6 right-6 flex flex-col items-center gap-6 text-white z-10">
-                  <button className="flex flex-col items-center gap-1" onClick={() => setIsLiked(!isLiked)}>
-                      <Heart className={`h-8 w-8 transition-all ${isLiked ? 'text-red-500 fill-current' : ''}`} />
-                      <span className="text-xs font-semibold">{item.likes}</span>
-                  </button>
-                  <button className="flex flex-col items-center gap-1">
-                      <MessageCircle className="h-8 w-8" />
-                      <span className="text-xs font-semibold">{item.commentsCount}</span>
-                  </button>
-                  <button><Send className="h-8 w-8" /></button>
-              </div>
-          </div>
+                 <div className="absolute bottom-6 right-6 flex flex-col items-center gap-6 text-white z-10">
+                    <div className="flex flex-col items-center gap-1">
+                        <Heart className={`h-8 w-8 transition-all ${isLiked ? 'text-red-500 fill-current' : ''}`} />
+                        <span className="text-xs font-semibold">{item.likes}</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-1">
+                        <MessageCircle className="h-8 w-8" />
+                        <span className="text-xs font-semibold">{item.commentsCount}</span>
+                    </div>
+                    <div><Send className="h-8 w-8" /></div>
+                </div>
+            </div>
+          </Link>
        </Card>
     );
 });
@@ -226,17 +170,20 @@ StoryPost.displayName = 'StoryPost';
 
 
 export function Feed() {
+  const feedContent = [
+    ...appData.sliceOfLifePosts.map(p => ({ ...p, type: 'story' as const, creator: appData.creators.find(c => c.id === p.creatorId) })),
+    ...appData.feedItems.map(p => ({ ...p, type: p.type === 'reel' ? 'reel' as const : 'photo' as const })),
+  ].sort((a,b) => (b.createdAt || 0) > (a.createdAt || 0) ? 1 : -1);
+
+
   return (
     <div className="flex flex-col w-full space-y-4">
-      {appData.feedItems.map((item, index) => {
+      {feedContent.map((item, index) => {
         if (item.type === 'photo') {
-            return <PhotoPost key={item.id} item={item} priority={index < 2} />
-        }
-        if (item.type === 'reel') {
-            return <ReelPost key={item.id} item={item} priority={index < 2} />
+            return <PhotoPost key={`photo-${item.id}`} item={item} priority={index < 2} />
         }
         if (item.type === 'story') {
-             return <StoryPost key={item.id} item={item} priority={index < 2} />
+             return <StoryPost key={`story-${item.id}`} item={item} priority={index < 2} />
         }
         return null;
       })}

@@ -2,6 +2,7 @@
 
 
 
+
 import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift, UserPlus, Star } from 'lucide-react';
 import { collection, writeBatch, getDocs, doc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
@@ -192,7 +193,9 @@ const rawSliceOfLifePosts = [
       postType: "Short Diary",
       likes: 1200,
       commentsCount: 88,
-      createdAt: "2024-07-21T08:00:00Z"
+      createdAt: "2024-07-21T08:00:00Z",
+      venueId: "bondi-icebergs",
+      relatedDealId: null,
     },
     {
       id: "sol-2",
@@ -205,15 +208,31 @@ const rawSliceOfLifePosts = [
       postType: "Deep Cut",
       likes: 3400,
       commentsCount: 230,
-      createdAt: "2024-07-20T19:30:00Z"
+      createdAt: "2024-07-20T19:30:00Z",
+      venueId: "the-corner-house",
+      relatedDealId: "hot-2",
+    },
+     {
+      id: "sol-3",
+      creatorId: "jay",
+      title: "The Ultimate Crispy Salmon Roll",
+      description: "I've tried sushi all over Bondi, and this is it. The perfect balance of crispy, fresh, and savory. This is a must-try. You can get 2-for-1 with the iykyk app.",
+      videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4",
+      thumbnailUrl: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?q=80&w=1948&auto=format&fit=crop",
+      duration: 25,
+      postType: "Local Spotlight",
+      likes: 5600,
+      commentsCount: 450,
+      createdAt: "2024-07-22T12:00:00Z",
+      venueId: "raw-bar",
+      relatedDealId: "hot-4",
     },
 ];
 
 const unifiedFeedItems = [
   ...rawPhotoPosts.map(p => ({ ...p, type: 'photo' as const })),
   ...rawReelPosts.map(r => ({ ...r, type: 'reel' as const, id: `reel-${r.id}` })),
-  ...rawSliceOfLifePosts.map(s => ({ ...s, type: 'story' as const, creator: { id: s.creatorId, name: s.creatorId, avatar: `https://github.com/${s.creatorId}.png` } })),
-];
+].sort(() => 0.5 - Math.random());
 
 export const appData = {
   feedItems: unifiedFeedItems,
@@ -996,3 +1015,4 @@ export const appData = {
 
 
     
+

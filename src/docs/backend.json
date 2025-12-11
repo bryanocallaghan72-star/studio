@@ -1,0 +1,514 @@
+
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the iykyk platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user entity."
+        },
+        "username": {
+          "type": "string",
+          "description": "The user's chosen username.",
+          "format": "string"
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address.",
+          "format": "email"
+        },
+        "bio": {
+          "type": "string",
+          "description": "A short biography or description of the user."
+        },
+        "location": {
+          "type": "string",
+          "description": "The user's general location (e.g., Bondi)."
+        },
+        "isCreator": {
+          "type": "boolean",
+          "description": "Indicates if the user is a creator with special permissions."
+        }
+      },
+      "required": [
+        "username",
+        "email"
+      ]
+    },
+    "Venue": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Venue",
+      "type": "object",
+      "description": "Represents a venue (e.g., restaurant, bar, fitness studio) in the iykyk platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the venue entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the venue."
+        },
+        "address": {
+          "type": "string",
+          "description": "The street address of the venue."
+        },
+        "latitude": {
+          "type": "number",
+          "description": "The latitude coordinate of the venue."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "The longitude coordinate of the venue."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the venue."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category of the venue (e.g., restaurant, bar)."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "address",
+        "latitude",
+        "longitude"
+      ]
+    },
+    "Experience": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Experience",
+      "type": "object",
+      "description": "Represents an experience or event happening at a venue.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the experience entity."
+        },
+        "venueId": {
+          "type": "string",
+          "description": "Reference to Venue. (Relationship: Venue 1:N Experience)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the experience."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the experience."
+        },
+        "startTime": {
+          "type": "string",
+          "description": "The start time of the experience.",
+          "format": "date-time"
+        },
+        "endTime": {
+          "type": "string",
+          "description": "The end time of the experience.",
+          "format": "date-time"
+        },
+        "moods": {
+          "type": "array",
+          "description": "An array of moods associated with the experience.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "venueId",
+        "name",
+        "startTime",
+        "endTime"
+      ]
+    },
+    "Deal": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Deal",
+      "type": "object",
+      "description": "Represents a deal or promotion offered at a venue or by a creator.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the deal entity."
+        },
+        "venueId": {
+          "type": "string",
+          "description": "Reference to Venue. (Relationship: Venue 1:N Deal)"
+        },
+        "venueName": {
+          "type": "string",
+          "description": "Denormalized name of the venue for efficient querying."
+        },
+        "creatorId": {
+          "type": "string",
+          "description": "Reference to User who created this deal. (Relationship: User 1:N Deal)"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the deal."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the deal."
+        },
+        "startTime": {
+          "type": "string",
+          "description": "The start time of the deal.",
+          "format": "date-time"
+        },
+        "endTime": {
+          "type": "string",
+          "description": "The end time of the deal.",
+          "format": "date-time"
+        },
+        "discount": {
+          "type": "number",
+          "description": "The discount amount (e.g., 0.20 for 20%)."
+        },
+        "dealType": {
+          "type": "string",
+          "description": "Used to differentiate between standard 'Deals' and real-time 'Fire' items.",
+          "enum": [
+            "fire",
+            "deal"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "venueId",
+        "venueName",
+        "title",
+        "startTime",
+        "endTime",
+        "dealType"
+      ]
+    },
+    "Community": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Community",
+      "type": "object",
+      "description": "Represents a themed community within the iykyk platform (e.g., sushi lovers, cocktail hunters).",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the community entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the community."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the community."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category of the community (e.g., food, drink, fitness)."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description"
+      ]
+    },
+    "SocialActivity": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Social Activity",
+      "type": "object",
+      "description": "Represents a real-time social activity or event created by a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the social activity."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the social activity (e.g., 'Spikeball at 4pm')."
+        },
+        "hostId": {
+          "type": "string",
+          "description": "The ID of the user hosting the activity."
+        },
+        "hostUsername": {
+          "type": "string",
+          "description": "The denormalized username of the host for easy display."
+        },
+        "locationText": {
+          "type": "string",
+          "description": "A descriptive location for the activity (e.g., 'Middle of Bondi Beach')."
+        },
+        "time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The scheduled time for the activity."
+        },
+        "maxParticipants": {
+          "type": "number",
+          "description": "The maximum number of participants allowed."
+        },
+        "currentParticipants": {
+          "type": "number",
+          "description": "The current count of joined participants."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the activity."
+        }
+      },
+      "required": [
+        "title",
+        "hostId",
+        "hostUsername",
+        "locationText",
+        "time",
+        "maxParticipants"
+      ]
+    },
+    "SocialParticipant": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Social Participant",
+      "type": "object",
+      "description": "Represents a user's participation status in a social activity.",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user joining or requesting to join."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "joined",
+            "requested"
+          ],
+          "description": "The participation status of the user."
+        },
+        "joinedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the user joined or requested."
+        }
+      },
+      "required": [
+        "userId",
+        "status",
+        "joinedAt"
+      ]
+    },
+    "ClaimedDeal": {
+      "title": "Claimed Deal",
+      "type": "object",
+      "description": "A record of a user claiming a deal, drop, or perk.",
+      "properties": {
+        "itemId": { "type": "string", "description": "The ID of the original deal, drop, or fire item." },
+        "itemTitle": { "type": "string", "description": "Denormalized title of the item." },
+        "itemType": { "type": "string", "enum": ["fire", "deal", "table", "active", "style", "stay"] },
+        "venueName": { "type": "string", "description": "Denormalized name of the venue." },
+        "creatorId": { "type": "string", "description": "The ID of the creator who influenced this claim, if any." },
+        "claimedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["itemId", "itemTitle", "itemType", "venueName", "claimedAt"]
+    },
+    "InfluencedAction": {
+        "title": "Influenced Action",
+        "type": "object",
+        "description": "A record of an action taken by a user that was influenced by a creator.",
+        "properties": {
+            "actionId": { "type": "string", "description": "A unique ID for this specific influenced action." },
+            "userId": { "type": "string", "description": "The ID of the user who took the action." },
+            "actionType": { "type": "string", "enum": ["claimDeal", "bookStay", "joinSocial"] },
+            "itemId": { "type": "string", "description": "The ID of the item related to the action (e.g., dealId, stayId)." },
+            "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "required": ["actionId", "userId", "actionType", "itemId", "timestamp"]
+    },
+    "JoinedSocial": {
+      "title": "Joined Social",
+      "type": "object",
+      "description": "A record of a user joining a social activity.",
+      "properties": {
+        "socialId": { "type": "string" },
+        "joinedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["socialId", "joinedAt"]
+    },
+    "Following": {
+      "title": "Following",
+      "type": "object",
+      "description": "A record of a user following another user (creator).",
+      "properties": {
+        "userId": { "type": "string" },
+        "followedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "followedAt"]
+    },
+    "Stay": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Stay",
+      "type": "object",
+      "description": "Represents a creator-recommended accommodation or 'Stay'.",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "pricePerNight": { "type": "number" },
+        "creatorId": { "type": "string" },
+        "creatorName": { 
+          "type": "string",
+          "description": "Denormalized creator name for efficient querying."
+        },
+        "creatorAvatarUrl": { 
+          "type": "string", 
+          "format": "uri",
+          "description": "Denormalized creator avatar URL for efficient querying."
+        },
+        "bookingUrl": { "type": "string", "format": "uri" },
+        "isFlashStay": { "type": "boolean" },
+        "availableUntil": { "type": "string", "format": "date-time" },
+        "primaryImageUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "The main hero image for the stay, shown in list views."
+        },
+        "imageUrls": {
+          "type": "array",
+          "description": "An array of additional image URLs for the stay's gallery.",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "area": {
+          "type": "string",
+          "description": "The general area or suburb of the stay (e.g., 'Bondi', 'Manly')."
+        },
+        "latitude": {
+          "type": "number",
+          "description": "The latitude coordinate for map plotting."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "The longitude coordinate for map plotting."
+        },
+        "tags": {
+          "type": "array",
+          "description": "An array of filterable tags (e.g., 'Pool', 'Beachfront').",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["id", "title", "pricePerNight", "creatorId", "bookingUrl", "primaryImageUrl", "area", "latitude", "longitude"]
+    },
+    "SavedStay": {
+      "title": "Saved Stay",
+      "type": "object",
+      "description": "A record of a user saving a stay for later.",
+      "properties": {
+        "stayId": { "type": "string" },
+        "savedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["stayId", "savedAt"]
+    },
+    "SliceOfLifePost": {
+      "title": "Slice of Life Post",
+      "type": "object",
+      "description": "Represents a single video story in the iykyk Slice of Life feed.",
+      "properties": {
+        "id": { "type": "string" },
+        "creatorId": { "type": "string", "description": "The ID of the user who created the post." },
+        "creatorName": { "type": "string", "description": "Denormalized name of the creator." },
+        "creatorAvatarUrl": { "type": "string", "format": "uri", "description": "Denormalized avatar URL of the creator." },
+        "title": { "type": "string", "description": "A short, evocative title for the story." },
+        "description": { "type": "string", "description": "A longer text description or transcript of the story." },
+        "videoUrl": { "type": "string", "format": "uri" },
+        "thumbnailUrl": { "type": "string", "format": "uri" },
+        "duration": { "type": "number", "description": "Length of the video in seconds." },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "postType": {
+          "type": "string",
+          "enum": ["Short Diary", "Deep Cut", "Map Day Story", "Local Spotlight", "Creator's Confession", "Bondi Moment"]
+        },
+        "likes": { "type": "number" },
+        "commentsCount": { "type": "number" },
+        "venueId": { "type": "string", "description": "The slug of the venue featured in the post." },
+        "relatedDealId": { "type": "string", "description": "The ID of a deal or hot item directly promoted in the post." }
+      },
+      "required": ["id", "creatorId", "creatorName", "title", "videoUrl", "thumbnailUrl", "duration", "createdAt", "postType", "venueId"]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Stores user profiles. Path-based ownership for user-specific data."
+    },
+    "/users/{userId}/claimedDeals/{dealId}": {
+        "schema": { "$ref": "#/entities/ClaimedDeal" },
+        "description": "Tracks deals, drops, and perks claimed by the user. The document ID is the original item ID."
+    },
+    "/users/{creatorId}/influencedActions/{actionId}": {
+        "schema": { "$ref": "#/entities/InfluencedAction" },
+        "description": "A log of actions that this creator influenced. Allows for calculating creator impact."
+    },
+    "/users/{userId}/joinedSocials/{socialId}": {
+        "schema": { "$ref": "#/entities/JoinedSocial" },
+        "description": "Tracks social activities the user has joined."
+    },
+    "/users/{userId}/following/{creatorId}": {
+        "schema": { "$ref": "#/entities/Following" },
+        "description": "Tracks other users (creators) this user is following."
+    },
+    "/users/{userId}/savedStays/{stayId}": {
+        "schema": { "$ref": "#/entities/SavedStay" },
+        "description": "Tracks stays the user has saved."
+    },
+    "/venues/{venueId}": {
+      "schema": { "$ref": "#/entities/Venue" },
+      "description": "Stores venue information. Top-level entity for easy querying."
+    },
+    "/venues/{venueId}/experiences/{experienceId}": {
+      "schema": { "$ref": "#/entities/Experience" },
+      "description": "Stores experiences associated with a venue."
+    },
+    "/deals/{dealId}": {
+      "schema": { "$ref": "#/entities/Deal" },
+      "description": "A top-level collection for all deals, fire items, and perks. This allows for efficient global queries, like finding all active 'fire' deals, without needing to query every venue subcollection. Denormalized data like venueName is included to support this."
+    },
+    "/communities/{communityId}": {
+      "schema": { "$ref": "#/entities/Community" },
+      "description": "Stores community information. Includes a 'members' map (uid: role) for role-based access control."
+    },
+    "/socials/{socialId}": {
+      "schema": { "$ref": "#/entities/SocialActivity" },
+      "description": "A top-level collection for user-created social activities. Allows for easy querying of all active events."
+    },
+    "/socials/{socialId}/participants/{userId}": {
+      "schema": { "$ref": "#/entities/SocialParticipant" },
+      "description": "Manages participants for a specific social activity. The document ID is the user's ID for easy lookup."
+    },
+    "/stays/{stayId}": {
+      "schema": { "$ref": "#/entities/Stay" },
+      "description": "A top-level collection for all creator-recommended stays and flash stays. Allows for easy querying of all available accommodations."
+    },
+    "/sliceOfLifePosts/{postId}": {
+        "schema": { "$ref": "#/entities/SliceOfLifePost" },
+        "description": "A top-level collection for all Slice of Life video stories."
+    }
+  }
+}
