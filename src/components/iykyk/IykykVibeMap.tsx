@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { appData } from "@/lib/data";
 import { GoogleMap, useJsApiLoader, MarkerF } from "@react-google-maps/api";
 import { DEMO_VENUES } from "@/data/DemoVenues";
+import { resolveVenueHref } from "@/lib/venueUtils";
 
 const { categories } = appData;
 type Venue = typeof DEMO_VENUES[0];
@@ -106,8 +107,10 @@ export function IykykVibeMap() {
   };
   
   const handleMarkerClick = (venueId: string) => {
-    const slug = venueId.replace('venue_', '');
-    router.push(`/venue/${slug}`);
+    const href = resolveVenueHref(venueId);
+    if (href) {
+      router.push(href);
+    }
   };
 
   const mapOptions = useMemo(() => ({
