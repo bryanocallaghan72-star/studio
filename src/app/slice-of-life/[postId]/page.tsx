@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Heart, MessageCircle, Send, MoreVertical, X, Ticket, Building, ArrowLeft } from 'lucide-react';
 import { CommentSheet, type Comment } from '@/components/iykyk/CommentSheet';
 import { QRCodeDialog } from '@/components/iykyk/QRCodeDialog';
+import { DEMO_VENUES } from '@/data/DemoVenues';
 
 export default function SliceOfLifePostPage() {
     const params = useParams();
@@ -21,6 +22,11 @@ export default function SliceOfLifePostPage() {
     const creator = post ? appData.creators.find(c => c.id === post.creatorId) : null;
     const deal = post?.relatedDealId ? appData.hotItems.find(d => d.id === post.relatedDealId) : null;
     
+    // Find the matching venue from DEMO_VENUES using the venueId from the post
+    const venue = post ? DEMO_VENUES.find(v => v.id === post.venueId) : null;
+    // Construct the correct href for the venue page, using the slug (id without prefix)
+    const venueHref = venue ? `/venue/${venue.id.replace('venue_', '')}` : null;
+
     const [isLiked, setIsLiked] = useState(false);
     const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
     const [isQRDialogOpen, setQRDialogOpen] = useState(false);
@@ -45,9 +51,6 @@ export default function SliceOfLifePostPage() {
             setQRDialogOpen(true);
         }
     }
-
-    // Corrected venue href
-    const venueHref = `/venue/${post.venueId}`;
 
     return (
         <>
@@ -101,12 +104,14 @@ export default function SliceOfLifePostPage() {
                                 Claim Perk
                             </Button>
                         )}
-                        <Link href={venueHref}>
-                            <Button variant="outline" className="w-full h-14 text-lg font-bold bg-white/10 border-white/30 text-white backdrop-blur-md hover:bg-white/20">
-                                <Building className="mr-2"/>
-                                View Venue
-                            </Button>
-                        </Link>
+                        {venueHref && (
+                            <Link href={venueHref}>
+                                <Button variant="outline" className="w-full h-14 text-lg font-bold bg-white/10 border-white/30 text-white backdrop-blur-md hover:bg-white/20">
+                                    <Building className="mr-2"/>
+                                    View Venue
+                                </Button>
+                            </Link>
+                        )}
                     </div>
                 </div>
 
