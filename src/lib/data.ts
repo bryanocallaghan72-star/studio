@@ -251,6 +251,22 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
       venueId: "raw-bar",
       relatedDealId: "hot-4",
     },
+    {
+      id: "sol-4",
+      creatorId: "alice",
+      title: "Best Sushi Ever!",
+      description: "Seriously, Raw Bar has the best sushi in Bondi. The vibe is immaculate and the fish is always so fresh. This is my go-to spot for a reason. You can claim a 2-for-1 deal on their crispy salmon rolls through the app right now!",
+      videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/production_id_4763985__2160p_.mp4",
+      thumbnailUrl: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=1000&auto=format&fit=crop",
+      duration: 32,
+      postType: "Creator's Confession",
+      likes: 4100,
+      commentsCount: 312,
+      createdAt: "2024-07-23T18:00:00Z",
+      venueId: "raw-bar",
+      relatedDealId: "hot-4",
+      sourcePlatform: "instagram"
+    }
 ];
 
 const creators = [
