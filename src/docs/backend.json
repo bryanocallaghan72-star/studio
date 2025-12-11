@@ -423,10 +423,14 @@
     "SliceOfLifePost": {
       "title": "Slice of Life Post",
       "type": "object",
-      "description": "Represents a single video story in the iykyk Slice of Life feed.",
+      "description": "Represents a single video story in the iykyk Slice of Life feed. This is the canonical entry point for creator attribution links.",
       "properties": {
-        "id": { "type": "string" },
+        "id": { "type": "string", "description": "Unique identifier for the post, used in the URL." },
         "creatorId": { "type": "string", "description": "The ID of the user who created the post." },
+        "venueId": { "type": "string", "description": "The slug of the venue featured in the post." },
+        "relatedDealId": { "type": "string", "description": "Optional ID of a deal or hot item directly promoted in the post." },
+        "sourcePlatform": { "type": "string", "enum": ["tiktok", "instagram"], "description": "The social platform where the post originated." },
+        "serialCode": { "type": "string", "description": "An optional unique code for tracking specific campaigns." },
         "creatorName": { "type": "string", "description": "Denormalized name of the creator." },
         "creatorAvatarUrl": { "type": "string", "format": "uri", "description": "Denormalized avatar URL of the creator." },
         "title": { "type": "string", "description": "A short, evocative title for the story." },
@@ -440,11 +444,9 @@
           "enum": ["Short Diary", "Deep Cut", "Map Day Story", "Local Spotlight", "Creator's Confession", "Bondi Moment"]
         },
         "likes": { "type": "number" },
-        "commentsCount": { "type": "number" },
-        "venueId": { "type": "string", "description": "The slug of the venue featured in the post." },
-        "relatedDealId": { "type": "string", "description": "The ID of a deal or hot item directly promoted in the post." }
+        "commentsCount": { "type": "number" }
       },
-      "required": ["id", "creatorId", "creatorName", "title", "videoUrl", "thumbnailUrl", "duration", "createdAt", "postType", "venueId"]
+      "required": ["id", "creatorId", "venueId", "title", "videoUrl", "thumbnailUrl", "duration", "createdAt", "postType"]
     }
   },
   "auth": {

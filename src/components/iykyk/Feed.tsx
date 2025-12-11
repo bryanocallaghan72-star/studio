@@ -16,7 +16,6 @@ import { Badge } from "@/components/ui/badge";
 import { CommentSheet, type Comment } from "./CommentSheet";
 import { appData } from "@/lib/data";
 import Image from "next/image";
-import { DEMO_VENUES } from "@/data/DemoVenues";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 const formatLikes = (likes: number) => {
@@ -170,15 +169,10 @@ StoryPost.displayName = 'StoryPost';
 
 
 export function Feed() {
-  const feedContent = [
-    ...appData.sliceOfLifePosts.map(p => ({ ...p, type: 'story' as const, creator: appData.creators.find(c => c.id === p.creatorId) })),
-    ...appData.feedItems.map(p => ({ ...p, type: p.type === 'reel' ? 'reel' as const : 'photo' as const })),
-  ].sort((a,b) => (b.createdAt || 0) > (a.createdAt || 0) ? 1 : -1);
-
-
+  
   return (
     <div className="flex flex-col w-full space-y-4">
-      {feedContent.map((item, index) => {
+      {appData.feedItems.map((item, index) => {
         if (item.type === 'photo') {
             return <PhotoPost key={`photo-${item.id}`} item={item} priority={index < 2} />
         }

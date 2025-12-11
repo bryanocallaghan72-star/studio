@@ -1,8 +1,4 @@
 
-
-
-
-
 import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift, UserPlus, Star } from 'lucide-react';
 import { collection, writeBatch, getDocs, doc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
@@ -87,6 +83,29 @@ export interface StyleDrop {
   slug: string;
 }
 
+export interface SliceOfLifePost {
+  id: string; // This is the postId
+  creatorId: string;
+  venueId: string; // The slug for the venue
+  relatedDealId?: string | null;
+  sourcePlatform?: 'tiktok' | 'instagram';
+  serialCode?: string; // Optional unique code for the post
+  title: string;
+  description: string;
+  videoUrl: string;
+  thumbnailUrl: string;
+  duration: number;
+  postType: string;
+  likes: number;
+  commentsCount: number;
+  createdAt: string;
+  creator: {
+    id: string;
+    name: string;
+    avatar: string;
+  }
+}
+
 
 // MVP Seeding Function
 export const seedVenuesToFirestore = async (firestore: any) => {
@@ -129,7 +148,8 @@ const rawPhotoPosts = [
       imageId: "style-1",
       likes: 621,
       comments: 68,
-      commentData: []
+      commentData: [],
+      createdAt: "2024-07-22T12:00:00Z"
   },
   {
       id: 1,
@@ -143,7 +163,8 @@ const rawPhotoPosts = [
       commentData: [
         { author: "alice", text: "Omg looks amazing!" },
         { author: "lucas", text: "You have to try their spicy tuna next time." },
-      ]
+      ],
+      createdAt: "2024-07-22T11:00:00Z"
   },
   {
       id: 2,
@@ -154,7 +175,8 @@ const rawPhotoPosts = [
       imageId: "community-sushi",
       likes: 482,
       comments: 51,
-      commentData: []
+      commentData: [],
+      createdAt: "2024-07-21T18:00:00Z"
   },
 ];
 
@@ -167,7 +189,8 @@ const rawReelPosts = [
       videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4",
       likes: 12500,
       comments: 789,
-      commentData: []
+      commentData: [],
+      createdAt: "2024-07-22T10:00:00Z"
     },
     {
         id: 2,
@@ -177,11 +200,12 @@ const rawReelPosts = [
         videoUrl: "https://test-videos.co.uk/vids/elephantsdream/mp4/h264/720/Elephants_Dream_720_10s_1MB.mp4",
         likes: 8300,
         comments: 452,
-        commentData: []
+        commentData: [],
+        createdAt: "2024-07-21T19:00:00Z"
     },
 ];
 
-const rawSliceOfLifePosts = [
+const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
     {
       id: "sol-1",
       creatorId: "shannon",
@@ -229,13 +253,87 @@ const rawSliceOfLifePosts = [
     },
 ];
 
+const creators = [
+    {
+      id: 'shannon',
+      name: 'Shannon',
+      bio: 'Just an Irish girl who\'s new to Bondi. Show me the best spots for a pint and a good chat!',
+      avatar: 'https://github.com/shannon.png',
+      x: '30%',
+      y: '40%',
+      activity: [{ name: 'Mon', uv: 200 }, { name: 'Tue', uv: 350 }, { name: 'Wed', uv: 300 }, { name: 'Thu', uv: 480 }, { name: 'Fri', uv: 500 }, { name: 'Sat', uv: 400 }, { name: 'Sun', uv: 600 }]
+    },
+    {
+      id: 'alice',
+      name: 'Alice',
+      bio: 'French DJ spinning tunes across Bondi. Find me where the beat drops and the cocktails flow.',
+      avatar: 'https://github.com/alice.png',
+      x: '70%',
+      y: '60%',
+      activity: [{ name: 'Mon', uv: 500 }, { name: 'Tue', uv: 450 }, { name: 'Wed', uv: 600 }, { name: 'Thu', uv: 550 }, { name: 'Fri', uv: 700 }, { name: 'Sat', uv: 800 }, { name: 'Sun', uv: 750 }]
+    },
+    {
+      id: 'lucas',
+      name: 'Lucas',
+      bio: 'Upcoming DJ and barman from a hospo family. I know the best-kept secrets of Bondi\'s nightlife.',
+      avatar: 'https://github.com/lucas.png',
+      x: '80%',
+      y: '20%',
+      activity: [{ name: 'Mon', uv: 400 }, { name: 'Tue', uv: 420 }, { name: 'Wed', uv: 500 }, { name: 'Thu', uv: 450 }, { name: 'Fri', uv: 600 }, { name: 'Sat', uv: 700 }, { name: 'Sun', uv: 650 }]
+    },
+    {
+      id: 'jay',
+      name: 'Jay',
+      bio: 'Korean foodie on a mission to find the most authentic and delicious eats in town.',
+      avatar: 'https://github.com/jay.png',
+      x: '45%',
+      y: '75%',
+      activity: [{ name: 'Mon', uv: 300 }, { name: 'Tue', uv: 320 }, { name: 'Wed', uv: 350 }, { name: 'Thu', uv: 400 }, { name: 'Fri', uv: 450 }, { name: 'Sat', uv: 500 }, { name: 'Sun', uv: 480 }]
+    },
+    {
+      id: 'kevin',
+      name: 'Kevin',
+      bio: 'I just really, really love bananas. And anything made with them. Send me your best banana bread recipes.',
+      avatar: 'https://github.com/kevin.png',
+      x: '15%',
+      y: '60%',
+      activity: [{ name: 'Mon', uv: 100 }, { name: 'Tue', uv: 120 }, { name: 'Wed', uv: 110 }, { name: 'Thu', uv: 150 }, { name: 'Fri', uv: 180 }, { name: 'Sat', uv: 200 }, { name: 'Sun', uv: 190 }]
+    },
+    {
+      id: 'bondicreator',
+      name: 'bondicreator',
+      bio: 'I make content about Bondi.',
+      avatar: 'https://github.com/shadcn.png',
+       x: '50%',
+      y: '50%',
+      activity: [{ name: 'Mon', uv: 250 }, { name: 'Tue', uv: 280 }, { name: 'Wed', uv: 300 }, { name: 'Thu', uv: 320 }, { name: 'Fri', 'uv': 350 }, { name: 'Sat', uv: 400 }, { name: 'Sun', uv: 380 }]
+    },
+    {
+      id: 'foodiegal',
+      name: 'foodiegal',
+      bio: 'I love food!',
+      avatar: 'https://github.com/foodie.png',
+      x: '25%',
+      y: '25%',
+      activity: [{ name: 'Mon', uv: 280 }, { name: 'Tue', uv: 300 }, { name: 'Wed', uv: 320 }, { name: 'Thu', uv: 350 }, { name: 'Fri', uv: 380 }, { name: 'Sat', uv: 420 }, { name: 'Sun', uv: 400 }]
+    }
+  ];
+
+const enrichedSliceOfLifePosts = rawSliceOfLifePosts.map(post => {
+    const creator = creators.find(c => c.id === post.creatorId);
+    if (!creator) throw new Error(`Creator not found for post ${post.id}`);
+    return { ...post, creator };
+}) as SliceOfLifePost[];
+
 const unifiedFeedItems = [
   ...rawPhotoPosts.map(p => ({ ...p, type: 'photo' as const })),
-  ...rawReelPosts.map(r => ({ ...r, type: 'reel' as const, id: `reel-${r.id}` })),
-].sort(() => 0.5 - Math.random());
+  ...enrichedSliceOfLifePosts.map(p => ({ ...p, type: 'story' as const })),
+].sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
 
 export const appData = {
   feedItems: unifiedFeedItems,
+  sliceOfLifePosts: enrichedSliceOfLifePosts,
   styleDrops: [
     {
       id: 'style-drop-1',
@@ -377,7 +475,6 @@ export const appData = {
         location: { lat: -33.8935, lng: 151.27 },
       },
   ] as TableDrop[],
-  sliceOfLifePosts: rawSliceOfLifePosts,
   quests: [
     { id: 'quest-photo', venue: 'Bondi Beach', slug: 'bondi-beach', title: 'Bondi Photo Quest' },
     { id: 'quest-foodie', venue: 'Totti\'s', slug: 'tottis', title: 'Foodie Challenge' },
@@ -632,72 +729,7 @@ export const appData = {
       claims: 19,
     }
   ],
-  reelsData: rawReelPosts,
-  creators: [
-    {
-      id: 'shannon',
-      name: 'Shannon',
-      bio: 'Just an Irish girl who\'s new to Bondi. Show me the best spots for a pint and a good chat!',
-      avatar: 'https://github.com/shannon.png',
-      x: '30%',
-      y: '40%',
-      activity: [{ name: 'Mon', uv: 200 }, { name: 'Tue', uv: 350 }, { name: 'Wed', uv: 300 }, { name: 'Thu', uv: 480 }, { name: 'Fri', uv: 500 }, { name: 'Sat', uv: 400 }, { name: 'Sun', uv: 600 }]
-    },
-    {
-      id: 'alice',
-      name: 'Alice',
-      bio: 'French DJ spinning tunes across Bondi. Find me where the beat drops and the cocktails flow.',
-      avatar: 'https://github.com/alice.png',
-      x: '70%',
-      y: '60%',
-      activity: [{ name: 'Mon', uv: 500 }, { name: 'Tue', uv: 450 }, { name: 'Wed', uv: 600 }, { name: 'Thu', uv: 550 }, { name: 'Fri', uv: 700 }, { name: 'Sat', uv: 800 }, { name: 'Sun', uv: 750 }]
-    },
-    {
-      id: 'lucas',
-      name: 'Lucas',
-      bio: 'Upcoming DJ and barman from a hospo family. I know the best-kept secrets of Bondi\'s nightlife.',
-      avatar: 'https://github.com/lucas.png',
-      x: '80%',
-      y: '20%',
-      activity: [{ name: 'Mon', uv: 400 }, { name: 'Tue', uv: 420 }, { name: 'Wed', uv: 500 }, { name: 'Thu', uv: 450 }, { name: 'Fri', uv: 600 }, { name: 'Sat', uv: 700 }, { name: 'Sun', uv: 650 }]
-    },
-    {
-      id: 'jay',
-      name: 'Jay',
-      bio: 'Korean foodie on a mission to find the most authentic and delicious eats in town.',
-      avatar: 'https://github.com/jay.png',
-      x: '45%',
-      y: '75%',
-      activity: [{ name: 'Mon', uv: 300 }, { name: 'Tue', uv: 320 }, { name: 'Wed', uv: 350 }, { name: 'Thu', uv: 400 }, { name: 'Fri', uv: 450 }, { name: 'Sat', uv: 500 }, { name: 'Sun', uv: 480 }]
-    },
-    {
-      id: 'kevin',
-      name: 'Kevin',
-      bio: 'I just really, really love bananas. And anything made with them. Send me your best banana bread recipes.',
-      avatar: 'https://github.com/kevin.png',
-      x: '15%',
-      y: '60%',
-      activity: [{ name: 'Mon', uv: 100 }, { name: 'Tue', uv: 120 }, { name: 'Wed', uv: 110 }, { name: 'Thu', uv: 150 }, { name: 'Fri', uv: 180 }, { name: 'Sat', uv: 200 }, { name: 'Sun', uv: 190 }]
-    },
-    {
-      id: 'bondicreator',
-      name: 'bondicreator',
-      bio: 'I make content about Bondi.',
-      avatar: 'https://github.com/shadcn.png',
-       x: '50%',
-      y: '50%',
-      activity: [{ name: 'Mon', uv: 250 }, { name: 'Tue', uv: 280 }, { name: 'Wed', uv: 300 }, { name: 'Thu', uv: 320 }, { name: 'Fri', 'uv': 350 }, { name: 'Sat', uv: 400 }, { name: 'Sun', uv: 380 }]
-    },
-    {
-      id: 'foodiegal',
-      name: 'foodiegal',
-      bio: 'I love food!',
-      avatar: 'https://github.com/foodie.png',
-      x: '25%',
-      y: '25%',
-      activity: [{ name: 'Mon', uv: 280 }, { name: 'Tue', uv: 300 }, { name: 'Wed', uv: 320 }, { name: 'Thu', uv: 350 }, { name: 'Fri', uv: 380 }, { name: 'Sat', uv: 420 }, { name: 'Sun', uv: 400 }]
-    }
-  ],
+  creators: creators,
   categories: {
     "All": { icon: Sparkles, color: '#f8fafc', textColor: '#0f172a' },
     "Drops": { icon: Gift, color: '#a78bfa', textColor: '#ffffff' },
@@ -967,52 +999,3 @@ export const appData = {
   }
 };
     
-
-    
-    
-
-    
-
-
-
-
-
-
-
-
-
-
-
-    
-
-    
-
-    
-
-
-
-
-    
-
-    
-
-    
-
-
-
-
-
-    
-
-    
-
-
-
-    
-
-    
-
-
-
-    
-
