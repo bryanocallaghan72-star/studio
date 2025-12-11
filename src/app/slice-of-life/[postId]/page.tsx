@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Heart, MessageCircle, Send, MoreVertical, X, Ticket, Building, ArrowLeft } from 'lucide-react';
 import { CommentSheet, type Comment } from '@/components/iykyk/CommentSheet';
 import { QRCodeDialog } from '@/components/iykyk/QRCodeDialog';
-import { DEMO_VENUES } from '@/data/DemoVenues';
+import { resolveVenueHref, findVenueByAnyId } from '@/lib/venueUtils';
 
 export default function SliceOfLifePostPage() {
     const params = useParams();
@@ -22,20 +22,8 @@ export default function SliceOfLifePostPage() {
     const creator = post ? appData.creators.find(c => c.id === post.creatorId) : null;
     const deal = post?.relatedDealId ? appData.hotItems.find(d => d.id === post.relatedDealId) : null;
     
-    // Find the matching venue from DEMO_VENUES using either id or slug
-    const venue = post
-      ? DEMO_VENUES.find(
-          (v) =>
-            v.id === post.venueId ||
-            v.slug === post.venueId ||
-            `venue/${v.slug}` === post.venueId
-        )
-      : null;
-
-    // Build href using numeric id (strip "venue_" prefix if present)
-    const venueHref = venue
-      ? `/venue/${String(venue.id).replace(/^venue_/, '')}`
-      : null;
+    const venue = post ? findVenueByAnyId(post.venueId) : null;
+    const venueHref = post ? resolveVenueHref(post.venueId) : null;
 
     const [isLiked, setIsLiked] = useState(false);
     const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
