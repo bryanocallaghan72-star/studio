@@ -48,7 +48,8 @@ export default function RootLayout({
                   </Sidebar>
                   <SidebarInset>
                     <main className="flex-1">
-                      <Header />
+                      {/* The ProfilePageClient now includes its own Header */}
+                      {/* <Header /> */}
                       <div className="flex-1 p-4 md:p-6 pb-24">
                         {children}
                       </div>

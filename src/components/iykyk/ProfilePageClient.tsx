@@ -17,6 +17,7 @@ import { appData } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { EditProfileDialog } from '@/components/iykyk/EditProfileDialog';
 import { WithId } from '@/firebase/firestore/use-collection';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function ProfilePageClient({ uid }: { uid: string }) {
   const { user: currentUser } = useUser();
@@ -27,19 +28,23 @@ export function ProfilePageClient({ uid }: { uid: string }) {
   }, [uid]);
 
   const shouldFetchFirestore = !mockUserProfile;
+  const isOwner = currentUser && currentUser.uid === uid;
 
   const userDocRef = useMemoFirebase(() => {
     if (!shouldFetchFirestore || !firestore || !uid) return null;
     return doc(firestore, 'users', uid);
   }, [firestore, uid, shouldFetchFirestore]);
   
+  // Only create the query if the viewer is the owner of the profile
   const influencedActionsQuery = useMemoFirebase(() => {
-    if (!firestore || !uid) return null;
+    if (!firestore || !isOwner) return null;
     return collection(firestore, 'users', uid, 'influencedActions');
-  }, [firestore, uid]);
+  }, [firestore, uid, isOwner]);
 
   const { data: firestoreUserProfile, isLoading: isFirestoreLoading } = useDoc<WithId<{ username: string; bio?: string }>>(userDocRef);
-  const { data: influencedActions } = useCollection(influencedActionsQuery);
+  
+  // Conditionally call the hook. It will do nothing if the query is null.
+  const { data: influencedActions, isLoading: isInfluenceLoading } = useCollection(influencedActionsQuery);
   
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   
@@ -62,10 +67,14 @@ export function ProfilePageClient({ uid }: { uid: string }) {
     return [...appData.map.pins].sort(() => 0.5 - Math.random()).slice(0, 3);
   }, [uid]);
 
-  const isOwner = currentUser && currentUser.uid === uid;
+  
   const isLoading = shouldFetchFirestore ? isFirestoreLoading : false;
 
-  const influenceScore = influencedActions ? influencedActions.length : mockUserProfile ? Math.floor(Math.random() * 200 + 50) : 0;
+  // Determine influence score based on available data
+  const influenceScore = isOwner 
+    ? (influencedActions ? influencedActions.length : 0)
+    : (mockUserProfile ? Math.floor(Math.random() * 200 + 50) : 0);
+  
   const followerCount = mockUserProfile ? Math.floor(Math.random() * 5000 + 1000) : 0;
 
   if (isLoading) {
@@ -88,11 +97,52 @@ export function ProfilePageClient({ uid }: { uid: string }) {
       </div>
     )
   }
+  
+  const renderImpactStats = () => {
+    if (isOwner && isInfluenceLoading) {
+      return (
+        <div className="grid grid-cols-2 gap-4">
+          <Skeleton className="h-[88px] w-full" />
+          <Skeleton className="h-[88px] w-full" />
+        </div>
+      );
+    }
+     if (isOwner && !currentUser) {
+        return (
+            <div className="text-center text-muted-foreground border rounded-lg p-6">
+                <p>Sign in to view your impact stats.</p>
+            </div>
+        );
+    }
+
+    return (
+      <div className="grid grid-cols-2 gap-4">
+          <div className="flex items-center gap-3 rounded-lg border p-4">
+              <div className="p-3 rounded-full bg-primary/10">
+                  <TrendingUp className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                  <p className="text-2xl font-bold">{influenceScore}</p>
+                  <p className="text-sm text-muted-foreground">Influence Score</p>
+              </div>
+          </div>
+          <div className="flex items-center gap-3 rounded-lg border p-4">
+              <div className="p-3 rounded-full bg-primary/10">
+                  <Users className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                  <p className="text-2xl font-bold">{followerCount.toLocaleString()}</p>
+                  <p className="text-sm text-muted-foreground">Followers</p>
+              </div>
+          </div>
+      </div>
+    );
+  }
+
 
   return (
     <>
-      <Header />
-      <main className="flex flex-1 flex-col gap-8 p-4 md:p-6 pb-24">
+      <main className="flex flex-1 flex-col gap-8 pb-24">
         
         <Card className="overflow-hidden border-none shadow-none bg-transparent">
           <div className="relative h-40 w-full bg-secondary rounded-2xl">
@@ -137,25 +187,8 @@ export function ProfilePageClient({ uid }: { uid: string }) {
             <CardHeader>
                 <CardTitle>Impact</CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 rounded-lg border p-4">
-                    <div className="p-3 rounded-full bg-primary/10">
-                        <TrendingUp className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                        <p className="text-2xl font-bold">{influenceScore}</p>
-                        <p className="text-sm text-muted-foreground">Influence Score</p>
-                    </div>
-                </div>
-                <div className="flex items-center gap-3 rounded-lg border p-4">
-                    <div className="p-3 rounded-full bg-primary/10">
-                        <Users className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                        <p className="text-2xl font-bold">{followerCount.toLocaleString()}</p>
-                        <p className="text-sm text-muted-foreground">Followers</p>
-                    </div>
-                </div>
+            <CardContent>
+                {renderImpactStats()}
             </CardContent>
         </Card>
 
