@@ -4,14 +4,14 @@
 import { useMemo, useState } from 'react';
 import Image from "next/image";
 import Link from "next/link";
-import { Rss, Star, MapPin, Loader2, Edit } from "lucide-react";
-import { doc } from 'firebase/firestore';
+import { Rss, Star, MapPin, Loader2, Edit, TrendingUp, Users } from "lucide-react";
+import { collection, doc } from 'firebase/firestore';
 
 import { Header } from "@/components/iykyk/Header";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
+import { useDoc, useFirestore, useMemoFirebase, useCollection } from '@/firebase';
 import { useUser } from '@/firebase/auth/use-user';
 import { appData } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -22,27 +22,27 @@ export function ProfilePageClient({ uid }: { uid: string }) {
   const { user: currentUser } = useUser();
   const firestore = useFirestore();
 
-  // Find the mock user profile from static data
   const mockUserProfile = useMemo(() => {
     return appData.creators.find(creator => creator.id === uid);
   }, [uid]);
 
-  // Determine if a Firestore fetch should even happen.
-  // We only fetch if the `uid` doesn't match one of our hardcoded mock creators.
   const shouldFetchFirestore = !mockUserProfile;
 
-  // Memoize the document reference to prevent re-renders in `useDoc`.
-  // The hook will only run if `shouldFetchFirestore` is true.
   const userDocRef = useMemoFirebase(() => {
     if (!shouldFetchFirestore || !firestore || !uid) return null;
     return doc(firestore, 'users', uid);
   }, [firestore, uid, shouldFetchFirestore]);
+  
+  const influencedActionsQuery = useMemoFirebase(() => {
+    if (!firestore || !uid) return null;
+    return collection(firestore, 'users', uid, 'influencedActions');
+  }, [firestore, uid]);
 
-  // Fetch the user document from Firestore if it's not a mock user.
   const { data: firestoreUserProfile, isLoading: isFirestoreLoading } = useDoc<WithId<{ username: string; bio?: string }>>(userDocRef);
+  const { data: influencedActions } = useCollection(influencedActionsQuery);
+  
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   
-  // Combine mock and firestore user profiles for rendering
   const userProfile = useMemo(() => {
     if (mockUserProfile) {
       return {
@@ -53,19 +53,20 @@ export function ProfilePageClient({ uid }: { uid: string }) {
       };
     }
     if (firestoreUserProfile) {
-      // This is a real user from Firestore
       return { isMock: false, ...firestoreUserProfile };
     }
     return null;
   }, [mockUserProfile, firestoreUserProfile]);
   
-  // Randomly select some pins for the user's profile
   const userPins = useMemo(() => {
     return [...appData.map.pins].sort(() => 0.5 - Math.random()).slice(0, 3);
-  }, [uid]); // Depend on uid to reshuffle for different profiles
+  }, [uid]);
 
   const isOwner = currentUser && currentUser.uid === uid;
   const isLoading = shouldFetchFirestore ? isFirestoreLoading : false;
+
+  const influenceScore = influencedActions ? influencedActions.length : mockUserProfile ? Math.floor(Math.random() * 200 + 50) : 0;
+  const followerCount = mockUserProfile ? Math.floor(Math.random() * 5000 + 1000) : 0;
 
   if (isLoading) {
     return (
@@ -93,13 +94,13 @@ export function ProfilePageClient({ uid }: { uid: string }) {
       <Header />
       <main className="flex flex-1 flex-col gap-8 p-4 md:p-6 pb-24">
         
-        <Card className="overflow-hidden border-none shadow-none">
-          <div className="relative h-40 w-full bg-secondary">
+        <Card className="overflow-hidden border-none shadow-none bg-transparent">
+          <div className="relative h-40 w-full bg-secondary rounded-2xl">
              <Image 
                 src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop"
                 alt={`${userProfile.username}'s banner`}
                 fill
-                className="object-cover"
+                className="object-cover rounded-2xl"
                 data-ai-hint="abstract gradient"
                 priority
              />
@@ -110,12 +111,12 @@ export function ProfilePageClient({ uid }: { uid: string }) {
                 <AvatarImage src={`https://api.dicebear.com/8.x/lorelei/svg?seed=${userProfile.username}`} alt={userProfile.username} />
                 <AvatarFallback>{userProfile.username.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
-              <div className="flex-grow pb-2">
-                 <h1 className="text-2xl font-bold tracking-tight">{userProfile.username}</h1>
-                 <p className="text-sm text-muted-foreground">@{userProfile.isMock ? userProfile.id : userProfile.username}</p>
-              </div>
             </div>
              <div className="px-6 mt-4 space-y-4">
+                 <div>
+                    <h1 className="text-2xl font-bold tracking-tight">{userProfile.username}</h1>
+                    <p className="text-sm text-muted-foreground">@{userProfile.isMock ? userProfile.id : userProfile.username}</p>
+                 </div>
                 <p className="text-muted-foreground">{userProfile.bio || "No bio yet."}</p>
                 {isOwner && !userProfile.isMock ? (
                   <Button onClick={() => setEditDialogOpen(true)}>
@@ -131,6 +132,33 @@ export function ProfilePageClient({ uid }: { uid: string }) {
             </div>
           </CardContent>
         </Card>
+
+        <Card>
+            <CardHeader>
+                <CardTitle>Impact</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-2 gap-4">
+                <div className="flex items-center gap-3 rounded-lg border p-4">
+                    <div className="p-3 rounded-full bg-primary/10">
+                        <TrendingUp className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                        <p className="text-2xl font-bold">{influenceScore}</p>
+                        <p className="text-sm text-muted-foreground">Influence Score</p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-3 rounded-lg border p-4">
+                    <div className="p-3 rounded-full bg-primary/10">
+                        <Users className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                        <p className="text-2xl font-bold">{followerCount.toLocaleString()}</p>
+                        <p className="text-sm text-muted-foreground">Followers</p>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+
 
         <section>
             <h2 className="text-2xl font-bold tracking-tight mb-4 flex items-center gap-2">
