@@ -33,6 +33,7 @@ export default function SliceOfLifePostPage() {
     const [localComments, setLocalComments] = useState<Comment[]>([]);
     const [commentCount, setCommentCount] = useState(post?.commentsCount || 0);
 
+    // This guard is now correctly placed before any JSX that uses post or creator.
     if (!post || !creator) {
         notFound();
     }
