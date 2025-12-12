@@ -9,10 +9,12 @@ import { appData } from '@/lib/data';
 import { writeBatch, collection, doc, getDocs } from 'firebase/firestore';
 import { Loader2, CheckCircle, AlertTriangle, Database } from 'lucide-react';
 import Link from 'next/link';
+import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 type SeedStatus = 'idle' | 'loading' | 'success' | 'skipped' | 'error';
 
-export default function AdminPage() {
+
+function Seeder() {
   const [status, setStatus] = useState<SeedStatus>('idle');
   const [message, setMessage] = useState('');
   
@@ -87,7 +89,6 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-4">
       <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -119,6 +120,16 @@ export default function AdminPage() {
           </Button>
         </CardContent>
       </Card>
-    </div>
   );
+}
+
+
+export default function AdminPage() {
+    return (
+    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-4">
+      <FirebaseClientProvider>
+          <Seeder />
+      </FirebaseClientProvider>
+    </div>
+    )
 }
