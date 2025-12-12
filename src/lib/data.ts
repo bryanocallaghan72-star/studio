@@ -266,6 +266,38 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
       venueId: "raw-bar",
       relatedDealId: "hot-4",
       sourcePlatform: "instagram"
+    },
+    {
+      id: "sol-5",
+      creatorId: "shannon",
+      title: "Golden Hour at Promenade",
+      description: "There's nothing like watching the sky turn orange over Bondi from the Promenade. The perfect end to any day. It's my little moment of therapy.",
+      videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-taryn-elliott-7876874__2160p_.mp4",
+      thumbnailUrl: "https://images.unsplash.com/photo-1571762283944-580798150a58?q=80&w=1000&auto=format&fit=crop",
+      duration: 28,
+      postType: "Bondi Moment",
+      likes: 2800,
+      commentsCount: 150,
+      createdAt: "2024-07-24T17:30:00Z",
+      venueId: "venue_7", // Promenade Bondi
+      relatedDealId: null,
+      sourcePlatform: "tiktok"
+    },
+    {
+      id: "sol-6",
+      creatorId: "lucas",
+      title: "Morning Buzz at Glory Days",
+      description: "The coffee here just hits different. The perfect start before a busy day. If you're looking for that classic Bondi cafe vibe, this is it.",
+      videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-gloria-g-2127732-3840x2160-30fps.mp4",
+      thumbnailUrl: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=1000&auto=format&fit=crop",
+      duration: 18,
+      postType: "Local Spotlight",
+      likes: 1900,
+      commentsCount: 110,
+      createdAt: "2024-07-24T09:00:00Z",
+      venueId: "venue_4", // Glory Days
+      relatedDealId: null,
+      sourcePlatform: "instagram"
     }
 ];
 
@@ -1014,4 +1046,7 @@ export const appData = {
     ]
   }
 };
+    
+
+
     
