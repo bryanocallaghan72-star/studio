@@ -5,7 +5,7 @@
 import { useState } from "react";
 import { Header } from "@/components/iykyk/Header";
 import { MobileNav } from "@/components/iykyk/MobileNav";
-import { notFound, useParams } from "next/navigation";
+import { notFound, useParams, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Badge } from "@/components/ui/badge";
@@ -81,7 +81,10 @@ const getVenueAction = (venueType: string) => {
 
 export default function VenueProfilePage() {
     const params = useParams();
+    const searchParams = useSearchParams();
     const id = params.id as string;
+    const creatorId = searchParams.get('creator');
+    
     const [isBookingSheetOpen, setIsBookingSheetOpen] = useState(false);
     
     const venue = DEMO_VENUES.find(p => p.id.replace('venue_', '') === id);
@@ -229,6 +232,7 @@ export default function VenueProfilePage() {
         isOpen={isBookingSheetOpen}
         onOpenChange={setIsBookingSheetOpen}
         venue={venue}
+        creatorId={creatorId}
     />
     </>
   );

@@ -51,6 +51,8 @@ export default function SliceOfLifePostPage() {
         }
     }
 
+    const attributedVenueHref = venueHref && post.creatorId ? `${venueHref}?creator=${post.creatorId}` : venueHref;
+
     return (
         <>
             <div className="relative h-screen w-full snap-start flex-shrink-0 bg-black">
@@ -103,8 +105,8 @@ export default function SliceOfLifePostPage() {
                                 Claim Perk
                             </Button>
                         )}
-                        {venueHref && (
-                            <Link href={venueHref}>
+                        {attributedVenueHref && (
+                            <Link href={attributedVenueHref}>
                                 <Button variant="outline" className="w-full h-14 text-lg font-bold bg-white/10 border-white/30 text-white backdrop-blur-md hover:bg-white/20">
                                     <Building className="mr-2"/>
                                     View Venue

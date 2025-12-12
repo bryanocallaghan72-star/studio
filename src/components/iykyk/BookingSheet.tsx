@@ -13,6 +13,8 @@ import { format } from 'date-fns';
 import type { DEMO_VENUES } from '@/data/DemoVenues';
 import { BookingConfirmationDialog } from './BookingConfirmationDialog';
 import { Input } from '@/components/ui/input';
+import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
+import { collection } from 'firebase/firestore';
 
 type Venue = (typeof DEMO_VENUES)[0];
 
@@ -20,9 +22,12 @@ type BookingSheetProps = {
     isOpen: boolean;
     onOpenChange: (isOpen: boolean) => void;
     venue: Venue;
+    creatorId?: string | null;
 };
 
-export function BookingSheet({ isOpen, onOpenChange, venue }: BookingSheetProps) {
+export function BookingSheet({ isOpen, onOpenChange, venue, creatorId }: BookingSheetProps) {
+    const firestore = useFirestore();
+    const { user } = useUser();
     const [partySize, setPartySize] = useState('2');
     const [timeOption, setTimeOption] = useState('now');
     const [date, setDate] = useState<Date | undefined>(new Date());
@@ -30,6 +35,17 @@ export function BookingSheet({ isOpen, onOpenChange, venue }: BookingSheetProps)
     const [isConfirmationOpen, setConfirmationOpen] = useState(false);
 
     const handleRequestTable = () => {
+        if (creatorId && user && firestore) {
+            const influenceRef = collection(firestore, 'users', creatorId, 'influencedActions');
+            const influenceData = {
+                userId: user.uid,
+                actionType: 'claimDeal', // Or a more specific 'bookTable'
+                itemId: venue.id,
+                timestamp: new Date().toISOString(),
+            };
+            addDocumentNonBlocking(influenceRef, influenceData);
+        }
+
         // Close the booking sheet
         onOpenChange(false);
         // Open the confirmation dialog
@@ -132,8 +148,9 @@ export function BookingSheet({ isOpen, onOpenChange, venue }: BookingSheetProps)
                             type="submit"
                             className="w-full h-14 text-lg font-bold"
                             onClick={handleRequestTable}
+                            disabled={!user}
                         >
-                            Request Table
+                            {user ? 'Request Table' : 'Sign in to Request'}
                         </Button>
                     </SheetFooter>
                 </SheetContent>
@@ -146,6 +163,7 @@ export function BookingSheet({ isOpen, onOpenChange, venue }: BookingSheetProps)
                 partySize={partySize}
                 bookingTime={timeOption === 'now' ? 'ASAP' : time}
                 bookingDate={date}
+                creatorId={creatorId}
             />
         </>
     );

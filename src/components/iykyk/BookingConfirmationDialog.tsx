@@ -2,8 +2,9 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, PartyPopper } from "lucide-react";
 import type { DEMO_VENUES } from '@/data/DemoVenues';
+import { appData } from "@/lib/data";
 
 type Venue = (typeof DEMO_VENUES)[0];
 
@@ -14,11 +15,13 @@ type BookingConfirmationDialogProps = {
     partySize: string;
     bookingTime: string;
     bookingDate?: Date;
+    creatorId?: string | null;
 };
 
-export function BookingConfirmationDialog({ isOpen, onOpenChange, venue, partySize, bookingTime, bookingDate }: BookingConfirmationDialogProps) {
+export function BookingConfirmationDialog({ isOpen, onOpenChange, venue, partySize, bookingTime, bookingDate, creatorId }: BookingConfirmationDialogProps) {
 
     const formattedDate = bookingDate ? new Date(bookingDate).toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' }) : 'Today';
+    const creator = creatorId ? appData.creators.find(c => c.id === creatorId) : null;
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -32,8 +35,16 @@ export function BookingConfirmationDialog({ isOpen, onOpenChange, venue, partySi
                         Your request for a table for <strong>{partySize}</strong> at <strong>{venue.name}</strong> has been sent.
                     </DialogDescription>
                 </DialogHeader>
-                <div className="text-center text-muted-foreground my-4">
+                <div className="text-center text-muted-foreground my-4 space-y-4">
                     <p>{formattedDate} at {bookingTime}</p>
+                    
+                    {creator && (
+                        <div className="bg-primary/10 text-primary p-3 rounded-lg text-sm flex items-center justify-center gap-2">
+                            <PartyPopper className="h-4 w-4" />
+                            <p>We'll let <strong>@{creator.id}</strong> know you liked their recommendation!</p>
+                        </div>
+                    )}
+
                     <p className="text-sm mt-4">The venue will confirm your booking shortly, usually via SMS.</p>
                 </div>
                 <DialogFooter>
