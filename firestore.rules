@@ -86,9 +86,9 @@ service cloud.firestore {
     match /venues/{venueId} {
       allow get, list: if true;
 
-      // For this prototype, we will not allow venue creation/updates via the client.
+      // Temporarily allow any signed-in user to write for seeding purposes.
       // In a real app, this would be restricted to admins or verified creators.
-      allow create, update, delete: if false;
+      allow write: if isSignedIn();
 
       // Experiences are tied to venues, read-only for clients.
       match /experiences/{experienceId} {
