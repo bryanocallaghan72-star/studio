@@ -1,34 +1,24 @@
 
-
 'use client';
 
 import { useState } from "react";
 import { Header } from "@/components/iykyk/Header";
-import { MobileNav } from "@/components/iykyk/MobileNav";
 import { notFound, useParams, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Flame, MapPin, Ticket, Clock, TrendingUp, Info, Utensils, Calendar, ShoppingBag, Waves } from "lucide-react";
+import { ArrowRight, Flame, MapPin, Ticket, Clock, TrendingUp, Info, Utensils, Calendar, ShoppingBag, Waves, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { DEMO_VENUES } from "@/data/DemoVenues";
 import { appData } from "@/lib/data";
 import { BookingSheet } from "@/components/iykyk/BookingSheet";
+import { useDoc, useFirestore, useMemoFirebase } from "@/firebase";
+import { doc } from 'firebase/firestore';
 
 const getImageForVenue = (venueName: string) => {
-    const venue = DEMO_VENUES.find(v => v.name === venueName);
-    if (venue?.image) {
-        return {
-            imageUrl: venue.image,
-            imageHint: venue.category,
-            width: 1000,
-            height: 1000,
-        };
-    }
     const venueNameLower = venueName.toLowerCase();
     if (venueNameLower.includes('sushi') || venueNameLower.includes('raw bar')) return PlaceHolderImages.find(img => img.id === 'sushi-1');
     if (venueNameLower.includes('bar') || venueNameLower.includes('cocktail') || venueNameLower.includes('ravesis')) return PlaceHolderImages.find(img => img.id === 'nightlife-1');
@@ -82,12 +72,28 @@ const getVenueAction = (venueType: string) => {
 export default function VenueProfilePage() {
     const params = useParams();
     const searchParams = useSearchParams();
-    const id = params.id as string;
+    const slug = params.id as string; // The URL param is the slug
     const creatorId = searchParams.get('creator');
     
     const [isBookingSheetOpen, setIsBookingSheetOpen] = useState(false);
     
-    const venue = DEMO_VENUES.find(p => p.id.replace('venue_', '') === id);
+    const firestore = useFirestore();
+    const venueDocRef = useMemoFirebase(() => {
+        if (!firestore || !slug) return null;
+        // The document ID in Firestore is the slug
+        return doc(firestore, 'venues', slug);
+    }, [firestore, slug]);
+    
+    const { data: venue, isLoading: isVenueLoading } = useDoc(venueDocRef);
+
+    if (isVenueLoading) {
+        return (
+             <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background">
+                <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                <p className="mt-4 text-muted-foreground">Loading Venue...</p>
+            </div>
+        )
+    }
 
     if (!venue) {
         notFound();
@@ -100,7 +106,7 @@ export default function VenueProfilePage() {
 
     const mockVenue = {
         ...venue,
-        slug: venue.id.replace('venue_', ''),
+        slug: venue.slug,
         type: venue.category,
         description: 'A great place in Bondi.',
         openingHours: '9am - 10pm',
@@ -237,3 +243,5 @@ export default function VenueProfilePage() {
     </>
   );
 }
+
+    

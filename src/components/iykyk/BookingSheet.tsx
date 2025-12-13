@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -10,18 +11,16 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar as CalendarIcon, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import type { DEMO_VENUES } from '@/data/DemoVenues';
 import { BookingConfirmationDialog } from './BookingConfirmationDialog';
 import { Input } from '@/components/ui/input';
 import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
 import { collection } from 'firebase/firestore';
-
-type Venue = (typeof DEMO_VENUES)[0];
+import { VenueLike } from '@/lib/venueUtils';
 
 type BookingSheetProps = {
     isOpen: boolean;
     onOpenChange: (isOpen: boolean) => void;
-    venue: Venue;
+    venue: VenueLike;
     creatorId?: string | null;
 };
 
@@ -50,6 +49,10 @@ export function BookingSheet({ isOpen, onOpenChange, venue, creatorId }: Booking
         onOpenChange(false);
         // Open the confirmation dialog
         setConfirmationOpen(true);
+    }
+
+    if (!venue) {
+        return null; // Or some loading/error state
     }
 
     return (
@@ -168,3 +171,5 @@ export function BookingSheet({ isOpen, onOpenChange, venue, creatorId }: Booking
         </>
     );
 }
+
+    

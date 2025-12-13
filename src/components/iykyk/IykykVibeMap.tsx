@@ -7,11 +7,28 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { appData } from "@/lib/data";
 import { GoogleMap, useJsApiLoader, MarkerF } from "@react-google-maps/api";
-import { DEMO_VENUES } from "@/data/DemoVenues";
 import { resolveVenueHref } from "@/lib/venueUtils";
+import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { collection, query, where } from "firebase/firestore";
+import { WithId } from "@/firebase/firestore/use-collection";
+
 
 const { categories } = appData;
-type Venue = typeof DEMO_VENUES[0];
+type Venue = WithId<{
+    id: string;
+    name: string;
+    category: string;
+    address: string;
+    image: string;
+    lat: number;
+    lng: number;
+    rating: number;
+    isSponsor: boolean;
+    vibe: string;
+    price: string;
+    slug: string;
+}>;
+
 
 // Map container style
 const containerStyle = {
@@ -60,30 +77,17 @@ export function IykykVibeMap() {
   
   const [center, setCenter] = useState(defaultCenter);
 
-  const { isLoaded, loadError } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-  });
+  const firestore = useFirestore();
+  const venuesQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    const venuesCollection = collection(firestore, 'venues');
 
-  useEffect(() => {
     if (venueSlug) {
-      const venue = DEMO_VENUES.find(v => v.id.replace('venue_', '') === venueSlug);
-      if (venue) {
-        setCenter({ lat: venue.lat, lng: venue.lng });
-      }
-    } else {
-      setCenter(defaultCenter);
-    }
-  }, [venueSlug]);
-
-  const venues = useMemo(() => {
-    if (activeTab === 'All' && !venueSlug) {
-      return DEMO_VENUES;
+      return query(venuesCollection, where('slug', '==', venueSlug));
     }
     
-    if (venueSlug) {
-        const venue = DEMO_VENUES.find(v => v.id.replace('venue_', '') === venueSlug);
-        return venue ? [venue] : [];
+    if (activeTab === 'All') {
+      return venuesCollection;
     }
 
     const specificCategories: {[key: string]: string[]} = {
@@ -94,8 +98,24 @@ export function IykykVibeMap() {
     };
 
     const relevantCategories = specificCategories[activeTab] || [activeTab];
-    return DEMO_VENUES.filter(venue => relevantCategories.includes(venue.category));
-  }, [activeTab, venueSlug]);
+    return query(venuesCollection, where('category', 'in', relevantCategories));
+  }, [firestore, activeTab, venueSlug]);
+
+  const { data: venues, isLoading: isVenuesLoading } = useCollection<Venue>(venuesQuery);
+
+  const { isLoaded, loadError } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+  });
+
+  useEffect(() => {
+    if (venues && venues.length === 1) {
+      const venue = venues[0];
+      setCenter({ lat: venue.lat, lng: venue.lng });
+    } else {
+      setCenter(defaultCenter);
+    }
+  }, [venues]);
 
 
   const handleTabChange = (category: string) => {
@@ -106,8 +126,8 @@ export function IykykVibeMap() {
     router.replace(`${pathname}?${params.toString()}`);
   };
   
-  const handleMarkerClick = (venueId: string) => {
-    const href = resolveVenueHref(venueId);
+  const handleMarkerClick = (venue: Venue) => {
+    const href = resolveVenueHref(venue.slug); // resolveVenueHref expects the slug
     if (href) {
       router.push(href);
     }
@@ -176,7 +196,7 @@ export function IykykVibeMap() {
         </div>
 
         <div className="flex-grow flex flex-col relative rounded-lg overflow-hidden">
-            {!isLoaded ? (
+            {(!isLoaded || isVenuesLoading) ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/50">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
@@ -204,7 +224,7 @@ export function IykykVibeMap() {
                         key={venue.id}
                         position={{ lat: venue.lat, lng: venue.lng }}
                         title={venue.name}
-                        onClick={() => handleMarkerClick(venue.id)}
+                        onClick={() => handleMarkerClick(venue)}
                         icon={markerIcon}
                       />
                     );
@@ -215,3 +235,5 @@ export function IykykVibeMap() {
     </section>
   );
 }
+
+    

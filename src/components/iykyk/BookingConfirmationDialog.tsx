@@ -1,17 +1,17 @@
+
 'use client';
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, PartyPopper } from "lucide-react";
-import type { DEMO_VENUES } from '@/data/DemoVenues';
 import { appData } from "@/lib/data";
+import { VenueLike } from "@/lib/venueUtils";
 
-type Venue = (typeof DEMO_VENUES)[0];
 
 type BookingConfirmationDialogProps = {
     isOpen: boolean;
     onOpenChange: (isOpen: boolean) => void;
-    venue: Venue;
+    venue: VenueLike;
     partySize: string;
     bookingTime: string;
     bookingDate?: Date;
@@ -22,6 +22,8 @@ export function BookingConfirmationDialog({ isOpen, onOpenChange, venue, partySi
 
     const formattedDate = bookingDate ? new Date(bookingDate).toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' }) : 'Today';
     const creator = creatorId ? appData.creators.find(c => c.id === creatorId) : null;
+
+    if (!venue) return null;
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -56,3 +58,5 @@ export function BookingConfirmationDialog({ isOpen, onOpenChange, venue, partySi
         </Dialog>
     );
 }
+
+    
