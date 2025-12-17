@@ -50,7 +50,11 @@ service cloud.firestore {
       allow list: if false;
 
       // Allow a user to create their own profile document.
-      allow create: if isOwner(userId) && request.resource.data.email == request.auth.token.email;
+      // For email users, verify the email matches. For anonymous users, allow creation without an email.
+      allow create: if isOwner(userId) && (
+        (request.auth.token.email != null && request.resource.data.email == request.auth.token.email) ||
+        (request.auth.token.email == null)
+      );
       // Allow a user to update or delete their own profile.
       allow update, delete: if isExistingOwner(userId);
 
