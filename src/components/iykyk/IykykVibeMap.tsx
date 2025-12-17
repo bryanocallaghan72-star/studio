@@ -1,16 +1,18 @@
 
 "use client";
 
-import { useMemo, useEffect, useState } from "react";
+import { useMemo, useEffect, useState, useRef } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { appData } from "@/lib/data";
-import { GoogleMap, useJsApiLoader, MarkerF } from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, MarkerF, Autocomplete } from "@react-google-maps/api";
 import { resolveVenueHref } from "@/lib/venueUtils";
 import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
 import { collection, query, where } from "firebase/firestore";
 import { WithId } from "@/firebase/firestore/use-collection";
+import { Input } from "../ui/input";
+import { Search } from "lucide-react";
 
 
 const { categories } = appData;
@@ -67,6 +69,7 @@ const mapStyles = [
   { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#3d3d3d" }] },
 ];
 
+const libraries: "places"[] = ['places'];
 
 export function IykykVibeMap() {
   const router = useRouter();
@@ -76,6 +79,7 @@ export function IykykVibeMap() {
   const venueSlug = searchParams.get('venue');
   
   const [center, setCenter] = useState(defaultCenter);
+  const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
 
   const firestore = useFirestore();
   const venuesQuery = useMemoFirebase(() => {
@@ -106,6 +110,7 @@ export function IykykVibeMap() {
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries,
   });
 
   useEffect(() => {
@@ -132,6 +137,22 @@ export function IykykVibeMap() {
       router.push(href);
     }
   };
+
+  const handlePlaceSelect = () => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+      if (place.geometry && place.geometry.location) {
+        const newCenter = {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng(),
+        };
+        setCenter(newCenter);
+        // Here you would typically add the new venue to your database
+        console.log("Selected Place:", place.name, newCenter);
+      }
+    }
+  };
+
 
   const mapOptions = useMemo(() => ({
     disableDefaultUI: true,
@@ -162,9 +183,21 @@ export function IykykVibeMap() {
   return (
     <section className="flex flex-col h-full relative">
         <div className="absolute top-0 left-0 right-0 z-10 p-4 md:p-6 space-y-4 bg-gradient-to-b from-background to-transparent">
-            <p className="text-muted-foreground">
-                Explore Bondi's landscape. Tap a pin for more info.
-            </p>
+            {isLoaded && (
+              <Autocomplete
+                onLoad={(ac) => setAutocomplete(ac)}
+                onPlaceChanged={handlePlaceSelect}
+              >
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground"/>
+                  <Input 
+                    type="text"
+                    placeholder="Search for a venue..."
+                    className="w-full pl-10 pr-4 py-2 bg-background/80 backdrop-blur-sm"
+                  />
+                </div>
+              </Autocomplete>
+            )}
 
             <div className="flex overflow-x-auto pb-2 scrollbar-hide -mx-2">
                 {mapFilterCategories.map((categoryKey) => {
@@ -195,7 +228,7 @@ export function IykykVibeMap() {
             </div>
         </div>
 
-        <div className="flex-grow flex flex-col relative rounded-lg overflow-hidden">
+        <div className="flex-grow flex flex-col relative rounded-lg overflow-hidden mt-32">
             {(!isLoaded || isVenuesLoading) ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/50">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -235,5 +268,7 @@ export function IykykVibeMap() {
     </section>
   );
 }
+
+    
 
     
