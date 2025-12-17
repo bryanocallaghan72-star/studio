@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useMemo, useEffect, useState, useRef, CSSProperties } from "react";
+import { useMemo, useEffect, useState, CSSProperties } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Loader2, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -11,7 +11,7 @@ import { resolveVenueHref } from "@/lib/venueUtils";
 import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
 import { collection, query, where } from "firebase/firestore";
 import { WithId } from "@/firebase/firestore/use-collection";
-import { Input } from "../ui/input";
+import { Input } from "@/components/ui/input";
 
 
 const { categories } = appData;
@@ -78,7 +78,9 @@ export function IykykVibeMap() {
   const venueSlug = searchParams.get('venue');
   
   const [center, setCenter] = useState(defaultCenter);
+  const [zoom, setZoom] = useState(venueSlug ? 17 : 15);
   const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
+  const [searchValue, setSearchValue] = useState("");
 
   const firestore = useFirestore();
   const venuesQuery = useMemoFirebase(() => {
@@ -117,8 +119,10 @@ export function IykykVibeMap() {
     if (venues && venues.length === 1) {
       const venue = venues[0];
       setCenter({ lat: venue.latitude, lng: venue.longitude });
+      setZoom(17);
     } else {
       setCenter(defaultCenter);
+      setZoom(15);
     }
   }, [venues]);
 
@@ -147,7 +151,8 @@ export function IykykVibeMap() {
           lng: place.geometry.location.lng(),
         };
         setCenter(newCenter);
-        // Here you would typically add the new venue to your database
+        setZoom(17);
+        setSearchValue(place.name || "");
         console.log("Selected Place:", place.name, newCenter);
       }
     }
@@ -198,6 +203,8 @@ export function IykykVibeMap() {
                     type="text"
                     placeholder="Search for a venue..."
                     className="w-full pl-10 pr-4 py-2 bg-background/80 backdrop-blur-sm"
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
                   />
                 </div>
               </Autocomplete>
@@ -241,7 +248,7 @@ export function IykykVibeMap() {
                 <GoogleMap
                     mapContainerStyle={containerStyle}
                     center={center}
-                    zoom={venueSlug ? 17 : 15}
+                    zoom={zoom}
                     options={mapOptions}
                 >
                   {venues && venues.map(venue => {
@@ -272,5 +279,3 @@ export function IykykVibeMap() {
     </section>
   );
 }
-
-    
