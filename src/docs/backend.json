@@ -9,16 +9,19 @@
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the user entity."
+          "description": "Unique identifier for the user entity (Firestore Document ID)."
         },
         "username": {
           "type": "string",
-          "description": "The user's chosen username.",
-          "format": "string"
+          "description": "The user's public-facing handle."
+        },
+        "refCode": {
+          "type": "string",
+          "description": "A unique, human-readable, and immutable referral code for attribution."
         },
         "email": {
           "type": "string",
-          "description": "The user's email address.",
+          "description": "The user's private email address.",
           "format": "email"
         },
         "bio": {
@@ -32,11 +35,18 @@
         "isCreator": {
           "type": "boolean",
           "description": "Indicates if the user is a creator with special permissions."
+        },
+        "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp when the user account was created."
         }
       },
       "required": [
         "username",
-        "email"
+        "email",
+        "refCode",
+        "createdAt"
       ]
     },
     "Venue": {
@@ -45,9 +55,17 @@
       "type": "object",
       "description": "Represents a venue (e.g., restaurant, bar, fitness studio) in the iykyk platform.",
       "properties": {
-        "id": {
+        "slug": {
+            "type": "string",
+            "description": "The URL-friendly slug, used as the Firestore Document ID."
+        },
+        "placeId": {
+            "type": "string",
+            "description": "The unique identifier from Google Places API."
+        },
+        "refCode": {
           "type": "string",
-          "description": "Unique identifier for the venue entity."
+          "description": "An optional unique, human-readable code for venue-specific promotions."
         },
         "name": {
           "type": "string",
@@ -72,14 +90,21 @@
         "category": {
           "type": "string",
           "description": "The category of the venue (e.g., restaurant, bar)."
+        },
+        "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp when the venue was first added."
         }
       },
       "required": [
-        "id",
+        "slug",
+        "placeId",
         "name",
         "address",
         "latitude",
-        "longitude"
+        "longitude",
+        "createdAt"
       ]
     },
     "Experience": {
@@ -514,3 +539,5 @@
     }
   }
 }
+
+    
