@@ -5,17 +5,17 @@ import { useMemo, useEffect, useState, CSSProperties } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Loader2, Search, PlusCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { appData } from "@/lib/data";
 import { GoogleMap, useJsApiLoader, MarkerF, Autocomplete } from "@react-google-maps/api";
 import { resolveVenueHref } from "@/lib/venueUtils";
-import { useCollection, useFirestore, useMemoFirebase, setDocumentNonBlocking } from "@/firebase";
-import { collection, query, where, doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { useCollection, useFirestore, useMemoFirebase, setDocumentNonBlocking, useUser } from "@/firebase";
+import { collection, query, where, doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { WithId } from "@/firebase/firestore/use-collection";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 
-const { categories } = appData;
+const { categories: appCategories } = appData;
+
 type Venue = WithId<{
     id: string;
     name: string;
@@ -86,6 +86,7 @@ export function IykykVibeMap() {
   const [isSaving, setIsSaving] = useState(false);
 
   const firestore = useFirestore();
+  const { user, isUserLoading } = useUser();
   const venuesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     const venuesCollection = collection(firestore, 'venues');
@@ -94,18 +95,20 @@ export function IykykVibeMap() {
       return query(venuesCollection, where('slug', '==', venueSlug));
     }
     
+    // This logic can be simplified if categories are consistent
+    const categoryMap: { [key: string]: string[] } = {
+        Brunch: ["Brunch", "Cafe & Matcha", "Viral Matcha", "Aesthetic Brunch"],
+        Nightlife: ["Nightlife", "Social Dining", "Beachfront Bar", "Cocktail Bar", "Italo Disco Dining"],
+        Vibes: ["Vibes", "Beach Club Vibe", "Iconic View"],
+        Sushi: ["Sushi", "Sushi & Sake"],
+    };
+
+    const relevantCategories = categoryMap[activeTab] || [activeTab];
+
     if (activeTab === 'All') {
       return venuesCollection;
     }
 
-    const specificCategories: {[key: string]: string[]} = {
-        "Brunch": ["Cafe & Matcha", "Viral Matcha", "Aesthetic Brunch"],
-        "Nightlife": ["Social Dining", "Beachfront Bar", "Cocktail Bar", "Italo Disco Dining"],
-        "Vibes": ["Beach Club Vibe", "Iconic View"],
-        "Sushi": ["Sushi & Sake"],
-    };
-
-    const relevantCategories = specificCategories[activeTab] || [activeTab];
     return query(venuesCollection, where('category', 'in', relevantCategories));
   }, [firestore, activeTab, venueSlug]);
 
@@ -119,7 +122,7 @@ export function IykykVibeMap() {
   });
 
   useEffect(() => {
-    if (venues && venues.length === 1) {
+    if (venueSlug && venues && venues.length === 1) {
       const venue = venues[0];
       setCenter({ lat: venue.latitude, lng: venue.longitude });
       setZoom(17);
@@ -131,10 +134,14 @@ export function IykykVibeMap() {
 
 
   const handleTabChange = (category: string) => {
-    const params = new URLSearchParams();
-    if (category !== 'All') {
-      params.set('category', category);
+    const params = new URLSearchParams(searchParams.toString());
+    if (category === 'All') {
+        params.delete('category');
+    } else {
+        params.set('category', category);
     }
+    // Remove venue param when changing tabs to show all relevant pins
+    params.delete('venue'); 
     setSelectedPlace(null);
     setSearchValue("");
     router.replace(`${pathname}?${params.toString()}`);
@@ -164,7 +171,7 @@ export function IykykVibeMap() {
   };
 
   const handleAddVenue = async () => {
-    if (!selectedPlace || !firestore || isSaving) return;
+    if (!selectedPlace || !firestore || isSaving || !user) return;
 
     setIsSaving(true);
 
@@ -191,15 +198,11 @@ export function IykykVibeMap() {
             category: "Vibes",
             description: "",
             updatedAt: serverTimestamp(),
-            createdAt: serverTimestamp() // Will only be set on creation
+            createdAt: serverTimestamp()
         };
         
-        // setDoc with merge will create or update.
-        // We can check existence first to conditionally set createdAt, but Firestore rules can also enforce this.
-        // For simplicity here, we rely on a server-side timestamp.
         await setDoc(venueRef, venueData, { merge: true });
 
-        // Navigation completes the loop
         router.push(`/venue/${slug}`);
 
     } catch (error) {
@@ -224,21 +227,18 @@ export function IykykVibeMap() {
     return <div className="p-6 text-center text-muted-foreground">Google Maps API key is missing. Please add it to your environment variables to enable the map.</div>;
   }
 
-  const demoCategories = {
-    ...categories,
-    "Cafe & Matcha": categories["Brunch"],
-    "Viral Matcha": categories["Brunch"],
-    "Aesthetic Brunch": categories["Brunch"],
-    "Beach Club Vibe": categories["Vibes"],
-    "Social Dining": categories["Nightlife"],
-    "Iconic View": categories["Vibes"],
-    "Beachfront Bar": categories["Nightlife"],
-    "Sushi & Sake": categories["Sushi"],
-    "Italo Disco Dining": categories["Nightlife"],
-    "Cocktail Bar": categories["Cocktails"],
-  };
+  const categoryData = {
+      ...appCategories,
+      "Sushi": { icon: Utensils, color: '#2dd4bf', textColor: '#0f172a' },
+  }
 
   const mapFilterCategories = ["All", "Brunch", "Nightlife", "Sushi", "Vibes"];
+
+  const getButtonText = () => {
+      if (isSaving || isUserLoading) return "Loading...";
+      if (!user) return "Sign in to add";
+      return "Add to iykyk Map";
+  }
 
   return (
     <section className="flex flex-col h-full relative">
@@ -264,16 +264,16 @@ export function IykykVibeMap() {
             {selectedPlace && (
                 <div className="flex items-center justify-between p-2 rounded-lg bg-background/80 backdrop-blur-sm shadow-md">
                     <p className="text-sm font-medium text-foreground ml-2">Add '{selectedPlace.name}'?</p>
-                    <Button onClick={handleAddVenue} disabled={isSaving}>
-                        {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <PlusCircle className="mr-2 h-4 w-4" />}
-                        Add to iykyk Map
+                    <Button onClick={handleAddVenue} disabled={isSaving || isUserLoading || !user}>
+                        {(isSaving || isUserLoading) ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <PlusCircle className="mr-2 h-4 w-4" />}
+                        {getButtonText()}
                     </Button>
                 </div>
             )}
 
             <div className="flex overflow-x-auto pb-2 scrollbar-hide -mx-2">
                 {mapFilterCategories.map((categoryKey) => {
-                    const category = categories[categoryKey as keyof typeof categories];
+                    const category = categoryData[categoryKey as keyof typeof categoryData];
                     if (!category) return null;
                     const {icon: Icon, color, textColor} = category;
 
@@ -300,7 +300,7 @@ export function IykykVibeMap() {
             </div>
         </div>
 
-        <div className="flex-grow flex flex-col relative rounded-lg overflow-hidden mt-32">
+        <div className="flex-grow flex flex-col relative rounded-lg overflow-hidden mt-32 md:mt-40">
             {(!isLoaded || isVenuesLoading) ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/50">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -313,7 +313,7 @@ export function IykykVibeMap() {
                     options={mapOptions}
                 >
                   {venues && venues.map(venue => {
-                    const category = demoCategories[venue.category as keyof typeof demoCategories] || categories.Vibes;
+                    const category = categoryData[venue.category as keyof typeof categoryData] || categoryData.Vibes;
                     const color = category ? category.color : '#FF7F50'; // default color
                     const pinSvg = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
                       `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="${color}" /><circle cx="12" cy="10" r="3" fill="white" stroke="none"/></svg>`
@@ -340,3 +340,5 @@ export function IykykVibeMap() {
     </section>
   );
 }
+
+    
