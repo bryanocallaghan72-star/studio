@@ -1,9 +1,9 @@
 
 "use client";
 
-import { useMemo, useEffect, useState, useRef } from "react";
+import { useMemo, useEffect, useState, useRef, CSSProperties } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { appData } from "@/lib/data";
 import { GoogleMap, useJsApiLoader, MarkerF, Autocomplete } from "@react-google-maps/api";
@@ -12,7 +12,6 @@ import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
 import { collection, query, where } from "firebase/firestore";
 import { WithId } from "@/firebase/firestore/use-collection";
 import { Input } from "../ui/input";
-import { Search } from "lucide-react";
 
 
 const { categories } = appData;
@@ -22,8 +21,8 @@ type Venue = WithId<{
     category: string;
     address: string;
     image: string;
-    lat: number;
-    lng: number;
+    latitude: number;
+    longitude: number;
     rating: number;
     isSponsor: boolean;
     vibe: string;
@@ -106,17 +105,18 @@ export function IykykVibeMap() {
   }, [firestore, activeTab, venueSlug]);
 
   const { data: venues, isLoading: isVenuesLoading } = useCollection<Venue>(venuesQuery);
+  const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    googleMapsApiKey: googleMapsApiKey,
     libraries,
   });
 
   useEffect(() => {
     if (venues && venues.length === 1) {
       const venue = venues[0];
-      setCenter({ lat: venue.lat, lng: venue.lng });
+      setCenter({ lat: venue.latitude, lng: venue.longitude });
     } else {
       setCenter(defaultCenter);
     }
@@ -162,6 +162,10 @@ export function IykykVibeMap() {
 
   if (loadError) {
     return <div className="text-destructive p-6">Error loading maps. Please check your API key and ensure the Maps JavaScript API is enabled in your Google Cloud project.</div>;
+  }
+  
+  if (!googleMapsApiKey) {
+    return <div className="p-6 text-center text-muted-foreground">Google Maps API key is missing. Please add it to your environment variables to enable the map.</div>;
   }
 
   const demoCategories = {
@@ -218,7 +222,7 @@ export function IykykVibeMap() {
                             style={{
                                 "--active-bg": color,
                                 "--active-text": textColor,
-                            } as React.CSSProperties}
+                            } as CSSProperties}
                         >
                             <Icon className="mr-2 h-4 w-4" />
                             {categoryKey}
@@ -255,7 +259,7 @@ export function IykykVibeMap() {
                     return (
                       <MarkerF
                         key={venue.id}
-                        position={{ lat: venue.lat, lng: venue.lng }}
+                        position={{ lat: venue.latitude, lng: venue.longitude }}
                         title={venue.name}
                         onClick={() => handleMarkerClick(venue)}
                         icon={markerIcon}
@@ -268,7 +272,5 @@ export function IykykVibeMap() {
     </section>
   );
 }
-
-    
 
     
