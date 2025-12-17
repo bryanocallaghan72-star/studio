@@ -3,15 +3,16 @@
 
 import { useMemo, useEffect, useState, CSSProperties } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Search, PlusCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { appData } from "@/lib/data";
 import { GoogleMap, useJsApiLoader, MarkerF, Autocomplete } from "@react-google-maps/api";
 import { resolveVenueHref } from "@/lib/venueUtils";
-import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
-import { collection, query, where } from "firebase/firestore";
+import { useCollection, useFirestore, useMemoFirebase, setDocumentNonBlocking } from "@/firebase";
+import { collection, query, where, doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { WithId } from "@/firebase/firestore/use-collection";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 
 const { categories } = appData;
@@ -81,6 +82,8 @@ export function IykykVibeMap() {
   const [zoom, setZoom] = useState(venueSlug ? 17 : 15);
   const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
   const [searchValue, setSearchValue] = useState("");
+  const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const firestore = useFirestore();
   const venuesQuery = useMemoFirebase(() => {
@@ -120,11 +123,11 @@ export function IykykVibeMap() {
       const venue = venues[0];
       setCenter({ lat: venue.latitude, lng: venue.longitude });
       setZoom(17);
-    } else {
+    } else if (!venueSlug) { // Avoid resetting view if we're just focused on one venue
       setCenter(defaultCenter);
       setZoom(15);
     }
-  }, [venues]);
+  }, [venues, venueSlug]);
 
 
   const handleTabChange = (category: string) => {
@@ -132,6 +135,8 @@ export function IykykVibeMap() {
     if (category !== 'All') {
       params.set('category', category);
     }
+    setSelectedPlace(null);
+    setSearchValue("");
     router.replace(`${pathname}?${params.toString()}`);
   };
   
@@ -145,7 +150,8 @@ export function IykykVibeMap() {
   const handlePlaceSelect = () => {
     if (autocomplete !== null) {
       const place = autocomplete.getPlace();
-      if (place.geometry && place.geometry.location) {
+       if (place.geometry && place.geometry.location) {
+        setSelectedPlace(place);
         const newCenter = {
           lat: place.geometry.location.lat(),
           lng: place.geometry.location.lng(),
@@ -153,8 +159,53 @@ export function IykykVibeMap() {
         setCenter(newCenter);
         setZoom(17);
         setSearchValue(place.name || "");
-        console.log("Selected Place:", place.name, newCenter);
       }
+    }
+  };
+
+  const handleAddVenue = async () => {
+    if (!selectedPlace || !firestore || isSaving) return;
+
+    setIsSaving(true);
+
+    const { place_id, name, formatted_address, vicinity } = selectedPlace;
+    const location = selectedPlace.geometry?.location;
+
+    if (!place_id || !name || !location) {
+        console.error("Selected place is missing required information.");
+        setIsSaving(false);
+        return;
+    }
+
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const venueRef = doc(firestore, "venues", slug);
+
+    try {
+        const venueData = {
+            slug: slug,
+            placeId: place_id,
+            name: name,
+            address: formatted_address || vicinity || 'Address not available',
+            latitude: location.lat(),
+            longitude: location.lng(),
+            category: "Vibes",
+            description: "",
+            updatedAt: serverTimestamp(),
+            createdAt: serverTimestamp() // Will only be set on creation
+        };
+        
+        // setDoc with merge will create or update.
+        // We can check existence first to conditionally set createdAt, but Firestore rules can also enforce this.
+        // For simplicity here, we rely on a server-side timestamp.
+        await setDoc(venueRef, venueData, { merge: true });
+
+        // Navigation completes the loop
+        router.push(`/venue/${slug}`);
+
+    } catch (error) {
+        console.error("Error saving venue:", error);
+    } finally {
+        setIsSaving(false);
     }
   };
 
@@ -208,6 +259,16 @@ export function IykykVibeMap() {
                   />
                 </div>
               </Autocomplete>
+            )}
+
+            {selectedPlace && (
+                <div className="flex items-center justify-between p-2 rounded-lg bg-background/80 backdrop-blur-sm shadow-md">
+                    <p className="text-sm font-medium text-foreground ml-2">Add '{selectedPlace.name}'?</p>
+                    <Button onClick={handleAddVenue} disabled={isSaving}>
+                        {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <PlusCircle className="mr-2 h-4 w-4" />}
+                        Add to iykyk Map
+                    </Button>
+                </div>
             )}
 
             <div className="flex overflow-x-auto pb-2 scrollbar-hide -mx-2">
