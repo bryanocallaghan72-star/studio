@@ -197,6 +197,7 @@ export function IykykVibeMap() {
 
     try {
         const venueDoc = await getDoc(venueRef);
+        const isNew = !venueDoc.exists();
         
         const venueData = {
             slug: slug,
@@ -208,7 +209,7 @@ export function IykykVibeMap() {
             category: "Vibes", // Default category
             description: "",
             updatedAt: serverTimestamp(),
-            ...(!venueDoc.exists() && { createdAt: serverTimestamp() }),
+            ...(isNew && { createdAt: serverTimestamp() }),
         };
 
         await setDoc(venueRef, venueData, { merge: true });
