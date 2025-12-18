@@ -11,13 +11,14 @@ import {
   AlertTriangle,
   ArrowLeft,
   Navigation,
+  Save,
 } from 'lucide-react';
 import { GoogleMap, useJsApiLoader, MarkerF } from '@react-google-maps/api';
 
-import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { useDoc, useFirestore, useMemoFirebase, setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
+import { doc, serverTimestamp } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
@@ -29,8 +30,11 @@ import {
   GOOGLE_MAPS_REGION,
   GOOGLE_MAPS_LANGUAGE,
 } from "@/lib/googleMaps";
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-// Simplified Venue type for this page
+// Updated Venue type for this page
 type Venue = WithId<{
   name: string;
   address: string;
@@ -38,6 +42,9 @@ type Venue = WithId<{
   description?: string;
   latitude: number;
   longitude: number;
+  subCategory?: string;
+  vibeTags?: string[];
+  priceTier?: '$' | '$$' | '$$$' | '$$$$';
 }>;
 
 // Map container style
@@ -135,6 +142,20 @@ export default function VenuePage() {
 
   const { data: venue, isLoading: isVenueLoading } = useDoc<Venue>(venueDocRef);
 
+  // State for the edit form
+  const [subCategory, setSubCategory] = useState('');
+  const [vibeTags, setVibeTags] = useState('');
+  const [priceTier, setPriceTier] = useState<string | undefined>(undefined);
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (venue) {
+      setSubCategory(venue.subCategory || '');
+      setVibeTags(venue.vibeTags?.join(', ') || '');
+      setPriceTier(venue.priceTier);
+    }
+  }, [venue]);
+
   const { isLoaded, loadError } = useJsApiLoader({
     id: GOOGLE_MAPS_LOADER_ID,
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
@@ -160,12 +181,36 @@ export default function VenuePage() {
     }
   };
   
-  const handleSave = () => {
+  const handleStubSave = () => {
      toast({
         title: "Coming Soon!",
         description: "The ability to save your favorite venues is on its way.",
       });
   }
+
+  const handleEnrichmentSave = () => {
+    if (!venueDocRef) return;
+    setIsSaving(true);
+    
+    const tagsArray = vibeTags.split(',').map(tag => tag.trim()).filter(Boolean);
+
+    const dataToSave = {
+      subCategory: subCategory,
+      vibeTags: tagsArray,
+      priceTier: priceTier,
+      updatedAt: serverTimestamp(),
+    };
+    
+    setDocumentNonBlocking(venueDocRef, dataToSave, { merge: true });
+
+    setTimeout(() => {
+        setIsSaving(false);
+        toast({
+            title: "Venue Updated",
+            description: `${venue?.name} has been updated with new details.`,
+        });
+    }, 500);
+  };
 
   if (isVenueLoading) {
     return <VenuePageSkeleton />;
@@ -199,11 +244,49 @@ export default function VenuePage() {
           <Share2 className="mr-2" />
           Share
         </Button>
-        <Button onClick={handleSave} variant="outline" size="lg">
+        <Button onClick={handleStubSave} variant="outline" size="lg">
           <Bookmark className="mr-2" />
           Save
         </Button>
       </div>
+
+      <Card className="overflow-hidden">
+        <CardHeader>
+          <CardTitle>Edit Venue Details</CardTitle>
+          <CardDescription>Add more specific details to help others discover this venue.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <Label htmlFor="subCategory">Sub-category</Label>
+                    <Input id="subCategory" value={subCategory} onChange={e => setSubCategory(e.target.value)} placeholder="e.g., Cocktail Bar, Pilates Studio" />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="priceTier">Price Tier</Label>
+                    <Select value={priceTier} onValueChange={setPriceTier}>
+                        <SelectTrigger id="priceTier">
+                            <SelectValue placeholder="Select price tier" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="$">$ (Inexpensive)</SelectItem>
+                            <SelectItem value="$$">$$ (Moderate)</SelectItem>
+                            <SelectItem value="$$$">$$$ (Pricey)</SelectItem>
+                            <SelectItem value="$$$$">$$$$ (Very Expensive)</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="vibeTags">Vibe Tags (comma-separated)</Label>
+                <Input id="vibeTags" value={vibeTags} onChange={e => setVibeTags(e.target.value)} placeholder="e.g., Casual, Rooftop, Live Music" />
+            </div>
+            <Button onClick={handleEnrichmentSave} disabled={isSaving}>
+                {isSaving ? <Loader2 className="mr-2 animate-spin" /> : <Save className="mr-2" />}
+                Save Details
+            </Button>
+        </CardContent>
+      </Card>
+
 
       <Card className="h-64 overflow-hidden">
         {loadError && <div>Map cannot be loaded right now.</div>}
