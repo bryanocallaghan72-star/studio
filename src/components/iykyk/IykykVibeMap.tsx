@@ -3,15 +3,16 @@
 
 import { useMemo, useEffect, useState, CSSProperties } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { Loader2, Search, PlusCircle } from "lucide-react";
+import { Loader2, Search, PlusCircle, Utensils } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GoogleMap, useJsApiLoader, MarkerF, Autocomplete } from "@react-google-maps/api";
 import { resolveVenueHref } from "@/lib/venueUtils";
-import { useCollection, useFirestore, useMemoFirebase, setDocumentNonBlocking, useUser } from "@/firebase";
-import { collection, query, where, doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { useCollection, useFirestore, useMemoFirebase, useUser } from "@/firebase";
+import { collection, query, where, doc, setDoc, serverTimestamp, updateDoc, getDoc } from "firebase/firestore";
 import { WithId } from "@/firebase/firestore/use-collection";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { appData } from "@/lib/data";
 
 
 const { categories: appCategories } = appData;
@@ -183,25 +184,38 @@ export function IykykVibeMap() {
         setIsSaving(false);
         return;
     }
+    
+    const slugBase = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const suffix = place_id.substring(0, 5);
+    const slug = `${slugBase}-${suffix}`;
 
-    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     const venueRef = doc(firestore, "venues", slug);
 
     try {
-        const venueData = {
+        const venueDoc = await getDoc(venueRef);
+        
+        const baseVenueData = {
             slug: slug,
             placeId: place_id,
             name: name,
             address: formatted_address || vicinity || 'Address not available',
             latitude: location.lat(),
             longitude: location.lng(),
-            category: "Vibes",
+            category: "Vibes", // Default category
             description: "",
-            updatedAt: serverTimestamp(),
-            createdAt: serverTimestamp()
+            updatedAt: serverTimestamp()
         };
-        
-        await setDoc(venueRef, venueData, { merge: true });
+
+        if (venueDoc.exists()) {
+            // Document exists, just update it
+            await updateDoc(venueRef, baseVenueData);
+        } else {
+            // Document doesn't exist, create it with createdAt
+            await setDoc(venueRef, {
+                ...baseVenueData,
+                createdAt: serverTimestamp()
+            });
+        }
 
         router.push(`/venue/${slug}`);
 
@@ -340,5 +354,3 @@ export function IykykVibeMap() {
     </section>
   );
 }
-
-    
