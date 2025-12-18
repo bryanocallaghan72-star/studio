@@ -13,6 +13,12 @@ import { WithId } from "@/firebase/firestore/use-collection";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { appData } from "@/lib/data";
+import {
+  GOOGLE_MAPS_LOADER_ID,
+  GOOGLE_MAPS_LIBRARIES,
+  GOOGLE_MAPS_REGION,
+  GOOGLE_MAPS_LANGUAGE,
+} from "@/lib/googleMaps";
 
 
 const { categories: appCategories } = appData;
@@ -70,8 +76,6 @@ const mapStyles = [
   { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#3d3d3d" }] },
 ];
 
-const libraries: "places"[] = ['places'];
-
 export function IykykVibeMap() {
   const router = useRouter();
   const pathname = usePathname();
@@ -117,9 +121,11 @@ export function IykykVibeMap() {
   const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
   const { isLoaded, loadError } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: googleMapsApiKey,
-    libraries,
+    id: GOOGLE_MAPS_LOADER_ID,
+    googleMapsApiKey,
+    libraries: GOOGLE_MAPS_LIBRARIES,
+    region: GOOGLE_MAPS_REGION,
+    language: GOOGLE_MAPS_LANGUAGE,
   });
 
   useEffect(() => {

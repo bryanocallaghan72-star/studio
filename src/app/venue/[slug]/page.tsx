@@ -23,6 +23,12 @@ import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { WithId } from '@/firebase/firestore/use-collection';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  GOOGLE_MAPS_LOADER_ID,
+  GOOGLE_MAPS_LIBRARIES,
+  GOOGLE_MAPS_REGION,
+  GOOGLE_MAPS_LANGUAGE,
+} from "@/lib/googleMaps";
 
 // Simplified Venue type for this page
 type Venue = WithId<{
@@ -33,8 +39,6 @@ type Venue = WithId<{
   latitude: number;
   longitude: number;
 }>;
-
-const libraries: 'places'[] = ['places'];
 
 // Map container style
 const mapContainerStyle = {
@@ -132,9 +136,11 @@ export default function VenuePage() {
   const { data: venue, isLoading: isVenueLoading } = useDoc<Venue>(venueDocRef);
 
   const { isLoaded, loadError } = useJsApiLoader({
-    id: 'google-map-script-venue',
+    id: GOOGLE_MAPS_LOADER_ID,
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-    libraries,
+    libraries: GOOGLE_MAPS_LIBRARIES,
+    region: GOOGLE_MAPS_REGION,
+    language: GOOGLE_MAPS_LANGUAGE,
   });
 
   const handleShare = () => {
