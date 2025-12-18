@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { GoogleMap, useJsApiLoader, MarkerF } from '@react-google-maps/api';
 
-import { useDoc, useFirestore, useMemoFirebase, setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
+import { useDoc, useFirestore, useMemoFirebase, setDocumentNonBlocking, useUser } from '@/firebase';
 import { doc, serverTimestamp } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -135,6 +135,7 @@ export default function VenuePage() {
   const { toast } = useToast();
 
   const firestore = useFirestore();
+  const { user } = useUser();
   const venueDocRef = useMemoFirebase(() => {
     if (!firestore || !slug) return null;
     return doc(firestore, 'venues', slug);
@@ -189,7 +190,7 @@ export default function VenuePage() {
   }
 
   const handleEnrichmentSave = () => {
-    if (!venueDocRef) return;
+    if (!venueDocRef || !user) return;
     setIsSaving(true);
     
     const tagsArray = vibeTags.split(',').map(tag => tag.trim()).filter(Boolean);
@@ -227,10 +228,23 @@ export default function VenuePage() {
       <header>
         <Badge variant="secondary">{venue.category}</Badge>
         <h1 className="text-4xl font-bold tracking-tight mt-2">{venue.name}</h1>
-        <p className="text-muted-foreground mt-2 flex items-center gap-2">
-          <MapPin className="h-4 w-4" />
-          {venue.address}
-        </p>
+        <div className="flex items-center gap-4 text-muted-foreground mt-2">
+            <p className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                {venue.address}
+            </p>
+        </div>
+         <div className="flex flex-wrap items-center gap-2 mt-4 text-sm">
+            {venue.priceTier && (
+              <Badge variant="outline" className="text-base">{venue.priceTier}</Badge>
+            )}
+            {venue.subCategory && (
+              <Badge variant="outline">{venue.subCategory}</Badge>
+            )}
+            {venue.vibeTags && venue.vibeTags.map(tag => (
+              <Badge key={tag} variant="secondary">{tag}</Badge>
+            ))}
+        </div>
       </header>
 
       {venue.description && <p className="text-foreground/80 text-lg">{venue.description}</p>}
@@ -280,9 +294,9 @@ export default function VenuePage() {
                 <Label htmlFor="vibeTags">Vibe Tags (comma-separated)</Label>
                 <Input id="vibeTags" value={vibeTags} onChange={e => setVibeTags(e.target.value)} placeholder="e.g., Casual, Rooftop, Live Music" />
             </div>
-            <Button onClick={handleEnrichmentSave} disabled={isSaving}>
+            <Button onClick={handleEnrichmentSave} disabled={isSaving || !user}>
                 {isSaving ? <Loader2 className="mr-2 animate-spin" /> : <Save className="mr-2" />}
-                Save Details
+                {isSaving ? "Saving..." : user ? "Save Details" : "Sign in to Save"}
             </Button>
         </CardContent>
       </Card>
