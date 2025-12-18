@@ -185,9 +185,13 @@ export function IykykVibeMap() {
         return;
     }
     
-    const slugBase = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    const suffix = place_id.substring(0, 5);
-    const slug = `${slugBase}-${suffix}`;
+    const slugBase = name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+
+    const short = place_id.slice(-6).toLowerCase();
+    const slug = `${slugBase}-${short}`;
 
     const venueRef = doc(firestore, "venues", slug);
 
@@ -354,3 +358,5 @@ export function IykykVibeMap() {
     </section>
   );
 }
+
+    
