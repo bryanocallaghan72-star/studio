@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { GoogleMap, useJsApiLoader, MarkerF, Autocomplete } from "@react-google-maps/api";
 import { resolveVenueHref } from "@/lib/venueUtils";
 import { useCollection, useFirestore, useMemoFirebase, useUser } from "@/firebase";
-import { collection, query, where, doc, setDoc, serverTimestamp, updateDoc, getDoc } from "firebase/firestore";
+import { collection, query, where, doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore";
 import { WithId } from "@/firebase/firestore/use-collection";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -198,7 +198,7 @@ export function IykykVibeMap() {
     try {
         const venueDoc = await getDoc(venueRef);
         
-        const baseVenueData = {
+        const venueData = {
             slug: slug,
             placeId: place_id,
             name: name,
@@ -207,19 +207,11 @@ export function IykykVibeMap() {
             longitude: location.lng(),
             category: "Vibes", // Default category
             description: "",
-            updatedAt: serverTimestamp()
+            updatedAt: serverTimestamp(),
+            ...(!venueDoc.exists() && { createdAt: serverTimestamp() }),
         };
 
-        if (venueDoc.exists()) {
-            // Document exists, just update it
-            await updateDoc(venueRef, baseVenueData);
-        } else {
-            // Document doesn't exist, create it with createdAt
-            await setDoc(venueRef, {
-                ...baseVenueData,
-                createdAt: serverTimestamp()
-            });
-        }
+        await setDoc(venueRef, venueData, { merge: true });
 
         router.push(`/venue/${slug}`);
 
@@ -358,5 +350,3 @@ export function IykykVibeMap() {
     </section>
   );
 }
-
-    
