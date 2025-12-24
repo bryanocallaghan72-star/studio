@@ -18,6 +18,7 @@ export type SocialActivity = {
     description: string;
     time: string;
     location: string;
+    venueId?: string;
     creator: {
         id: string;
         name: string;
@@ -144,6 +145,7 @@ const rawPhotoPosts = [
       type: "photo",
       creator: { id: "alice", name: "alice", avatar: "https://github.com/alice.png" },
       venue: "Tuchuzy",
+      venueId: "tuchuzy",
       description: "Obsessed with the new collection at Tuchuzy. The perfect spot for finding designer gems. ✨ #iykykstyle #bondifashion",
       imageId: "style-1",
       likes: 621,
@@ -156,6 +158,7 @@ const rawPhotoPosts = [
       type: "photo",
       creator: { id: "jay", name: "jay", avatar: "https://github.com/jay.png" },
       venue: "Raw Bar",
+      venueId: "raw-bar",
       description: "Finally found the best sushi in Bondi. That crispy salmon roll is a game changer. 🍣",
       imageId: "sushi-1",
       likes: 245,
@@ -171,6 +174,7 @@ const rawPhotoPosts = [
       type: "photo",
       creator: { id: "alice", name: "alice", avatar: "https://github.com/alice.png" },
       venue: "Hotel Ravesis",
+      venueId: "hotel-ravesis",
       description: "Sunset vibes and perfect cocktails. My kind of Tuesday.",
       imageId: "community-sushi",
       likes: 482,
@@ -279,7 +283,7 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
       likes: 2800,
       commentsCount: 150,
       createdAt: "2024-07-24T17:30:00Z",
-      venueId: "venue_7", // Promenade Bondi
+      venueId: "venue_7", // Promenade Bondi - WARNING: This slug does not exist in venues-collection.json
       relatedDealId: null,
       sourcePlatform: "tiktok"
     },
@@ -295,7 +299,7 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
       likes: 1900,
       commentsCount: 110,
       createdAt: "2024-07-24T09:00:00Z",
-      venueId: "venue_4", // Glory Days
+      venueId: "venue_4", // Glory Days - WARNING: This slug does not exist in venues-collection.json
       relatedDealId: null,
       sourcePlatform: "instagram"
     }
@@ -386,6 +390,7 @@ export const appData = {
     {
       id: 'style-drop-1',
       venueName: 'Tuchuzy',
+      venueId: 'tuchuzy',
       venueImageUrl: 'https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=2071&auto=format&fit=crop',
       title: 'Private Access: Sample Sale',
       description: 'Get first look at the Tuchuzy sample sale before it opens to the public. Limited spots.',
@@ -398,6 +403,7 @@ export const appData = {
     {
       id: 'style-drop-2',
       venueName: 'Venroy',
+      venueId: 'venroy',
       venueImageUrl: 'https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?q=80&w=2500&auto=format&fit=crop',
       title: '25% Off New Season Linen',
       description: 'Exclusive discount on the latest collection of Venroy\'s signature linen wear.',
@@ -410,6 +416,7 @@ export const appData = {
     {
       id: 'style-drop-3',
       venueName: 'Aquabumps',
+      venueId: 'aquabumps',
       venueImageUrl: 'https://images.unsplash.com/photo-1534279435138-3e414156d05f?q=80&w=2070&auto=format&fit=crop',
       title: 'Signed Mini-Print',
       description: 'Claim a free, signed mini-print from photographer Eugene Tan. Today only.',
@@ -446,19 +453,7 @@ export const appData = {
       isFavoriteVenue: true,
       location: { lat: -33.886, lng: 151.277 },
     },
-    {
-      id: 'class-yoga-1',
-      venueId: 'yoga-by-the-sea',
-      venueName: 'Yoga by the Sea',
-      className: "Sunrise Vinyasa Flow",
-      classImageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2120&auto=format&fit=crop',
-      spotsAvailable: 1,
-      startTime: new Date(Date.now() + 0.5 * 60 * 60 * 1000).toISOString(),
-      expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
-      instructorHandle: 'alice',
-      isFavoriteVenue: false,
-      location: { lat: -33.89, lng: 151.278 },
-    },
+    // WARNING: "Yoga by the Sea" does not exist in venues-collection.json
   ] as ClassDrop[],
   tableDrops: [
     {
@@ -524,12 +519,12 @@ export const appData = {
       },
   ] as TableDrop[],
   quests: [
-    { id: 'quest-photo', venue: 'Bondi Beach', slug: 'bondi-beach', title: 'Bondi Photo Quest' },
-    { id: 'quest-foodie', venue: 'Totti\'s', slug: 'tottis', title: 'Foodie Challenge' },
+    { id: 'quest-photo', venueId: 'bondi-beach', title: 'Bondi Photo Quest', venue: 'Bondi Beach' },
+    { id: 'quest-foodie', venueId: 'tottis', title: 'Foodie Challenge', venue: 'Totti\'s' },
   ],
   rewards: [
-      { id: 'reward-coffee', venue: 'The Depot', slug: 'the-depot', title: 'Free Coffee Reward' },
-      { id: 'reward-merch', venue: 'Hotel Ravesis', slug: 'hotel-ravesis', title: 'Exclusive Merch' },
+      { id: 'reward-coffee', venueId: 'the-depot', title: 'Free Coffee Reward', venue: 'The Depot' },
+      { id: 'reward-merch', venueId: 'hotel-ravesis', title: 'Exclusive Merch', venue: 'Hotel Ravesis' },
   ],
   socialActivities: [
     {
@@ -538,6 +533,7 @@ export const appData = {
         description: 'Starting the day with good vibes and a great stretch. All levels welcome, just bring a mat and some water!',
         time: '7:00 AM',
         location: 'Grassy Knoll, North Bondi',
+        venueId: 'bondi-beach',
         creator: { id: 'lucas', name: 'Lucas', avatar: 'https://github.com/lucas.png' },
         participants: 8,
         maxParticipants: 10,
@@ -550,6 +546,7 @@ export const appData = {
         description: 'Need 3 more players for some friendly but competitive spikeball this arvo. Let\'s get a game going!',
         time: '4:00 PM',
         location: 'Middle of Bondi Beach',
+        venueId: 'bondi-beach',
         creator: { id: 'jay', name: 'Jay', avatar: 'https://github.com/jay.png' },
         participants: 1,
         maxParticipants: 4,
@@ -562,6 +559,7 @@ export const appData = {
         description: 'Heading to The Depot for a coffee break. Anyone wanna join and chat about nothing in particular?',
         time: '2:30 PM',
         location: 'The Depot',
+        venueId: 'the-depot',
         creator: { id: 'shannon', name: 'Shannon', avatar: 'https://github.com/shannon.png' },
         participants: 2,
         maxParticipants: 4,
@@ -574,6 +572,7 @@ export const appData = {
         description: 'Craving some fresh sushi from Raw Bar for dinner tonight but don\'t wanna go alone. Join me!',
         time: '7:30 PM',
         location: 'Raw Bar',
+        venueId: 'raw-bar',
         creator: { id: 'alice', name: 'Alice', avatar: 'https://github.com/alice.png' },
         participants: 1,
         maxParticipants: 2,
@@ -586,6 +585,7 @@ export const appData = {
         id: 'drop-1',
         title: "Free Iced Latte",
         venue: "The Depot",
+        venueId: "the-depot",
         description: "Your daily pick-me-up is on us. Show this in AR mode to redeem.",
         imageId: "coffee-1",
         isSponsored: true,
@@ -594,6 +594,7 @@ export const appData = {
         id: 'drop-2',
         title: "Priority Entry",
         venue: "Hotel Ravesis",
+        venueId: "hotel-ravesis",
         description: "Skip the line tonight. Unlock this reward by visiting the venue in AR mode.",
         imageId: "cocktail-101",
         isSponsored: false,
@@ -602,6 +603,7 @@ export const appData = {
         id: 'drop-3',
         title: "Free Surf Wax",
         venue: "Lets Go Surfing",
+        venueId: "lets-go-surfing",
         description: "Grab a free block of surf wax for your next session. Only on iykyk.",
         imageId: "surf-lesson",
         isSponsored: true,
@@ -691,6 +693,7 @@ export const appData = {
         id: 'deal-patron',
         title: "2-for-1 Patrón Margaritas",
         venue: "Hotel Ravesis",
+        venueId: "hotel-ravesis",
         description: "Enjoy two Patrón Margaritas for the price of one. The perfect sunset drink!",
         imageId: "cocktail-101",
         validity: "Fri & Sat Sunset",
@@ -701,6 +704,7 @@ export const appData = {
         id: 'deal-2',
         title: "50% Off Sushi Platters",
         venue: "Raw Bar",
+        venueId: "raw-bar",
         description: "Half-price sushi platters every Tuesday and Wednesday.",
         imageId: "sushi-1",
         validity: "Tues & Weds only",
@@ -711,6 +715,7 @@ export const appData = {
         id: 'deal-3',
         title: "Free Coffee with Breakfast",
         venue: "Harry's Bondi",
+        venueId: "harrys-bondi",
         description: "Get a free coffee with any breakfast order before 10 AM on weekdays.",
         imageId: "coffee-1",
         validity: "Weekdays before 10 AM",
@@ -721,6 +726,7 @@ export const appData = {
         id: 'deal-4',
         title: "Free Reformer Class",
         venue: "Fluidform Pilates",
+        venueId: "fluidform-pilates",
         description: "First time at Fluidform? Your first class is on us!",
         imageId: "fitness-1",
         validity: "New members only",
@@ -731,6 +737,7 @@ export const appData = {
         id: 'deal-5',
         title: "20% Off Storewide",
         venue: "Tuchuzy",
+        venueId: "tuchuzy",
         description: "Get 20% off all new season arrivals this weekend only.",
         imageId: "style-1",
         validity: "This weekend only",
@@ -743,6 +750,7 @@ export const appData = {
         id: 'hot-1',
         title: "Last Minute Spot",
         venue: "Fluidform Pilates",
+        venueId: "fluidform-pilates",
         description: "25% off the 5pm Reformer class.",
         imageId: "fitness-1",
         expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
@@ -752,6 +760,7 @@ export const appData = {
         id: 'hot-2',
         title: "$10 Spicy Margs",
         venue: "Lulu",
+        venueId: "lulu",
         description: "Spice up your night with our signature spicy margaritas.",
         imageId: "community-sushi",
         creatorId: "lucas",
@@ -762,6 +771,7 @@ export const appData = {
       id: 'hot-3',
       title: "2 for 1 Cocktails",
       venue: "Raw Bar",
+      venueId: "raw-bar",
       description: "Enjoy our signature cocktails. Buy one, get one free!",
       imageId: "community-sushi",
       expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
@@ -771,6 +781,7 @@ export const appData = {
       id: 'hot-4',
       title: "2-for-1 Crispy Salmon Rolls",
       venue: "Raw Bar",
+      venueId: "raw-bar",
       description: "Enjoy our signature crispy salmon rolls. Buy one, get one free!",
       imageId: "sushi-1",
       expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString(),
@@ -875,9 +886,9 @@ export const appData = {
         travelMode: 'walking',
       },
       mockItinerary: [
-        { time: '17:00', name: 'Bondi to Bronte Coastal Walk', notes: 'Golden hour walk.' },
-        { time: '18:00', name: 'Hotel Ravesis', notes: 'Enjoy a 2-for-1 Patrón Margarita deal.' },
-        { time: '19:30', name: 'La Piadina', notes: 'Casual and delicious Italian street food.' }
+        { time: '17:00', name: 'Bondi to Bronte Coastal Walk', venueId: 'bondi-to-bronte-coastal-walk', notes: 'Golden hour walk.' },
+        { time: '18:00', name: 'Hotel Ravesis', venueId: 'hotel-ravesis', notes: 'Enjoy a 2-for-1 Patrón Margarita deal.' },
+        { time: '19:30', name: 'La Piadina', venueId: 'la-piadina', notes: 'Casual and delicious Italian street food.' }
       ],
       curatedMessage: 'Your Patrón Margarita Sunset is ready! Take a golden hour stroll along the coast, then head to Hotel Ravesis for your 2-for-1 Patrón Margarita. Finish with some amazing Italian food at La Piadina. Enjoy the sunset!'
     },
@@ -892,11 +903,11 @@ export const appData = {
         travelMode: 'walking',
       },
       mockItinerary: [
-        { time: '18:30', name: 'The Rum Diary Bar', notes: 'Booked in for a cheeky cocktail.' },
-        { time: '19:30', name: 'Totti\'s', notes: 'Reservation for dinner and some delicious Italian food.' },
-        { time: '21:00', name: 'Bondi Icebergs', notes: 'Finish the night with some wicked cocktails.' }
+        { time: '18:30', name: 'The Corner House', venueId: 'the-corner-house', notes: 'Booked in for a cheeky cocktail.' },
+        { time: '19:30', name: 'Totti\'s', venueId: 'tottis', notes: 'Reservation for dinner and some delicious Italian food.' },
+        { time: '21:00', name: 'Bondi Icebergs', venueId: 'bondi-icebergs', notes: 'Finish the night with some wicked cocktails.' }
       ],
-      curatedMessage: 'All good, you\'re booked in for a cheeky cocktail at The Rum Diary Bar, then jump over to Totti\'s for some delicious Italian food. Finish the night at Icebergs with some wicked cocktails. You\'ve Got This!'
+      curatedMessage: 'All good, you\'re booked in for a cheeky cocktail at The Corner House, then jump over to Totti\'s for some delicious Italian food. Finish the night at Icebergs with some wicked cocktails. You\'ve Got This!'
     },
     {
       id: 'mmd2',
@@ -909,11 +920,11 @@ export const appData = {
         travelMode: 'walking',
       },
       mockItinerary: [
-        { time: '18:30', name: 'Lulu', notes: 'Trivia & tapas at the local.' },
-        { time: '20:00', name: 'Hotel Ravesis', notes: 'Rooftop cocktails - mingle hour.' },
-        { time: '22:00', name: 'Bondi Vibes Bar', notes: 'Dancing & good energy!' }
+        { time: '18:30', name: 'Lulu', venueId: 'lulu', notes: 'Trivia & tapas at the local.' },
+        { time: '20:00', name: 'Hotel Ravesis', venueId: 'hotel-ravesis', notes: 'Rooftop cocktails - mingle hour.' },
+        { time: '22:00', name: 'The Bucket List', venueId: 'the-bucket-list', notes: 'Dancing & good energy!' }
       ],
-      curatedMessage: 'Get ready to mingle! You\'re all set for trivia and tapas at Lulu, then hit the rooftop at Ravesis for some cocktails. Finish the night dancing at Bondi Vibes Bar. Have fun!'
+      curatedMessage: 'Get ready to mingle! You\'re all set for trivia and tapas at Lulu, then hit the rooftop at Ravesis for cocktails. Finish the night dancing at The Bucket List. Have fun!'
     },
     {
       id: 'mmd3',
@@ -926,9 +937,9 @@ export const appData = {
         travelMode: 'walking',
       },
       mockItinerary: [
-        { time: '08:00', name: 'Fluidform Pilates', notes: 'Sunrise yoga at the Pavilion.' },
-        { time: '09:30', name: 'Harry\'s Bondi', notes: 'Acai bowl & green juice.' },
-        { time: '11:00', name: 'Bondi Icebergs', notes: 'Cold plunge & reset.' }
+        { time: '08:00', name: 'Fluidform Pilates', venueId: 'fluidform-pilates', notes: 'Sunrise yoga at the Pavilion.' },
+        { time: '09:30', name: 'Harry\'s Bondi', venueId: 'harrys-bondi', notes: 'Acai bowl & green juice.' },
+        { time: '11:00', name: 'Bondi Icebergs', venueId: 'bondi-icebergs', notes: 'Cold plunge & reset.' }
       ],
       curatedMessage: 'Your wellness day is all planned! Start with sunrise yoga at Fluidform Pilates, grab a healthy bite at Harry\'s, then finish with a refreshing cold plunge at Icebergs. A perfect reset!'
     },
@@ -943,11 +954,11 @@ export const appData = {
         travelMode: 'walking',
       },
       mockItinerary: [
-        { time: '18:00', name: 'Totti\'s', notes: 'Reservation for an amazing meal.' },
-        { time: '19:30', name: 'Hotel Ravesis', notes: 'Rooftop drinks with an ocean view.' },
-        { time: '21:00', name: 'Bondi Icebergs', notes: 'Sunset walk and cocktails at the pool.' }
+        { time: '18:00', name: 'Totti\'s', venueId: 'tottis', notes: 'Reservation for an amazing meal.' },
+        { time: '19:30', name: 'Hotel Ravesis', venueId: 'hotel-ravesis', notes: 'Rooftop drinks with an ocean view.' },
+        { time: '21:00', name: 'Bondi Icebergs', venueId: 'bondi-icebergs', notes: 'Sunset walk and cocktails at the pool.' }
       ],
-      curatedMessage: 'All good, you\'re booked in for a cheeky cocktail at Rum Diaries, then jump over to Totti\'s for some delicious Italian food. Finish the night at Icebergs with some wicked cocktails. You\'ve Got This!'
+      curatedMessage: 'All good, you\'re booked in for a cheeky cocktail at The Corner House, then jump over to Totti\'s for some delicious Italian food. Finish the night at Icebergs with some wicked cocktails. You\'ve Got This!'
     },
     {
       id: 'mmd5',
@@ -960,11 +971,11 @@ export const appData = {
         travelMode: 'uber',
       },
       mockItinerary: [
-        { time: '18:00', name: 'Lulu', notes: 'Margaritas and shared tapas.' },
-        { time: '20:00', name: 'Hotel Ravesis', notes: 'Skyline cocktails on the rooftop.' },
-        { time: '22:00', name: 'Bondi Vibes Bar', notes: 'Dancing & good energy.' }
+        { time: '18:00', name: 'Lulu', venueId: 'lulu', notes: 'Margaritas and shared tapas.' },
+        { time: '20:00', name: 'Hotel Ravesis', venueId: 'hotel-ravesis', notes: 'Skyline cocktails on the rooftop.' },
+        { time: '22:00', name: 'The Bucket List', venueId: 'the-bucket-list', notes: 'Dancing & good energy.' }
       ],
-      curatedMessage: 'Your girls\' night out is all set! Start with margaritas at Lulu, then hit the rooftop at Ravesis for cocktails. Finish the night dancing at Bondi Vibes Bar. Have a blast!'
+      curatedMessage: 'Your girls\' night out is all set! Start with margaritas at Lulu, then hit the rooftop at Ravesis for cocktails. Finish the night dancing at The Bucket List. Have a blast!'
     },
     {
       id: 'mmd6',
@@ -977,11 +988,11 @@ export const appData = {
         travelMode: 'walking',
       },
       mockItinerary: [
-        { time: '12:00', name: 'Raw Bar', notes: 'Ricotta hotcakes & spritz.' },
-        { time: '13:30', name: 'Totti\'s', notes: 'Window shopping & try-ons.' },
-        { time: '15:00', name: 'Sushi-e', notes: 'Champagne & oysters.' }
+        { time: '12:00', name: 'Bills', venueId: 'bills', notes: 'Ricotta hotcakes & spritz.' },
+        { time: '13:30', name: 'Tuchuzy', venueId: 'tuchuzy', notes: 'Window shopping & try-ons.' },
+        { time: '15:00', name: 'Sean\'s', venueId: 'seans', notes: 'Champagne & oysters.' }
       ],
-      curatedMessage: 'Lunch plans are sorted! You\'re all set for ricotta hotcakes and spritz at Raw Bar, then head over to Totti\'s for a window shop. Finish your afternoon with champagne and oysters at Sushi-e. Enjoy!'
+      curatedMessage: 'Lunch plans are sorted! You\'re all set for ricotta hotcakes and spritz at Bills, then head over to Tuchuzy for a window shop. Finish your afternoon with champagne and oysters at Sean\'s. Enjoy!'
     },
     {
       id: 'mmd7',
@@ -994,10 +1005,10 @@ export const appData = {
         travelMode: 'walking',
       },
       mockItinerary: [
-        { time: '13:30', name: 'Raw Bar', notes: 'Healthy and fresh lunch.' },
-        { time: '14:30', name: 'Beach Burrito Company', notes: 'A quick taco.' }
+        { time: '13:30', name: 'Raw Bar', venueId: 'raw-bar', notes: 'Healthy and fresh lunch.' },
+        { time: '14:30', name: 'La Piadina', venueId: 'la-piadina', notes: 'A quick Italian sandwich.' }
       ],
-      curatedMessage: 'Your quick lunch is sorted! Head to Raw Bar for a fresh meal, or grab a quick taco at Beach Burrito Company. Enjoy!'
+      curatedMessage: 'Your quick lunch is sorted! Head to Raw Bar for a fresh meal, or grab a quick sandwich at La Piadina. Enjoy!'
     },
     {
       id: 'mmd8',
@@ -1010,11 +1021,11 @@ export const appData = {
         travelMode: 'walking',
       },
       mockItinerary: [
-        { time: '07:00', name: 'Bondi Beach Outdoor Gym', notes: 'PT Session with a view.' },
-        { time: '09:00', name: 'Acai Brothers', notes: 'Protein-packed acai bowl.' },
-        { time: '14:00', name: 'Lets Go Surfing', notes: 'Afternoon surf lesson.' }
+        { time: '07:00', name: 'Bondi Beach', venueId: 'bondi-beach', notes: 'PT Session at the outdoor gym.' },
+        { time: '09:00', name: 'Porch and Parlour', venueId: 'porch-and-parlour', notes: 'Protein-packed breakfast bowl.' },
+        { time: '14:00', name: 'Lets Go Surfing', venueId: 'lets-go-surfing', notes: 'Afternoon surf lesson.' }
       ],
-      curatedMessage: 'Your fitness day is locked in! Smash a PT session at the outdoor gym, refuel with a protein bowl from Acai Brothers, and then catch some waves with a surf lesson. Go get \'em!'
+      curatedMessage: 'Your fitness day is locked in! Smash a PT session at the outdoor gym, refuel with a protein bowl from Porch and Parlour, and then catch some waves with a surf lesson. Go get \'em!'
     },
   ],
   map: {
@@ -1044,7 +1055,43 @@ export const appData = {
       { id: 37, name: "Bondi to Bronte Coastal Walk", slug: "bondi-to-bronte-coastal-walk", type: "Vibes", description: "One of the most scenic coastal walks in the world.", x: "85%", y: "95%", latitude: -33.903, longitude: 151.276, openingHours: "24/7", vibeTags: ["Walk", "Scenic", "Nature"], currentVibe: "Chill" },
       { id: 4, name: "Bondi Beach", slug: "bondi-beach", type: "Vibes", description: "World-famous beach with golden sands and surf.", x: "80%", y: "30%", latitude: -33.8917, longitude: 151.277, openingHours: "24/7", vibeTags: ["Beach", "Surf", "Sun"], currentVibe: "Buzzing" }
     ]
-  }
+  },
+  groupEventsOptions: [
+    {
+        id: 'ge1',
+        title: 'Work Christmas Party',
+        description: 'Plan a memorable end-of-year celebration for your team.',
+        request: {
+            vibe: 'A sophisticated yet fun Christmas party for a corporate team. Good food, great drinks, and a lively atmosphere are a must.',
+            pace: 3,
+            budget: 4,
+            travelMode: 'uber',
+        },
+        mockItinerary: [
+            { time: '18:00', name: 'Chiswick', venueId: 'chiswick', notes: 'Welcome drinks and canapés in the garden.' },
+            { time: '19:30', name: 'North Bondi Fish', venueId: 'north-bondi-fish', notes: 'Main course with a seafood focus and ocean views.' },
+            { time: '21:30', name: 'The Corner House', venueId: 'the-corner-house', notes: 'After-dinner cocktails to continue the celebration.' }
+        ],
+        curatedMessage: 'Your work Christmas party is set to be a hit! Start with garden drinks at Chiswick, enjoy a seafood feast at North Bondi Fish, and finish with cocktails at The Corner House. Cheers!'
+    },
+    {
+        id: 'ge2',
+        title: 'Hens Night',
+        description: 'Create an unforgettable night for the bride-to-be.',
+        request: {
+            vibe: 'A glamorous and fun Hens night. Start with a stylish dinner, move to a chic bar for cocktails, and end with dancing.',
+            pace: 4,
+            budget: 4,
+            travelMode: 'uber',
+        },
+        mockItinerary: [
+            { time: '19:00', name: 'Sean\'s', venueId: 'seans', notes: 'Elegant dinner to start the night.' },
+            { time: '21:00', name: 'Hotel Ravesis', venueId: 'hotel-ravesis', notes: 'Rooftop cocktails and sunset views.' },
+            { time: '23:00', name: 'The Bucket List', venueId: 'the-bucket-list', notes: 'Beachside dancing until late.' }
+        ],
+        curatedMessage: 'The perfect Hens night awaits! Enjoy an elegant dinner at Sean\'s, followed by rooftop cocktails at Hotel Ravesis, and dance the night away at The Bucket List. It\'s going to be a night to remember!'
+    }
+  ]
 };
     
 
