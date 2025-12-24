@@ -9,7 +9,7 @@ export function useCamera() {
 
     useEffect(() => {
         const getCameraPermission = async () => {
-            if (hasCameraPermission) return;
+            if (hasCameraPermission !== null) return;
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ 
                   video: { 
