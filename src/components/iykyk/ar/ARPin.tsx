@@ -35,42 +35,46 @@ export function ARPin({ pin }: ARPinProps) {
   const pinColor = getPinColor(pin.type);
 
   return (
-    <motion.div
+    <div
       key={pin.id}
       className="absolute"
       style={pin.style}
-      initial={{ opacity: 0, y: 20, scale: 0.8 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -20, scale: 0.8 }}
-      transition={{ type: 'spring', stiffness: 100, damping: 10 }}
     >
-      <Link href={`/venue/${pin.slug}`}>
-        <div className="group relative cursor-pointer flex flex-col items-center">
-            
-            <div 
-              style={{'--pin-glow-color': pinColor} as React.CSSProperties}
-              className={cn(
-                'absolute -inset-2.5 rounded-full blur-xl animate-pulse',
-                'bg-[var(--pin-glow-color)] opacity-40'
-              )}
-            ></div>
-            
-            <ColorPinSVG color={pinColor} className="w-16 h-16 drop-shadow-2xl" />
+      {/* CSS-only glow, isolated from Framer Motion transforms */}
+      <div 
+        className="absolute top-0 left-0 w-16 h-16 pointer-events-none"
+      >
+          <div
+            style={{ backgroundColor: pinColor }}
+            className="absolute -inset-1 rounded-full blur-xl animate-pulse opacity-40"
+          ></div>
+      </div>
+      
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.8 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -20, scale: 0.8 }}
+        transition={{ type: 'spring', stiffness: 100, damping: 10 }}
+      >
+        <Link href={`/venue/${pin.slug}`}>
+          <div className="group relative cursor-pointer flex flex-col items-center">
+              <ColorPinSVG color={pinColor} className="w-16 h-16 drop-shadow-2xl" />
 
-            <div
-                className={cn(
-                'mt-2 rounded-full border-2 border-white/30 bg-black/60 px-4 py-1.5 text-center shadow-lg backdrop-blur-md transition-all group-hover:scale-110 group-hover:border-white/50'
-                )}
-            >
-                <p className="font-bold text-white text-sm whitespace-nowrap">{pin.name}</p>
-                 {pin.distanceMeters !== undefined && (
-                    <p className="text-xs text-white/70 font-medium">
-                        {pin.isUnlocked ? 'Unlocked ✨' : `${Math.round(pin.distanceMeters)}m away`}
-                    </p>
-                )}
-            </div>
-        </div>
-      </Link>
-    </motion.div>
+              <div
+                  className={cn(
+                  'mt-2 rounded-full border-2 border-white/30 bg-black/60 px-4 py-1.5 text-center shadow-lg backdrop-blur-md transition-all group-hover:scale-110 group-hover:border-white/50'
+                  )}
+              >
+                  <p className="font-bold text-white text-sm whitespace-nowrap">{pin.name}</p>
+                   {pin.distanceMeters !== undefined && (
+                      <p className="text-xs text-white/70 font-medium">
+                          {pin.isUnlocked ? 'Unlocked ✨' : `${Math.round(pin.distanceMeters)}m away`}
+                      </p>
+                  )}
+              </div>
+          </div>
+        </Link>
+      </motion.div>
+    </div>
   );
 }
