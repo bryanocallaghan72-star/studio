@@ -6,8 +6,6 @@ import { appData } from '@/lib/data';
 import type { LayerType } from '@/app/ar/page';
 import { ARPin } from './ARPin';
 import { useARVenues, type ARVenue } from '@/hooks/useARVenues';
-import { useUserLocation } from '@/hooks/useUserLocation';
-
 
 // 1. Expanded ARPinData type for future features
 export type ARPinData = {
@@ -39,29 +37,12 @@ const PREDEFINED_POSITIONS = [
     { top: '65%', left: '60%' }, // Bottom-right
 ];
 
-// Haversine formula to calculate distance between two points on Earth.
-function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
-  const R = 6371e3; // metres
-  const φ1 = lat1 * Math.PI/180; // φ, λ in radians
-  const φ2 = lat2 * Math.PI/180;
-  const Δφ = (lat2-lat1) * Math.PI/180;
-  const Δλ = (lon2-lon1) * Math.PI/180;
-
-  const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-            Math.cos(φ1) * Math.cos(φ2) *
-            Math.sin(Δλ/2) * Math.sin(Δλ/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-  const d = R * c; // in metres
-  return d;
-}
-
 /**
  * 2. Centralized enrichment function to create a consistent ARPinData object.
  * This is now the single source of truth for pin creation.
  */
 function enrichPin(
-    rawPin: ARVenue & { typeOverride?: string; distanceMeters?: number }, 
+    rawPin: ARVenue, 
     position: { top: string, left: string }, 
     index: number,
     layer: LayerType
@@ -72,7 +53,7 @@ function enrichPin(
   const uniqueId = `${layer}-${rawPin.id}`;
   
   let category: ARPinData['category'] = 'default';
-  let type = rawPin.typeOverride || rawPin.category || 'Default';
+  let type = rawPin.category || 'Default';
   let isSponsored = false;
 
   // Normalize category and type
@@ -116,107 +97,71 @@ function enrichPin(
  * 3. Refactored getPinsForLayer to use the enrichment function.
  * This function now only filters data and delegates the complex logic.
  */
-function getPinsForLayer(layer: LayerType, venuePins: ARVenue[], userCoords: { latitude: number, longitude: number } | null): ARPinData[] {
-    let filteredPins: (ARVenue & {typeOverride?: string})[] = [];
+function getPinsForLayer(layer: LayerType, venuePins: ARVenue[]): ARPinData[] {
+    let filteredPins: ARVenue[] = [];
 
     switch (layer) {
         case 'fire':
             const fireVenues = new Set(appData.hotItems.map(item => item.venue));
-            filteredPins = venuePins
-              .filter(pin => fireVenues.has(pin.name))
-              .map(pin => ({...pin, typeOverride: 'Fire' }));
+            filteredPins = venuePins.filter(pin => fireVenues.has(pin.name));
             break;
         case 'deals':
             const dealVenues = new Set(appData.deals.map(item => item.venue));
-            filteredPins = venuePins
-              .filter(pin => dealVenues.has(pin.name))
-              .map(pin => ({...pin, typeOverride: 'Deals' }));
+            filteredPins = venuePins.filter(pin => dealVenues.has(pin.name));
             break;
         case 'drops':
              const dropVenues = new Set(appData.arDrops.map(item => item.venue));
-             filteredPins = venuePins
-               .filter(pin => dropVenues.has(pin.name))
-               .map(pin => ({...pin, typeOverride: 'Drop'})); // Type is further refined in enrichPin
+             filteredPins = venuePins.filter(pin => dropVenues.has(pin.name));
              break;
         case 'quests':
             if (appData.quests) {
                 const questVenues = new Set(appData.quests.map(item => item.venue));
-                filteredPins = venuePins
-                  .filter(pin => questVenues.has(pin.name))
-                  .map(pin => ({ ...pin, typeOverride: 'Quest' }));
+                filteredPins = venuePins.filter(pin => questVenues.has(pin.name));
             }
             break;
         case 'rewards':
             if (appData.rewards) {
                 const rewardVenues = new Set(appData.rewards.map(item => item.venue));
-                filteredPins = venuePins
-                    .filter(pin => rewardVenues.has(pin.name))
-                    .map(pin => ({ ...pin, typeOverride: 'Reward' }));
+                filteredPins = venuePins.filter(pin => rewardVenues.has(pin.name));
             }
             break;
         case 'all':
         default:
-            const findPin = (venueName: string) => venuePins.find(p => p.name === venueName);
-            const firePins = appData.hotItems.map(item => findPin(item.venue) ? { ...findPin(item.venue)!, typeOverride: 'Fire' } : null);
-            const dealPins = appData.deals.map(item => findPin(item.venue) ? { ...findPin(item.venue)!, typeOverride: 'Deals' } : null);
-            const dropPins = appData.arDrops.map(item => findPin(item.venue) ? { ...findPin(item.venue)!, typeOverride: 'Drop' } : null);
+            const allPinsMap = new Map<string, ARVenue>();
+            
+            const addPinToMap = (venueName: string, typeOverride: string) => {
+              const venue = venuePins.find(p => p.name === venueName || p.slug === venueName);
+              if (venue && !allPinsMap.has(venue.slug)) { // Prioritize what's added first
+                allPinsMap.set(venue.slug, { ...venue, category: typeOverride });
+              }
+            };
+            
+            appData.hotItems.forEach(item => addPinToMap(item.venue, 'Fire'));
+            appData.deals.forEach(item => addPinToMap(item.venue, 'Deals'));
+            appData.arDrops.forEach(item => addPinToMap(item.venue, 'Drop'));
 
-            // Combine and remove duplicates, keeping the more "important" type
-            const allPinsMap = new Map<string, ARVenue & { typeOverride?: string }>();
-            [...firePins, ...dealPins, ...dropPins].forEach(pin => {
-                if (pin) allPinsMap.set(pin.slug, pin);
-            });
             filteredPins = Array.from(allPinsMap.values());
             break;
     }
-
-    // New logic with pre-computation and safe sorting
-    if (userCoords) {
-        const pinsWithDistance = filteredPins.map(pin => {
-            let distanceMeters;
-            // ✅ Safe numeric check
-            if (typeof pin.latitude === "number" && typeof pin.longitude === "number") {
-                distanceMeters = getDistance(userCoords.latitude, userCoords.longitude, pin.latitude, pin.longitude);
-            }
-            return { ...pin, distanceMeters };
-        });
-
-        // ✅ Sort using the pre-computed distance
-        pinsWithDistance.sort((a, b) => {
-            if (a.distanceMeters === undefined) return 1;
-            if (b.distanceMeters === undefined) return -1;
-            return a.distanceMeters - b.distanceMeters;
-        });
-        
-        // Return the enriched data, sliced AFTER sorting
-        return pinsWithDistance
-            .slice(0, MAX_PINS_DISPLAYED)
-            .map((pin, index) => {
-                // ✅ Deterministic position assignment
-                const position = PREDEFINED_POSITIONS[index % PREDEFINED_POSITIONS.length];
-                return enrichPin(pin, position, index, layer);
-            });
-    }
-
-    // Fallback for when no user coordinates are available
+    
+    // Slice AFTER filtering, and then enrich the final list
     return filteredPins
-      .slice(0, MAX_PINS_DISPLAYED)
-      .map((pin, index) => {
-          const position = PREDEFINED_POSITIONS[index % PREDEFINED_POSITIONS.length];
-          return enrichPin(pin, position, index, layer);
-      });
+        .slice(0, MAX_PINS_DISPLAYED)
+        .map((pin, index) => {
+            const position = PREDEFINED_POSITIONS[index % PREDEFINED_POSITIONS.length];
+            return enrichPin(pin, position, index, layer);
+        });
 }
 
 export function ARPinLayer({ activeLayer }: { activeLayer: LayerType }) {
     const { venues, isLoading, error } = useARVenues();
-    const { coords: userCoords } = useUserLocation();
 
     const arPins = useMemo(() => {
         if (!venues || isLoading) {
             return [];
         }
-        return getPinsForLayer(activeLayer, venues, userCoords);
-    }, [activeLayer, venues, isLoading, userCoords]);
+        return getPinsForLayer(activeLayer, venues);
+    }, [activeLayer, venues, isLoading]);
 
     if (error) {
         // You could render an error state here if needed
