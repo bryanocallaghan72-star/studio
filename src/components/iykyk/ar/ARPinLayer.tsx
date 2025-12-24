@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo } from 'react';
@@ -6,9 +5,8 @@ import { AnimatePresence } from 'framer-motion';
 import { appData } from '@/lib/data';
 import type { LayerType } from '@/app/ar/page';
 import { ARPin } from './ARPin';
+import { useARVenues, type ARVenue } from '@/hooks/useARVenues';
 
-// A raw pin from the appData source
-type RawPin = (typeof appData.map.pins)[0];
 
 // 1. Expanded ARPinData type for future features
 export type ARPinData = {
@@ -58,14 +56,14 @@ const shuffleArray = <T>(array: T[]): T[] => {
  * @param layer - The active layer, used for generating a unique ID.
  * @returns A fully enriched ARPinData object.
  */
-function enrichPin(rawPin: RawPin & { typeOverride?: string }, index: number, layer: LayerType, position: { top: string, left: string }): ARPinData {
+function enrichPin(rawPin: ARVenue & { typeOverride?: string }, index: number, layer: LayerType, position: { top: string, left: string }): ARPinData {
   const horizontalJitter = Math.floor(Math.random() * 11) - 5; // -5 to +5
   const verticalJitter = Math.floor(Math.random() * 11) - 5;
 
   const uniqueId = `${layer}-${rawPin.id}`;
   
   let category: ARPinData['category'] = 'default';
-  let type = rawPin.typeOverride || rawPin.type || 'Default';
+  let type = rawPin.typeOverride || rawPin.category || 'Default';
   let isSponsored = false;
 
   // Normalize category and type
@@ -110,32 +108,32 @@ function enrichPin(rawPin: RawPin & { typeOverride?: string }, index: number, la
  * @param layer The active AR layer.
  * @returns An array of enriched ARPinData objects ready for rendering.
  */
-function getPinsForLayer(layer: LayerType): ARPinData[] {
-    let filteredPins: (RawPin & {typeOverride?: string})[] = [];
+function getPinsForLayer(layer: LayerType, venuePins: ARVenue[]): ARPinData[] {
+    let filteredPins: (ARVenue & {typeOverride?: string})[] = [];
 
     switch (layer) {
         case 'fire':
             const fireVenues = new Set(appData.hotItems.map(item => item.venue));
-            filteredPins = appData.map.pins
+            filteredPins = venuePins
               .filter(pin => fireVenues.has(pin.name))
               .map(pin => ({...pin, typeOverride: 'Fire' }));
             break;
         case 'deals':
             const dealVenues = new Set(appData.deals.map(item => item.venue));
-            filteredPins = appData.map.pins
+            filteredPins = venuePins
               .filter(pin => dealVenues.has(pin.name))
               .map(pin => ({...pin, typeOverride: 'Deals' }));
             break;
         case 'drops':
              const dropVenues = new Set(appData.arDrops.map(item => item.venue));
-             filteredPins = appData.map.pins
+             filteredPins = venuePins
                .filter(pin => dropVenues.has(pin.name))
                .map(pin => ({...pin, typeOverride: 'Drop'})); // Type is further refined in enrichPin
              break;
         case 'quests':
             if (appData.quests) {
                 const questVenues = new Set(appData.quests.map(item => item.venue));
-                filteredPins = appData.map.pins
+                filteredPins = venuePins
                   .filter(pin => questVenues.has(pin.name))
                   .map(pin => ({ ...pin, typeOverride: 'Quest' }));
             }
@@ -143,19 +141,20 @@ function getPinsForLayer(layer: LayerType): ARPinData[] {
         case 'rewards':
             if (appData.rewards) {
                 const rewardVenues = new Set(appData.rewards.map(item => item.venue));
-                filteredPins = appData.map.pins
+                filteredPins = venuePins
                     .filter(pin => rewardVenues.has(pin.name))
                     .map(pin => ({ ...pin, typeOverride: 'Reward' }));
             }
             break;
         case 'all':
         default:
-            const firePins = appData.hotItems.map(item => ({ ...appData.map.pins.find(p => p.name === item.venue)!, typeOverride: 'Fire' }));
-            const dealPins = appData.deals.map(item => ({ ...appData.map.pins.find(p => p.name === item.venue)!, typeOverride: 'Deals' }));
-            const dropPins = appData.arDrops.map(item => ({ ...appData.map.pins.find(p => p.name === item.venue)!, typeOverride: 'Drop' }));
+            const findPin = (venueName: string) => venuePins.find(p => p.name === venueName);
+            const firePins = appData.hotItems.map(item => findPin(item.venue) ? { ...findPin(item.venue)!, typeOverride: 'Fire' } : null);
+            const dealPins = appData.deals.map(item => findPin(item.venue) ? { ...findPin(item.venue)!, typeOverride: 'Deals' } : null);
+            const dropPins = appData.arDrops.map(item => findPin(item.venue) ? { ...findPin(item.venue)!, typeOverride: 'Drop' } : null);
 
             // Combine and remove duplicates, keeping the more "important" type
-            const allPinsMap = new Map<string, RawPin & { typeOverride?: string }>();
+            const allPinsMap = new Map<string, ARVenue & { typeOverride?: string }>();
             [...firePins, ...dealPins, ...dropPins].forEach(pin => {
                 if (pin) allPinsMap.set(pin.slug, pin);
             });
@@ -171,8 +170,20 @@ function getPinsForLayer(layer: LayerType): ARPinData[] {
 }
 
 export function ARPinLayer({ activeLayer }: { activeLayer: LayerType }) {
-    const arPins = useMemo(() => getPinsForLayer(activeLayer), [activeLayer]);
+    const { venues, isLoading, error } = useARVenues();
 
+    const arPins = useMemo(() => {
+        if (!venues || isLoading) {
+            return [];
+        }
+        return getPinsForLayer(activeLayer, venues);
+    }, [activeLayer, venues, isLoading]);
+
+    if (error) {
+        // You could render an error state here if needed
+        console.error("AR Pin Layer Error:", error);
+    }
+    
     return (
         <div className="relative z-10 h-full w-full">
             <AnimatePresence>
