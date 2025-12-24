@@ -6,6 +6,7 @@ import { appData } from '@/lib/data';
 import type { LayerType } from '@/app/ar/page';
 import { ARPin } from './ARPin';
 import { useARVenues, type ARVenue } from '@/hooks/useARVenues';
+import { useUserLocation } from '@/hooks/useUserLocation';
 
 
 // 1. Expanded ARPinData type for future features
@@ -48,15 +49,34 @@ const shuffleArray = <T>(array: T[]): T[] => {
     return newArray;
 };
 
+// Haversine formula to calculate distance between two points on Earth.
+function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371e3; // metres
+  const φ1 = lat1 * Math.PI/180; // φ, λ in radians
+  const φ2 = lat2 * Math.PI/180;
+  const Δφ = (lat2-lat1) * Math.PI/180;
+  const Δλ = (lon2-lon1) * Math.PI/180;
+
+  const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ/2) * Math.sin(Δλ/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+  const d = R * c; // in metres
+  return d;
+}
+
 /**
  * 2. Centralized enrichment function to create a consistent ARPinData object.
  * This is now the single source of truth for pin creation.
- * @param rawPin - The original pin data from appData.
- * @param index - The index in the list, used for styling.
- * @param layer - The active layer, used for generating a unique ID.
- * @returns A fully enriched ARPinData object.
  */
-function enrichPin(rawPin: ARVenue & { typeOverride?: string }, index: number, layer: LayerType, position: { top: string, left: string }): ARPinData {
+function enrichPin(
+    rawPin: ARVenue & { typeOverride?: string }, 
+    position: { top: string, left: string }, 
+    userCoords: { latitude: number, longitude: number } | null,
+    index: number,
+    layer: LayerType
+): ARPinData {
   const horizontalJitter = Math.floor(Math.random() * 11) - 5; // -5 to +5
   const verticalJitter = Math.floor(Math.random() * 11) - 5;
 
@@ -65,6 +85,11 @@ function enrichPin(rawPin: ARVenue & { typeOverride?: string }, index: number, l
   let category: ARPinData['category'] = 'default';
   let type = rawPin.typeOverride || rawPin.category || 'Default';
   let isSponsored = false;
+  let distanceMeters: number | undefined = undefined;
+
+  if (userCoords && rawPin.latitude && rawPin.longitude) {
+    distanceMeters = getDistance(userCoords.latitude, userCoords.longitude, rawPin.latitude, rawPin.longitude);
+  }
 
   // Normalize category and type
   if (type.toLowerCase().includes('fire')) {
@@ -93,6 +118,7 @@ function enrichPin(rawPin: ARVenue & { typeOverride?: string }, index: number, l
     isSponsored: isSponsored,
     lat: rawPin.latitude,
     lng: rawPin.longitude,
+    distanceMeters: distanceMeters,
     style: {
       top: `calc(${position.top} + ${verticalJitter}px)`,
       left: `calc(${position.left} + ${horizontalJitter}px)`,
@@ -105,10 +131,8 @@ function enrichPin(rawPin: ARVenue & { typeOverride?: string }, index: number, l
 /**
  * 3. Refactored getPinsForLayer to use the enrichment function.
  * This function now only filters data and delegates the complex logic.
- * @param layer The active AR layer.
- * @returns An array of enriched ARPinData objects ready for rendering.
  */
-function getPinsForLayer(layer: LayerType, venuePins: ARVenue[]): ARPinData[] {
+function getPinsForLayer(layer: LayerType, venuePins: ARVenue[], userCoords: { latitude: number, longitude: number } | null): ARPinData[] {
     let filteredPins: (ARVenue & {typeOverride?: string})[] = [];
 
     switch (layer) {
@@ -162,22 +186,31 @@ function getPinsForLayer(layer: LayerType, venuePins: ARVenue[]): ARPinData[] {
             break;
     }
 
+    if (userCoords) {
+        filteredPins.sort((a, b) => {
+            const distA = getDistance(userCoords.latitude, userCoords.longitude, a.latitude, a.longitude);
+            const distB = getDistance(userCoords.latitude, userCoords.longitude, b.latitude, b.longitude);
+            return distA - distB;
+        });
+    }
+
     const shuffledPositions = shuffleArray(PREDEFINED_POSITIONS);
 
     return filteredPins
       .slice(0, MAX_PINS_DISPLAYED)
-      .map((pin, index) => enrichPin(pin, index, layer, shuffledPositions[index]));
+      .map((pin, index) => enrichPin(pin, shuffledPositions[index], userCoords, index, layer));
 }
 
 export function ARPinLayer({ activeLayer }: { activeLayer: LayerType }) {
     const { venues, isLoading, error } = useARVenues();
+    const { coords: userCoords } = useUserLocation();
 
     const arPins = useMemo(() => {
         if (!venues || isLoading) {
             return [];
         }
-        return getPinsForLayer(activeLayer, venues);
-    }, [activeLayer, venues, isLoading]);
+        return getPinsForLayer(activeLayer, venues, userCoords);
+    }, [activeLayer, venues, isLoading, userCoords]);
 
     if (error) {
         // You could render an error state here if needed
