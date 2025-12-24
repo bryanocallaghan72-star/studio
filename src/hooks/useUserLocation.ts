@@ -41,7 +41,7 @@ export function useUserLocation(): UserLocationState {
         coords: null,
         accuracyMeters: null,
         isLoading: false,
-        error: new GeolocationPositionError(), // Mock error for unsupported browsers
+        error: null, // Set error to null as GeolocationPositionError cannot be manually instantiated
       });
       return;
     }
