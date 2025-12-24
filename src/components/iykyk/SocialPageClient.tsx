@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
-import { collection } from 'firebase/firestore';
+import { collection, query, where, orderBy, limit, Timestamp } from 'firebase/firestore';
 import { Users, UserPlus, MapPin, Coffee, Dumbbell, Waves, Plus, Loader2 } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
@@ -20,15 +20,16 @@ type SocialActivity = {
     id: string;
     title: string;
     description: string;
-    time: string;
+    startAt: Timestamp;
+    endAt?: Timestamp;
+    venueSlug?: string;
     locationText: string;
+    geo?: { lat: number; lng: number };
     hostId: string;
     hostUsername: string;
     currentParticipants: number;
     maxParticipants: number;
     category: 'Health & Fitness' | 'Vibes' | 'Brunch' | 'Sushi';
-    // participantAvatars might be a subcollection, so we may need to fetch them separately
-    // For now, let's assume they might not be on the main document
 };
 
 const ParticipantAvatars = ({ count }: { count: number }) => {
@@ -96,7 +97,19 @@ export function SocialPageClient() {
     const [createActivityData, setCreateActivityData] = useState<{title: string; category: SocialActivity['category']} | null>(null);
 
     const firestore = useFirestore();
-    const socialsQuery = useMemoFirebase(() => firestore ? collection(firestore, 'socials') : null, [firestore]);
+
+    const socialsQuery = useMemoFirebase(() => {
+        if (!firestore) return null;
+        // Fetch activities starting in the last 30 minutes, ordered by start time.
+        const nowMinusGrace = new Date(Date.now() - 30 * 60 * 1000);
+        return query(
+            collection(firestore, 'socials'),
+            where('startAt', '>=', nowMinusGrace),
+            orderBy('startAt', 'asc'),
+            limit(50)
+        );
+    }, [firestore]);
+
     const { data: socialActivities, isLoading } = useCollection<SocialActivity>(socialsQuery);
 
     const handleAskToJoin = (activity: SocialActivity) => {
@@ -120,7 +133,14 @@ export function SocialPageClient() {
             );
         }
         
-        if (!socialActivities || socialActivities.length === 0) {
+        const now = new Date();
+        const activeActivities = socialActivities?.filter(activity => {
+            const endDate = activity.endAt?.toDate() ?? new Date(activity.startAt.toDate().getTime() + 2 * 60 * 60 * 1000); // Default 2h duration
+            return endDate > now;
+        }) ?? [];
+
+
+        if (activeActivities.length === 0) {
             return (
                 <div className="text-center py-20">
                     <Users className="mx-auto h-12 w-12 text-muted-foreground" />
@@ -132,9 +152,11 @@ export function SocialPageClient() {
 
         return (
              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {socialActivities.map(activity => {
+                {activeActivities.map(activity => {
                     const progress = (activity.currentParticipants / activity.maxParticipants) * 100;
-                    
+                    // Safely format the timestamp
+                    const startTime = activity.startAt ? activity.startAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '...';
+
                     return (
                         <Card key={activity.id} className="flex flex-col p-6 bg-card shadow-lg hover:shadow-xl transition-shadow hover:-translate-y-1">
                              <CardHeader className="p-0">
@@ -144,7 +166,7 @@ export function SocialPageClient() {
                                     >
                                         {activity.category}
                                     </Badge>
-                                    <div className="text-sm font-semibold text-muted-foreground">{new Date(activity.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                                    <div className="text-sm font-semibold text-muted-foreground">{startTime}</div>
                                 </div>
                                 <CardTitle>{activity.title}</CardTitle>
                                 <CardDescription className="mt-1 line-clamp-2 h-[40px]">{activity.description}</CardDescription>
@@ -259,9 +281,11 @@ export function SocialPageClient() {
                     isOpen={isCreateDialogOpen}
                     onOpenChange={setCreateDialogOpen}
                     defaultTitle={createActivityData.title}
-                    defaultCategory={createActivityData.category}
+                    defaultCategory={createActivityData.category as any}
                 />
             )}
         </>
     );
 }
+
+    
