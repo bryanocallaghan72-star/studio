@@ -39,16 +39,6 @@ const PREDEFINED_POSITIONS = [
     { top: '65%', left: '60%' }, // Bottom-right
 ];
 
-// Helper function to shuffle an array.
-const shuffleArray = <T>(array: T[]): T[] => {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    return newArray;
-};
-
 // Haversine formula to calculate distance between two points on Earth.
 function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371e3; // metres
@@ -71,9 +61,8 @@ function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
  * This is now the single source of truth for pin creation.
  */
 function enrichPin(
-    rawPin: ARVenue & { typeOverride?: string }, 
+    rawPin: ARVenue & { typeOverride?: string; distanceMeters?: number }, 
     position: { top: string, left: string }, 
-    userCoords: { latitude: number, longitude: number } | null,
     index: number,
     layer: LayerType
 ): ARPinData {
@@ -85,11 +74,6 @@ function enrichPin(
   let category: ARPinData['category'] = 'default';
   let type = rawPin.typeOverride || rawPin.category || 'Default';
   let isSponsored = false;
-  let distanceMeters: number | undefined = undefined;
-
-  if (userCoords && rawPin.latitude && rawPin.longitude) {
-    distanceMeters = getDistance(userCoords.latitude, userCoords.longitude, rawPin.latitude, rawPin.longitude);
-  }
 
   // Normalize category and type
   if (type.toLowerCase().includes('fire')) {
@@ -118,7 +102,7 @@ function enrichPin(
     isSponsored: isSponsored,
     lat: rawPin.latitude,
     lng: rawPin.longitude,
-    distanceMeters: distanceMeters,
+    distanceMeters: rawPin.distanceMeters,
     style: {
       top: `calc(${position.top} + ${verticalJitter}px)`,
       left: `calc(${position.left} + ${horizontalJitter}px)`,
@@ -186,19 +170,41 @@ function getPinsForLayer(layer: LayerType, venuePins: ARVenue[], userCoords: { l
             break;
     }
 
+    // New logic with pre-computation and safe sorting
     if (userCoords) {
-        filteredPins.sort((a, b) => {
-            const distA = getDistance(userCoords.latitude, userCoords.longitude, a.latitude, a.longitude);
-            const distB = getDistance(userCoords.latitude, userCoords.longitude, b.latitude, b.longitude);
-            return distA - distB;
+        const pinsWithDistance = filteredPins.map(pin => {
+            let distanceMeters;
+            // ✅ Safe numeric check
+            if (typeof pin.latitude === "number" && typeof pin.longitude === "number") {
+                distanceMeters = getDistance(userCoords.latitude, userCoords.longitude, pin.latitude, pin.longitude);
+            }
+            return { ...pin, distanceMeters };
         });
+
+        // ✅ Sort using the pre-computed distance
+        pinsWithDistance.sort((a, b) => {
+            if (a.distanceMeters === undefined) return 1;
+            if (b.distanceMeters === undefined) return -1;
+            return a.distanceMeters - b.distanceMeters;
+        });
+        
+        // Return the enriched data, sliced AFTER sorting
+        return pinsWithDistance
+            .slice(0, MAX_PINS_DISPLAYED)
+            .map((pin, index) => {
+                // ✅ Deterministic position assignment
+                const position = PREDEFINED_POSITIONS[index % PREDEFINED_POSITIONS.length];
+                return enrichPin(pin, position, index, layer);
+            });
     }
 
-    const shuffledPositions = shuffleArray(PREDEFINED_POSITIONS);
-
+    // Fallback for when no user coordinates are available
     return filteredPins
       .slice(0, MAX_PINS_DISPLAYED)
-      .map((pin, index) => enrichPin(pin, shuffledPositions[index], userCoords, index, layer));
+      .map((pin, index) => {
+          const position = PREDEFINED_POSITIONS[index % PREDEFINED_POSITIONS.length];
+          return enrichPin(pin, position, index, layer);
+      });
 }
 
 export function ARPinLayer({ activeLayer }: { activeLayer: LayerType }) {
