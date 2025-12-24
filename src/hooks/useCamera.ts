@@ -11,7 +11,11 @@ export function useCamera() {
         const getCameraPermission = async () => {
             if (hasCameraPermission) return;
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                  video: { 
+                    facingMode: 'environment' // <--- This forces the rear camera
+                  } 
+                });
                 setHasCameraPermission(true);
 
                 if (videoRef.current) {
