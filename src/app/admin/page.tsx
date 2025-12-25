@@ -1,26 +1,27 @@
+
 'use client';
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useFirestore } from '@/firebase';
-import { appData } from '@/lib/data';
-import { writeBatch, collection, doc, getDocs } from 'firebase/firestore';
-import { Loader2, CheckCircle, AlertTriangle, Database } from 'lucide-react';
+import { seedVenues, type SeedMode, type SeedResult } from '@/lib/seeding';
+import { Loader2, CheckCircle, AlertTriangle, Database, FileWarning, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Switch } from '@/components/ui/switch';
 
-type SeedStatus = 'idle' | 'loading' | 'success' | 'skipped' | 'error';
+type SeedStatus = 'idle' | 'loading' | 'success' | 'error';
 
 
 function Seeder() {
   const [status, setStatus] = useState<SeedStatus>('idle');
-  const [message, setMessage] = useState('');
+  const [result, setResult] = useState<SeedResult | null>(null);
+  const [seedMode, setSeedMode] = useState<SeedMode>('skip-if-exists');
+  const [isDryRun, setIsDryRun] = useState(true);
   
-  // Note: This component doesn't use useFirestore directly for seeding
-  // to avoid issues if the provider isn't available on this specific admin page.
-  // Instead, we would initialize it on demand if we had a Firestore instance.
-  // For this fix, we will assume `useFirestore` might fail and handle it gracefully.
   let firestore: any;
   try {
     firestore = useFirestore();
@@ -32,59 +33,45 @@ function Seeder() {
   const handleSeedVenues = async () => {
     if (!firestore) {
       setStatus('error');
-      setMessage('Firestore is not initialized. Cannot seed data. Is the page wrapped in FirebaseClientProvider?');
+      setResult({
+        success: false, 
+        message: 'Firestore is not initialized. Cannot seed data.',
+        operations: { total: 0, written: 0, skipped: 0, dryRun: isDryRun }
+      });
       return;
     }
 
     setStatus('loading');
-    const venuesCollection = collection(firestore, 'venues');
+    setResult(null);
 
-    try {
-      // 1. Check if the collection is already populated
-      const snapshot = await getDocs(venuesCollection);
-      if (!snapshot.empty) {
-        setStatus('skipped');
-        setMessage('Seeding skipped. The "venues" collection already contains data.');
-        return;
-      }
+    const seedResult = await seedVenues(firestore, { mode: seedMode, dryRun: isDryRun });
 
-      // 2. Prepare a batch write operation
-      const batch = writeBatch(firestore);
-      appData.map.pins.forEach(venue => {
-        // Use the venue's slug as the document ID for clean URLs
-        const docRef = doc(venuesCollection, venue.slug);
-        batch.set(docRef, venue);
-      });
-
-      // 3. Commit the batch
-      await batch.commit();
-      setStatus('success');
-      setMessage(`Successfully seeded ${appData.map.pins.length} venues to Firestore.`);
-
-    } catch (error: any) {
-      setStatus('error');
-      if (error.code === 'permission-denied') {
-        setMessage('Permission denied. Please ensure your Firestore security rules allow you to write to the "venues" collection. This is a temporary requirement for seeding.');
-      } else {
-        setMessage(`An error occurred: ${error.message}`);
-      }
-      console.error('Error seeding venues:', error);
-    }
+    setResult(seedResult);
+    setStatus(seedResult.success ? 'success' : 'error');
   };
 
   const renderStatus = () => {
-    switch (status) {
-      case 'loading':
-        return <p className="flex items-center text-muted-foreground"><Loader2 className="mr-2 h-4 w-4 animate-spin" />Seeding data...</p>;
-      case 'success':
-        return <p className="flex items-center text-green-600"><CheckCircle className="mr-2 h-4 w-4" />{message}</p>;
-      case 'skipped':
-        return <p className="flex items-center text-yellow-600"><AlertTriangle className="mr-2 h-4 w-4" />{message}</p>;
-      case 'error':
-        return <p className="flex items-center text-destructive"><AlertTriangle className="mr-2 h-4 w-4" />{message}</p>;
-      default:
+    if (!result) {
+        if(status === 'loading') {
+            return <p className="flex items-center text-muted-foreground"><Loader2 className="mr-2 h-4 w-4 animate-spin" />Seeding data...</p>;
+        }
         return null;
     }
+
+    const icon = result.success ? <CheckCircle className="mr-2 h-4 w-4 text-green-600" /> : <AlertTriangle className="mr-2 h-4 w-4 text-destructive" />;
+    const color = result.success ? 'text-green-600' : 'text-destructive';
+
+    return (
+        <div className='text-left space-y-2'>
+            <p className={`flex items-center font-semibold ${color}`}>{icon}{result.message}</p>
+            <div className='text-xs text-muted-foreground space-y-1 pl-6'>
+                <p>Total venues in seed file: {result.operations.total}</p>
+                <p>Venues written: {result.operations.written}</p>
+                <p>Venues skipped: {result.operations.skipped}</p>
+                 {result.operations.dryRun && <p className='font-bold flex items-center'><FileWarning className="mr-1 h-3 w-3 text-amber-500" />This was a dry run. No data was actually changed.</p>}
+            </div>
+        </div>
+    )
   }
 
   return (
@@ -95,10 +82,38 @@ function Seeder() {
             iykyk Data Seeding
           </CardTitle>
           <CardDescription>
-            Use this utility to perform a one-time population of your Firestore database with the initial set of venues.
+            Use this utility to populate your Firestore database with canonical venue data.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
+
+          <div className='space-y-4 rounded-lg border p-4'>
+            <Label className='font-semibold'>Seeding Mode</Label>
+            <RadioGroup value={seedMode} onValueChange={(value: any) => setSeedMode(value)}>
+                <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="skip-if-exists" id="r1" />
+                    <Label htmlFor="r1" className='font-normal'>Skip if exists (Safe)</Label>
+                </div>
+                 <p className='text-xs text-muted-foreground pl-6'>Only create venues that don't already have a document in Firestore. Good for initial seeding.</p>
+                <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="upsert" id="r2" />
+                    <Label htmlFor="r2" className='font-normal'>Upsert (Overwrite)</Label>
+                </div>
+                <p className='text-xs text-muted-foreground pl-6'>Create new venues and completely overwrite existing ones with the seed data.</p>
+            </RadioGroup>
+          </div>
+          
+           <div className="flex items-center space-x-2 rounded-lg border p-4 justify-between">
+            <div className='space-y-1'>
+                <Label htmlFor="dry-run-switch" className="font-semibold flex items-center gap-2">
+                    <ShieldCheck className='text-green-600'/>
+                    Dry Run Mode
+                </Label>
+                <p className='text-xs text-muted-foreground'>Simulate the seeding process without making any actual changes to the database.</p>
+            </div>
+            <Switch id="dry-run-switch" checked={isDryRun} onCheckedChange={setIsDryRun} />
+          </div>
+
           <Button 
             onClick={handleSeedVenues} 
             disabled={status === 'loading' || !firestore}
@@ -109,12 +124,14 @@ function Seeder() {
             ) : (
               <Database className="mr-2 h-4 w-4" />
             )}
-            Seed Venues to Firestore
+            Seed Venues
           </Button>
-          <div className="h-6 text-center">
+
+          <div className="h-20 text-center">
             {renderStatus()}
           </div>
-           <Button variant="link" asChild>
+
+           <Button variant="link" asChild className='mx-auto block'>
             <Link href="/discover">Back to App</Link>
           </Button>
         </CardContent>
