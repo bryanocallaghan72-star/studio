@@ -1,6 +1,3 @@
-
-'use client';
-
 import {
   writeBatch,
   collection,
@@ -54,27 +51,44 @@ export async function seedVenues(
     },
   };
 
+  // Batch safety guard
+  if (SEED_VENUES.length > 450) {
+    const errorMsg = `Seed count (${SEED_VENUES.length}) exceeds batch limit of 450. Please split the seed file.`;
+    console.error(errorMsg);
+    result.success = false;
+    result.message = errorMsg;
+    return result;
+  }
+  
   try {
-    const existingVenues = new Set<string>();
-    if (mode === 'skip-if-exists') {
-      const snapshot = await getDocs(venuesCollection);
-      snapshot.forEach((doc) => existingVenues.add(doc.id));
-      result.operations.skipped = existingVenues.size;
-    }
-
     const batch = writeBatch(firestore);
     let writesPerformed = 0;
 
-    SEED_VENUES.forEach((venue) => {
-      if (mode === 'skip-if-exists' && existingVenues.has(venue.slug)) {
-        return; // Skip this venue
-      }
-      const docRef = doc(venuesCollection, venue.slug);
-      batch.set(docRef, venue);
-      writesPerformed++;
-    });
+    if (mode === 'skip-if-exists') {
+      const snapshot = await getDocs(venuesCollection);
+      const existingVenues = new Set<string>();
+      snapshot.forEach((doc) => existingVenues.add(doc.id));
+      
+      SEED_VENUES.forEach((venue) => {
+        if (!existingVenues.has(venue.slug)) {
+          const docRef = doc(venuesCollection, venue.slug);
+          batch.set(docRef, venue);
+          writesPerformed++;
+        }
+      });
+      result.operations.skipped = SEED_VENUES.length - writesPerformed;
+
+    } else { // upsert mode
+      SEED_VENUES.forEach((venue) => {
+        const docRef = doc(venuesCollection, venue.slug);
+        batch.set(docRef, venue);
+        writesPerformed++;
+      });
+      result.operations.skipped = 0;
+    }
 
     result.operations.written = writesPerformed;
+    
     if (writesPerformed === 0) {
         result.message = 'No new venues to add.';
     } else {
@@ -84,12 +98,6 @@ export async function seedVenues(
     if (!dryRun && writesPerformed > 0) {
       await batch.commit();
     }
-    
-    // Adjust skipped count for upsert mode
-    if (mode === 'upsert') {
-        result.operations.skipped = result.operations.total - result.operations.written;
-    }
-
 
   } catch (error: any) {
     result.success = false;
