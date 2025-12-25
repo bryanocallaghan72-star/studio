@@ -298,3 +298,7 @@ export const SEED_VENUES: Venue[] = [
     },
   },
 ];
+
+export const SEED_VENUES_BY_SLUG = Object.fromEntries(
+  SEED_VENUES.map(v => [v.slug, v])
+) satisfies Record<string, Venue>;
