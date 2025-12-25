@@ -12,6 +12,7 @@ import { DEMO_VENUES } from '@/data/DemoVenues';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '../ui/skeleton';
 
 type Venue = typeof DEMO_VENUES[0];
 
@@ -117,11 +118,37 @@ const SUBCATEGORY_ICONS: Record<SubCategory, React.ElementType> = {
     Cocktails: Waves, // Re-using for cocktails for now
 };
 
+export function FlowTabsSkeleton() {
+    return (
+        <div>
+            <h2 className="text-3xl font-bold tracking-tight mb-2">iykyk Flow</h2>
+            <p className="text-muted-foreground mb-4">Time-of-day rhythm for what's good, right now.</p>
+            <div className="grid grid-cols-4 gap-2 rounded-lg bg-card border p-1">
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-full" />
+            </div>
+             <div className="mt-4 mb-6 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                <Skeleton className="h-8 w-24 rounded-full" />
+                <Skeleton className="h-8 w-24 rounded-full" />
+             </div>
+             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <Skeleton className="h-64 w-full rounded-lg" />
+                <Skeleton className="h-64 w-full rounded-lg" />
+                <Skeleton className="h-64 w-full rounded-lg" />
+            </div>
+        </div>
+    )
+}
+
 export function FlowTabs() {
   const [activeTab, setActiveTab] = useState<'morning' | 'day' | 'golden' | 'dusk'>('morning');
   const [activeSubCategory, setActiveSubCategory] = useState<SubCategory>('All');
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     const currentHour = new Date().getHours();
     const newActiveTab = getCurrentTimeCategory(currentHour);
     setActiveTab(newActiveTab);
@@ -153,6 +180,10 @@ export function FlowTabs() {
   }, [activeTab, activeSubCategory, tabData]);
 
   const availableSubcategories = SUBCATEGORY_MAP[activeTab];
+
+  if (!isClient) {
+    return <FlowTabsSkeleton />;
+  }
 
   return (
     <div>
