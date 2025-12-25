@@ -55,19 +55,20 @@ export interface VenueDetails {
  */
 export interface Venue {
   // Essential Identifiers
-  id: string; // The unique identifier (e.g., Firestore document ID, which is the slug)
-  slug: string; // The URL-friendly identifier
+  id: string;   // Typically same as slug (Firestore doc ID)
+  slug: string;
   name: string;
 
-  // Optional Nested Data Structures
+  // Canonical structured fields (preferred)
   location?: VenueLocation;
   details?: VenueDetails;
 
-  // Optional direct-access fields for convenience, may be deprecated later
+  // Legacy/compat convenience fields (avoid adding new usage)
   latitude?: number;
   longitude?: number;
   address?: string;
   category?: VenueCategory;
   description?: string;
-  isSponsor?: boolean;
+
+  isSponsored?: boolean;
 }
