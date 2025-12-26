@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, memo, useMemo } from 'react';
@@ -211,7 +210,7 @@ export function FlowTabs() {
     <div>
       <h2 className="text-3xl font-bold tracking-tight mb-2">iykyk Flow</h2>
       <p className="text-muted-foreground mb-4">Time-of-day rhythm for what's good, right now.</p>
-      <Tabs defaultValue={activeTab} value={activeTab} onValueChange={handleTabChange} className="w-full">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid w-full grid-cols-4 bg-card border">
           {tabData.map(tab => (
             <TabsTrigger key={tab.value} value={tab.value}>

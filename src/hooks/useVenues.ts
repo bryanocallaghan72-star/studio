@@ -17,7 +17,7 @@ export function useVenues() {
     return query(collection(firestore, 'venues'));
   }, [firestore]);
 
-  const { data: venues, isLoading, error } = useCollection<Venue>(venuesQuery);
+  const { data: venues, isLoading, error } = useCollection<WithId<Venue>>(venuesQuery);
 
   return { venues, isLoading, error };
 }
