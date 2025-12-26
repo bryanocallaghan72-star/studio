@@ -1,15 +1,19 @@
+
 "use client";
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Ticket, Utensils, Droplet, ShoppingBag, Calendar, CalendarCheck2 } from "lucide-react";
+import { Ticket, Utensils, Droplet, ShoppingBag, Calendar, CalendarCheck2, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { QRCodeDialog } from './QRCodeDialog';
 import { appData } from '@/lib/data';
 import { cn } from '@/lib/utils';
+import { useVenues } from '@/hooks/useVenues';
+import type { Venue } from '@/types/venue';
+import { Skeleton } from '../ui/skeleton';
 
 const { deals } = appData;
 
@@ -23,10 +27,39 @@ const categories = [
 ];
 
 
+const DealCardSkeleton = () => (
+  <Card className="group overflow-hidden relative bg-card">
+    <Skeleton className="h-48 w-full" />
+    <CardContent className="p-4">
+      <div className="flex justify-between items-start">
+        <div>
+          <Skeleton className="h-5 w-40 mb-2" />
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-3 w-32 mt-2" />
+        </div>
+        <Skeleton className="h-9 w-20" />
+      </div>
+    </CardContent>
+  </Card>
+);
+
 export function Deals() {
     const [selectedDeal, setSelectedDeal] = useState<(typeof deals)[0] | null>(null);
     const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
     const [activeCategory, setActiveCategory] = useState('All');
+
+    const { venues, isLoading: areVenuesLoading, error } = useVenues();
+
+    const venuesBySlug = useMemo(() => {
+        if (!venues) return {};
+        return venues.reduce((acc, venue) => {
+            if (venue.slug) {
+                acc[venue.slug] = venue;
+            }
+            return acc;
+        }, {} as Record<string, Venue>);
+    }, [venues]);
+
 
     const handleClaimDeal = (deal: (typeof deals)[0]) => {
         setSelectedDeal(deal);
@@ -35,7 +68,7 @@ export function Deals() {
 
     const filteredDeals = deals.filter(deal => {
         if (activeCategory === 'All') return true;
-        if (activeCategory === 'Mid-week') return !deal.tags.includes('Weekend');
+        if (activeCategory === 'Mid-week') return deal.tags.includes('Mid-week');
         if (activeCategory === 'Weekend') return deal.tags.includes('Weekend');
         return deal.category === activeCategory;
     });
@@ -67,8 +100,17 @@ export function Deals() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
-                    {filteredDeals.map(deal => {
+                    {areVenuesLoading ? (
+                      <>
+                        <DealCardSkeleton />
+                        <DealCardSkeleton />
+                      </>
+                    ) : (
+                      filteredDeals.map(deal => {
                          const image = PlaceHolderImages.find(img => img.id === deal.imageId);
+                         const venue = venuesBySlug[deal.venueSlug];
+                         const venueName = venue?.name ?? 'A special place';
+
                          return (
                             <Card key={deal.id} className="group overflow-hidden relative transition-all hover:shadow-xl hover:-translate-y-1 bg-card">
                                 <div className="relative h-48 w-full">
@@ -91,12 +133,12 @@ export function Deals() {
                                     <div className="flex justify-between items-start">
                                         <div>
                                             <h3 className="text-lg font-bold">{deal.title}</h3>
-                                            <p className="text-sm text-muted-foreground">{deal.venue}</p>
+                                            <p className="text-sm text-muted-foreground">{venueName}</p>
                                             <p className="text-xs text-accent mt-2 font-semibold">{deal.validity}</p>
                                         </div>
                                         <Button 
                                             variant="secondary"
-                                            onClick={() => handleClaimDeal(deal)}
+                                            onClick={() => handleClaimDeal({...deal, venue: venueName})}
                                         >
                                             Claim
                                         </Button>
@@ -105,9 +147,10 @@ export function Deals() {
                                 </CardContent>
                             </Card>
                          )
-                    })}
+                      })
+                    )}
                 </div>
-                 {filteredDeals.length === 0 && (
+                 {filteredDeals.length === 0 && !areVenuesLoading && (
                     <div className="text-center py-12">
                         <p className="text-muted-foreground">No deals available in this category right now.</p>
                     </div>
@@ -117,7 +160,7 @@ export function Deals() {
                 <QRCodeDialog
                     isOpen={isQRDialogOpen}
                     onOpenChange={setIsQRDialogOpen}
-                    deal={selectedDeal}
+                    deal={{...selectedDeal, venue: venuesBySlug[selectedDeal.venueSlug]?.name || 'A special place'}}
                 />
             )}
         </>

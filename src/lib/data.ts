@@ -1,4 +1,5 @@
 
+
 import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift, UserPlus, Star } from 'lucide-react';
 import { collection, writeBatch, getDocs, doc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
@@ -692,8 +693,7 @@ export const appData = {
     {
         id: 'deal-patron',
         title: "2-for-1 Patrón Margaritas",
-        venue: "Hotel Ravesis",
-        venueId: "hotel-ravesis",
+        venueSlug: "hotel-ravesis",
         description: "Enjoy two Patrón Margaritas for the price of one. The perfect sunset drink!",
         imageId: "cocktail-101",
         validity: "Fri & Sat Sunset",
@@ -703,8 +703,7 @@ export const appData = {
     {
         id: 'deal-2',
         title: "50% Off Sushi Platters",
-        venue: "Raw Bar",
-        venueId: "raw-bar",
+        venueSlug: "raw-bar",
         description: "Half-price sushi platters every Tuesday and Wednesday.",
         imageId: "sushi-1",
         validity: "Tues & Weds only",
@@ -714,8 +713,7 @@ export const appData = {
     {
         id: 'deal-3',
         title: "Free Coffee with Breakfast",
-        venue: "Harry's Bondi",
-        venueId: "harrys-bondi",
+        venueSlug: "harrys-bondi",
         description: "Get a free coffee with any breakfast order before 10 AM on weekdays.",
         imageId: "coffee-1",
         validity: "Weekdays before 10 AM",
@@ -725,8 +723,7 @@ export const appData = {
     {
         id: 'deal-4',
         title: "Free Reformer Class",
-        venue: "Fluidform Pilates",
-        venueId: "fluidform-pilates",
+        venueSlug: "fluidform-pilates",
         description: "First time at Fluidform? Your first class is on us!",
         imageId: "fitness-1",
         validity: "New members only",
@@ -736,8 +733,7 @@ export const appData = {
     {
         id: 'deal-5',
         title: "20% Off Storewide",
-        venue: "Tuchuzy",
-        venueId: "tuchuzy",
+        venueSlug: "tuchuzy",
         description: "Get 20% off all new season arrivals this weekend only.",
         imageId: "style-1",
         validity: "This weekend only",
@@ -1097,3 +1093,4 @@ export const appData = {
 
 
     
+
