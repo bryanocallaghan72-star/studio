@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useMemo, useState } from 'react';
@@ -9,13 +8,11 @@ import { Ticket, Utensils, Droplet, ShoppingBag, Calendar, CalendarCheck2, Loade
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { QRCodeDialog } from './QRCodeDialog';
-import { appData } from '@/lib/data';
+import { useDeals, type Deal } from '@/hooks/useDeals';
 import { cn } from '@/lib/utils';
 import { useVenues } from '@/hooks/useVenues';
 import type { Venue } from '@/types/venue';
 import { Skeleton } from '../ui/skeleton';
-
-const { deals } = appData;
 
 const categories = [
     { name: 'All', icon: Ticket },
@@ -44,11 +41,12 @@ const DealCardSkeleton = () => (
 );
 
 export function Deals() {
-    const [selectedDeal, setSelectedDeal] = useState<(typeof deals)[0] | null>(null);
+    const [selectedDeal, setSelectedDeal] = useState<Deal & { venue: string } | null>(null);
     const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
     const [activeCategory, setActiveCategory] = useState('All');
 
-    const { venues, isLoading: areVenuesLoading, error } = useVenues();
+    const { deals, isLoading: areDealsLoading, error: dealsError } = useDeals();
+    const { venues, isLoading: areVenuesLoading, error: venuesError } = useVenues();
 
     const venuesBySlug = useMemo(() => {
         if (!venues) return {};
@@ -61,8 +59,8 @@ export function Deals() {
     }, [venues]);
 
 
-    const handleClaimDeal = (deal: (typeof deals)[0]) => {
-        setSelectedDeal(deal);
+    const handleClaimDeal = (deal: Deal, venueName: string) => {
+        setSelectedDeal({ ...deal, venue: venueName });
         setIsQRDialogOpen(true);
     };
 
@@ -138,7 +136,7 @@ export function Deals() {
                                         </div>
                                         <Button 
                                             variant="secondary"
-                                            onClick={() => handleClaimDeal({...deal, venue: venueName})}
+                                            onClick={() => handleClaimDeal(deal, venueName)}
                                         >
                                             Claim
                                         </Button>
@@ -160,7 +158,7 @@ export function Deals() {
                 <QRCodeDialog
                     isOpen={isQRDialogOpen}
                     onOpenChange={setIsQRDialogOpen}
-                    deal={{...selectedDeal, venue: venuesBySlug[selectedDeal.venueSlug]?.name || 'A special place'}}
+                    deal={selectedDeal}
                 />
             )}
         </>
