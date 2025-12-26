@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useMemo } from 'react';
@@ -5,17 +6,34 @@ import { collection, query } from 'firebase/firestore';
 import { useFirestore, useCollection, useMemoFirebase, WithId } from '@/firebase';
 import { useUserLocation } from '@/hooks/useUserLocation';
 
-// Extended type including distance (calculated client-side)
-export type ARVenue = WithId<{
+// This is the raw shape that might come from Firestore, supporting both schemas.
+type FetchedVenue = WithId<{
+  slug: string;
+  name: string;
+  // New nested structure
+  location?: { latitude?: number; longitude?: number };
+  details?: { category?: string };
+  // Legacy flat structure
+  latitude?: number;
+  longitude?: number;
+  category?: string;
+  vibe?: string;
+  isSponsored?: boolean;
+}>;
+
+// This is the clean, flat shape the rest of the UI expects.
+export type ARVenue = {
+  id: string;
   slug: string;
   name: string;
   latitude: number;
   longitude: number;
   category?: string;
-  distanceMeters?: number; // <--- The new magic field
-  vibe?: string;           // Useful for filtering
-  isSponsor?: boolean;     // Useful for filtering
-}>;
+  distanceMeters?: number;
+  vibe?: string;
+  isSponsor?: boolean;
+};
+
 
 // Helper: Haversine Formula for distance (The Math of Earth)
 function getDistanceFromLatLonInM(lat1: number, lon1: number, lat2: number, lon2: number) {
@@ -36,7 +54,7 @@ function deg2rad(deg: number) {
 
 export function useARVenues() {
   const firestore = useFirestore();
-  const { coords: userCoords } = useUserLocation(); // <--- Plug in your location hook
+  const { coords: userCoords } = useUserLocation();
 
   // 1. The Raw Fetch (Unchanged)
   const venuesQuery = useMemoFirebase(() => {
@@ -44,29 +62,62 @@ export function useARVenues() {
     return query(collection(firestore, 'venues'));
   }, [firestore]);
 
-  const { data: rawVenues, isLoading, error } = useCollection<ARVenue>(venuesQuery);
+  const { data: rawVenues, isLoading, error } = useCollection<FetchedVenue>(venuesQuery);
 
-  // 2. The Sorting Logic (New)
-  // We process this client-side. For <500 venues, this is instantaneous (0ms).
+  // 2. The Adapter & Sorting Logic
   const sortedVenues = useMemo(() => {
     if (!rawVenues) return [];
-    if (!userCoords) return rawVenues; // Return unsorted if no GPS
 
-    return rawVenues
+    const processedVenues: ARVenue[] = rawVenues
       .map((venue) => {
-        // Calculate distance for every venue
-        const dist = getDistanceFromLatLonInM(
-          userCoords.latitude,
-          userCoords.longitude,
-          venue.latitude,
-          venue.longitude
-        );
-        return { ...venue, distanceMeters: Math.round(dist) };
+        // --- ADAPTER LOGIC ---
+        // Prioritize new nested structure, fall back to legacy flat structure.
+        const latitude = venue.location?.latitude ?? venue.latitude;
+        const longitude = venue.location?.longitude ?? venue.longitude;
+        const category = venue.details?.category ?? venue.category;
+
+        // --- VALIDATION ---
+        // Ensure we have valid coordinates before proceeding.
+        if (typeof latitude !== 'number' || typeof longitude !== 'number') {
+          return null;
+        }
+
+        // --- DISTANCE CALCULATION ---
+        const distanceMeters = userCoords
+          ? Math.round(
+              getDistanceFromLatLonInM(
+                userCoords.latitude,
+                userCoords.longitude,
+                latitude,
+                longitude
+              )
+            )
+          : undefined;
+        
+        // --- RETURN CLEAN, FLAT SHAPE ---
+        return {
+          id: venue.id,
+          slug: venue.slug,
+          name: venue.name,
+          latitude,
+          longitude,
+          category,
+          distanceMeters,
+          vibe: venue.vibe,
+          isSponsor: venue.isSponsored,
+        };
       })
-      .sort((a, b) => {
-        // Sort closest to furthest
-        return (a.distanceMeters || Infinity) - (b.distanceMeters || Infinity);
+      .filter((v): v is ARVenue => v !== null); // Filter out any invalid venues
+
+    // --- SORTING ---
+    // If we have user coordinates, sort by distance. Otherwise, maintain Firestore's order.
+    if (userCoords) {
+      return processedVenues.sort((a, b) => {
+        return (a.distanceMeters ?? Infinity) - (b.distanceMeters ?? Infinity);
       });
+    }
+
+    return processedVenues;
 
   }, [rawVenues, userCoords]);
 
