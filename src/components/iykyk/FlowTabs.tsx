@@ -8,13 +8,13 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import Link from 'next/link';
-import { DEMO_VENUES } from '@/data/DemoVenues';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '../ui/skeleton';
+import { useVenues } from '@/hooks/useVenues';
+import type { Venue } from '@/types/venue';
 
-type Venue = typeof DEMO_VENUES[0];
 
 const VenueCard = memo(({ venue }: { venue: Venue }) => {
     const router = useRouter();
@@ -35,38 +35,39 @@ const VenueCard = memo(({ venue }: { venue: Venue }) => {
             "Italo Disco Dining": "Nightlife",
             "Cocktail Bar": "Nightlife",
         };
-        const mapCategory = categoryMap[venue.category] || 'All';
+        const mapCategory = venue.details?.category ? (categoryMap[venue.details.category] || 'All') : 'All';
 
         router.push(`/map?category=${mapCategory}`);
     };
     
+    // Safely access properties. Fallback for image to avoid crashes.
+    const imageUrl = venue.details?.category === 'Brunch' 
+      ? "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1000&auto=format&fit=crop"
+      : "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop";
+
     return (
-        <Link href={`/venue/${venue.id.replace('venue_', '')}`}>
+        <Link href={`/venue/${venue.slug}`}>
             <Card className="overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1">
-                {venue.image ? (
-                     <div className="relative h-40 w-full">
-                        <Image
-                            src={venue.image}
-                            alt={venue.name}
-                            fill
-                            className="object-cover"
-                        />
-                     </div>
-                ) : (
-                    <div className="relative h-40 w-full bg-secondary" />
-                )}
+                 <div className="relative h-40 w-full">
+                    <Image
+                        src={imageUrl}
+                        alt={venue.name}
+                        fill
+                        className="object-cover"
+                    />
+                 </div>
                 <CardHeader>
                     <div className="flex items-start justify-between gap-2">
                         <div>
                             <CardTitle className="text-lg">{venue.name}</CardTitle>
-                            <CardDescription>{venue.address}</CardDescription>
+                            <CardDescription>{venue.location?.address}</CardDescription>
                         </div>
                         <button onClick={handleMapClick} className="p-2 rounded-full hover:bg-secondary transition-colors flex-shrink-0">
                             <MapPin className="h-5 w-5 text-muted-foreground" />
                         </button>
                     </div>
                      <div className="flex pt-2">
-                        <Badge variant="outline" className="border-accent text-accent">{venue.category}</Badge>
+                        {venue.details?.category && <Badge variant="outline" className="border-accent text-accent">{venue.details.category}</Badge>}
                     </div>
                 </CardHeader>
             </Card>
@@ -76,8 +77,22 @@ const VenueCard = memo(({ venue }: { venue: Venue }) => {
 VenueCard.displayName = 'VenueCard';
 
 
-const getVenuesForTime = (time: 'morning' | 'day' | 'golden' | 'dusk') => {
-    return DEMO_VENUES.filter(p => p.vibe === time);
+const getVenuesForTime = (time: 'morning' | 'day' | 'golden' | 'dusk', allVenues: Venue[]) => {
+    // This logic will be enhanced in a future step. For now, we just filter by some basic category.
+    const morningCats = ['Brunch', 'Cafe & Matcha', 'Viral Matcha'];
+    const dayCats = ['Brunch', 'Sushi', 'Vibes', 'Beach Club Vibe', 'Iconic View'];
+    const goldenCats = ['Sushi', 'Nightlife', 'Vibes', 'Cocktail Bar', 'Social Dining', 'Beachfront Bar'];
+    const duskCats = ['Sushi', 'Nightlife', 'Cocktail Bar', 'Italo Disco Dining', 'Sushi & Sake'];
+
+    let relevantCategories: string[] = [];
+    switch(time) {
+        case 'morning': relevantCategories = morningCats; break;
+        case 'day': relevantCategories = dayCats; break;
+        case 'golden': relevantCategories = goldenCats; break;
+        case 'dusk': relevantCategories = duskCats; break;
+    }
+    
+    return allVenues.filter(p => p.details?.category && relevantCategories.includes(p.details.category));
 };
 
 const getCurrentTimeCategory = (hour: number): 'morning' | 'day' | 'golden' | 'dusk' => {
@@ -115,7 +130,7 @@ const SUBCATEGORY_ICONS: Record<SubCategory, React.ElementType> = {
     Sushi: Utensils,
     Nightlife: Beer,
     Vibes: Sun,
-    Cocktails: Waves, // Re-using for cocktails for now
+    Cocktails: Waves,
 };
 
 export function FlowTabsSkeleton() {
@@ -145,27 +160,30 @@ export function FlowTabsSkeleton() {
 export function FlowTabs() {
   const [activeTab, setActiveTab] = useState<'morning' | 'day' | 'golden' | 'dusk'>('morning');
   const [activeSubCategory, setActiveSubCategory] = useState<SubCategory>('All');
-  const [isClient, setIsClient] = useState(false);
-
+  const { venues, isLoading, error } = useVenues();
+  
   useEffect(() => {
-    setIsClient(true);
+    // isClient check is implicitly handled by useEffect.
     const currentHour = new Date().getHours();
     const newActiveTab = getCurrentTimeCategory(currentHour);
     setActiveTab(newActiveTab);
-    setActiveSubCategory('All'); // Reset sub-category when time tab changes
+    setActiveSubCategory('All'); 
   }, []);
 
-  const tabData = useMemo(() => [
-    { value: 'morning' as const, label: 'Morning', icon: Sun, venues: getVenuesForTime('morning') },
-    { value: 'day' as const, label: 'Day', icon: Sparkles, venues: getVenuesForTime('day') },
-    { value: 'golden' as const, label: 'Golden Hour', icon: Sparkles, venues: getVenuesForTime('golden') },
-    { value: 'dusk' as const, label: 'Night', icon: Moon, venues: getVenuesForTime('dusk') },
-  ], []);
+  const tabData = useMemo(() => {
+    if (!venues) return [];
+    return [
+        { value: 'morning' as const, label: 'Morning', icon: Sun, venues: getVenuesForTime('morning', venues) },
+        { value: 'day' as const, label: 'Day', icon: Sparkles, venues: getVenuesForTime('day', venues) },
+        { value: 'golden' as const, label: 'Golden Hour', icon: Sparkles, venues: getVenuesForTime('golden', venues) },
+        { value: 'dusk' as const, label: 'Night', icon: Moon, venues: getVenuesForTime('dusk', venues) },
+      ]
+  }, [venues]);
 
   const handleTabChange = (value: string) => {
       const newTab = value as 'morning' | 'day' | 'golden' | 'dusk';
       setActiveTab(newTab);
-      setActiveSubCategory('All'); // Reset subcategory on main tab change
+      setActiveSubCategory('All');
   };
   
   const filteredVenues = useMemo(() => {
@@ -174,15 +192,19 @@ export function FlowTabs() {
         return venuesForTime;
     }
     return venuesForTime.filter(venue => {
-        const mappedCategory = CATEGORY_ALIASES[venue.category] || venue.category;
+        const mappedCategory = venue.details?.category ? (CATEGORY_ALIASES[venue.details.category] || venue.details.category) : '';
         return mappedCategory === activeSubCategory;
     });
   }, [activeTab, activeSubCategory, tabData]);
 
   const availableSubcategories = SUBCATEGORY_MAP[activeTab];
 
-  if (!isClient) {
+  if (isLoading || !venues) {
     return <FlowTabsSkeleton />;
+  }
+  
+  if (error) {
+    return <div className="text-destructive">Error loading venues.</div>;
   }
 
   return (
