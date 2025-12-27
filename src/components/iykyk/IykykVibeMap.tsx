@@ -19,23 +19,8 @@ import {
   GOOGLE_MAPS_LANGUAGE,
 } from "@/lib/googleMaps";
 import { CATEGORIES } from "@/config/categories";
-
-
-type Venue = WithId<{
-    id: string;
-    name: string;
-    category: string;
-    address: string;
-    image: string;
-    latitude: number;
-    longitude: number;
-    rating: number;
-    isSponsor: boolean;
-    vibe: string;
-    price: string;
-    slug: string;
-}>;
-
+import type { Venue } from '@/types/venue';
+import { venueToMapPin, type MapPinData } from "@/adapters/venueToMapPin";
 
 // Map container style
 const containerStyle = {
@@ -112,11 +97,37 @@ export function IykykVibeMap() {
       return venuesCollection;
     }
 
-    return query(venuesCollection, where('category', 'in', relevantCategories));
+    // This now queries against the canonical `details.category` or the legacy `category`
+    // Firestore does not support OR queries on different fields, so we filter client-side for now.
+    // A more robust solution would be a data migration or more complex query structure.
+    return venuesCollection;
   }, [firestore, activeTab, venueSlug]);
 
-  const { data: venues, isLoading: isVenuesLoading } = useCollection<Venue>(venuesQuery);
+  const { data: venues, isLoading: isVenuesLoading } = useCollection<WithId<Venue>>(venuesQuery);
   const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
+
+  // Adapt fetched venues to the flat structure the map expects
+  const mapPins = useMemo(() => {
+    if (!venues) return [];
+    
+    return venues
+      .map(venueToMapPin) // Use the adapter
+      .filter((pin): pin is MapPinData => pin !== null) // Filter out invalid venues
+      .filter(pin => { // Apply client-side category filtering
+        if (activeTab === 'All' || venueSlug) return true;
+
+        const categoryMap: { [key: string]: string[] } = {
+            Brunch: ["Brunch", "Cafe & Matcha", "Viral Matcha", "Aesthetic Brunch"],
+            Nightlife: ["Nightlife", "Social Dining", "Beachfront Bar", "Cocktail Bar", "Italo Disco Dining"],
+            Vibes: ["Vibes", "Beach Club Vibe", "Iconic View"],
+            Sushi: ["Sushi", "Sushi & Sake"],
+        };
+
+        const relevantCategories = categoryMap[activeTab] || [activeTab];
+        return relevantCategories.includes(pin.category);
+      });
+  }, [venues, activeTab, venueSlug]);
+
 
   const { isLoaded, loadError } = useJsApiLoader({
     id: GOOGLE_MAPS_LOADER_ID,
@@ -127,15 +138,15 @@ export function IykykVibeMap() {
   });
 
   useEffect(() => {
-    if (venueSlug && venues && venues.length === 1) {
-      const venue = venues[0];
-      setCenter({ lat: venue.latitude, lng: venue.longitude });
+    if (venueSlug && mapPins.length === 1) {
+      const pin = mapPins[0];
+      setCenter({ lat: pin.latitude, lng: pin.longitude });
       setZoom(17);
     } else if (!venueSlug) { // Avoid resetting view if we're just focused on one venue
       setCenter(defaultCenter);
       setZoom(15);
     }
-  }, [venues, venueSlug]);
+  }, [mapPins, venueSlug]);
 
 
   const handleTabChange = (category: string) => {
@@ -152,8 +163,8 @@ export function IykykVibeMap() {
     router.replace(`${pathname}?${params.toString()}`);
   };
   
-  const handleMarkerClick = (venue: Venue) => {
-    const href = resolveVenueHref(venue.slug); // resolveVenueHref expects the slug
+  const handleMarkerClick = (pin: MapPinData) => {
+    const href = resolveVenueHref(pin.slug);
     if (href) {
       router.push(href);
     }
@@ -207,11 +218,16 @@ export function IykykVibeMap() {
             slug: slug,
             placeId: place_id,
             name: name,
-            address: formatted_address || vicinity || 'Address not available',
-            latitude: location.lat(),
-            longitude: location.lng(),
-            category: "Vibes", // Default category
-            description: "",
+            // Saving in the new, nested structure
+            location: {
+                address: formatted_address || vicinity || 'Address not available',
+                latitude: location.lat(),
+                longitude: location.lng(),
+            },
+            details: {
+                category: "Vibes", // Default category
+                description: "",
+            },
             updatedAt: serverTimestamp(),
             ...(isNew && { createdAt: serverTimestamp() }),
         };
@@ -327,8 +343,8 @@ export function IykykVibeMap() {
                     zoom={zoom}
                     options={mapOptions}
                 >
-                  {venues && venues.map(venue => {
-                    const category = categoryData[venue.category as keyof typeof categoryData] || categoryData.Vibes;
+                  {mapPins && mapPins.map(pin => {
+                    const category = categoryData[pin.category as keyof typeof categoryData] || categoryData.Vibes;
                     const color = category ? category.color : '#FF7F50'; // default color
                     const pinSvg = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
                       `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="${color}" /><circle cx="12" cy="10" r="3" fill="white" stroke="none"/></svg>`
@@ -341,10 +357,10 @@ export function IykykVibeMap() {
 
                     return (
                       <MarkerF
-                        key={venue.id}
-                        position={{ lat: venue.latitude, lng: venue.longitude }}
-                        title={venue.name}
-                        onClick={() => handleMarkerClick(venue)}
+                        key={pin.id}
+                        position={{ lat: pin.latitude, lng: pin.longitude }}
+                        title={pin.name}
+                        onClick={() => handleMarkerClick(pin)}
                         icon={markerIcon}
                       />
                     );
