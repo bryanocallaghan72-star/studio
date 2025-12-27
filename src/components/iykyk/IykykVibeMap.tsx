@@ -12,16 +12,14 @@ import { collection, query, where, doc, setDoc, serverTimestamp, getDoc } from "
 import { WithId } from "@/firebase/firestore/use-collection";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { appData } from "@/lib/data";
 import {
   GOOGLE_MAPS_LOADER_ID,
   GOOGLE_MAPS_LIBRARIES,
   GOOGLE_MAPS_REGION,
   GOOGLE_MAPS_LANGUAGE,
 } from "@/lib/googleMaps";
+import { CATEGORIES } from "@/config/categories";
 
-
-const { categories: appCategories } = appData;
 
 type Venue = WithId<{
     id: string;
@@ -245,7 +243,7 @@ export function IykykVibeMap() {
   }
 
   const categoryData = {
-      ...appCategories,
+      ...CATEGORIES,
       "Sushi": { icon: Utensils, color: '#2dd4bf', textColor: '#0f172a' },
   }
 
