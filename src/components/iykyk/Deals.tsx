@@ -5,12 +5,11 @@ import { useMemo, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Ticket, Utensils, Droplet, ShoppingBag, Calendar, CalendarCheck2, Loader2 } from "lucide-react";
+import { Ticket, Utensils, Droplet, ShoppingBag, Calendar, CalendarCheck2 } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { QRCodeDialog } from './QRCodeDialog';
 import { useDeals, type Deal } from '@/hooks/useDeals';
-import { cn } from '@/lib/utils';
 import { useVenues } from '@/hooks/useVenues';
 import type { Venue } from '@/types/venue';
 import { Skeleton } from '../ui/skeleton';
@@ -46,8 +45,8 @@ export function Deals() {
     const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
     const [activeCategory, setActiveCategory] = useState('All');
 
-    const { deals, isLoading: areDealsLoading, error: dealsError } = useDeals();
-    const { venues, isLoading: areVenuesLoading, error: venuesError } = useVenues();
+    const { deals, isLoading: areDealsLoading } = useDeals();
+    const { venues, isLoading: areVenuesLoading } = useVenues();
 
     const venuesBySlug = useMemo(() => {
         if (!venues) return {};
