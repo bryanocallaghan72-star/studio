@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,8 +14,7 @@ import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
 import { doc, collection } from 'firebase/firestore';
 import { useTableDrops, type TableDrop } from '@/hooks/useTableDrops';
 import { useVenues } from '@/hooks/useVenues';
-import type { Venue } from '@/types/venue';
-import { appData } from '@/lib/data'; // Keep for creator mock data
+import { useCreators } from '@/hooks/useCreators';
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
@@ -60,8 +59,7 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     );
 };
 
-const TableDropCard = ({ drop, onClaim, venueName }: { drop: TableDrop, onClaim: (drop: TableDrop) => void, venueName: string }) => {
-    const creator = drop.creatorPickHandle ? appData.creators.find(c => c.id === drop.creatorPickHandle) : null;
+const TableDropCard = ({ drop, onClaim, venueName, creator }: { drop: TableDrop, onClaim: (drop: TableDrop) => void, venueName: string, creator: any }) => {
     const [formattedTimes, setFormattedTimes] = useState<{ start: string; end: string } | null>(null);
     const { user } = useUser();
 
@@ -153,6 +151,7 @@ export function Tables() {
 
     const { tableDrops, isLoading: areDropsLoading } = useTableDrops();
     const { venues, isLoading: areVenuesLoading } = useVenues();
+    const { creators } = useCreators();
 
     const venuesBySlug = useMemo(() => {
         if (!venues) return {};
@@ -161,8 +160,16 @@ export function Tables() {
                 acc[venue.slug] = venue;
             }
             return acc;
-        }, {} as Record<string, Venue>);
+        }, {} as Record<string, (typeof venues)[number]>);
     }, [venues]);
+
+    const creatorsById = useMemo(() => {
+        if (!creators) return {};
+        return creators.reduce((acc, creator) => {
+            acc[creator.id] = creator;
+            return acc;
+        }, {} as Record<string, (typeof creators)[number]>);
+    }, [creators]);
 
 
     useEffect(() => {
@@ -176,7 +183,7 @@ export function Tables() {
     const handleConfirmClaim = () => {
         if (!confirmingDrop || !user || !firestore) return;
         
-        const venueKey = (confirmingDrop as any).venueId ?? null;
+        const venueKey = confirmingDrop.venueId;
         const venue = venueKey ? venuesBySlug[venueKey] : undefined;
         const venueName = venue?.name ?? confirmingDrop.venueName;
 
@@ -243,7 +250,8 @@ export function Tables() {
                                     {favoriteDrops.map(drop => {
                                         const venue = venuesBySlug[drop.venueId];
                                         const venueName = venue?.name ?? drop.venueName;
-                                        return <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} venueName={venueName} />
+                                        const creator = drop.creatorPickHandle ? creatorsById[drop.creatorPickHandle] : null;
+                                        return <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} venueName={venueName} creator={creator} />
                                     })}
                                 </div>
                             ) : (
@@ -259,7 +267,8 @@ export function Tables() {
                                     {liveDrops.map(drop => {
                                         const venue = venuesBySlug[drop.venueId];
                                         const venueName = venue?.name ?? drop.venueName;
-                                        return <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} venueName={venueName} />
+                                        const creator = drop.creatorPickHandle ? creatorsById[drop.creatorPickHandle] : null;
+                                        return <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} venueName={venueName} creator={creator} />
                                     })}
                                 </div>
                             ) : (
