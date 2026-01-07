@@ -60,6 +60,7 @@ const VenueCard = memo(({ venue }: { venue: Venue }) => {
                     <div className="flex items-start justify-between gap-2">
                         <div>
                             <CardTitle className="text-lg">{venue.name}</CardTitle>
+                            {/* Safely access nested address */}
                             <CardDescription>{venue.location?.address}</CardDescription>
                         </div>
                         <button onClick={handleMapClick} className="p-2 rounded-full hover:bg-secondary transition-colors flex-shrink-0">
@@ -67,6 +68,7 @@ const VenueCard = memo(({ venue }: { venue: Venue }) => {
                         </button>
                     </div>
                      <div className="flex pt-2">
+                        {/* Safely access nested category */}
                         {venue.details?.category && <Badge variant="outline" className="border-accent text-accent">{venue.details.category}</Badge>}
                     </div>
                 </CardHeader>
@@ -79,7 +81,7 @@ VenueCard.displayName = 'VenueCard';
 
 const getVenuesForTime = (time: 'morning' | 'day' | 'golden' | 'dusk', allVenues: Venue[]) => {
     // This logic will be enhanced in a future step. For now, we just filter by some basic category.
-    const morningCats = ['Brunch', 'Cafe & Matcha', 'Viral Matcha'];
+    const morningCats = ['Brunch', 'Cafe & Matcha', 'Viral Matcha', 'Aesthetic Brunch'];
     const dayCats = ['Brunch', 'Sushi', 'Vibes', 'Beach Club Vibe', 'Iconic View'];
     const goldenCats = ['Sushi', 'Nightlife', 'Vibes', 'Cocktail Bar', 'Social Dining', 'Beachfront Bar'];
     const duskCats = ['Sushi', 'Nightlife', 'Cocktail Bar', 'Italo Disco Dining', 'Sushi & Sake'];
@@ -92,7 +94,11 @@ const getVenuesForTime = (time: 'morning' | 'day' | 'golden' | 'dusk', allVenues
         case 'dusk': relevantCategories = duskCats; break;
     }
     
-    return allVenues.filter(p => p.details?.category && relevantCategories.includes(p.details.category));
+    // Filter safely using the canonical `details.category` field
+    return allVenues.filter(p => {
+        const category = p.details?.category; // Use optional chaining
+        return category && relevantCategories.includes(category);
+    });
 };
 
 const getCurrentTimeCategory = (hour: number): 'morning' | 'day' | 'golden' | 'dusk' => {
@@ -192,7 +198,11 @@ export function FlowTabs() {
         return venuesForTime;
     }
     return venuesForTime.filter(venue => {
-        const mappedCategory = venue.details?.category ? (CATEGORY_ALIASES[venue.details.category] || venue.details.category) : '';
+        // Filter safely using canonical details field and optional chaining
+        const category = venue.details?.category;
+        if (!category) return false;
+        
+        const mappedCategory = CATEGORY_ALIASES[category] || category;
         return mappedCategory === activeSubCategory;
     });
   }, [activeTab, activeSubCategory, tabData]);
@@ -241,7 +251,7 @@ export function FlowTabs() {
 
         <TabsContent value={activeTab} forceMount>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredVenues.map(venue => <VenueCard key={venue.id} venue={venue as Venue} />)}
+                {filteredVenues.map(venue => <VenueCard key={venue.id} venue={venue} />)}
             </div>
              {filteredVenues.length === 0 && (
                 <div className="text-center py-12 text-muted-foreground">
