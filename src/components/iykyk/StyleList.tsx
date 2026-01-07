@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -167,7 +166,7 @@ export function StyleList() {
         setConfirmingDrop(null);
     };
     
-    const liveDrops = styleDrops
+    const liveDrops = (styleDrops || [])
         .filter(drop => new Date(drop.expiresAt).getTime() > Date.now())
         .map(drop => ({ ...drop, hasUserClaimed: claimedDrops.includes(drop.id) }))
         .sort((a, b) => new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime());
@@ -188,7 +187,8 @@ export function StyleList() {
                  {isLoading ? <StylePageSkeleton /> : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
                         {liveDrops.length > 0 ? liveDrops.map(drop => {
-                            const venueName = venuesBySlug[drop.slug]?.name ?? drop.venueName;
+                            const key = drop.slug ?? drop.venueId;
+                            const venueName = (key ? venuesBySlug[key]?.name : undefined) ?? drop.venueName ?? "A special place";
                             return (
                                 <StyleDropCard key={drop.id} drop={drop} venueName={venueName} onClaim={handleClaimClick} />
                             )
@@ -201,25 +201,32 @@ export function StyleList() {
                 )}
             </section>
             
-            {confirmingDrop && (
-                <Dialog open={!!confirmingDrop} onOpenChange={() => setConfirmingDrop(null)}>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Confirm Your Claim</DialogTitle>
-                            <DialogDescription>
-                                You're about to claim: <strong>{confirmingDrop.title}</strong> at {venuesBySlug[confirmingDrop.slug]?.name ?? confirmingDrop.venueName}.
-                                {confirmingDrop.priceToClaimCents > 0 && ` A fee of $${confirmingDrop.priceToClaimCents / 100} will be charged.`}
-                            </DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setConfirmingDrop(null)}>Cancel</Button>
-                            <Button className="bg-rose-500 hover:bg-rose-600" onClick={handleConfirmClaim}>Confirm</Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-            )}
+            {confirmingDrop && (() => {
+                const key = confirmingDrop.slug ?? confirmingDrop.venueId;
+                const venueName = (key ? venuesBySlug[key]?.name : undefined) ?? confirmingDrop.venueName ?? "A special place";
+                return (
+                    <Dialog open={!!confirmingDrop} onOpenChange={() => setConfirmingDrop(null)}>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Confirm Your Claim</DialogTitle>
+                                <DialogDescription>
+                                    You're about to claim: <strong>{confirmingDrop.title}</strong> at {venueName}.
+                                    {confirmingDrop.priceToClaimCents > 0 && ` A fee of $${confirmingDrop.priceToClaimCents / 100} will be charged.`}
+                                </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter>
+                                <Button variant="outline" onClick={() => setConfirmingDrop(null)}>Cancel</Button>
+                                <Button className="bg-rose-500 hover:bg-rose-600" onClick={handleConfirmClaim}>Confirm</Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+                )
+            })()}
 
-            {successfulDrop && (
+            {successfulDrop && (() => {
+                const key = successfulDrop.slug ?? successfulDrop.venueId;
+                const venueName = (key ? venuesBySlug[key]?.name : undefined) ?? successfulDrop.venueName ?? "A special place";
+                 return (
                  <Dialog open={!!successfulDrop} onOpenChange={() => setSuccessfulDrop(null)}>
                     <DialogContent>
                         <DialogHeader className="items-center text-center">
@@ -228,7 +235,7 @@ export function StyleList() {
                             </div>
                             <DialogTitle className="text-2xl">Claimed!</DialogTitle>
                             <DialogDescription>
-                                Your drop for <strong>{successfulDrop.title}</strong> at {venuesBySlug[successfulDrop.slug]?.name ?? successfulDrop.venueName} is confirmed.
+                                Your drop for <strong>{successfulDrop.title}</strong> at {venueName} is confirmed.
                             </DialogDescription>
                         </DialogHeader>
                         <div className="flex flex-col items-center justify-center space-y-4 p-4">
@@ -246,7 +253,8 @@ export function StyleList() {
                          </DialogFooter>
                     </DialogContent>
                 </Dialog>
-            )}
+                 )
+            })()}
         </>
     );
 }
