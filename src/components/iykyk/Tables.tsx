@@ -1,20 +1,21 @@
-
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Utensils, CheckCircle } from "lucide-react";
 import Image from "next/image";
-import { appData } from '@/lib/data';
-import type { TableDrop } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
 import { doc, collection } from 'firebase/firestore';
+import { useTableDrops, type TableDrop } from '@/hooks/useTableDrops';
+import { useVenues } from '@/hooks/useVenues';
+import type { Venue } from '@/types/venue';
+import { appData } from '@/lib/data'; // Keep for creator mock data
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
@@ -59,7 +60,7 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     );
 };
 
-const TableDropCard = ({ drop, onClaim }: { drop: TableDrop, onClaim: (drop: TableDrop) => void }) => {
+const TableDropCard = ({ drop, onClaim, venueName }: { drop: TableDrop, onClaim: (drop: TableDrop) => void, venueName: string }) => {
     const creator = drop.creatorPickHandle ? appData.creators.find(c => c.id === drop.creatorPickHandle) : null;
     const [formattedTimes, setFormattedTimes] = useState<{ start: string; end: string } | null>(null);
     const { user } = useUser();
@@ -82,7 +83,7 @@ const TableDropCard = ({ drop, onClaim }: { drop: TableDrop, onClaim: (drop: Tab
             <div className="absolute inset-0">
                 <Image
                     src={drop.venueImageUrl}
-                    alt={drop.venueName}
+                    alt={venueName}
                     fill
                     className="object-cover transition-transform group-hover:scale-105"
                     data-ai-hint="restaurant interior"
@@ -107,7 +108,7 @@ const TableDropCard = ({ drop, onClaim }: { drop: TableDrop, onClaim: (drop: Tab
                         )}
                     </div>
                     <h3 className="text-2xl font-bold leading-tight text-white" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.55)" }}>
-                        {drop.venueName}{drop.tableLabel && ` – ${drop.tableLabel}`}
+                        {venueName}{drop.tableLabel && ` – ${drop.tableLabel}`}
                     </h3>
                     {formattedTimes ? (
                          <p className="text-white/90 mt-1">Table for {drop.partySize} • {formattedTimes.start} – {formattedTimes.end}</p>
@@ -150,6 +151,20 @@ export function Tables() {
     const firestore = useFirestore();
     const { user } = useUser();
 
+    const { tableDrops, isLoading: areDropsLoading } = useTableDrops();
+    const { venues, isLoading: areVenuesLoading } = useVenues();
+
+    const venuesBySlug = useMemo(() => {
+        if (!venues) return {};
+        return venues.reduce((acc, venue) => {
+            if (venue.slug) {
+                acc[venue.slug] = venue;
+            }
+            return acc;
+        }, {} as Record<string, Venue>);
+    }, [venues]);
+
+
     useEffect(() => {
         setIsClient(true);
     }, []);
@@ -160,6 +175,10 @@ export function Tables() {
 
     const handleConfirmClaim = () => {
         if (!confirmingDrop || !user || !firestore) return;
+        
+        const venueKey = (confirmingDrop as any).venueId ?? null;
+        const venue = venueKey ? venuesBySlug[venueKey] : undefined;
+        const venueName = venue?.name ?? confirmingDrop.venueName;
 
         // Optimistically update UI
         setClaimedDrops(prev => [...prev, confirmingDrop!.id]);
@@ -170,9 +189,9 @@ export function Tables() {
         const claimedDealRef = doc(firestore, 'users', user.uid, 'claimedDeals', confirmingDrop.id);
         const claimData = {
             itemId: confirmingDrop.id,
-            itemTitle: `Table at ${confirmingDrop.venueName}`,
+            itemTitle: `Table at ${venueName}`,
             itemType: 'table',
-            venueName: confirmingDrop.venueName,
+            venueName: venueName,
             creatorId: confirmingDrop.creatorPickHandle || null,
             claimedAt: new Date().toISOString(),
         };
@@ -192,12 +211,14 @@ export function Tables() {
         }
     };
     
-    const liveDrops = appData.tableDrops
+    const liveDrops = tableDrops
         .filter(drop => new Date(drop.expiresAt).getTime() > Date.now())
         .map(drop => ({ ...drop, hasUserClaimed: claimedDrops.includes(drop.id) }))
         .sort((a, b) => new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime());
 
     const favoriteDrops = liveDrops.filter(drop => drop.isFavoriteVenue);
+
+    const isLoading = !isClient || areDropsLoading || areVenuesLoading;
     
     return (
         <>
@@ -210,7 +231,7 @@ export function Tables() {
                     </div>
                 </div>
 
-                {!isClient ? <TablesSkeleton /> : (
+                {isLoading ? <TablesSkeleton /> : (
                     <Tabs defaultValue="live" className="w-full mt-4">
                         <TabsList className="grid w-full grid-cols-2">
                             <TabsTrigger value="hit-list">My Hit List</TabsTrigger>
@@ -219,9 +240,11 @@ export function Tables() {
                         <TabsContent value="hit-list" className="mt-6">
                             {favoriteDrops.length > 0 ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    {favoriteDrops.map(drop => (
-                                        <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} />
-                                    ))}
+                                    {favoriteDrops.map(drop => {
+                                        const venue = venuesBySlug[drop.venueId];
+                                        const venueName = venue?.name ?? drop.venueName;
+                                        return <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} venueName={venueName} />
+                                    })}
                                 </div>
                             ) : (
                                 <div className="text-center py-20">
@@ -233,9 +256,11 @@ export function Tables() {
                         <TabsContent value="live" className="mt-6">
                             {liveDrops.length > 0 ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    {liveDrops.map(drop => (
-                                        <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} />
-                                    ))}
+                                    {liveDrops.map(drop => {
+                                        const venue = venuesBySlug[drop.venueId];
+                                        const venueName = venue?.name ?? drop.venueName;
+                                        return <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} venueName={venueName} />
+                                    })}
                                 </div>
                             ) : (
                                 <div className="text-center py-20">
@@ -248,55 +273,63 @@ export function Tables() {
             </section>
             
             {/* Confirmation Modal */}
-            {confirmingDrop && (
-                <Dialog open={!!confirmingDrop} onOpenChange={() => setConfirmingDrop(null)}>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Claim this table?</DialogTitle>
-                            <DialogDescription>
-                                You are about to claim a table for {confirmingDrop.partySize} at <strong>{confirmingDrop.venueName}</strong> from {new Date(confirmingDrop.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.
-                                {confirmingDrop.priceToClaimCents > 0 && ` A fee of $${confirmingDrop.priceToClaimCents / 100} will be charged.`}
-                            </DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setConfirmingDrop(null)}>Cancel</Button>
-                            <Button onClick={handleConfirmClaim}>Confirm</Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-            )}
+            {confirmingDrop && (() => {
+                const venue = venuesBySlug[confirmingDrop.venueId];
+                const venueName = venue?.name ?? confirmingDrop.venueName;
+                return (
+                    <Dialog open={!!confirmingDrop} onOpenChange={() => setConfirmingDrop(null)}>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Claim this table?</DialogTitle>
+                                <DialogDescription>
+                                    You are about to claim a table for {confirmingDrop.partySize} at <strong>{venueName}</strong> from {new Date(confirmingDrop.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.
+                                    {confirmingDrop.priceToClaimCents > 0 && ` A fee of $${confirmingDrop.priceToClaimCents / 100} will be charged.`}
+                                </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter>
+                                <Button variant="outline" onClick={() => setConfirmingDrop(null)}>Cancel</Button>
+                                <Button onClick={handleConfirmClaim}>Confirm</Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+                )
+            })()}
 
             {/* Success "Golden Ticket" Modal */}
-            {successfulDrop && (
-                <Dialog open={!!successfulDrop} onOpenChange={() => setSuccessfulDrop(null)}>
-                    <DialogContent className="p-0 border-0 bg-transparent shadow-none max-w-sm">
-                       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-yellow-300 to-amber-500 shadow-2xl border border-amber-300 text-black">
-                         <div className="p-8 flex flex-col items-center text-center">
-                            <CheckCircle className="h-16 w-16 text-white mb-4" />
-                            <h2 className="text-2xl font-bold tracking-tight">Table Claimed!</h2>
-                            <p className="font-semibold mt-2">You claimed a table at</p>
-                            <p className="text-3xl font-bold">{successfulDrop.venueName}</p>
-                            
-                            <div className="my-6 w-full space-y-2 text-left bg-black/5 p-4 rounded-lg">
-                                <p><strong>Party Size:</strong> {successfulDrop.partySize}</p>
-                                <p><strong>Time:</strong> {new Date(successfulDrop.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                                <p className="font-semibold">Please arrive by {new Date(new Date(successfulDrop.startTime).getTime() + 15 * 60000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                            </div>
+            {successfulDrop && (() => {
+                const venue = venuesBySlug[successfulDrop.venueId];
+                const venueName = venue?.name ?? successfulDrop.venueName;
+                return (
+                    <Dialog open={!!successfulDrop} onOpenChange={() => setSuccessfulDrop(null)}>
+                        <DialogContent className="p-0 border-0 bg-transparent shadow-none max-w-sm">
+                           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-yellow-300 to-amber-500 shadow-2xl border border-amber-300 text-black">
+                             <div className="p-8 flex flex-col items-center text-center">
+                                <CheckCircle className="h-16 w-16 text-white mb-4" />
+                                <h2 className="text-2xl font-bold tracking-tight">Table Claimed!</h2>
+                                <p className="font-semibold mt-2">You claimed a table at</p>
+                                <p className="text-3xl font-bold">{venueName}</p>
+                                
+                                <div className="my-6 w-full space-y-2 text-left bg-black/5 p-4 rounded-lg">
+                                    <p><strong>Party Size:</strong> {successfulDrop.partySize}</p>
+                                    <p><strong>Time:</strong> {new Date(successfulDrop.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                    <p className="font-semibold">Please arrive by {new Date(new Date(successfulDrop.startTime).getTime() + 15 * 60000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                </div>
 
-                            {/* Placeholder for QR Code */}
-                            <div className="bg-white p-3 rounded-lg shadow-inner">
-                                <svg width="128" height="128" viewBox="0 0 100 100"><path fill="#000" d="M0 0h30v30H0z m10 10h10v10H10zM70 0h30v30H70z m10 10h10v10H80zM0 70h30v30H0z m10 10h10v10H10zM40 0h10v10H40z m20 0h10v10H60zM40 20h10v10H40z m20 10h10v10H60z m-30 10h10v10H30z m30 0h10v10H60z m-20 0h10v10H40zM30 50h10v10H30z m20 0h10v10H50zM70 40h10v10H70z m10 10h10v10H80z m-10 10h10v10H70z m10 10h10v10H80zM40 70h10v10H40z m20 0h10v10H60z m-30 20h10v10H30z m30 0h10v10H60z m-20 0h10v10H40z"/></svg>
-                            </div>
-                            
-                            <p className="text-xs mt-4 opacity-70">Show this screen upon arrival.</p>
-                         </div>
-                         <DialogFooter className="p-4 bg-black/10">
-                            <Button className="w-full bg-white text-black hover:bg-white/90" onClick={() => setSuccessfulDrop(null)}>Done</Button>
-                         </DialogFooter>
-                       </div>
-                    </DialogContent>
-                </Dialog>
-            )}
+                                {/* Placeholder for QR Code */}
+                                <div className="bg-white p-3 rounded-lg shadow-inner">
+                                    <svg width="128" height="128" viewBox="0 0 100 100"><path fill="#000" d="M0 0h30v30H0z m10 10h10v10H10zM70 0h30v30H70z m10 10h10v10H80zM0 70h30v30H0z m10 10h10v10H10zM40 0h10v10H40z m20 0h10v10H60zM40 20h10v10H40z m20 10h10v10H60z m-30 10h10v10H30z m30 0h10v10H60z m-20 0h10v10H40zM30 50h10v10H30z m20 0h10v10H50zM70 40h10v10H70z m10 10h10v10H80z m-10 10h10v10H70z m10 10h10v10H80zM40 70h10v10H40z m20 0h10v10H60z m-30 20h10v10H30z m30 0h10v10H60z m-20 0h10v10H40z"/></svg>
+                                </div>
+                                
+                                <p className="text-xs mt-4 opacity-70">Show this screen upon arrival.</p>
+                             </div>
+                             <DialogFooter className="p-4 bg-black/10">
+                                <Button className="w-full bg-white text-black hover:bg-white/90" onClick={() => setSuccessfulDrop(null)}>Done</Button>
+                             </DialogFooter>
+                           </div>
+                        </DialogContent>
+                    </Dialog>
+                )
+            })()}
         </>
     );
 }
