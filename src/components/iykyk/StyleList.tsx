@@ -1,20 +1,21 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Shirt, CheckCircle, Ticket, MapPin } from "lucide-react";
 import Image from "next/image";
-import { appData } from '@/lib/data';
-import type { StyleDrop } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { QRCodeSVG } from './QRCodeSVG';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useStyleDrops, type StyleDrop } from '@/hooks/useStyleDrops';
+import { useVenues } from '@/hooks/useVenues';
+import { appData } from '@/lib/data'; // Keep for creators until useCreators is made
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
@@ -59,7 +60,7 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     );
 };
 
-const StyleDropCard = ({ drop, onClaim }: { drop: StyleDrop, onClaim: (drop: StyleDrop) => void }) => {
+const StyleDropCard = ({ drop, venueName, onClaim }: { drop: StyleDrop, venueName: string, onClaim: (drop: StyleDrop) => void }) => {
     const creator = drop.creatorPickHandle ? appData.creators.find(c => c.id === drop.creatorPickHandle) : null;
     const router = useRouter();
 
@@ -76,7 +77,7 @@ const StyleDropCard = ({ drop, onClaim }: { drop: StyleDrop, onClaim: (drop: Sty
             <div className="absolute inset-0">
                 <Image
                     src={drop.venueImageUrl}
-                    alt={drop.venueName}
+                    alt={venueName}
                     fill
                     className="object-cover transition-transform group-hover:scale-105"
                     data-ai-hint="fashion boutique"
@@ -103,7 +104,7 @@ const StyleDropCard = ({ drop, onClaim }: { drop: StyleDrop, onClaim: (drop: Sty
                      <div className="flex justify-between items-start">
                         <div>
                             <h3 className="text-2xl font-bold leading-tight text-white" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.55)" }}>
-                                {drop.title} at {drop.venueName}
+                                {drop.title} at {venueName}
                             </h3>
                             <p className="text-white/90 mt-1 line-clamp-2">{drop.description}</p>
                         </div>
@@ -142,11 +143,20 @@ export function StyleList() {
     const [claimedDrops, setClaimedDrops] = useState<string[]>([]);
     const [confirmingDrop, setConfirmingDrop] = useState<StyleDrop | null>(null);
     const [successfulDrop, setSuccessfulDrop] = useState<StyleDrop | null>(null);
-    const [isClient, setIsClient] = useState(false);
 
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
+    const { styleDrops, isLoading: areDropsLoading } = useStyleDrops();
+    const { venues, isLoading: areVenuesLoading } = useVenues();
+    
+    const venuesBySlug = useMemo(() => {
+        if (!venues) return {};
+        return venues.reduce((acc, venue) => {
+            if (venue.slug) {
+                acc[venue.slug] = venue;
+            }
+            return acc;
+        }, {} as Record<string, (typeof venues)[number]>);
+    }, [venues]);
+
 
     const handleClaimClick = (drop: StyleDrop) => setConfirmingDrop(drop);
 
@@ -157,11 +167,13 @@ export function StyleList() {
         setConfirmingDrop(null);
     };
     
-    const liveDrops = appData.styleDrops
+    const liveDrops = styleDrops
         .filter(drop => new Date(drop.expiresAt).getTime() > Date.now())
         .map(drop => ({ ...drop, hasUserClaimed: claimedDrops.includes(drop.id) }))
         .sort((a, b) => new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime());
     
+    const isLoading = areDropsLoading || areVenuesLoading;
+
     return (
         <>
             <section>
@@ -173,11 +185,14 @@ export function StyleList() {
                     </div>
                 </div>
                 
-                 {!isClient ? <StylePageSkeleton /> : (
+                 {isLoading ? <StylePageSkeleton /> : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
-                        {liveDrops.length > 0 ? liveDrops.map(drop => (
-                            <StyleDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} />
-                        )) : (
+                        {liveDrops.length > 0 ? liveDrops.map(drop => {
+                            const venueName = venuesBySlug[drop.slug]?.name ?? drop.venueName;
+                            return (
+                                <StyleDropCard key={drop.id} drop={drop} venueName={venueName} onClaim={handleClaimClick} />
+                            )
+                        }) : (
                             <div className="text-center py-20 col-span-full">
                                 <p className="text-muted-foreground">No live style drops right now. Check back soon!</p>
                             </div>
@@ -192,7 +207,7 @@ export function StyleList() {
                         <DialogHeader>
                             <DialogTitle>Confirm Your Claim</DialogTitle>
                             <DialogDescription>
-                                You're about to claim: <strong>{confirmingDrop.title}</strong> at {confirmingDrop.venueName}.
+                                You're about to claim: <strong>{confirmingDrop.title}</strong> at {venuesBySlug[confirmingDrop.slug]?.name ?? confirmingDrop.venueName}.
                                 {confirmingDrop.priceToClaimCents > 0 && ` A fee of $${confirmingDrop.priceToClaimCents / 100} will be charged.`}
                             </DialogDescription>
                         </DialogHeader>
@@ -213,7 +228,7 @@ export function StyleList() {
                             </div>
                             <DialogTitle className="text-2xl">Claimed!</DialogTitle>
                             <DialogDescription>
-                                Your drop for <strong>{successfulDrop.title}</strong> at {successfulDrop.venueName} is confirmed.
+                                Your drop for <strong>{successfulDrop.title}</strong> at {venuesBySlug[successfulDrop.slug]?.name ?? successfulDrop.venueName} is confirmed.
                             </DialogDescription>
                         </DialogHeader>
                         <div className="flex flex-col items-center justify-center space-y-4 p-4">
