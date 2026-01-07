@@ -11,7 +11,6 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { QRCodeDialog } from './QRCodeDialog';
 import { useDeals, type Deal } from '@/hooks/useDeals';
 import { useVenues } from '@/hooks/useVenues';
-import type { Venue } from '@/types/venue';
 import { Skeleton } from '../ui/skeleton';
 
 const categories = [
@@ -41,7 +40,7 @@ const DealCardSkeleton = () => (
 );
 
 export function Deals() {
-    const [selectedDeal, setSelectedDeal] = useState<Deal & { venueName: string } | null>(null);
+    const [selectedDeal, setSelectedDeal] = useState<{ title: string; description: string; venue: string; } | null>(null);
     const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
     const [activeCategory, setActiveCategory] = useState('All');
 
@@ -55,21 +54,30 @@ export function Deals() {
                 acc[venue.slug] = venue;
             }
             return acc;
-        }, {} as Record<string, Venue>);
+        }, {} as Record<string, (typeof venues)[number]>);
     }, [venues]);
 
 
     const handleClaimDeal = (deal: Deal, venueName: string) => {
-        setSelectedDeal({ ...deal, venueName: venueName });
+        setSelectedDeal({
+          title: deal.title,
+          description: deal.description,
+          venue: venueName,
+        });
         setIsQRDialogOpen(true);
     };
 
-    const filteredDeals = deals.filter(deal => {
-        if (activeCategory === 'All') return true;
-        if (activeCategory === 'Mid-week') return !deal.tags.includes('Weekend');
-        if (activeCategory === 'Weekend') return deal.tags.includes('Weekend');
-        return deal.category === activeCategory;
-    });
+    const filteredDeals = useMemo(() => {
+        if (!deals) return [];
+        return deals.filter(deal => {
+            if (activeCategory === 'All') return true;
+            // Corrected and safe-guarded filtering logic
+            if (activeCategory === 'Weekend') return deal.tags?.includes('Weekend');
+            if (activeCategory === 'Mid-week') return !deal.tags?.includes('Weekend');
+            // Default category filtering
+            return deal.category === activeCategory;
+        });
+    }, [deals, activeCategory]);
     
     const isLoading = areDealsLoading || areVenuesLoading;
 
@@ -108,8 +116,8 @@ export function Deals() {
                     ) : (
                       filteredDeals.map(deal => {
                          const image = PlaceHolderImages.find(img => img.id === deal.imageId);
-                         const venue = venuesBySlug[deal.venueSlug];
-                         const venueName = venue?.name ?? 'A special place';
+                         // Resolve venue name using the live data, with a fallback
+                         const venueName = venuesBySlug[deal.venueSlug]?.name ?? "A special place";
 
                          return (
                             <Card key={deal.id} className="group overflow-hidden relative transition-all hover:shadow-xl hover:-translate-y-1 bg-card">
@@ -160,11 +168,7 @@ export function Deals() {
                 <QRCodeDialog
                     isOpen={isQRDialogOpen}
                     onOpenChange={setIsQRDialogOpen}
-                    deal={{
-                        title: selectedDeal.title,
-                        description: selectedDeal.description,
-                        venue: selectedDeal.venueName,
-                    }}
+                    deal={selectedDeal}
                 />
             )}
         </>

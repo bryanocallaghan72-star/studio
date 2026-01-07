@@ -1,32 +1,38 @@
+
 'use client';
 
 import { appData } from '@/lib/data';
 
-// Define the shape of a deal based on the mock data for type safety
+// The canonical shape of a Deal object as returned by the hook.
+// venueSlug is now guaranteed.
 export type Deal = {
   id: string;
   title: string;
-  venueSlug: string;
+  venueSlug: string; // Now required
   description: string;
   imageId: string;
   validity: string;
   category: string;
-  tags: string[];
+  tags?: string[]; // Made optional for safety
 };
 
 /**
  * Hook to fetch deal data.
- * In Phase 1, this returns mock data. It will be updated to fetch from
- * Firestore in a later phase.
+ * In Phase 1, this returns mock data but ensures each deal object
+ * has a consistent `venueSlug` for linking to live venue data.
  *
  * @returns An object containing the deals array, loading state, and error state.
  */
 export function useDeals() {
+  // Map over the raw data to enforce the Deal type and ensure venueSlug exists.
+  const processedDeals = appData.deals.map((deal: any) => ({
+    ...deal,
+    // Ensure venueSlug is present, falling back from venueId if necessary.
+    venueSlug: deal.venueSlug || deal.venueId || '', 
+  }));
 
-  // For Phase 1, we simply return the mock data.
-  // The structure is designed to be replaced with a real Firestore call.
   return {
-    deals: appData.deals as Deal[],
+    deals: processedDeals as Deal[],
     isLoading: false,
     error: null,
   };
