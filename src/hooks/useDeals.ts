@@ -16,14 +16,14 @@ export type Deal = {
 
 /**
  * Hook to fetch deal data.
- * In Phase 0, this returns mock data. It will be updated to fetch from
+ * In Phase 1, this returns mock data. It will be updated to fetch from
  * Firestore in a later phase.
  *
  * @returns An object containing the deals array, loading state, and error state.
  */
 export function useDeals() {
 
-  // For Phase 0, we simply return the mock data.
+  // For Phase 1, we simply return the mock data.
   // The structure is designed to be replaced with a real Firestore call.
   return {
     deals: appData.deals as Deal[],

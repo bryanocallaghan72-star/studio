@@ -41,7 +41,7 @@ const DealCardSkeleton = () => (
 );
 
 export function Deals() {
-    const [selectedDeal, setSelectedDeal] = useState<Deal & { venue: string } | null>(null);
+    const [selectedDeal, setSelectedDeal] = useState<Deal & { venueName: string } | null>(null);
     const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
     const [activeCategory, setActiveCategory] = useState('All');
 
@@ -60,7 +60,7 @@ export function Deals() {
 
 
     const handleClaimDeal = (deal: Deal, venueName: string) => {
-        setSelectedDeal({ ...deal, venue: venueName });
+        setSelectedDeal({ ...deal, venueName: venueName });
         setIsQRDialogOpen(true);
     };
 
@@ -70,6 +70,8 @@ export function Deals() {
         if (activeCategory === 'Weekend') return deal.tags.includes('Weekend');
         return deal.category === activeCategory;
     });
+    
+    const isLoading = areDealsLoading || areVenuesLoading;
 
     return (
         <>
@@ -98,7 +100,7 @@ export function Deals() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
-                    {areVenuesLoading ? (
+                    {isLoading ? (
                       <>
                         <DealCardSkeleton />
                         <DealCardSkeleton />
@@ -148,7 +150,7 @@ export function Deals() {
                       })
                     )}
                 </div>
-                 {filteredDeals.length === 0 && !areVenuesLoading && (
+                 {filteredDeals.length === 0 && !isLoading && (
                     <div className="text-center py-12">
                         <p className="text-muted-foreground">No deals available in this category right now.</p>
                     </div>
@@ -158,7 +160,11 @@ export function Deals() {
                 <QRCodeDialog
                     isOpen={isQRDialogOpen}
                     onOpenChange={setIsQRDialogOpen}
-                    deal={selectedDeal}
+                    deal={{
+                        title: selectedDeal.title,
+                        description: selectedDeal.description,
+                        venue: selectedDeal.venueName,
+                    }}
                 />
             )}
         </>
