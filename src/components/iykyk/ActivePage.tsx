@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -145,10 +145,23 @@ export function ActivePage() {
     const { user } = useUser();
     const { venues, isLoading: areVenuesLoading } = useVenues();
 
+    const venuesBySlug = useMemo(() => {
+        if (!venues) return {};
+        return venues.reduce((acc, venue) => {
+            if (venue.slug) {
+                acc[venue.slug] = venue;
+            }
+            return acc;
+        }, {} as Record<string, Venue>);
+    }, [venues]);
+
+
     const handleClaimClick = (drop: ClassDrop) => setConfirmingDrop(drop);
 
     const handleConfirmClaim = () => {
         if (!confirmingDrop || !user || !firestore) return;
+        
+        const venueName = venuesBySlug[confirmingDrop.venueId]?.name ?? confirmingDrop.venueName;
         
         setClaimedDrops(prev => [...prev, confirmingDrop!.id]);
         setSuccessfulDrop(confirmingDrop);
@@ -158,9 +171,9 @@ export function ActivePage() {
         const claimedDealRef = doc(firestore, 'users', user.uid, 'claimedDeals', confirmingDrop.id);
         const claimData = {
             itemId: confirmingDrop.id,
-            itemTitle: `${confirmingDrop.className} at ${confirmingDrop.venueName}`,
+            itemTitle: `${confirmingDrop.className} at ${venueName}`,
             itemType: 'active',
-            venueName: confirmingDrop.venueName,
+            venueName: venueName,
             creatorId: confirmingDrop.instructorHandle || null,
             claimedAt: new Date().toISOString(),
         };
@@ -208,7 +221,7 @@ export function ActivePage() {
                             {favoriteDrops.length > 0 ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     {favoriteDrops.map(drop => {
-                                        const venue = venues?.find(v => v.slug === drop.venueId);
+                                        const venue = venuesBySlug[drop.venueId];
                                         return <ClassDropCard key={drop.id} drop={drop} venue={venue} onClaim={handleClaimClick} />;
                                     })}
                                 </div>
@@ -223,7 +236,7 @@ export function ActivePage() {
                             {liveDrops.length > 0 ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     {liveDrops.map(drop => {
-                                        const venue = venues?.find(v => v.slug === drop.venueId);
+                                        const venue = venuesBySlug[drop.venueId];
                                         return <ClassDropCard key={drop.id} drop={drop} venue={venue} onClaim={handleClaimClick} />;
                                     })}
                                 </div>
@@ -243,7 +256,7 @@ export function ActivePage() {
                         <DialogHeader>
                             <DialogTitle>Claim this spot?</DialogTitle>
                             <DialogDescription>
-                                You're about to claim a spot for <strong>{confirmingDrop.className}</strong> at {venues?.find(v => v.slug === confirmingDrop.venueId)?.name ?? confirmingDrop.venueName}.
+                                You're about to claim a spot for <strong>{confirmingDrop.className}</strong> at {venuesBySlug[confirmingDrop.venueId]?.name ?? confirmingDrop.venueName}.
                             </DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
@@ -263,7 +276,7 @@ export function ActivePage() {
                             </div>
                             <DialogTitle className="text-2xl">You're in!</DialogTitle>
                             <DialogDescription>
-                                Your spot for <strong>{successfulDrop.className}</strong> at {venues?.find(v => v.slug === successfulDrop.venueId)?.name ?? successfulDrop.venueName} is confirmed.
+                                Your spot for <strong>{successfulDrop.className}</strong> at {venuesBySlug[successfulDrop.venueId]?.name ?? successfulDrop.venueName} is confirmed.
                             </DialogDescription>
                         </DialogHeader>
                          <DialogFooter>
