@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useMemo, useState } from 'react';
@@ -66,7 +67,7 @@ export function Deals() {
 
     const filteredDeals = deals.filter(deal => {
         if (activeCategory === 'All') return true;
-        if (activeCategory === 'Mid-week') return deal.tags.includes('Mid-week');
+        if (activeCategory === 'Mid-week') return !deal.tags.includes('Weekend');
         if (activeCategory === 'Weekend') return deal.tags.includes('Weekend');
         return deal.category === activeCategory;
     });
