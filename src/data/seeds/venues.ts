@@ -16,9 +16,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.8953,
       longitude: 151.274,
+      address: "1 Notts Ave, Bondi Beach NSW 2026"
     },
     details: {
       category: 'Vibes',
+      description: "Iconic ocean views and fine dining.",
+      openingHours: "6am - 6:30pm",
+      vibeTags: ["Iconic", "Views", "Swim"],
+      currentVibe: "Buzzing"
     },
   },
   {
@@ -28,9 +33,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.8913,
       longitude: 151.276,
+      address: "118 Campbell Parade, Bondi Beach NSW 2026"
     },
     details: {
       category: 'Nightlife',
+      description: "Stylish beachfront bar and restaurant.",
+      openingHours: "12pm - 12am",
+      vibeTags: ["Stylish", "Rooftop", "Cocktails"],
+      currentVibe: "Packed"
     },
   },
   {
@@ -40,9 +50,31 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.8943,
       longitude: 151.27,
+      address: "286 Campbell Parade, North Bondi NSW 2026"
     },
     details: {
       category: 'Brunch',
+      description: "Popular spot for brunch and coffee.",
+      openingHours: "7am - 3pm",
+      vibeTags: ["Casual", "Local Fav", "Coffee"],
+      currentVibe: "Chill"
+    },
+  },
+    {
+    id: 'bondi-beach',
+    slug: 'bondi-beach',
+    name: 'Bondi Beach',
+    location: {
+      latitude: -33.8917,
+      longitude: 151.277,
+      address: "Bondi Beach, NSW 2026"
+    },
+    details: {
+      category: 'Vibes',
+      description: "World-famous beach with golden sands and surf.",
+      openingHours: "24/7",
+      vibeTags: ["Beach", "Surf", "Sun"],
+      currentVibe: "Buzzing"
     },
   },
   {
@@ -52,9 +84,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.8895,
       longitude: 151.274,
+      address: "1/136 Wairoa Ave, Bondi Beach NSW 2026"
     },
     details: {
       category: 'Sushi',
+      description: "Authentic Japanese sushi and sashimi.",
+      openingHours: "12pm - 10pm",
+      vibeTags: ["Authentic", "Sushi", "Fresh"],
+      currentVibe: "Buzzing"
     },
   },
   {
@@ -64,9 +101,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.8888,
       longitude: 151.277,
+      address: "126 Ramsgate Ave, North Bondi NSW 2026"
     },
     details: {
       category: 'Brunch',
+      description: "Insta-famous colorful brunch dishes.",
+      openingHours: "7am - 4pm",
+      vibeTags: ["Instagrammable", "Healthy", "Brunch"],
+      currentVibe: "Packed"
     },
   },
   {
@@ -76,9 +118,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.895,
       longitude: 151.268,
+      address: "283 Bondi Rd, Bondi NSW 2026"
     },
     details: {
       category: 'Restaurants',
+      description: "Vibrant Italian restaurant with a leafy courtyard.",
+      openingHours: "12pm - 11pm",
+      vibeTags: ["Italian", "Courtyard", "Group Friendly"],
+      currentVibe: "Packed"
     },
   },
   {
@@ -88,9 +135,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.892,
       longitude: 151.271,
+      address: "281 Bondi Rd, Bondi NSW 2026"
     },
     details: {
       category: 'Cocktails',
+      description: "Cozy bar with a great cocktail list.",
+      openingHours: "4pm - 12am",
+      vibeTags: ["Cozy", "Cocktails", "Local"],
+      currentVibe: "Buzzing"
     },
   },
   {
@@ -100,9 +152,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.889,
       longitude: 151.276,
+      address: "2/136 Wairoa Ave, Bondi Beach NSW 2026"
     },
     details: {
       category: 'Brunch',
+      description: "Classic brunch fare with a modern twist.",
+      openingHours: "7am - 3pm",
+      vibeTags: ["Brunch", "Modern", "Coffee"],
+      currentVibe: "Buzzing"
     },
   },
   {
@@ -112,9 +169,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.8935,
       longitude: 151.27,
+      address: "276 Campbell Parade, Bondi Beach NSW 2026"
     },
     details: {
       category: 'Restaurants',
+      description: "Modern Pan-Asian cuisine in a chic setting.",
+      openingHours: "5pm - 11pm",
+      vibeTags: ["Pan-Asian", "Chic", "Dinner"],
+      currentVibe: "Buzzing"
     },
   },
   {
@@ -124,9 +186,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.891,
       longitude: 151.27,
+      address: "79 Hall St, Bondi Beach NSW 2026"
     },
     details: {
       category: 'Brunch',
+      description: "Famous for ricotta hotcakes and scrambled eggs.",
+      openingHours: "7:30am - 3pm",
+      vibeTags: ["Iconic", "Brunch", "Hotcakes"],
+      currentVibe: "Packed"
     },
   },
   {
@@ -136,9 +203,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.887,
       longitude: 151.278,
+      address: "270 Campbell Parade, Bondi Beach NSW 2026"
     },
     details: {
       category: 'Restaurants',
+      description: "Farm-to-table dining with ocean views.",
+      openingHours: "6pm - 10pm",
+      vibeTags: ["Farm-to-Table", "Fine Dining", "Views"],
+      currentVibe: "Buzzing"
     },
   },
   {
@@ -148,9 +220,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.89,
       longitude: 151.273,
+      address: "106-110 Glenayr Ave, Bondi Beach NSW 2026"
     },
     details: {
       category: 'Restaurants',
+      description: "Authentic Italian flatbread sandwiches.",
+      openingHours: "11am - 9pm",
+      vibeTags: ["Quick", "Italian", "Lunch"],
+      currentVibe: "Chill"
     },
   },
   {
@@ -160,9 +237,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.89,
       longitude: 151.277,
+      address: "Bondi Pavilion, Queen Elizabeth Dr, Bondi Beach"
     },
     details: {
       category: 'Nightlife',
+      description: "Casual beachside bar with a lively atmosphere.",
+      openingHours: "12pm - 12am",
+      vibeTags: ["Beachy", "Casual", "Lively"],
+      currentVibe: "Packed"
     },
   },
   {
@@ -172,9 +254,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.888,
       longitude: 151.276,
+      address: "17-18/110 Ramsgate Ave, North Bondi NSW 2026"
     },
     details: {
       category: 'Brunch',
+      description: "Bohemian-style cafe with healthy options.",
+      openingHours: "6:30am - 3pm",
+      vibeTags: ["Bohemian", "Healthy", "Coffee"],
+      currentVibe: "Buzzing"
     },
   },
   {
@@ -184,9 +271,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.892,
       longitude: 151.272,
+      address: "1/284-294 Campbell Parade, Bondi Beach NSW 2026"
     },
     details: {
       category: 'Health & Fitness',
+      description: "Boutique pilates studio.",
+      openingHours: "6am - 7pm",
+      vibeTags: ["Pilates", "Wellness", "Modern"],
+      currentVibe: "Chill"
     },
   },
   {
@@ -196,9 +288,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.896,
       longitude: 151.266,
+      address: "65 Ocean St, Woollahra NSW 2025"
     },
     details: {
       category: 'Restaurants',
+      description: "Elegant garden-to-plate dining experience.",
+      openingHours: "12pm - 10pm",
+      vibeTags: ["Seasonal", "Elegant", "Garden"],
+      currentVibe: "Buzzing"
     },
   },
   {
@@ -208,9 +305,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.887,
       longitude: 151.277,
+      address: "120 Ramsgate Ave, North Bondi NSW 2026"
     },
     details: {
       category: 'Restaurants',
+      description: "Fresh seafood in a relaxed setting.",
+      openingHours: "12pm - 10pm",
+      vibeTags: ["Seafood", "Beachfront", "Relaxed"],
+      currentVibe: "Buzzing"
     },
   },
   {
@@ -220,9 +322,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.886,
       longitude: 151.277,
+      address: "128 Ramsgate Ave, North Bondi NSW 2026"
     },
     details: {
       category: 'Surf',
+      description: "Learn to surf with the best in Bondi.",
+      openingHours: "7am - 5pm",
+      vibeTags: ["Surfing", "Lessons", "Beginner Friendly"],
+      currentVibe: "Buzzing"
     },
   },
   {
@@ -232,9 +339,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.893,
       longitude: 151.271,
+      address: "9/178 Campbell Parade, Bondi Beach NSW 2026"
     },
     details: {
       category: 'Retail',
+      description: "Iconic Bondi boutique with curated designer collections.",
+      openingHours: "10am - 6pm",
+      vibeTags: ["Designer", "Boutique", "Fashion"],
+      currentVibe: "Chill"
     },
   },
   {
@@ -244,9 +356,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.892,
       longitude: 151.273,
+      address: "2/180-186 Campbell Parade, Bondi Beach NSW 2026"
     },
     details: {
       category: 'Retail',
+      description: "Leisurewear for a global nomadic life. Born in Bondi.",
+      openingHours: "10am - 6pm",
+      vibeTags: ["Leisurewear", "Local", "Minimalist"],
+      currentVibe: "Chill"
     },
   },
   {
@@ -256,9 +373,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.894,
       longitude: 151.268,
+      address: "151 Curlewis St, Bondi Beach NSW 2026"
     },
     details: {
       category: 'Retail',
+      description: "Gallery showcasing incredible surf and ocean photography.",
+      openingHours: "10am - 5pm",
+      vibeTags: ["Art", "Photography", "Ocean"],
+      currentVibe: "Chill"
     },
   },
   {
@@ -268,9 +390,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.89,
       longitude: 151.275,
+      address: "Campbell Parade, Bondi Beach NSW 2026"
     },
     details: {
       category: 'Retail',
+      description: "Sunday markets for unique finds from local designers.",
+      openingHours: "10am - 4pm (Sun)",
+      vibeTags: ["Market", "Local", "Unique"],
+      currentVibe: "Buzzing"
     },
   },
   {
@@ -280,21 +407,14 @@ export const SEED_VENUES: Venue[] = [
     location: {
       latitude: -33.903,
       longitude: 151.276,
+      address: "Bondi to Bronte Coastal Walk"
     },
     details: {
       category: 'Vibes',
-    },
-  },
-  {
-    id: 'bondi-beach',
-    slug: 'bondi-beach',
-    name: 'Bondi Beach',
-    location: {
-      latitude: -33.8917,
-      longitude: 151.277,
-    },
-    details: {
-      category: 'Vibes',
+      description: "One of the most scenic coastal walks in the world.",
+      openingHours: "24/7",
+      vibeTags: ["Walk", "Scenic", "Nature"],
+      currentVibe: "Chill"
     },
   },
   {

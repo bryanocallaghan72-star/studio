@@ -1,437 +1,472 @@
+/**
+ * @fileoverview Baseline seed data for all venues in the application.
+ * This data should be considered the canonical source for venue identity, location,
+ * and primary category. It is used to populate the Firestore 'venues' collection.
+ *
+ * It uses the strict `Venue` type definition.
+ */
 
-[
+import type { Venue } from '@/types/venue';
+
+export const SEED_VENUES: Venue[] = [
   {
-    "id": 1,
-    "name": "Bondi Icebergs",
-    "slug": "bondi-icebergs",
-    "type": "Vibes",
-    "description": "Iconic ocean views and fine dining.",
-    "x": "80%",
-    "y": "85%",
-    "latitude": -33.8953,
-    "longitude": 151.274,
-    "openingHours": "6am - 6:30pm",
-    "vibeTags": [
-      "Iconic",
-      "Views",
-      "Swim"
-    ],
-    "currentVibe": "Buzzing"
+    id: 'bondi-icebergs',
+    slug: 'bondi-icebergs',
+    name: 'Bondi Icebergs',
+    location: {
+      latitude: -33.8953,
+      longitude: 151.274,
+      address: "1 Notts Ave, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Vibes',
+      description: "Iconic ocean views and fine dining.",
+      openingHours: "6am - 6:30pm",
+      vibeTags: ["Iconic", "Views", "Swim"],
+      currentVibe: "Buzzing"
+    },
   },
   {
-    "id": 2,
-    "name": "Hotel Ravesis",
-    "slug": "hotel-ravesis",
-    "type": "Nightlife",
-    "description": "Stylish beachfront bar and restaurant.",
-    "x": "48%",
-    "y": "45%",
-    "latitude": -33.8913,
-    "longitude": 151.276,
-    "openingHours": "12pm - 12am",
-    "vibeTags": [
-      "Stylish",
-      "Rooftop",
-      "Cocktails"
-    ],
-    "currentVibe": "Packed"
+    id: 'hotel-ravesis',
+    slug: 'hotel-ravesis',
+    name: 'Hotel Ravesis',
+    location: {
+      latitude: -33.8913,
+      longitude: 151.276,
+      address: "118 Campbell Parade, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Nightlife',
+      description: "Stylish beachfront bar and restaurant.",
+      openingHours: "12pm - 12am",
+      vibeTags: ["Stylish", "Rooftop", "Cocktails"],
+      currentVibe: "Packed"
+    },
   },
   {
-    "id": 3,
-    "name": "The Depot",
-    "slug": "the-depot",
-    "type": "Brunch",
-    "description": "Popular spot for brunch and coffee.",
-    "x": "15%",
-    "y": "75%",
-    "latitude": -33.8943,
-    "longitude": 151.27,
-    "openingHours": "7am - 3pm",
-    "vibeTags": [
-      "Casual",
-      "Local Fav",
-      "Coffee"
-    ],
-    "currentVibe": "Chill"
+    id: 'the-depot',
+    slug: 'the-depot',
+    name: 'The Depot',
+    location: {
+      latitude: -33.8943,
+      longitude: 151.27,
+      address: "286 Campbell Parade, North Bondi NSW 2026"
+    },
+    details: {
+      category: 'Brunch',
+      description: "Popular spot for brunch and coffee.",
+      openingHours: "7am - 3pm",
+      vibeTags: ["Casual", "Local Fav", "Coffee"],
+      currentVibe: "Chill"
+    },
+  },
+    {
+    id: 'bondi-beach',
+    slug: 'bondi-beach',
+    name: 'Bondi Beach',
+    location: {
+      latitude: -33.8917,
+      longitude: 151.277,
+      address: "Bondi Beach, NSW 2026"
+    },
+    details: {
+      category: 'Vibes',
+      description: "World-famous beach with golden sands and surf.",
+      openingHours: "24/7",
+      vibeTags: ["Beach", "Surf", "Sun"],
+      currentVibe: "Buzzing"
+    },
   },
   {
-    "id": 5,
-    "name": "Raw Bar",
-    "slug": "raw-bar",
-    "type": "Sushi",
-    "description": "Authentic Japanese sushi and sashimi.",
-    "x": "25%",
-    "y": "55%",
-    "latitude": -33.8895,
-    "longitude": 151.274,
-    "openingHours": "12pm - 10pm",
-    "vibeTags": [
-      "Authentic",
-      "Sushi",
-      "Fresh"
-    ],
-    "currentVibe": "Buzzing"
+    id: 'raw-bar',
+    slug: 'raw-bar',
+    name: 'Raw Bar',
+    location: {
+      latitude: -33.8895,
+      longitude: 151.274,
+      address: "1/136 Wairoa Ave, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Sushi',
+      description: "Authentic Japanese sushi and sashimi.",
+      openingHours: "12pm - 10pm",
+      vibeTags: ["Authentic", "Sushi", "Fresh"],
+      currentVibe: "Buzzing"
+    },
   },
   {
-    "id": 6,
-    "name": "Speedo's Cafe",
-    "slug": "speedos-cafe",
-    "type": "Brunch",
-    "description": "Insta-famous colorful brunch dishes.",
-    "x": "55%",
-    "y": "30%",
-    "latitude": -33.8888,
-    "longitude": 151.277,
-    "openingHours": "7am - 4pm",
-    "vibeTags": [
-      "Instagrammable",
-      "Healthy",
-      "Brunch"
-    ],
-    "currentVibe": "Packed"
+    id: 'speedos-cafe',
+    slug: 'speedos-cafe',
+    name: "Speedo's Cafe",
+    location: {
+      latitude: -33.8888,
+      longitude: 151.277,
+      address: "126 Ramsgate Ave, North Bondi NSW 2026"
+    },
+    details: {
+      category: 'Brunch',
+      description: "Insta-famous colorful brunch dishes.",
+      openingHours: "7am - 4pm",
+      vibeTags: ["Instagrammable", "Healthy", "Brunch"],
+      currentVibe: "Packed"
+    },
   },
   {
-    "id": 7,
-    "name": "Totti's",
-    "slug": "tottis",
-    "type": "Restaurants",
-    "description": "Vibrant Italian restaurant with a leafy courtyard.",
-    "x": "10%",
-    "y": "85%",
-    "latitude": -33.895,
-    "longitude": 151.268,
-    "openingHours": "12pm - 11pm",
-    "vibeTags": [
-      "Italian",
-      "Courtyard",
-      "Group Friendly"
-    ],
-    "currentVibe": "Packed"
+    id: 'tottis',
+    slug: 'tottis',
+    name: "Totti's",
+    location: {
+      latitude: -33.895,
+      longitude: 151.268,
+      address: "283 Bondi Rd, Bondi NSW 2026"
+    },
+    details: {
+      category: 'Restaurants',
+      description: "Vibrant Italian restaurant with a leafy courtyard.",
+      openingHours: "12pm - 11pm",
+      vibeTags: ["Italian", "Courtyard", "Group Friendly"],
+      currentVibe: "Packed"
+    },
   },
   {
-    "id": 9,
-    "name": "The Corner House",
-    "slug": "the-corner-house",
-    "type": "Cocktails",
-    "description": "Cozy bar with a great cocktail list.",
-    "x": "35%",
-    "y": "50%",
-    "latitude": -33.892,
-    "longitude": 151.271,
-    "openingHours": "4pm - 12am",
-    "vibeTags": [
-      "Cozy",
-      "Cocktails",
-      "Local"
-    ],
-    "currentVibe": "Buzzing"
+    id: 'the-corner-house',
+    slug: 'the-corner-house',
+    name: 'The Corner House',
+    location: {
+      latitude: -33.892,
+      longitude: 151.271,
+      address: "281 Bondi Rd, Bondi NSW 2026"
+    },
+    details: {
+      category: 'Cocktails',
+      description: "Cozy bar with a great cocktail list.",
+      openingHours: "4pm - 12am",
+      vibeTags: ["Cozy", "Cocktails", "Local"],
+      currentVibe: "Buzzing"
+    },
   },
   {
-    "id": 10,
-    "name": "Harry's Bondi",
-    "slug": "harrys-bondi",
-    "type": "Brunch",
-    "description": "Classic brunch fare with a modern twist.",
-    "x": "65%",
-    "y": "45%",
-    "latitude": -33.889,
-    "longitude": 151.276,
-    "openingHours": "7am - 3pm",
-    "vibeTags": [
-      "Brunch",
-      "Modern",
-      "Coffee"
-    ],
-    "currentVibe": "Buzzing"
+    id: 'harrys-bondi',
+    slug: 'harrys-bondi',
+    name: "Harry's Bondi",
+    location: {
+      latitude: -33.889,
+      longitude: 151.276,
+      address: "2/136 Wairoa Ave, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Brunch',
+      description: "Classic brunch fare with a modern twist.",
+      openingHours: "7am - 3pm",
+      vibeTags: ["Brunch", "Modern", "Coffee"],
+      currentVibe: "Buzzing"
+    },
   },
   {
-    "id": 11,
-    "name": "Lulu",
-    "slug": "lulu",
-    "type": "Restaurants",
-    "description": "Modern Pan-Asian cuisine in a chic setting.",
-    "x": "20%",
-    "y": "70%",
-    "latitude": -33.8935,
-    "longitude": 151.27,
-    "openingHours": "5pm - 11pm",
-    "vibeTags": [
-      "Pan-Asian",
-      "Chic",
-      "Dinner"
-    ],
-    "currentVibe": "Buzzing"
+    id: 'lulu',
+    slug: 'lulu',
+    name: 'Lulu',
+    location: {
+      latitude: -33.8935,
+      longitude: 151.27,
+      address: "276 Campbell Parade, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Restaurants',
+      description: "Modern Pan-Asian cuisine in a chic setting.",
+      openingHours: "5pm - 11pm",
+      vibeTags: ["Pan-Asian", "Chic", "Dinner"],
+      currentVibe: "Buzzing"
+    },
   },
   {
-    "id": 15,
-    "name": "Bills",
-    "slug": "bills",
-    "type": "Brunch",
-    "description": "Famous for ricotta hotcakes and scrambled eggs.",
-    "x": "15%",
-    "y": "80%",
-    "latitude": -33.891,
-    "longitude": 151.27,
-    "openingHours": "7:30am - 3pm",
-    "vibeTags": [
-      "Iconic",
-      "Brunch",
-      "Hotcakes"
-    ],
-    "currentVibe": "Packed"
+    id: 'bills',
+    slug: 'bills',
+    name: 'Bills',
+    location: {
+      latitude: -33.891,
+      longitude: 151.27,
+      address: "79 Hall St, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Brunch',
+      description: "Famous for ricotta hotcakes and scrambled eggs.",
+      openingHours: "7:30am - 3pm",
+      vibeTags: ["Iconic", "Brunch", "Hotcakes"],
+      currentVibe: "Packed"
+    },
   },
   {
-    "id": 16,
-    "name": "Sean's",
-    "slug": "seans",
-    "type": "Restaurants",
-    "description": "Farm-to-table dining with ocean views.",
-    "x": "60%",
-    "y": "15%",
-    "latitude": -33.887,
-    "longitude": 151.278,
-    "openingHours": "6pm - 10pm",
-    "vibeTags": [
-      "Farm-to-Table",
-      "Fine Dining",
-      "Views"
-    ],
-    "currentVibe": "Buzzing"
+    id: 'seans',
+    slug: 'seans',
+    name: "Sean's",
+    location: {
+      latitude: -33.887,
+      longitude: 151.278,
+      address: "270 Campbell Parade, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Restaurants',
+      description: "Farm-to-table dining with ocean views.",
+      openingHours: "6pm - 10pm",
+      vibeTags: ["Farm-to-Table", "Fine Dining", "Views"],
+      currentVibe: "Buzzing"
+    },
   },
   {
-    "id": 17,
-    "name": "La Piadina",
-    "slug": "la-piadina",
-    "type": "Restaurants",
-    "description": "Authentic Italian flatbread sandwiches.",
-    "x": "50%",
-    "y": "40%",
-    "latitude": -33.89,
-    "longitude": 151.273,
-    "openingHours": "11am - 9pm",
-    "vibeTags": [
-      "Quick",
-      "Italian",
-      "Lunch"
-    ],
-    "currentVibe": "Chill"
+    id: 'la-piadina',
+    slug: 'la-piadina',
+    name: 'La Piadina',
+    location: {
+      latitude: -33.89,
+      longitude: 151.273,
+      address: "106-110 Glenayr Ave, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Restaurants',
+      description: "Authentic Italian flatbread sandwiches.",
+      openingHours: "11am - 9pm",
+      vibeTags: ["Quick", "Italian", "Lunch"],
+      currentVibe: "Chill"
+    },
   },
   {
-    "id": 18,
-    "name": "The Bucket List",
-    "slug": "the-bucket-list",
-    "type": "Nightlife",
-    "description": "Casual beachside bar with a lively atmosphere.",
-    "x": "75%",
-    "y": "30%",
-    "latitude": -33.89,
-    "longitude": 151.277,
-    "openingHours": "12pm - 12am",
-    "vibeTags": [
-      "Beachy",
-      "Casual",
-      "Lively"
-    ],
-    "currentVibe": "Packed"
+    id: 'the-bucket-list',
+    slug: 'the-bucket-list',
+    name: 'The Bucket List',
+    location: {
+      latitude: -33.89,
+      longitude: 151.277,
+      address: "Bondi Pavilion, Queen Elizabeth Dr, Bondi Beach"
+    },
+    details: {
+      category: 'Nightlife',
+      description: "Casual beachside bar with a lively atmosphere.",
+      openingHours: "12pm - 12am",
+      vibeTags: ["Beachy", "Casual", "Lively"],
+      currentVibe: "Packed"
+    },
   },
   {
-    "id": 19,
-    "name": "Porch and Parlour",
-    "slug": "porch-and-parlour",
-    "type": "Brunch",
-    "description": "Bohemian-style cafe with healthy options.",
-    "x": "50%",
-    "y": "55%",
-    "latitude": -33.888,
-    "longitude": 151.276,
-    "openingHours": "6:30am - 3pm",
-    "vibeTags": [
-      "Bohemian",
-      "Healthy",
-      "Coffee"
-    ],
-    "currentVibe": "Buzzing"
+    id: 'porch-and-parlour',
+    slug: 'porch-and-parlour',
+    name: 'Porch and Parlour',
+    location: {
+      latitude: -33.888,
+      longitude: 151.276,
+      address: "17-18/110 Ramsgate Ave, North Bondi NSW 2026"
+    },
+    details: {
+      category: 'Brunch',
+      description: "Bohemian-style cafe with healthy options.",
+      openingHours: "6:30am - 3pm",
+      vibeTags: ["Bohemian", "Healthy", "Coffee"],
+      currentVibe: "Buzzing"
+    },
   },
   {
-    "id": 26,
-    "name": "Fluidform Pilates",
-    "slug": "fluidform-pilates",
-    "type": "Health & Fitness",
-    "description": "Boutique pilates studio.",
-    "x": "25%",
-    "y": "55%",
-    "latitude": -33.892,
-    "longitude": 151.272,
-    "openingHours": "6am - 7pm",
-    "vibeTags": [
-      "Pilates",
-      "Wellness",
-      "Modern"
-    ],
-    "currentVibe": "Chill"
+    id: 'fluidform-pilates',
+    slug: 'fluidform-pilates',
+    name: 'Fluidform Pilates',
+    location: {
+      latitude: -33.892,
+      longitude: 151.272,
+      address: "1/284-294 Campbell Parade, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Health & Fitness',
+      description: "Boutique pilates studio.",
+      openingHours: "6am - 7pm",
+      vibeTags: ["Pilates", "Wellness", "Modern"],
+      currentVibe: "Chill"
+    },
   },
   {
-    "id": 29,
-    "name": "Chiswick",
-    "slug": "chiswick",
-    "type": "Restaurants",
-    "description": "Elegant garden-to-plate dining experience.",
-    "x": "5%",
-    "y": "85%",
-    "latitude": -33.896,
-    "longitude": 151.266,
-    "openingHours": "12pm - 10pm",
-    "vibeTags": [
-      "Seasonal",
-      "Elegant",
-      "Garden"
-    ],
-    "currentVibe": "Buzzing"
+    id: 'chiswick',
+    slug: 'chiswick',
+    name: 'Chiswick',
+    location: {
+      latitude: -33.896,
+      longitude: 151.266,
+      address: "65 Ocean St, Woollahra NSW 2025"
+    },
+    details: {
+      category: 'Restaurants',
+      description: "Elegant garden-to-plate dining experience.",
+      openingHours: "12pm - 10pm",
+      vibeTags: ["Seasonal", "Elegant", "Garden"],
+      currentVibe: "Buzzing"
+    },
   },
   {
-    "id": 30,
-    "name": "North Bondi Fish",
-    "slug": "north-bondi-fish",
-    "type": "Restaurants",
-    "description": "Fresh seafood in a relaxed setting.",
-    "x": "55%",
-    "y": "40%",
-    "latitude": -33.887,
-    "longitude": 151.277,
-    "openingHours": "12pm - 10pm",
-    "vibeTags": [
-      "Seafood",
-      "Beachfront",
-      "Relaxed"
-    ],
-    "currentVibe": "Buzzing"
+    id: 'north-bondi-fish',
+    slug: 'north-bondi-fish',
+    name: 'North Bondi Fish',
+    location: {
+      latitude: -33.887,
+      longitude: 151.277,
+      address: "120 Ramsgate Ave, North Bondi NSW 2026"
+    },
+    details: {
+      category: 'Restaurants',
+      description: "Fresh seafood in a relaxed setting.",
+      openingHours: "12pm - 10pm",
+      vibeTags: ["Seafood", "Beachfront", "Relaxed"],
+      currentVibe: "Buzzing"
+    },
   },
   {
-    "id": 31,
-    "name": "Lets Go Surfing",
-    "slug": "lets-go-surfing",
-    "type": "Surf",
-    "description": "Learn to surf with the best in Bondi.",
-    "x": "70%",
-    "y": "10%",
-    "latitude": -33.886,
-    "longitude": 151.277,
-    "openingHours": "7am - 5pm",
-    "vibeTags": [
-      "Surfing",
-      "Lessons",
-      "Beginner Friendly"
-    ],
-    "currentVibe": "Buzzing"
+    id: 'lets-go-surfing',
+    slug: 'lets-go-surfing',
+    name: 'Lets Go Surfing',
+    location: {
+      latitude: -33.886,
+      longitude: 151.277,
+      address: "128 Ramsgate Ave, North Bondi NSW 2026"
+    },
+    details: {
+      category: 'Surf',
+      description: "Learn to surf with the best in Bondi.",
+      openingHours: "7am - 5pm",
+      vibeTags: ["Surfing", "Lessons", "Beginner Friendly"],
+      currentVibe: "Buzzing"
+    },
   },
   {
-    "id": 33,
-    "name": "Tuchuzy",
-    "slug": "tuchuzy",
-    "type": "Retail",
-    "description": "Iconic Bondi boutique with curated designer collections.",
-    "x": "20%",
-    "y": "65%",
-    "latitude": -33.893,
-    "longitude": 151.271,
-    "openingHours": "10am - 6pm",
-    "vibeTags": [
-      "Designer",
-      "Boutique",
-      "Fashion"
-    ],
-    "currentVibe": "Chill"
+    id: 'tuchuzy',
+    slug: 'tuchuzy',
+    name: 'Tuchuzy',
+    location: {
+      latitude: -33.893,
+      longitude: 151.271,
+      address: "9/178 Campbell Parade, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Retail',
+      description: "Iconic Bondi boutique with curated designer collections.",
+      openingHours: "10am - 6pm",
+      vibeTags: ["Designer", "Boutique", "Fashion"],
+      currentVibe: "Chill"
+    },
   },
   {
-    "id": 34,
-    "name": "Venroy",
-    "slug": "venroy",
-    "type": "Retail",
-    "description": "Leisurewear for a global nomadic life. Born in Bondi.",
-    "x": "30%",
-    "y": "60%",
-    "latitude": -33.892,
-    "longitude": 151.273,
-    "openingHours": "10am - 6pm",
-    "vibeTags": [
-      "Leisurewear",
-      "Local",
-      "Minimalist"
-    ],
-    "currentVibe": "Chill"
+    id: 'venroy',
+    slug: 'venroy',
+    name: 'Venroy',
+    location: {
+      latitude: -33.892,
+      longitude: 151.273,
+      address: "2/180-186 Campbell Parade, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Retail',
+      description: "Leisurewear for a global nomadic life. Born in Bondi.",
+      openingHours: "10am - 6pm",
+      vibeTags: ["Leisurewear", "Local", "Minimalist"],
+      currentVibe: "Chill"
+    },
   },
   {
-    "id": 35,
-    "name": "Aquabumps",
-    "slug": "aquabumps",
-    "type": "Retail",
-    "description": "Gallery showcasing incredible surf and ocean photography.",
-    "x": "5%",
-    "y": "75%",
-    "latitude": -33.894,
-    "longitude": 151.268,
-    "openingHours": "10am - 5pm",
-    "vibeTags": [
-      "Art",
-      "Photography",
-      "Ocean"
-    ],
-    "currentVibe": "Chill"
+    id: 'aquabumps',
+    slug: 'aquabumps',
+    name: 'Aquabumps',
+    location: {
+      latitude: -33.894,
+      longitude: 151.268,
+      address: "151 Curlewis St, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Retail',
+      description: "Gallery showcasing incredible surf and ocean photography.",
+      openingHours: "10am - 5pm",
+      vibeTags: ["Art", "Photography", "Ocean"],
+      currentVibe: "Chill"
+    },
   },
   {
-    "id": 36,
-    "name": "Bondi Markets",
-    "slug": "bondi-markets",
-    "type": "Retail",
-    "description": "Sunday markets for unique finds from local designers.",
-    "x": "70%",
-    "y": "10%",
-    "latitude": -33.89,
-    "longitude": 151.275,
-    "openingHours": "10am - 4pm (Sun)",
-    "vibeTags": [
-      "Market",
-      "Local",
-      "Unique"
-    ],
-    "currentVibe": "Buzzing"
+    id: 'bondi-markets',
+    slug: 'bondi-markets',
+    name: 'Bondi Markets',
+    location: {
+      latitude: -33.89,
+      longitude: 151.275,
+      address: "Campbell Parade, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Retail',
+      description: "Sunday markets for unique finds from local designers.",
+      openingHours: "10am - 4pm (Sun)",
+      vibeTags: ["Market", "Local", "Unique"],
+      currentVibe: "Buzzing"
+    },
   },
   {
-    "id": 37,
-    "name": "Bondi to Bronte Coastal Walk",
-    "slug": "bondi-to-bronte-coastal-walk",
-    "type": "Vibes",
-    "description": "One of the most scenic coastal walks in the world.",
-    "x": "85%",
-    "y": "95%",
-    "latitude": -33.903,
-    "longitude": 151.276,
-    "openingHours": "24/7",
-    "vibeTags": [
-      "Walk",
-      "Scenic",
-      "Nature"
-    ],
-    "currentVibe": "Chill"
+    id: 'bondi-to-bronte-coastal-walk',
+    slug: 'bondi-to-bronte-coastal-walk',
+    name: 'Bondi to Bronte Coastal Walk',
+    location: {
+      latitude: -33.903,
+      longitude: 151.276,
+      address: "Bondi to Bronte Coastal Walk"
+    },
+    details: {
+      category: 'Vibes',
+      description: "One of the most scenic coastal walks in the world.",
+      openingHours: "24/7",
+      vibeTags: ["Walk", "Scenic", "Nature"],
+      currentVibe: "Chill"
+    },
   },
   {
-    "id": 4,
-    "name": "Bondi Beach",
-    "slug": "bondi-beach",
-    "type": "Vibes",
-    "description": "World-famous beach with golden sands and surf.",
-    "x": "80%",
-    "y": "30%",
-    "latitude": -33.8917,
-    "longitude": 151.277,
-    "openingHours": "24/7",
-    "vibeTags": [
-      "Beach",
-      "Surf",
-      "Sun"
-    ],
-    "currentVibe": "Buzzing"
+    id: 'iberica-bondi',
+    slug: 'iberica-bondi',
+    name: 'Iberica Bondi',
+    location: {
+      latitude: -33.8908,
+      longitude: 151.2721
+    },
+    details: {
+      category: 'Restaurants'
+    }
+  },
+  {
+    id: 'upbeat-bondi',
+    slug: 'upbeat-bondi',
+    name: 'Upbeat Bondi',
+    location: {
+      latitude: -33.8938,
+      longitude: 151.2675
+    },
+    details: {
+      category: 'Brunch'
+    }
+  },
+  {
+    id: 'saltys-bondi-beach',
+    slug: 'saltys-bondi-beach',
+    name: "Salty's Bondi Beach",
+    location: {
+      latitude: -33.8899,
+      longitude: 151.2755
+    },
+    details: {
+      category: 'Nightlife'
+    }
+  },
+  {
+    id: 'kissed-earth',
+    slug: 'kissed-earth',
+    name: 'Kissed Earth',
+    location: {
+      latitude: -33.8925,
+      longitude: 151.269
+    },
+    details: {
+      category: 'Brunch'
+    }
   }
-]
+];
 
-    
+export const SEED_VENUES_BY_SLUG = Object.fromEntries(
+  SEED_VENUES.map(v => [v.slug, v])
+) satisfies Record<string, Venue>;
