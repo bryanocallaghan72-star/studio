@@ -19,14 +19,17 @@ import { EditProfileDialog } from '@/components/iykyk/EditProfileDialog';
 import { WithId } from '@/firebase/firestore/use-collection';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useClaimedDeals } from '@/hooks/useClaimedDeals';
+import { useCreators } from '@/hooks/useCreators';
 
 export function ProfilePageClient({ uid }: { uid: string }) {
   const { user: currentUser } = useUser();
   const firestore = useFirestore();
 
+  const { creatorsById } = useCreators();
+
   const mockUserProfile = useMemo(() => {
-    return appData.creators.find(creator => creator.id === uid);
-  }, [uid]);
+    return creatorsById[uid];
+  }, [uid, creatorsById]);
 
   const shouldFetchFirestore = !mockUserProfile;
   const isOwner = currentUser && currentUser.uid === uid;

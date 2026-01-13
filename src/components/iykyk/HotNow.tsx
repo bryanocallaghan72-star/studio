@@ -9,13 +9,13 @@ import { Flame, Ticket, Users } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { QRCodeDialog } from './QRCodeDialog';
-import { appData } from '@/lib/data'; // Keep for creators until useCreators hook is made
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
 import { doc, collection } from 'firebase/firestore';
 import { useHotItems, type HotItem } from '@/hooks/useHotItems';
 import { useVenues } from '@/hooks/useVenues';
 import { Skeleton } from '../ui/skeleton';
+import { useCreators } from '@/hooks/useCreators';
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
@@ -76,6 +76,7 @@ export function HotNow() {
 
     const { hotItems, isLoading: areItemsLoading } = useHotItems();
     const { venues, isLoading: areVenuesLoading } = useVenues();
+    const { creatorsById, isLoading: areCreatorsLoading } = useCreators();
     
     const venuesBySlug = useMemo(() => {
         if (!venues) return {};
@@ -123,7 +124,7 @@ export function HotNow() {
         }
     };
     
-    const isLoading = areItemsLoading || areVenuesLoading;
+    const isLoading = areItemsLoading || areVenuesLoading || areCreatorsLoading;
 
     const activeItems = useMemo(() => {
         if (!hotItems) return [];
@@ -144,7 +145,7 @@ export function HotNow() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         {activeItems.map(item => {
                             const image = item.imageId ? PlaceHolderImages.find(img => img.id === item.imageId) : null;
-                            const creator = item.creatorId ? appData.creators.find(c => c.id === item.creatorId) : null;
+                            const creator = item.creatorId ? creatorsById[item.creatorId] : null;
                             const venueName = venuesBySlug[item.venueId]?.name ?? item.venue;
 
                             return (

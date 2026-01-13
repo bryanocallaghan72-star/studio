@@ -144,7 +144,7 @@ export function ActivePage() {
     
     const { classDrops, isLoading: areDropsLoading } = useClassDrops();
     const { venues, isLoading: areVenuesLoading } = useVenues();
-    const { creatorsById } = useCreators();
+    const { creatorsById, isLoading: areCreatorsLoading } = useCreators();
 
     useEffect(() => {
         setIsClient(true);
@@ -204,7 +204,7 @@ export function ActivePage() {
     
     const favoriteDrops = liveDrops.filter(drop => drop.isFavoriteVenue);
     
-    const isLoading = !isClient || areDropsLoading || areVenuesLoading;
+    const isLoading = !isClient || areDropsLoading || areVenuesLoading || areCreatorsLoading;
 
     return (
         <>

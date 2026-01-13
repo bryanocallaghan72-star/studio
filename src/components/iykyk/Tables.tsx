@@ -152,7 +152,7 @@ export function Tables() {
 
     const { tableDrops, isLoading: areDropsLoading } = useTableDrops();
     const { venues, isLoading: areVenuesLoading } = useVenues();
-    const { creatorsById } = useCreators();
+    const { creatorsById, isLoading: areCreatorsLoading } = useCreators();
 
     useEffect(() => {
         setIsClient(true);
@@ -217,7 +217,7 @@ export function Tables() {
 
     const favoriteDrops = liveDrops.filter(drop => drop.isFavoriteVenue);
 
-    const isLoading = !isClient || areDropsLoading || areVenuesLoading;
+    const isLoading = !isClient || areDropsLoading || areVenuesLoading || areCreatorsLoading;
     
     return (
         <>

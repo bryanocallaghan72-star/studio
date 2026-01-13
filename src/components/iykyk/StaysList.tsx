@@ -16,15 +16,7 @@ import { useCreators } from '@/hooks/useCreators';
 export function StaysList() {
     const [selectedStay, setSelectedStay] = useState<(typeof appData.stays)[0] | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const { creators } = useCreators();
-
-    const creatorsById = useMemo(() => {
-        if (!creators) return {};
-        return creators.reduce((acc, creator) => {
-            acc[creator.id] = creator;
-            return acc;
-        }, {} as Record<string, (typeof creators)[number]>);
-    }, [creators]);
+    const { creatorsById } = useCreators();
 
     const handleBookNow = (stay: (typeof appData.stays)[0]) => {
         setSelectedStay(stay);

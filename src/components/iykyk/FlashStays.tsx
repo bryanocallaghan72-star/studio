@@ -8,8 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Zap, Ticket, Bed } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { QRCodeDialog } from './QRCodeDialog';
-import { appData } from '@/lib/data';
+import { appData } from "@/lib/data";
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
 import Link from 'next/link';
@@ -68,15 +67,7 @@ export function FlashStays() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const firestore = useFirestore();
     const { user } = useUser();
-    const { creators } = useCreators();
-
-    const creatorsById = useMemo(() => {
-        if (!creators) return {};
-        return creators.reduce((acc, creator) => {
-            acc[creator.id] = creator;
-            return acc;
-        }, {} as Record<string, (typeof creators)[number]>);
-    }, [creators]);
+    const { creatorsById } = useCreators();
 
     const handleBookNow = (stay: (typeof appData.stays)[0]) => {
         setSelectedStay(stay);
