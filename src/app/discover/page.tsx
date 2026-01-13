@@ -1,3 +1,4 @@
+
 'use client';
 
 import { MobileNav } from "@/components/iykyk/MobileNav";
@@ -7,7 +8,7 @@ import Image from "next/image";
 import { featureData } from '@/lib/features';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from "@/components/ui/button";
-import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code, Utensils, Star } from 'lucide-react';
+import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code, Utensils, Star, Wrench } from 'lucide-react';
 import { SurpriseMe } from "@/components/iykyk/SurpriseMe";
 
 const iconMap: { [key: string]: React.ElementType } = {
@@ -27,6 +28,7 @@ const iconMap: { [key: string]: React.ElementType } = {
     Code,
     Utensils,
     Star,
+    Wrench,
 };
 
 export default function DiscoverPage() {
@@ -110,6 +112,15 @@ export default function DiscoverPage() {
                     </Link>
                 </div>
             </Card>
+
+            <div className="text-center">
+                <Button asChild variant="outline">
+                    <Link href="/admin">
+                        <Wrench className="mr-2 h-4 w-4" />
+                        Admin Panel
+                    </Link>
+                </Button>
+            </div>
         </div>
       </div>
       <MobileNav />
