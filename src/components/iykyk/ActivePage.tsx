@@ -7,8 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dumbbell, CheckCircle, Zap } from "lucide-react";
 import Image from "next/image";
-import { appData } from '@/lib/data';
-import type { ClassDrop } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
@@ -16,7 +14,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
 import { doc, collection } from 'firebase/firestore';
 import { useVenues } from '@/hooks/useVenues';
-import type { Venue } from '@/types/venue';
+import { useClassDrops, type ClassDrop } from '@/hooks/useClassDrops';
+import { appData } from '@/lib/data'; // Keep for creators
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
@@ -62,11 +61,10 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
 };
 
 
-const ClassDropCard = ({ drop, venue, onClaim }: { drop: ClassDrop, venue?: Venue, onClaim: (drop: ClassDrop) => void }) => {
+const ClassDropCard = ({ drop, venueName, onClaim }: { drop: ClassDrop, venueName: string, onClaim: (drop: ClassDrop) => void }) => {
     const creator = drop.instructorHandle ? appData.creators.find(c => c.id === drop.instructorHandle) : null;
     const [formattedTime, setFormattedTime] = useState<string | null>(null);
     const { user } = useUser();
-    const venueName = venue?.name ?? drop.venueName;
 
      useEffect(() => {
         setFormattedTime(new Date(drop.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
@@ -138,11 +136,14 @@ const ActivePageSkeleton = () => (
 );
 
 export function ActivePage() {
+    const [isClient, setIsClient] = useState(false);
     const [claimedDrops, setClaimedDrops] = useState<string[]>([]);
     const [confirmingDrop, setConfirmingDrop] = useState<ClassDrop | null>(null);
     const [successfulDrop, setSuccessfulDrop] = useState<ClassDrop | null>(null);
     const firestore = useFirestore();
     const { user } = useUser();
+    
+    const { classDrops, isLoading: areDropsLoading } = useClassDrops();
     const { venues, isLoading: areVenuesLoading } = useVenues();
 
     const venuesBySlug = useMemo(() => {
@@ -152,9 +153,12 @@ export function ActivePage() {
                 acc[venue.slug] = venue;
             }
             return acc;
-        }, {} as Record<string, Venue>);
+        }, {} as Record<string, (typeof venues)[number]>);
     }, [venues]);
 
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     const handleClaimClick = (drop: ClassDrop) => setConfirmingDrop(drop);
 
@@ -193,12 +197,14 @@ export function ActivePage() {
         }
     };
     
-    const liveDrops = appData.classDrops
+    const liveDrops = (classDrops || [])
         .filter(drop => new Date(drop.expiresAt).getTime() > Date.now())
         .map(drop => ({ ...drop, hasUserClaimed: claimedDrops.includes(drop.id) }))
         .sort((a, b) => new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime());
     
     const favoriteDrops = liveDrops.filter(drop => drop.isFavoriteVenue);
+    
+    const isLoading = !isClient || areDropsLoading || areVenuesLoading;
 
     return (
         <>
@@ -211,7 +217,7 @@ export function ActivePage() {
                     </div>
                 </div>
                 
-                 {areVenuesLoading ? <ActivePageSkeleton /> : (
+                 {isLoading ? <ActivePageSkeleton /> : (
                     <Tabs defaultValue="live" className="w-full mt-4">
                         <TabsList className="grid w-full grid-cols-2">
                             <TabsTrigger value="hit-list">My Hit List</TabsTrigger>
@@ -221,8 +227,8 @@ export function ActivePage() {
                             {favoriteDrops.length > 0 ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     {favoriteDrops.map(drop => {
-                                        const venue = venuesBySlug[drop.venueId];
-                                        return <ClassDropCard key={drop.id} drop={drop} venue={venue} onClaim={handleClaimClick} />;
+                                        const venueName = venuesBySlug[drop.venueId]?.name ?? drop.venueName;
+                                        return <ClassDropCard key={drop.id} drop={drop} venueName={venueName} onClaim={handleClaimClick} />;
                                     })}
                                 </div>
                             ) : (
@@ -236,8 +242,8 @@ export function ActivePage() {
                             {liveDrops.length > 0 ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     {liveDrops.map(drop => {
-                                        const venue = venuesBySlug[drop.venueId];
-                                        return <ClassDropCard key={drop.id} drop={drop} venue={venue} onClaim={handleClaimClick} />;
+                                        const venueName = venuesBySlug[drop.venueId]?.name ?? drop.venueName;
+                                        return <ClassDropCard key={drop.id} drop={drop} venueName={venueName} onClaim={handleClaimClick} />;
                                     })}
                                 </div>
                             ) : (
@@ -250,24 +256,29 @@ export function ActivePage() {
                 )}
             </section>
             
-            {confirmingDrop && (
-                <Dialog open={!!confirmingDrop} onOpenChange={() => setConfirmingDrop(null)}>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Claim this spot?</DialogTitle>
-                            <DialogDescription>
-                                You're about to claim a spot for <strong>{confirmingDrop.className}</strong> at {venuesBySlug[confirmingDrop.venueId]?.name ?? confirmingDrop.venueName}.
-                            </DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setConfirmingDrop(null)}>Cancel</Button>
-                            <Button className="bg-pink-500 hover:bg-pink-600" onClick={handleConfirmClaim}>Confirm</Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-            )}
+            {confirmingDrop && (() => {
+                const venueName = venuesBySlug[confirmingDrop.venueId]?.name ?? confirmingDrop.venueName;
+                return (
+                    <Dialog open={!!confirmingDrop} onOpenChange={() => setConfirmingDrop(null)}>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Claim this spot?</DialogTitle>
+                                <DialogDescription>
+                                    You're about to claim a spot for <strong>{confirmingDrop.className}</strong> at {venueName}.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter>
+                                <Button variant="outline" onClick={() => setConfirmingDrop(null)}>Cancel</Button>
+                                <Button className="bg-pink-500 hover:bg-pink-600" onClick={handleConfirmClaim}>Confirm</Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+                )
+            })()}
 
-            {successfulDrop && (
+            {successfulDrop && (() => {
+                 const venueName = venuesBySlug[successfulDrop.venueId]?.name ?? successfulDrop.venueName;
+                 return (
                  <Dialog open={!!successfulDrop} onOpenChange={() => setSuccessfulDrop(null)}>
                     <DialogContent>
                         <DialogHeader className="items-center text-center">
@@ -276,7 +287,7 @@ export function ActivePage() {
                             </div>
                             <DialogTitle className="text-2xl">You're in!</DialogTitle>
                             <DialogDescription>
-                                Your spot for <strong>{successfulDrop.className}</strong> at {venuesBySlug[successfulDrop.venueId]?.name ?? successfulDrop.venueName} is confirmed.
+                                Your spot for <strong>{successfulDrop.className}</strong> at {venueName} is confirmed.
                             </DialogDescription>
                         </DialogHeader>
                          <DialogFooter>
@@ -284,7 +295,8 @@ export function ActivePage() {
                          </DialogFooter>
                     </DialogContent>
                 </Dialog>
-            )}
+                )
+            })()}
         </>
     );
 }
