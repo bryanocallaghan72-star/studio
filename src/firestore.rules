@@ -92,11 +92,7 @@ service cloud.firestore {
 
       // Allow create if user is signed in and provides essential data.
       allow create: if isSignedIn()
-                      && request.resource.data.slug == venueId
-                      && request.resource.data.placeId is string
-                      && request.resource.data.name is string
-                      && request.resource.data.latitude is number
-                      && request.resource.data.longitude is number;
+                      && request.resource.data.slug == venueId;
 
       // Allow update if user is signed in.
       // This is a broader rule for now to allow enrichment.

@@ -12,6 +12,7 @@ import { FirebaseClientProvider } from '@/firebase/client-provider';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
+import { IykykSeeder } from '@/components/admin/IykykSeeder';
 
 type SeedStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -75,6 +76,7 @@ function Seeder() {
   }
 
   return (
+    <>
       <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -131,11 +133,15 @@ function Seeder() {
             {renderStatus()}
           </div>
 
-           <Button variant="link" asChild className='mx-auto block'>
-            <Link href="/discover">Back to App</Link>
-          </Button>
         </CardContent>
       </Card>
+      
+      <IykykSeeder />
+
+      <Button variant="link" asChild className='mx-auto mt-6 block'>
+        <Link href="/discover">Back to App</Link>
+      </Button>
+    </>
   );
 }
 
