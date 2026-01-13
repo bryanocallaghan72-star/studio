@@ -15,7 +15,7 @@ import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
 import { doc, collection } from 'firebase/firestore';
 import { useVenues } from '@/hooks/useVenues';
 import { useClassDrops, type ClassDrop } from '@/hooks/useClassDrops';
-import { appData } from '@/lib/data'; // Keep for creators
+import { useCreators } from '@/hooks/useCreators';
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
@@ -61,8 +61,7 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
 };
 
 
-const ClassDropCard = ({ drop, venueName, onClaim }: { drop: ClassDrop, venueName: string, onClaim: (drop: ClassDrop) => void }) => {
-    const creator = drop.instructorHandle ? appData.creators.find(c => c.id === drop.instructorHandle) : null;
+const ClassDropCard = ({ drop, venueName, onClaim, creator }: { drop: ClassDrop, venueName: string, onClaim: (drop: ClassDrop) => void, creator: any }) => {
     const [formattedTime, setFormattedTime] = useState<string | null>(null);
     const { user } = useUser();
 
@@ -145,6 +144,7 @@ export function ActivePage() {
     
     const { classDrops, isLoading: areDropsLoading } = useClassDrops();
     const { venues, isLoading: areVenuesLoading } = useVenues();
+    const { creators } = useCreators();
 
     const venuesBySlug = useMemo(() => {
         if (!venues) return {};
@@ -155,6 +155,14 @@ export function ActivePage() {
             return acc;
         }, {} as Record<string, (typeof venues)[number]>);
     }, [venues]);
+    
+    const creatorsById = useMemo(() => {
+        if (!creators) return {};
+        return creators.reduce((acc, creator) => {
+            acc[creator.id] = creator;
+            return acc;
+        }, {} as Record<string, (typeof creators)[number]>);
+    }, [creators]);
 
     useEffect(() => {
         setIsClient(true);
@@ -228,7 +236,8 @@ export function ActivePage() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     {favoriteDrops.map(drop => {
                                         const venueName = venuesBySlug[drop.venueId]?.name ?? drop.venueName;
-                                        return <ClassDropCard key={drop.id} drop={drop} venueName={venueName} onClaim={handleClaimClick} />;
+                                        const creator = drop.instructorHandle ? creatorsById[drop.instructorHandle] : null;
+                                        return <ClassDropCard key={drop.id} drop={drop} venueName={venueName} onClaim={handleClaimClick} creator={creator}/>;
                                     })}
                                 </div>
                             ) : (
@@ -243,7 +252,8 @@ export function ActivePage() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     {liveDrops.map(drop => {
                                         const venueName = venuesBySlug[drop.venueId]?.name ?? drop.venueName;
-                                        return <ClassDropCard key={drop.id} drop={drop} venueName={venueName} onClaim={handleClaimClick} />;
+                                        const creator = drop.instructorHandle ? creatorsById[drop.instructorHandle] : null;
+                                        return <ClassDropCard key={drop.id} drop={drop} venueName={venueName} onClaim={handleClaimClick} creator={creator} />;
                                     })}
                                 </div>
                             ) : (

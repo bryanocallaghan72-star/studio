@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import Link from 'next/link';
 import { CheckCircle, CalendarPlus } from 'lucide-react';
 import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
 import { doc, collection } from 'firebase/firestore';
+import { useCreators } from '@/hooks/useCreators';
 
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
@@ -67,6 +68,15 @@ export function FlashStays() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const firestore = useFirestore();
     const { user } = useUser();
+    const { creators } = useCreators();
+
+    const creatorsById = useMemo(() => {
+        if (!creators) return {};
+        return creators.reduce((acc, creator) => {
+            acc[creator.id] = creator;
+            return acc;
+        }, {} as Record<string, (typeof creators)[number]>);
+    }, [creators]);
 
     const handleBookNow = (stay: (typeof appData.stays)[0]) => {
         setSelectedStay(stay);
@@ -113,7 +123,7 @@ export function FlashStays() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {activeStays.map(stay => {
                         const image = stay.imageId ? PlaceHolderImages.find(img => img.id === stay.imageId) : null;
-                        const creator = stay.creatorId ? appData.creators.find(c => c.id === stay.creatorId) : null;
+                        const creator = stay.creatorId ? creatorsById[stay.creatorId] : null;
                         return (
                             <Card key={stay.id} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-primary">
                                 <div className="absolute inset-0">

@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Bed, Star, CheckCircle, CalendarPlus } from "lucide-react";
@@ -11,10 +11,20 @@ import { appData } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import Link from 'next/link';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
+import { useCreators } from '@/hooks/useCreators';
 
 export function StaysList() {
     const [selectedStay, setSelectedStay] = useState<(typeof appData.stays)[0] | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const { creators } = useCreators();
+
+    const creatorsById = useMemo(() => {
+        if (!creators) return {};
+        return creators.reduce((acc, creator) => {
+            acc[creator.id] = creator;
+            return acc;
+        }, {} as Record<string, (typeof creators)[number]>);
+    }, [creators]);
 
     const handleBookNow = (stay: (typeof appData.stays)[0]) => {
         setSelectedStay(stay);
@@ -35,7 +45,7 @@ export function StaysList() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {appData.stays.map(stay => {
                         const image = PlaceHolderImages.find(img => img.id === stay.imageId);
-                        const creator = appData.creators.find(c => c.id === stay.creatorId);
+                        const creator = stay.creatorId ? creatorsById[stay.creatorId] : null;
                         return (
                             <Card key={stay.id} className="group relative overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 rounded-2xl">
                                 {image && (
