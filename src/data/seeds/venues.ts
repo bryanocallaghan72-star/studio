@@ -297,6 +297,54 @@ export const SEED_VENUES: Venue[] = [
       category: 'Vibes',
     },
   },
+  {
+    id: 'iberica-bondi',
+    slug: 'iberica-bondi',
+    name: 'Iberica Bondi',
+    location: {
+      latitude: -33.8908,
+      longitude: 151.2721
+    },
+    details: {
+      category: 'Restaurants'
+    }
+  },
+  {
+    id: 'upbeat-bondi',
+    slug: 'upbeat-bondi',
+    name: 'Upbeat Bondi',
+    location: {
+      latitude: -33.8938,
+      longitude: 151.2675
+    },
+    details: {
+      category: 'Brunch'
+    }
+  },
+  {
+    id: 'saltys-bondi-beach',
+    slug: 'saltys-bondi-beach',
+    name: "Salty's Bondi Beach",
+    location: {
+      latitude: -33.8899,
+      longitude: 151.2755
+    },
+    details: {
+      category: 'Nightlife'
+    }
+  },
+  {
+    id: 'kissed-earth',
+    slug: 'kissed-earth',
+    name: 'Kissed Earth',
+    location: {
+      latitude: -33.8925,
+      longitude: 151.269
+    },
+    details: {
+      category: 'Brunch'
+    }
+  }
 ];
 
 export const SEED_VENUES_BY_SLUG = Object.fromEntries(
