@@ -144,7 +144,11 @@ export function ActivePage() {
     
     const { classDrops, isLoading: areDropsLoading } = useClassDrops();
     const { venues, isLoading: areVenuesLoading } = useVenues();
-    const { creators } = useCreators();
+    const { creatorsById } = useCreators();
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     const venuesBySlug = useMemo(() => {
         if (!venues) return {};
@@ -155,18 +159,6 @@ export function ActivePage() {
             return acc;
         }, {} as Record<string, (typeof venues)[number]>);
     }, [venues]);
-    
-    const creatorsById = useMemo(() => {
-        if (!creators) return {};
-        return creators.reduce((acc, creator) => {
-            acc[creator.id] = creator;
-            return acc;
-        }, {} as Record<string, (typeof creators)[number]>);
-    }, [creators]);
-
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
 
     const handleClaimClick = (drop: ClassDrop) => setConfirmingDrop(drop);
 

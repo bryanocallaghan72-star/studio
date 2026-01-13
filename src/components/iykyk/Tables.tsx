@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -151,7 +152,11 @@ export function Tables() {
 
     const { tableDrops, isLoading: areDropsLoading } = useTableDrops();
     const { venues, isLoading: areVenuesLoading } = useVenues();
-    const { creators } = useCreators();
+    const { creatorsById } = useCreators();
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     const venuesBySlug = useMemo(() => {
         if (!venues) return {};
@@ -162,19 +167,6 @@ export function Tables() {
             return acc;
         }, {} as Record<string, (typeof venues)[number]>);
     }, [venues]);
-
-    const creatorsById = useMemo(() => {
-        if (!creators) return {};
-        return creators.reduce((acc, creator) => {
-            acc[creator.id] = creator;
-            return acc;
-        }, {} as Record<string, (typeof creators)[number]>);
-    }, [creators]);
-
-
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
 
     const handleClaimClick = (drop: TableDrop) => {
         setConfirmingDrop(drop);
