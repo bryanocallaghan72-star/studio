@@ -4,7 +4,7 @@
 import { useMemo, useState } from 'react';
 import Image from "next/image";
 import Link from "next/link";
-import { Rss, Star, MapPin, Loader2, Edit, TrendingUp, Users } from "lucide-react";
+import { Rss, Star, MapPin, Loader2, Edit, TrendingUp, Users, Ticket } from "lucide-react";
 import { collection, doc } from 'firebase/firestore';
 
 import { Header } from "@/components/iykyk/Header";
@@ -18,6 +18,7 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { EditProfileDialog } from '@/components/iykyk/EditProfileDialog';
 import { WithId } from '@/firebase/firestore/use-collection';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useClaimedDeals } from '@/hooks/useClaimedDeals';
 
 export function ProfilePageClient({ uid }: { uid: string }) {
   const { user: currentUser } = useUser();
@@ -35,16 +36,10 @@ export function ProfilePageClient({ uid }: { uid: string }) {
     return doc(firestore, 'users', uid);
   }, [firestore, uid, shouldFetchFirestore]);
   
-  // Only create the query if the viewer is the owner of the profile
-  const influencedActionsQuery = useMemoFirebase(() => {
-    if (!firestore || !isOwner) return null;
-    return collection(firestore, 'users', uid, 'influencedActions');
-  }, [firestore, uid, isOwner]);
-
   const { data: firestoreUserProfile, isLoading: isFirestoreLoading } = useDoc<WithId<{ username: string; bio?: string }>>(userDocRef);
   
-  // Conditionally call the hook. It will do nothing if the query is null.
-  const { data: influencedActions, isLoading: isInfluenceLoading } = useCollection(influencedActionsQuery);
+  // Use our new hook to get the count of claimed deals for the viewed profile
+  const { count: claimsCount, isLoading: isClaimsLoading } = useClaimedDeals(uid);
   
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   
@@ -69,11 +64,6 @@ export function ProfilePageClient({ uid }: { uid: string }) {
 
   
   const isLoading = shouldFetchFirestore ? isFirestoreLoading : false;
-
-  // Determine influence score based on available data
-  const influenceScore = isOwner 
-    ? (influencedActions ? influencedActions.length : 0)
-    : (mockUserProfile ? Math.floor(Math.random() * 200 + 50) : 0);
   
   const followerCount = mockUserProfile ? Math.floor(Math.random() * 5000 + 1000) : 0;
 
@@ -99,7 +89,7 @@ export function ProfilePageClient({ uid }: { uid: string }) {
   }
   
   const renderImpactStats = () => {
-    if (isOwner && isInfluenceLoading) {
+    if (isClaimsLoading) {
       return (
         <div className="grid grid-cols-2 gap-4">
           <Skeleton className="h-[88px] w-full" />
@@ -107,23 +97,16 @@ export function ProfilePageClient({ uid }: { uid: string }) {
         </div>
       );
     }
-     if (isOwner && !currentUser) {
-        return (
-            <div className="text-center text-muted-foreground border rounded-lg p-6">
-                <p>Sign in to view your impact stats.</p>
-            </div>
-        );
-    }
 
     return (
       <div className="grid grid-cols-2 gap-4">
           <div className="flex items-center gap-3 rounded-lg border p-4">
               <div className="p-3 rounded-full bg-primary/10">
-                  <TrendingUp className="h-6 w-6 text-primary" />
+                  <Ticket className="h-6 w-6 text-primary" />
               </div>
               <div>
-                  <p className="text-2xl font-bold">{influenceScore}</p>
-                  <p className="text-sm text-muted-foreground">Influence Score</p>
+                  <p className="text-2xl font-bold">{claimsCount}</p>
+                  <p className="text-sm text-muted-foreground">Deals Claimed</p>
               </div>
           </div>
           <div className="flex items-center gap-3 rounded-lg border p-4">
