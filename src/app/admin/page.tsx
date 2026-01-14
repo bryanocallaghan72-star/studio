@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { IykykSeeder } from '@/components/admin/IykykSeeder';
+import { useUser } from '@/firebase/auth/use-user';
 
 type SeedStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -22,6 +23,7 @@ function Seeder() {
   const [result, setResult] = useState<SeedResult | null>(null);
   const [seedMode, setSeedMode] = useState<SeedMode>('skip-if-exists');
   const [isDryRun, setIsDryRun] = useState(true);
+  const { user, isUserLoading } = useUser();
   
   let firestore: any;
   try {
@@ -32,11 +34,11 @@ function Seeder() {
 
 
   const handleSeedVenues = async () => {
-    if (!firestore) {
+    if (!firestore || !user) {
       setStatus('error');
       setResult({
         success: false, 
-        message: 'Firestore is not initialized. Cannot seed data.',
+        message: 'Firestore is not initialized or user is not authenticated.',
         operations: { total: 0, written: 0, skipped: 0, dryRun: isDryRun }
       });
       return;
@@ -50,6 +52,13 @@ function Seeder() {
     setResult(seedResult);
     setStatus(seedResult.success ? 'success' : 'error');
   };
+
+  const getButtonText = () => {
+    if (status === 'loading') return 'Seeding...';
+    if (isUserLoading) return 'Checking auth...';
+    if (!user) return 'Sign in to Seed';
+    return 'Seed Venues';
+  }
 
   const renderStatus = () => {
     if (!result) {
@@ -118,15 +127,15 @@ function Seeder() {
 
           <Button 
             onClick={handleSeedVenues} 
-            disabled={status === 'loading' || !firestore}
+            disabled={status === 'loading' || !firestore || !user || isUserLoading}
             className="w-full"
           >
-            {status === 'loading' ? (
+            {(status === 'loading' || isUserLoading) ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               <Database className="mr-2 h-4 w-4" />
             )}
-            Seed Venues
+            {getButtonText()}
           </Button>
 
           <div className="h-20 text-center">
