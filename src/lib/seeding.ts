@@ -1,3 +1,4 @@
+
 import {
   writeBatch,
   collection,
@@ -6,6 +7,7 @@ import {
   Firestore,
 } from 'firebase/firestore';
 import { SEED_VENUES } from '@/data/seeds/venues';
+import type { Venue } from '@/types/venue';
 
 export type SeedMode = 'upsert' | 'skip-if-exists';
 
@@ -19,6 +21,36 @@ export interface SeedResult {
     dryRun: boolean;
   };
 }
+
+/**
+ * Creates a Firestore-compliant data object from a canonical Venue object.
+ * This ensures all required fields for security rules are present.
+ *
+ * @param {Venue} venue - The canonical venue object from the seed file.
+ * @returns {object} A data object ready to be written to Firestore.
+ */
+function createFirestorePayload(venue: Venue): object {
+  const latitude = venue.location?.latitude ?? venue.latitude ?? 0;
+  const longitude = venue.location?.longitude ?? venue.longitude ?? 0;
+  
+  // Ensure the payload matches the security rules for creation.
+  return {
+    ...venue,
+    slug: venue.slug, // Rule: slug must match doc ID
+    name: venue.name,   // Rule: name must be a string
+    placeId: `seed:${venue.slug}`, // Rule: placeId must be a string
+    latitude: latitude, // Rule: must be a top-level number
+    longitude: longitude, // Rule: must be a top-level number
+    
+    // Also ensure the canonical nested structure is preserved.
+    location: {
+      ...venue.location,
+      latitude: latitude,
+      longitude: longitude,
+    },
+  };
+}
+
 
 /**
  * Seeds the Firestore 'venues' collection from the canonical SEED_VENUES data.
@@ -72,7 +104,8 @@ export async function seedVenues(
       SEED_VENUES.forEach((venue) => {
         if (!existingVenues.has(venue.slug)) {
           const docRef = doc(venuesCollection, venue.slug);
-          batch.set(docRef, venue);
+          const firestoreData = createFirestorePayload(venue);
+          batch.set(docRef, firestoreData);
           writesPerformed++;
         }
       });
@@ -81,7 +114,8 @@ export async function seedVenues(
     } else { // upsert mode
       SEED_VENUES.forEach((venue) => {
         const docRef = doc(venuesCollection, venue.slug);
-        batch.set(docRef, venue);
+        const firestoreData = createFirestorePayload(venue);
+        batch.set(docRef, firestoreData, { merge: true }); // Use merge for upsert
         writesPerformed++;
       });
       result.operations.skipped = 0;
