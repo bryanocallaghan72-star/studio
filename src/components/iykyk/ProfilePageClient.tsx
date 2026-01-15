@@ -20,6 +20,15 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useClaimedDeals } from '@/hooks/useClaimedDeals';
 import { useCreators } from '@/hooks/useCreators';
 
+// Update user profile type to include new optional fields
+type UserProfile = WithId<{
+  username: string;
+  bio?: string;
+  avatarUrl?: string;
+  bannerUrl?: string;
+}>;
+
+
 export function ProfilePageClient({ uid }: { uid: string }) {
   const { user: currentUser } = useUser();
   const firestore = useFirestore();
@@ -38,7 +47,7 @@ export function ProfilePageClient({ uid }: { uid: string }) {
     return doc(firestore, 'users', uid);
   }, [firestore, uid, shouldFetchFirestore]);
   
-  const { data: firestoreUserProfile, isLoading: isFirestoreLoading } = useDoc<WithId<{ username: string; bio?: string }>>(userDocRef);
+  const { data: firestoreUserProfile, isLoading: isFirestoreLoading } = useDoc<UserProfile>(userDocRef);
   
   // Use our new hook to get the count of claimed deals for the viewed profile
   const { count: claimsCount, isLoading: isClaimsLoading } = useClaimedDeals(uid);
@@ -52,6 +61,8 @@ export function ProfilePageClient({ uid }: { uid: string }) {
         id: mockUserProfile.id,
         username: mockUserProfile.name,
         bio: mockUserProfile.bio,
+        avatarUrl: mockUserProfile.avatar, // Use mock avatar as avatarUrl
+        bannerUrl: undefined,
       };
     }
     if (firestoreUserProfile) {
@@ -124,6 +135,10 @@ export function ProfilePageClient({ uid }: { uid: string }) {
     );
   }
 
+  // Use bannerUrl if available, otherwise fallback to default
+  const bannerImage = userProfile.bannerUrl || "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop";
+  // Use avatarUrl if available, otherwise fallback to Dicebear
+  const avatarImage = userProfile.avatarUrl || `https://api.dicebear.com/8.x/lorelei/svg?seed=${userProfile.username}`;
 
   return (
     <>
@@ -132,7 +147,7 @@ export function ProfilePageClient({ uid }: { uid: string }) {
         <Card className="overflow-hidden border-none shadow-none bg-transparent">
           <div className="relative h-40 w-full bg-secondary rounded-2xl">
              <Image 
-                src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop"
+                src={bannerImage}
                 alt={`${userProfile.username}'s banner`}
                 fill
                 className="object-cover rounded-2xl"
@@ -143,7 +158,7 @@ export function ProfilePageClient({ uid }: { uid: string }) {
           <CardContent className="p-0">
             <div className="flex items-end gap-4 -mt-16 px-6">
               <Avatar className="h-28 w-28 border-4 border-background">
-                <AvatarImage src={`https://api.dicebear.com/8.x/lorelei/svg?seed=${userProfile.username}`} alt={userProfile.username} />
+                <AvatarImage src={avatarImage} alt={userProfile.username} />
                 <AvatarFallback>{userProfile.username.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
             </div>
