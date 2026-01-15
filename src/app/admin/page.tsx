@@ -4,9 +4,9 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useFirestore } from '@/firebase';
+import { useAuth, useFirestore } from '@/firebase';
 import { seedVenues, type SeedMode, type SeedResult } from '@/lib/seeding';
-import { Loader2, CheckCircle, AlertTriangle, Database, FileWarning, ShieldCheck } from 'lucide-react';
+import { Loader2, CheckCircle, AlertTriangle, Database, FileWarning, ShieldCheck, User } from 'lucide-react';
 import Link from 'next/link';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import { Label } from '@/components/ui/label';
@@ -14,6 +14,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { IykykSeeder } from '@/components/admin/IykykSeeder';
 import { useUser } from '@/firebase/auth/use-user';
+import { signInAnonymously } from 'firebase/auth';
 
 type SeedStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -24,6 +25,7 @@ function Seeder() {
   const [seedMode, setSeedMode] = useState<SeedMode>('skip-if-exists');
   const [isDryRun, setIsDryRun] = useState(true);
   const { user, isUserLoading } = useUser();
+  const auth = useAuth();
   
   let firestore: any;
   try {
@@ -31,6 +33,21 @@ function Seeder() {
   } catch (e) {
     console.warn("useFirestore could not be used, likely outside of a provider. Seeding will be disabled.");
   }
+
+  const handleAnonymousSignIn = async () => {
+    if (!auth) return;
+    try {
+      await signInAnonymously(auth);
+    } catch (error) {
+      console.error("Anonymous sign-in failed", error);
+      setStatus('error');
+      setResult({
+        success: false, 
+        message: 'Anonymous sign-in failed.',
+        operations: { total: 0, written: 0, skipped: 0, dryRun: isDryRun }
+      });
+    }
+  };
 
 
   const handleSeedVenues = async () => {
@@ -124,6 +141,13 @@ function Seeder() {
             </div>
             <Switch id="dry-run-switch" checked={isDryRun} onCheckedChange={setIsDryRun} />
           </div>
+
+          {!user && !isUserLoading && (
+            <Button onClick={handleAnonymousSignIn} className="w-full" variant="secondary">
+              <User className="mr-2 h-4 w-4" />
+              Sign in (Anonymous)
+            </Button>
+          )}
 
           <Button 
             onClick={handleSeedVenues} 
