@@ -38,6 +38,13 @@ service cloud.firestore {
       let socialDoc = get(/databases/$(database)/documents/socials/$(socialId));
       return isSignedIn() && socialDoc.data.hostId == request.auth.uid;
     }
+    
+    /**
+     * @description Checks if the user has admin privileges for seeding.
+     */
+    function isAdmin() {
+      return isSignedIn() && (request.auth.token.admin == true || request.auth.token.email in ["REPLACE_ME@example.com"]);
+    }
 
     // --- Collection Rules ---
 
@@ -92,15 +99,12 @@ service cloud.firestore {
 
       // Allow create if user is signed in and provides essential data.
       allow create: if isSignedIn()
-                      && request.resource.data.slug == venueId
-                      && request.resource.data.placeId is string
-                      && request.resource.data.name is string
-                      && request.resource.data.latitude is number
-                      && request.resource.data.longitude is number;
-
-      // Allow update if user is signed in and the slug remains correct.
-      allow update: if isSignedIn()
                       && request.resource.data.slug == venueId;
+
+      // Allow update if user is signed in.
+      // This is a broader rule for now to allow enrichment.
+      allow update: if isSignedIn();
+
 
       // Experiences are tied to venues, read-only for clients.
       match /experiences/{experienceId} {
@@ -120,16 +124,34 @@ service cloud.firestore {
       allow update, delete: if isExistingOwner(resource.data.creatorId);
     }
     
-    // /stays/{stayId}
-    // Public stay recommendations. Read by anyone, writable by the creator.
+    // /stays/{stayId} - Writable by admins for seeding
     match /stays/{stayId} {
       allow get, list: if true;
-
-      // A user can create a stay recommendation if they are signed in and the creatorId matches their UID.
-      allow create: if isSignedIn() && request.resource.data.creatorId == request.auth.uid;
-      // Only the original creator can update or delete their own stay recommendation.
-      allow update, delete: if isExistingOwner(resource.data.creatorId);
+      allow create, update, delete: if isAdmin();
     }
+    
+    // --- Drop Collections - Writable by Admin ---
+    match /tableDrops/{dropId} {
+        allow get, list: if true;
+        allow create, update, delete: if isAdmin();
+    }
+    match /classDrops/{dropId} {
+        allow get, list: if true;
+        allow create, update, delete: if isAdmin();
+    }
+    match /styleDrops/{dropId} {
+        allow get, list: if true;
+        allow create, update, delete: if isAdmin();
+    }
+    match /hotItems/{itemId} {
+        allow get, list: if true;
+        allow create, update, delete: if isAdmin();
+    }
+    match /arDrops/{dropId} {
+        allow get, list: if true;
+        allow create, update, delete: if isAdmin();
+    }
+
 
     // /communities/{communityId}
     // Read-only from the client for now.
