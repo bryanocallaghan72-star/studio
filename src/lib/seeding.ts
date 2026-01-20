@@ -158,6 +158,7 @@ const collectionsToSeed = [
     { name: 'styleDrops', data: STYLE_DROPS, idField: 'id' },
     { name: 'hotItems', data: HOT_ITEMS, idField: 'id' },
     { name: 'arDrops', data: AR_DROPS, idField: 'id' },
+    { name: 'deals', data: DEALS, idField: 'id' },
 ];
 
 
