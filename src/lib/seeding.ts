@@ -7,6 +7,15 @@ import {
   Firestore,
 } from 'firebase/firestore';
 import { SEED_VENUES } from '@/data/seeds/venues';
+import { 
+    TABLE_DROPS, 
+    CLASS_DROPS, 
+    STAYS, 
+    STYLE_DROPS, 
+    HOT_ITEMS, 
+    AR_DROPS, 
+    DEALS 
+} from '@/data/seeds/drops';
 import type { Venue } from '@/types/venue';
 
 export type SeedMode = 'upsert' | 'skip-if-exists';
@@ -137,6 +146,92 @@ export async function seedVenues(
     result.success = false;
     result.message = `An error occurred: ${error.message}`;
     console.error('Error seeding venues:', error);
+  }
+
+  return result;
+}
+
+const collectionsToSeed = [
+    { name: 'tableDrops', data: TABLE_DROPS, idField: 'id' },
+    { name: 'classDrops', data: CLASS_DROPS, idField: 'id' },
+    { name: 'stays', data: STAYS, idField: 'id' },
+    { name: 'styleDrops', data: STYLE_DROPS, idField: 'id' },
+    { name: 'hotItems', data: HOT_ITEMS, idField: 'id' },
+    { name: 'arDrops', data: AR_DROPS, idField: 'id' },
+    { name: 'deals', data: DEALS, idField: 'id' },
+];
+
+
+export async function seedAllDrops(
+  firestore: Firestore,
+  options: {
+    mode?: SeedMode;
+    dryRun?: boolean;
+  } = {}
+): Promise<SeedResult> {
+  const { mode = 'skip-if-exists', dryRun = false } = options;
+  const result: SeedResult = {
+    success: true,
+    message: '',
+    operations: {
+      total: 0,
+      written: 0,
+      skipped: 0,
+      dryRun,
+    },
+  };
+
+  const batch = writeBatch(firestore);
+  let totalWrites = 0;
+  let totalSkips = 0;
+  let totalItems = 0;
+
+  try {
+    for (const { name, data, idField } of collectionsToSeed) {
+        const collectionRef = collection(firestore, name);
+        totalItems += data.length;
+
+        let existingIds = new Set<string>();
+        if (mode === 'skip-if-exists') {
+            const snapshot = await getDocs(collectionRef);
+            snapshot.forEach((doc) => existingIds.add(doc.id));
+        }
+
+        data.forEach((item: any) => {
+            const docId = item[idField];
+            if (!docId) {
+                console.warn(`Item in collection ${name} is missing id field.`, item);
+                return;
+            }
+
+            if (mode === 'skip-if-exists' && existingIds.has(docId)) {
+                totalSkips++;
+            } else {
+                const docRef = doc(collectionRef, docId);
+                batch.set(docRef, item, { merge: true });
+                totalWrites++;
+            }
+        });
+    }
+
+    result.operations.total = totalItems;
+    result.operations.written = totalWrites;
+    result.operations.skipped = totalSkips;
+
+    if (totalWrites === 0) {
+      result.message = 'No new drops to add.';
+    } else {
+      result.message = `${dryRun ? '[DRY RUN] Would have written' : 'Successfully wrote'} ${totalWrites} drop items across ${collectionsToSeed.length} collections.`;
+    }
+
+    if (!dryRun && totalWrites > 0) {
+      await batch.commit();
+    }
+
+  } catch (error: any) {
+    result.success = false;
+    result.message = `An error occurred while seeding drops: ${error.message}`;
+    console.error('Error seeding drops:', error);
   }
 
   return result;
