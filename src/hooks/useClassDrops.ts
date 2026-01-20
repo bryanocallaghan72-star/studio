@@ -1,26 +1,9 @@
 
 "use client";
 
-import { appData } from '@/lib/data';
+import { CLASS_DROPS } from '@/data/seeds/drops';
+import type { ClassDrop } from '@/data/seeds/drops';
 
-// The canonical shape of a Class Drop object as returned by the hook.
-export type ClassDrop = {
-  id: string;
-  venueId: string; // The slug for the venue
-  venueName: string;
-  className: string;
-  classImageUrl: string;
-  spotsAvailable: number;
-  startTime: string;
-  expiresAt: string;
-  instructorHandle?: string;
-  isFavoriteVenue?: boolean;
-  hasUserClaimed?: boolean; // This is added client-side
-  location: {
-    lat: number;
-    lng: number;
-  };
-};
 
 /**
  * Hook to fetch class drop data.
@@ -31,7 +14,7 @@ export type ClassDrop = {
  */
 export function useClassDrops() {
   return {
-    classDrops: appData.classDrops as ClassDrop[],
+    classDrops: CLASS_DROPS as ClassDrop[],
     isLoading: false,
     error: null,
   };

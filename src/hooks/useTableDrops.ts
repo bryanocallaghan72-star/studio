@@ -1,23 +1,8 @@
+
 "use client";
 
-import { appData } from '@/lib/data';
-
-// The shape of a table drop, based on its usage in the UI.
-export type TableDrop = {
-  id: string;
-  venueId: string; // The slug for the venue
-  venueName: string;
-  venueImageUrl: string;
-  expiresAt: string;
-  startTime: string;
-  endTime: string;
-  partySize: number;
-  tableLabel?: string;
-  priceToClaimCents: number;
-  creatorPickHandle?: string;
-  isFavoriteVenue?: boolean;
-  hasUserClaimed?: boolean; // This is added client-side
-};
+import { TABLE_DROPS } from '@/data/seeds/drops';
+import type { TableDrop } from '@/data/seeds/drops';
 
 /**
  * Hook to fetch table drop data.
@@ -30,7 +15,7 @@ export function useTableDrops() {
   // For Phase 1, we simply return the mock data.
   // The structure is designed to be replaced with a real Firestore call.
   return {
-    tableDrops: appData.tableDrops as TableDrop[],
+    tableDrops: TABLE_DROPS as TableDrop[],
     isLoading: false,
     error: null,
   };

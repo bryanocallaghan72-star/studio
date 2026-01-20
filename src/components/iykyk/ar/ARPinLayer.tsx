@@ -1,11 +1,12 @@
+
 'use client';
 
 import { useMemo } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { appData } from '@/lib/data';
 import type { LayerType } from '@/app/ar/page';
 import { ARPin } from './ARPin';
 import { useARVenues, type ARVenue } from '@/hooks/useARVenues';
+import { AR_DROPS, DEALS, HOT_ITEMS } from '@/data/seeds/drops';
 
 // 1. Expanded ARPinData type for future features
 export type ARPinData = {
@@ -63,7 +64,7 @@ function enrichPin(
     category = 'deal';
   } else if (type.toLowerCase().includes('drop')) {
     category = 'drop';
-    const dropDetail = appData.arDrops.find(d => d.venue === rawPin.name);
+    const dropDetail = AR_DROPS.find(d => d.venue === rawPin.name);
     if (dropDetail) {
       type = dropDetail.isSponsored ? 'Sponsored Drop' : 'Daily Drop';
       isSponsored = dropDetail.isSponsored;
@@ -102,43 +103,32 @@ function getPinsForLayer(layer: LayerType, venuePins: ARVenue[]): ARPinData[] {
 
     switch (layer) {
         case 'fire':
-            const fireVenues = new Set(appData.hotItems.map(item => item.venue));
+            const fireVenues = new Set(HOT_ITEMS.map(item => item.venue));
             filteredPins = venuePins.filter(pin => fireVenues.has(pin.name));
             break;
         case 'deals':
-            const dealVenues = new Set(appData.deals.map(item => item.venue));
-            filteredPins = venuePins.filter(pin => dealVenues.has(pin.name));
+            const dealVenues = new Set(DEALS.map(item => item.venueSlug));
+            filteredPins = venuePins.filter(pin => dealVenues.has(pin.slug));
             break;
         case 'drops':
-             const dropVenues = new Set(appData.arDrops.map(item => item.venue));
+             const dropVenues = new Set(AR_DROPS.map(item => item.venue));
              filteredPins = venuePins.filter(pin => dropVenues.has(pin.name));
              break;
-        case 'quests':
-            if (appData.quests) {
-                const questVenues = new Set(appData.quests.map(item => item.venue));
-                filteredPins = venuePins.filter(pin => questVenues.has(pin.name));
-            }
-            break;
-        case 'rewards':
-            if (appData.rewards) {
-                const rewardVenues = new Set(appData.rewards.map(item => item.venue));
-                filteredPins = venuePins.filter(pin => rewardVenues.has(pin.name));
-            }
-            break;
+        // The 'quests' and 'rewards' cases can be implemented here once their data exists
         case 'all':
         default:
             const allPinsMap = new Map<string, ARVenue>();
             
-            const addPinToMap = (venueName: string, typeOverride: string) => {
-              const venue = venuePins.find(p => p.name === venueName || p.slug === venueName);
+            const addPinToMap = (venueNameOrSlug: string, typeOverride: string) => {
+              const venue = venuePins.find(p => p.name === venueNameOrSlug || p.slug === venueNameOrSlug);
               if (venue && !allPinsMap.has(venue.slug)) { // Prioritize what's added first
                 allPinsMap.set(venue.slug, { ...venue, category: typeOverride });
               }
             };
             
-            appData.hotItems.forEach(item => addPinToMap(item.venue, 'Fire'));
-            appData.deals.forEach(item => addPinToMap(item.venue, 'Deals'));
-            appData.arDrops.forEach(item => addPinToMap(item.venue, 'Drop'));
+            HOT_ITEMS.forEach(item => addPinToMap(item.venueId, 'Fire'));
+            DEALS.forEach(item => addPinToMap(item.venueSlug, 'Deals'));
+            AR_DROPS.forEach(item => addPinToMap(item.venueId, 'Drop'));
 
             filteredPins = Array.from(allPinsMap.values());
             break;

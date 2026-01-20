@@ -7,18 +7,19 @@ import { Button } from "@/components/ui/button";
 import { Bed, Star, CheckCircle, CalendarPlus } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { appData } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import Link from 'next/link';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
 import { useCreators } from '@/hooks/useCreators';
+import { useStays } from '@/hooks/useStays';
 
 export function StaysList() {
-    const [selectedStay, setSelectedStay] = useState<(typeof appData.stays)[0] | null>(null);
+    const [selectedStay, setSelectedStay] = useState<ReturnType<typeof useStays>['stays'][0] | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const { creatorsById } = useCreators();
+    const { stays } = useStays();
 
-    const handleBookNow = (stay: (typeof appData.stays)[0]) => {
+    const handleBookNow = (stay: ReturnType<typeof useStays>['stays'][0]) => {
         setSelectedStay(stay);
         setIsDialogOpen(true);
     };
@@ -35,7 +36,7 @@ export function StaysList() {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {appData.stays.map(stay => {
+                    {stays.map(stay => {
                         const image = PlaceHolderImages.find(img => img.id === stay.imageId);
                         const creator = stay.creatorId ? creatorsById[stay.creatorId] : null;
                         return (

@@ -6,6 +6,7 @@ import { notFound, useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { appData } from '@/lib/data';
+import { HOT_ITEMS } from '@/data/seeds/drops';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -20,7 +21,7 @@ export default function SliceOfLifePostPage() {
 
     const post = appData.sliceOfLifePosts.find(p => p.id === postId);
     const creator = post ? appData.creators.find(c => c.id === post.creatorId) : null;
-    const deal = post?.relatedDealId ? appData.hotItems.find(d => d.id === post.relatedDealId) : null;
+    const deal = post?.relatedDealId ? HOT_ITEMS.find(d => d.id === post.relatedDealId) : null;
     
     const venue = post ? findVenueByAnyId(post.venueId) : null;
     const venueHref = post ? resolveVenueHref(post.venueId) : null;

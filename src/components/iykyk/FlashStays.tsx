@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Zap, Ticket, Bed } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { appData } from "@/lib/data";
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
 import Link from 'next/link';
@@ -16,7 +15,7 @@ import { CheckCircle, CalendarPlus } from 'lucide-react';
 import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
 import { doc, collection } from 'firebase/firestore';
 import { useCreators } from '@/hooks/useCreators';
-
+import { useStays } from '@/hooks/useStays';
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
@@ -63,13 +62,14 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
 
 
 export function FlashStays() {
-    const [selectedStay, setSelectedStay] = useState<(typeof appData.stays)[0] | null>(null);
+    const [selectedStay, setSelectedStay] = useState<ReturnType<typeof useStays>['stays'][0] | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const firestore = useFirestore();
     const { user } = useUser();
     const { creatorsById } = useCreators();
+    const { stays } = useStays();
 
-    const handleBookNow = (stay: (typeof appData.stays)[0]) => {
+    const handleBookNow = (stay: ReturnType<typeof useStays>['stays'][0]) => {
         setSelectedStay(stay);
         setIsDialogOpen(true);
 
@@ -101,7 +101,7 @@ export function FlashStays() {
         }
     };
 
-    const activeStays = appData.stays.filter(item => item.endsIn && new Date(Date.now() + item.endsIn).getTime() > Date.now());
+    const activeStays = stays.filter(item => item.endsIn && new Date(Date.now() + item.endsIn).getTime() > Date.now());
 
     return (
         <>

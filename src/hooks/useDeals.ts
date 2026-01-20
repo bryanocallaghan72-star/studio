@@ -1,20 +1,9 @@
 
 'use client';
 
-import { appData } from '@/lib/data';
+import { DEALS } from '@/data/seeds/drops';
+import type { Deal } from '@/data/seeds/drops';
 
-// The canonical shape of a Deal object as returned by the hook.
-// venueSlug is now guaranteed.
-export type Deal = {
-  id: string;
-  title: string;
-  venueSlug: string; // Now required
-  description: string;
-  imageId: string;
-  validity: string;
-  category: string;
-  tags?: string[]; // Made optional for safety
-};
 
 /**
  * Hook to fetch deal data.
@@ -25,7 +14,7 @@ export type Deal = {
  */
 export function useDeals() {
   // Map over the raw data to enforce the Deal type and ensure venueSlug exists.
-  const processedDeals = appData.deals.map((deal: any) => ({
+  const processedDeals = DEALS.map((deal: any) => ({
     ...deal,
     // Ensure venueSlug is present, falling back from venueId if necessary.
     venueSlug: deal.venueSlug || deal.venueId || '', 
