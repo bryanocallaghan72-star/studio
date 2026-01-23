@@ -14,10 +14,15 @@ import { Heart, MessageCircle, Send, MoreVertical, X, Ticket, Building, ArrowLef
 import { CommentSheet, type Comment } from '@/components/iykyk/CommentSheet';
 import { QRCodeDialog } from '@/components/iykyk/QRCodeDialog';
 import { resolveVenueHref, findVenueByAnyId } from '@/lib/venueUtils';
+import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
+import { collection } from 'firebase/firestore';
 
 export default function SliceOfLifePostPage() {
     const params = useParams();
     const postId = params.postId as string;
+    
+    const firestore = useFirestore();
+    const { user } = useUser();
 
     const post = appData.sliceOfLifePosts.find(p => p.id === postId);
     const creator = post ? appData.creators.find(c => c.id === post.creatorId) : null;
@@ -48,6 +53,20 @@ export default function SliceOfLifePostPage() {
 
     const handleClaim = () => {
         if (deal) {
+            // --- Creator Influence Attribution ---
+            if (user && firestore && post.creatorId) {
+                const influenceRef = collection(firestore, 'users', post.creatorId, 'influencedActions');
+                const influenceData = {
+                    userId: user.uid,
+                    actionType: 'claimDeal',
+                    itemId: deal.id,
+                    timestamp: new Date().toISOString(),
+                };
+                // Use the non-blocking function to log this action
+                addDocumentNonBlocking(influenceRef, influenceData);
+            }
+            // --- End Attribution ---
+
             setQRDialogOpen(true);
         }
     }
@@ -101,9 +120,9 @@ export default function SliceOfLifePostPage() {
                     {/* Action Buttons */}
                     <div className="grid grid-cols-2 gap-3">
                         {deal && (
-                            <Button className="h-14 text-lg font-bold bg-primary text-primary-foreground" onClick={handleClaim}>
+                            <Button className="h-14 text-lg font-bold bg-primary text-primary-foreground" onClick={handleClaim} disabled={!user}>
                                 <Ticket className="mr-2"/>
-                                Claim Perk
+                                {user ? 'Claim Perk' : 'Sign in to Claim'}
                             </Button>
                         )}
                         {attributedVenueHref && (
