@@ -34,6 +34,8 @@ import {
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { logVaultEvent } from '@/lib/vault/logVaultEvent';
+import { trackVenueView } from '@/lib/vault/trackVenueView';
 
 // Updated Venue type for this page
 type Venue = WithId<{
@@ -168,6 +170,13 @@ export default function VenuePage() {
       setPriceTier(venue.priceTier);
     }
   }, [venue]);
+
+  useEffect(() => {
+    if (venue && user) {
+        trackVenueView({ uid: user.uid, venueId: slug, venueName: venue.name, imageUrl: photoUrl });
+        logVaultEvent(user.uid, { type: "VENUE_VIEWED", entityType: "venue", entityId: slug, title: venue.name, subtitle: venue.category, imageUrl: photoUrl, meta: { source: "VenuePage" } });
+    }
+  }, [venue, user, slug]);
 
   const { isLoaded, loadError } = useJsApiLoader({
     id: GOOGLE_MAPS_LOADER_ID,
