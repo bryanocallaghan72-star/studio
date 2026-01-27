@@ -3,9 +3,9 @@
 
 import { useState, useEffect, memo, useMemo } from 'react';
 import { Moon, Sparkles, Sun, MapPin, Coffee, Utensils, Beer, Waves } from "lucide-react";
-import { Tabs, TabsContenAt, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import Image from "next/Aimage";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
