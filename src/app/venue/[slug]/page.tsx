@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import {
   MapPin,
@@ -45,6 +46,7 @@ type Venue = WithId<{
   subCategory?: string;
   vibeTags?: string[];
   priceTier?: '$' | '$$' | '$$$' | '$$$$';
+  photoReference?: string;
 }>;
 
 // Map container style
@@ -143,11 +145,21 @@ export default function VenuePage() {
 
   const { data: venue, isLoading: isVenueLoading } = useDoc<Venue>(venueDocRef);
 
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   // State for the edit form
   const [subCategory, setSubCategory] = useState('');
   const [vibeTags, setVibeTags] = useState('');
   const [priceTier, setPriceTier] = useState<string | undefined>(undefined);
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (venue?.photoReference) {
+      const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
+      const url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${venue.photoReference}&key=${apiKey}`;
+      setPhotoUrl(url);
+    }
+  }, [venue]);
+
 
   useEffect(() => {
     if (venue) {
@@ -224,17 +236,38 @@ export default function VenuePage() {
   const center = { lat: venue.latitude, lng: venue.longitude };
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
-      <header>
-        <Badge variant="secondary">{venue.category}</Badge>
-        <h1 className="text-4xl font-bold tracking-tight mt-2">{venue.name}</h1>
-        <div className="flex items-center gap-4 text-muted-foreground mt-2">
+    <div className="space-y-6">
+      <Card className="overflow-hidden -mx-4 -mt-6 md:-mx-6 md:-mt-6 rounded-none md:rounded-b-2xl shadow-lg">
+          <div className="relative h-64 w-full bg-secondary">
+              {(photoUrl) ? (
+                  <Image
+                      src={photoUrl}
+                      alt={venue.name}
+                      fill
+                      className="object-cover"
+                      priority
+                  />
+              ) : (
+                  <div className="flex items-center justify-center h-full bg-muted">
+                      <Building className="h-16 w-16 text-muted-foreground" />
+                  </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute bottom-0 left-0 p-4 md:p-6">
+                  <Badge variant="secondary">{venue.category}</Badge>
+                  <h1 className="text-4xl font-bold tracking-tight mt-2 text-white" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{venue.name}</h1>
+              </div>
+          </div>
+      </Card>
+      
+      <div className='p-4 md:p-0 space-y-6'>
+        <div className="flex items-center gap-4 text-muted-foreground">
             <p className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
                 {venue.address}
             </p>
         </div>
-         <div className="flex flex-wrap items-center gap-2 mt-4 text-sm">
+        <div className="flex flex-wrap items-center gap-2 text-sm">
             {venue.priceTier && (
               <Badge variant="outline" className="text-base">{venue.priceTier}</Badge>
             )}
@@ -245,80 +278,80 @@ export default function VenuePage() {
               <Badge key={tag} variant="secondary">{tag}</Badge>
             ))}
         </div>
-      </header>
 
-      {venue.description && <p className="text-foreground/80 text-lg">{venue.description}</p>}
+        {venue.description && <p className="text-foreground/80 text-lg">{venue.description}</p>}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-        <Button onClick={handleGetDirections} size="lg">
-          <Navigation className="mr-2" />
-          Get Directions
-        </Button>
-        <Button onClick={handleShare} variant="outline" size="lg">
-          <Share2 className="mr-2" />
-          Share
-        </Button>
-        <Button onClick={handleStubSave} variant="outline" size="lg">
-          <Bookmark className="mr-2" />
-          Save
-        </Button>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+          <Button onClick={handleGetDirections} size="lg">
+            <Navigation className="mr-2" />
+            Get Directions
+          </Button>
+          <Button onClick={handleShare} variant="outline" size="lg">
+            <Share2 className="mr-2" />
+            Share
+          </Button>
+          <Button onClick={handleStubSave} variant="outline" size="lg">
+            <Bookmark className="mr-2" />
+            Save
+          </Button>
+        </div>
+
+        <Card className="overflow-hidden">
+          <CardHeader>
+            <CardTitle>Edit Venue Details</CardTitle>
+            <CardDescription>Add more specific details to help others discover this venue.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                      <Label htmlFor="subCategory">Sub-category</Label>
+                      <Input id="subCategory" value={subCategory} onChange={e => setSubCategory(e.target.value)} placeholder="e.g., Cocktail Bar, Pilates Studio" />
+                  </div>
+                  <div className="space-y-2">
+                      <Label htmlFor="priceTier">Price Tier</Label>
+                      <Select value={priceTier} onValueChange={setPriceTier}>
+                          <SelectTrigger id="priceTier">
+                              <SelectValue placeholder="Select price tier" />
+                          </SelectTrigger>
+                          <SelectContent>
+                              <SelectItem value="$">$ (Inexpensive)</SelectItem>
+                              <SelectItem value="$$">$$ (Moderate)</SelectItem>
+                              <SelectItem value="$$$">$$$ (Pricey)</SelectItem>
+                              <SelectItem value="$$$$">$$$$ (Very Expensive)</SelectItem>
+                          </SelectContent>
+                      </Select>
+                  </div>
+              </div>
+              <div className="space-y-2">
+                  <Label htmlFor="vibeTags">Vibe Tags (comma-separated)</Label>
+                  <Input id="vibeTags" value={vibeTags} onChange={e => setVibeTags(e.target.value)} placeholder="e.g., Casual, Rooftop, Live Music" />
+              </div>
+              <Button onClick={handleEnrichmentSave} disabled={isSaving || !user}>
+                  {isSaving ? <Loader2 className="mr-2 animate-spin" /> : <Save className="mr-2" />}
+                  {isSaving ? "Saving..." : user ? "Save Details" : "Sign in to Save"}
+              </Button>
+          </CardContent>
+        </Card>
+
+
+        <Card className="h-64 overflow-hidden">
+          {loadError && <div>Map cannot be loaded right now.</div>}
+          {isLoaded && !loadError ? (
+            <GoogleMap
+              mapContainerStyle={mapContainerStyle}
+              center={center}
+              zoom={16}
+              options={mapOptions}
+            >
+              <MarkerF position={center} />
+            </GoogleMap>
+          ) : (
+            <div className="flex items-center justify-center h-full bg-muted">
+                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          )}
+        </Card>
       </div>
-
-      <Card className="overflow-hidden">
-        <CardHeader>
-          <CardTitle>Edit Venue Details</CardTitle>
-          <CardDescription>Add more specific details to help others discover this venue.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                    <Label htmlFor="subCategory">Sub-category</Label>
-                    <Input id="subCategory" value={subCategory} onChange={e => setSubCategory(e.target.value)} placeholder="e.g., Cocktail Bar, Pilates Studio" />
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="priceTier">Price Tier</Label>
-                    <Select value={priceTier} onValueChange={setPriceTier}>
-                        <SelectTrigger id="priceTier">
-                            <SelectValue placeholder="Select price tier" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="$">$ (Inexpensive)</SelectItem>
-                            <SelectItem value="$$">$$ (Moderate)</SelectItem>
-                            <SelectItem value="$$$">$$$ (Pricey)</SelectItem>
-                            <SelectItem value="$$$$">$$$$ (Very Expensive)</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-            </div>
-             <div className="space-y-2">
-                <Label htmlFor="vibeTags">Vibe Tags (comma-separated)</Label>
-                <Input id="vibeTags" value={vibeTags} onChange={e => setVibeTags(e.target.value)} placeholder="e.g., Casual, Rooftop, Live Music" />
-            </div>
-            <Button onClick={handleEnrichmentSave} disabled={isSaving || !user}>
-                {isSaving ? <Loader2 className="mr-2 animate-spin" /> : <Save className="mr-2" />}
-                {isSaving ? "Saving..." : user ? "Save Details" : "Sign in to Save"}
-            </Button>
-        </CardContent>
-      </Card>
-
-
-      <Card className="h-64 overflow-hidden">
-        {loadError && <div>Map cannot be loaded right now.</div>}
-        {isLoaded && !loadError ? (
-          <GoogleMap
-            mapContainerStyle={mapContainerStyle}
-            center={center}
-            zoom={16}
-            options={mapOptions}
-          >
-            <MarkerF position={center} />
-          </GoogleMap>
-        ) : (
-           <div className="flex items-center justify-center h-full bg-muted">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-           </div>
-        )}
-      </Card>
     </div>
   );
 }
