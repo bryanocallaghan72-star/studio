@@ -282,6 +282,23 @@ export const SEED_VENUES: Venue[] = [
     },
   },
   {
+    id: 'balance-moves-pilates',
+    slug: 'balance-moves-pilates',
+    name: 'Balance Moves Pilates & Barre Studio',
+    location: {
+      latitude: -33.8925,
+      longitude: 151.2725,
+      address: "1/2A Jaques Ave, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Health & Fitness',
+      description: "A beautiful Pilates and Barre studio offering a range of classes.",
+      openingHours: "6am - 8pm",
+      vibeTags: ["Wellness", "Pilates", "Barre", "Community"],
+      currentVibe: "Focused"
+    },
+  },
+  {
     id: 'chiswick',
     slug: 'chiswick',
     name: 'Chiswick',
@@ -470,3 +487,4 @@ export const SEED_VENUES: Venue[] = [
 export const SEED_VENUES_BY_SLUG = Object.fromEntries(
   SEED_VENUES.map(v => [v.slug, v])
 ) satisfies Record<string, Venue>;
+

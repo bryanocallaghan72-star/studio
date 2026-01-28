@@ -1,5 +1,4 @@
 
-
 import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift, UserPlus, Star } from 'lucide-react';
 import { collection, writeBatch, getDocs, doc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
@@ -87,6 +86,19 @@ export const seedVenuesToFirestore = async (firestore: any) => {
 
 // Raw data for different content types
 const rawPhotoPosts = [
+  {
+      id: 7,
+      type: "photo",
+      creator: { id: "emma", name: "emma", avatar: "https://github.com/emma.png" },
+      venue: "Balance Moves Pilates & Barre Studio",
+      venueId: "balance-moves-pilates",
+      description: "Finding my balance and flow at this beautiful studio. The perfect space to reset mind and body. 🧘‍♀️ #pilates #bondiwellness #iykykactive",
+      imageId: "pilates-1",
+      likes: 834,
+      comments: 72,
+      commentData: [],
+      createdAt: "2024-07-26T14:00:00Z"
+  },
   {
       id: 6,
       type: "photo",
@@ -264,16 +276,16 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
     {
       id: "sol-7",
       creatorId: "emma",
-      title: "My Daily Ritual at Kissed Earth",
-      description: "Starting my day with a nourishing smoothie from Kissed Earth. It's more than just a cafe, it's a whole wellness vibe. The perfect community-focused space to reset.",
+      title: "Fueling up at Upbeat",
+      description: "Found my new favorite lunch spot! Upbeat Bondi has the most incredible, healthy bowls that taste as good as they look. The perfect post-workout fuel to keep you going. So fresh and delicious!",
       videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-gloria-g-2127732-3840x2160-30fps.mp4",
-      thumbnailUrl: "https://images.unsplash.com/photo-1627308594190-a057cd4bfac8?q=80&w=2070&auto=format&fit=crop",
-      duration: 22,
+      thumbnailUrl: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=2070&auto=format&fit=crop",
+      duration: 19,
       postType: "Local Spotlight",
-      likes: 1800,
-      commentsCount: 95,
-      createdAt: "2024-07-25T09:00:00Z",
-      venueId: "kissed-earth",
+      likes: 1500,
+      commentsCount: 75,
+      createdAt: "2024-07-26T13:00:00Z",
+      venueId: "upbeat-bondi",
       relatedDealId: null,
       sourcePlatform: "instagram"
     },
@@ -296,16 +308,16 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
     {
       id: "sol-9",
       creatorId: "emma",
-      title: "Fueling up at Upbeat",
-      description: "Found my new favorite lunch spot! Upbeat Bondi has the most incredible, healthy bowls that taste as good as they look. The perfect post-workout fuel to keep you going. So fresh and delicious!",
+      title: "My Daily Ritual at Kissed Earth",
+      description: "Starting my day with a nourishing smoothie from Kissed Earth. It's more than just a cafe, it's a whole wellness vibe. The perfect community-focused space to reset.",
       videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-gloria-g-2127732-3840x2160-30fps.mp4",
-      thumbnailUrl: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=2070&auto=format&fit=crop",
-      duration: 19,
+      thumbnailUrl: "https://images.unsplash.com/photo-1627308594190-a057cd4bfac8?q=80&w=2070&auto=format&fit=crop",
+      duration: 22,
       postType: "Local Spotlight",
-      likes: 1500,
-      commentsCount: 75,
-      createdAt: "2024-07-26T13:00:00Z",
-      venueId: "upbeat-bondi",
+      likes: 1800,
+      commentsCount: 95,
+      createdAt: "2024-07-25T09:00:00Z",
+      venueId: "kissed-earth",
       relatedDealId: null,
       sourcePlatform: "instagram"
     }
@@ -810,6 +822,7 @@ export const appData = {
 
 
     
+
 
 
 
