@@ -154,6 +154,17 @@ const rawReelPosts = [
         commentData: [],
         createdAt: "2024-07-21T19:00:00Z"
     },
+    {
+      id: 3,
+      creator: { name: "emma", avatar: "https://github.com/emma.png" },
+      description: "Finding my balance at Balance Moves Pilates & Barre Studio. Such an amazing space! #pilates #bondiwellness",
+      imageId: "pilates-1",
+      videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-gloria-g-2127732-3840x2160-30fps.mp4",
+      likes: 9800,
+      comments: 620,
+      commentData: [],
+      createdAt: "2024-07-26T15:00:00Z"
+  },
 ];
 
 const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
@@ -799,6 +810,7 @@ export const appData = {
 
 
     
+
 
 
 
