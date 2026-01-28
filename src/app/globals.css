@@ -253,7 +253,7 @@ nav, aside {
 .discover-text-override .card-title,
 .discover-text-override .card-description,
 .discover-text-override .icon-color {
-  color: #FFF6C2 !important;
+  color: #ffdf00 !important;
   text-shadow: 0 1px 3px rgba(0,0,0,0.55) !important;
 }
 
