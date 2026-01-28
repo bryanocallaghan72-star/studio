@@ -164,7 +164,7 @@ nav, aside {
 
 /* ☀️ DAY – Ready for new palette */
 [data-theme="day"] {
-  --bg-gradient: linear-gradient(to bottom, #FFE066, #E0F2FF);
+  --bg-gradient: linear-gradient(to bottom, #ffdf00, #E0F2FF);
   --text-primary: #1A1A1A;
   --text-secondary: #4A4A4A;
   --card-bg: rgba(255, 255, 255, 0.72);
@@ -172,7 +172,7 @@ nav, aside {
   --border-color: rgba(255, 224, 102, 0.25);
 
   /* ShadCN Variables */
-  --background: 45 100% 70%; /* #FFE066 */
+  --background: 52 100% 50%; /* #ffdf00 */
   --foreground: 0 0% 10%; /* #1A1A1A */
   --card: 0 0% 100% / 0.72;
   --card-foreground: 0 0% 10%;
