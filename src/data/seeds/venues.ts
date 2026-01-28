@@ -299,6 +299,40 @@ export const SEED_VENUES: Venue[] = [
     },
   },
   {
+    id: 'bodymindlife-bondi',
+    slug: 'bodymindlife-bondi',
+    name: 'BodyMindLife',
+    location: {
+      latitude: -33.894,
+      longitude: 151.268,
+      address: "Level 1/151 Curlewis St, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Health & Fitness',
+      description: "A premier destination for yoga, Pilates, and wellness.",
+      openingHours: "6am - 9pm",
+      vibeTags: ["Yoga", "Pilates", "Wellness", "Community"],
+      currentVibe: "Serene"
+    },
+  },
+  {
+    id: 'bondi-vixen',
+    slug: 'bondi-vixen',
+    name: 'Bondi Vixen',
+    location: {
+      latitude: -33.890,
+      longitude: 151.277,
+      address: "Bondi Pavilion, Queen Elizabeth Dr, Bondi Beach"
+    },
+    details: {
+      category: 'Health & Fitness',
+      description: "High-energy dance and fitness classes. Famous for Twerk & Tone.",
+      openingHours: "Varies",
+      vibeTags: ["Dance", "Fun", "High-Energy", "Twerk"],
+      currentVibe: "Electric"
+    },
+  },
+  {
     id: 'chiswick',
     slug: 'chiswick',
     name: 'Chiswick',
@@ -487,4 +521,5 @@ export const SEED_VENUES: Venue[] = [
 export const SEED_VENUES_BY_SLUG = Object.fromEntries(
   SEED_VENUES.map(v => [v.slug, v])
 ) satisfies Record<string, Venue>;
+
 

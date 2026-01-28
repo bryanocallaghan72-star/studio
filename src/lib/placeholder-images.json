@@ -25,6 +25,22 @@
       "height": 1380
     },
     {
+      "id": "yoga-studio-1",
+      "description": "A bright and serene yoga studio with mats laid out.",
+      "imageUrl": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2120&auto=format&fit=crop",
+      "imageHint": "yoga studio",
+      "width": 2120,
+      "height": 1414
+    },
+    {
+      "id": "dance-fitness-1",
+      "description": "A high-energy dance fitness class with people moving.",
+      "imageUrl": "https://images.unsplash.com/photo-1522844426677-4c7760256251?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "dance fitness",
+      "width": 2070,
+      "height": 1380
+    },
+    {
       "id": "morning-1",
       "description": "The sun rising over a calm Bondi beach, casting a golden glow.",
       "imageUrl": "https://images.unsplash.com/photo-1600115010857-edbbc7e1efb8?q=80&w=2070&auto=format&fit=crop",
