@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Heart, MessageCircle, Send, MoreVertical, ArrowLeft, Ticket, Building, Loader2 } from 'lucide-react';
+import { Heart, MessageCircle, Send, MoreVertical, ArrowLeft, Ticket, Building } from 'lucide-react';
 import { CommentSheet, type Comment } from '@/components/iykyk/CommentSheet';
 import { QRCodeDialog } from '@/components/iykyk/QRCodeDialog';
 import { resolveVenueHref, findVenueByAnyId } from '@/lib/venueUtils';
@@ -17,17 +17,10 @@ import { collection } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { HOT_ITEMS } from '@/data/seeds/drops';
 import { appData } from '@/lib/data';
-import { Skeleton } from '@/components/ui/skeleton';
-
-const PostPageSkeleton = () => (
-    <div className="relative h-screen w-full flex items-center justify-center bg-black">
-        <Loader2 className="h-8 w-8 text-white animate-spin" />
-    </div>
-);
-
 
 export default function SliceOfLifePostPage() {
     const params = useParams();
+    // Ensure postId is read correctly from the URL parameter.
     const postId = params.postId as string;
     
     const firestore = useFirestore();
@@ -35,6 +28,7 @@ export default function SliceOfLifePostPage() {
     
     // Find the post from the canonical mock data source.
     const post = useMemo(() => {
+        if (!postId) return null;
         return appData.sliceOfLifePosts.find(p => p.id === postId);
     }, [postId]);
 
@@ -43,19 +37,28 @@ export default function SliceOfLifePostPage() {
     const [isQRDialogOpen, setQRDialogOpen] = useState(false);
     const [localComments, setLocalComments] = useState<Comment[]>([]);
 
+    // This logic runs after post is validated, preventing runtime errors.
     const commentCount = post ? post.commentsCount + localComments.length : 0;
     const likeCount = post ? (isLiked ? post.likes + 1 : post.likes) : 0;
     
     const { deal, venue, attributedVenueHref } = useMemo(() => {
         if (!post) return { deal: null, venue: null, attributedVenueHref: null };
+        
         const deal = post.relatedDealId ? HOT_ITEMS.find(d => d.id === post.relatedDealId) : null;
+        
+        // Find the full venue object for other UI elements (like the QR dialog)
         const venue = findVenueByAnyId(post.venueId);
-        const venueHref = resolveVenueHref(venue);
+
+        // Directly use the post's venueId (which should be a slug) to generate the href.
+        const venueHref = resolveVenueHref(post.venueId);
+        
         // Add creator attribution to the link
         const attributedHref = venueHref && post.creatorId ? `${venueHref}?creator=${post.creatorId}` : venueHref;
+        
         return { deal, venue, attributedVenueHref: attributedHref };
     }, [post]);
 
+    // Single, correct handlePostComment function
     const handlePostComment = (commentText: string) => {
         setLocalComments(prevComments => [...prevComments, { author: "You", text: commentText }]);
     };
@@ -76,23 +79,29 @@ export default function SliceOfLifePostPage() {
         }
     }
     
+    // Guard clause to handle case where post is not found.
     if (!post) {
-        // This will render the not-found page if no post matches the ID.
+        // This renders Next.js's standard 404 page.
         notFound();
     }
     
+    // post is guaranteed to exist beyond this point.
     const creator = post.creator;
 
     return (
         <>
             <div className="relative h-screen w-full snap-start flex-shrink-0 bg-black">
-                <Image 
-                    src={post.thumbnailUrl}
-                    alt={post.title}
-                    fill
-                    className="object-cover opacity-50"
-                    priority
-                />
+                {post.thumbnailUrl ? (
+                    <Image 
+                        src={post.thumbnailUrl}
+                        alt={post.title}
+                        fill
+                        className="object-cover opacity-60"
+                        priority
+                    />
+                ) : (
+                    <div className="absolute inset-0 bg-black" />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                 
                 <header className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between p-4">
@@ -187,4 +196,3 @@ export default function SliceOfLifePostPage() {
         </>
     );
 }
-

@@ -36,15 +36,14 @@ export function findVenueByAnyId(identifier?: string | null): Venue | null {
 export function resolveVenueHref(venueOrIdentifier: VenueLike | string | null): string | null {
   if (!venueOrIdentifier) return null;
 
-  // If we just get the slug/name string, find the venue first.
-  if (typeof venueOrIdentifier === 'string') {
-    const foundVenue = findVenueByAnyId(venueOrIdentifier);
-    return foundVenue ? `/venue/${foundVenue.slug}` : null;
+  // If we get the whole venue object, use its slug.
+  if (typeof venueOrIdentifier === 'object' && venueOrIdentifier.slug) {
+    return `/venue/${venueOrIdentifier.slug}`;
   }
 
-  // If we get the whole venue object, use its slug.
-  if (venueOrIdentifier.slug) {
-    return `/venue/${venueOrIdentifier.slug}`;
+  // If we get just a string, assume it's a slug and use it directly.
+  if (typeof venueOrIdentifier === 'string') {
+    return `/venue/${venueOrIdentifier}`;
   }
   
   return null;
