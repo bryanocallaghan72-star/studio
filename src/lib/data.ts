@@ -249,6 +249,22 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
       venueId: "the-bucket-list",
       relatedDealId: null,
       sourcePlatform: "instagram"
+    },
+    {
+      id: "sol-7",
+      creatorId: "emma",
+      title: "My Daily Ritual at Kissed Earth",
+      description: "Starting my day with a nourishing smoothie from Kissed Earth. It's more than just a cafe, it's a whole wellness vibe. The perfect community-focused space to reset.",
+      videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-gloria-g-2127732-3840x2160-30fps.mp4",
+      thumbnailUrl: "https://images.unsplash.com/photo-1627308594190-a057cd4bfac8?q=80&w=2070&auto=format&fit=crop",
+      duration: 22,
+      postType: "Local Spotlight",
+      likes: 1800,
+      commentsCount: 95,
+      createdAt: "2024-07-25T09:00:00Z",
+      venueId: "kissed-earth",
+      relatedDealId: null,
+      sourcePlatform: "instagram"
     }
 ];
 
@@ -297,6 +313,15 @@ const creators = [
       x: '15%',
       y: '60%',
       activity: [{ name: 'Mon', uv: 100 }, { name: 'Tue', uv: 120 }, { name: 'Wed', uv: 110 }, { name: 'Thu', uv: 150 }, { name: 'Fri', uv: 180 }, { name: 'Sat', uv: 200 }, { name: 'Sun', uv: 190 }]
+    },
+    {
+      id: 'emma',
+      name: 'Emma',
+      bio: 'Wellness advocate and smoothie enthusiast. Finding the beauty in balance here in Bondi.',
+      avatar: 'https://github.com/emma.png',
+      x: '55%',
+      y: '65%',
+      activity: [{ name: 'Mon', uv: 310 }, { name: 'Tue', uv: 340 }, { name: 'Wed', uv: 380 }, { name: 'Thu', uv: 410 }, { name: 'Fri', uv: 450 }, { name: 'Sat', uv: 500 }, { name: 'Sun', uv: 470 }]
     },
     {
       id: 'bondicreator',
@@ -742,6 +767,7 @@ export const appData = {
 
 
     
+
 
 
 
