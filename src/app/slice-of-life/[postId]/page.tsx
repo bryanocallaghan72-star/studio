@@ -1,12 +1,10 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { notFound, useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useVenues } from '@/hooks/useVenues';
-import { useCreators } from '@/hooks/useCreators';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +16,7 @@ import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { HOT_ITEMS } from '@/data/seeds/drops';
+import { appData } from '@/lib/data';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const PostPageSkeleton = () => (
@@ -31,47 +30,14 @@ export default function SliceOfLifePostPage() {
     const params = useParams();
     const postId = params.postId as string;
     
-    const { venues, isLoading: venuesLoading } = useVenues();
-    const { creators, isLoading: creatorsLoading } = useCreators();
-
-    const post = useMemo(() => {
-        if (!venues || venues.length === 0 || !creators || creators.length === 0 || !postId) return null;
-
-        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
-
-        const generatedPosts = venues.map((venue, index) => {
-            const creator = creators[index % creators.length];
-            const photoReference = (venue as any).photoReference;
-
-            const thumbnailUrl = photoReference
-                ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${photoReference}&key=${apiKey}`
-                : 'https://images.unsplash.com/photo-1593384581543-0a96116d34b6?q=80&w=2070&auto=format&fit=crop';
-            
-            return {
-                id: `sol-${venue.slug}`,
-                creatorId: creator.id,
-                venueId: venue.slug,
-                relatedDealId: index % 4 === 0 ? 'hot-2' : null,
-                title: `A Vibe at ${venue.name}`,
-                description: (venue as any).description || `Just discovered this gem in Bondi. You have to check it out! The atmosphere is amazing.`,
-                videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-taryn-elliott-7876874__2160p_.mp4",
-                thumbnailUrl,
-                duration: 28,
-                postType: "Local Spotlight",
-                likes: Math.floor(Math.random() * 5000) + 500,
-                commentsCount: Math.floor(Math.random() * 500) + 20,
-                createdAt: new Date(Date.now() - index * 1000 * 60 * 60).toISOString(),
-                creator,
-            };
-        });
-
-        return generatedPosts.find(p => p.id === postId);
-
-    }, [venues, creators, postId]);
-
     const firestore = useFirestore();
     const { user } = useUser();
     
+    // Find the post from the canonical mock data source.
+    const post = useMemo(() => {
+        return appData.sliceOfLifePosts.find(p => p.id === postId);
+    }, [postId]);
+
     const [isLiked, setIsLiked] = useState(false);
     const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
     const [isQRDialogOpen, setQRDialogOpen] = useState(false);
@@ -85,8 +51,9 @@ export default function SliceOfLifePostPage() {
         const deal = post.relatedDealId ? HOT_ITEMS.find(d => d.id === post.relatedDealId) : null;
         const venue = findVenueByAnyId(post.venueId);
         const venueHref = resolveVenueHref(venue);
-        const attributedVenueHref = venueHref && post.creatorId ? `${venueHref}?creator=${post.creatorId}` : venueHref;
-        return { deal, venue, attributedVenueHref };
+        // Add creator attribution to the link
+        const attributedHref = venueHref && post.creatorId ? `${venueHref}?creator=${post.creatorId}` : venueHref;
+        return { deal, venue, attributedVenueHref: attributedHref };
     }, [post]);
 
     const handlePostComment = (commentText: string) => {
@@ -108,12 +75,9 @@ export default function SliceOfLifePostPage() {
             setQRDialogOpen(true);
         }
     }
-
-    if (venuesLoading || creatorsLoading) {
-        return <PostPageSkeleton />;
-    }
     
     if (!post) {
+        // This will render the not-found page if no post matches the ID.
         notFound();
     }
     
@@ -170,11 +134,13 @@ export default function SliceOfLifePostPage() {
                         )}
                         
                         {attributedVenueHref ? (
-                            <Link href={attributedVenueHref}>
-                                <Button variant="outline" className="w-full h-14 text-lg font-bold bg-white/10 border-white/30 text-white backdrop-blur-md hover:bg-white/20">
-                                    <Building className="mr-2"/>
-                                    View Venue
-                                </Button>
+                            <Link href={attributedVenueHref} legacyBehavior>
+                                <a className={cn(!deal && "col-span-2")}>
+                                  <Button variant="outline" className="w-full h-14 text-lg font-bold bg-white/10 border-white/30 text-white backdrop-blur-md hover:bg-white/20">
+                                      <Building className="mr-2"/>
+                                      View Venue
+                                  </Button>
+                                </a>
                             </Link>
                         ) : (
                              <Button variant="outline" className="w-full h-14 text-lg font-bold bg-white/10 border-white/30 text-white backdrop-blur-md" disabled>
@@ -221,3 +187,4 @@ export default function SliceOfLifePostPage() {
         </>
     );
 }
+
