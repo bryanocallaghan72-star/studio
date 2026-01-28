@@ -35,11 +35,9 @@ export default function SliceOfLifePostPage() {
     const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
     const [isQRDialogOpen, setQRDialogOpen] = useState(false);
     
-    // Mock comments state
     const [localComments, setLocalComments] = useState<Comment[]>([]);
     const [commentCount, setCommentCount] = useState(post?.commentsCount || 0);
 
-    // This guard is now correctly placed before any JSX that uses post or creator.
     if (!post || !creator) {
         notFound();
     }
@@ -53,7 +51,6 @@ export default function SliceOfLifePostPage() {
 
     const handleClaim = () => {
         if (deal) {
-            // --- Creator Influence Attribution ---
             if (user && firestore && post.creatorId) {
                 const influenceRef = collection(firestore, 'users', post.creatorId, 'influencedActions');
                 const influenceData = {
@@ -62,11 +59,8 @@ export default function SliceOfLifePostPage() {
                     itemId: deal.id,
                     timestamp: new Date().toISOString(),
                 };
-                // Use the non-blocking function to log this action
                 addDocumentNonBlocking(influenceRef, influenceData);
             }
-            // --- End Attribution ---
-
             setQRDialogOpen(true);
         }
     }
@@ -85,7 +79,6 @@ export default function SliceOfLifePostPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                 
-                {/* Header */}
                 <header className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between p-4">
                     <Link href="/feed" passHref>
                         <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
@@ -98,7 +91,6 @@ export default function SliceOfLifePostPage() {
                     <div className="w-10" />
                 </header>
 
-                {/* UI Overlay */}
                 <div className="absolute inset-0 flex flex-col justify-end p-6 text-white z-10">
                     <div className="space-y-3 mb-4">
                         <Badge variant="secondary" className="w-fit bg-white/20 border-white/30 text-white backdrop-blur-md">
@@ -117,7 +109,6 @@ export default function SliceOfLifePostPage() {
                         </p>
                     </div>
 
-                    {/* Action Buttons */}
                     <div className="grid grid-cols-2 gap-3">
                         {deal && (
                             <Button className="h-14 text-lg font-bold bg-primary text-primary-foreground" onClick={handleClaim} disabled={!user}>
@@ -125,18 +116,23 @@ export default function SliceOfLifePostPage() {
                                 {user ? 'Claim Perk' : 'Sign in to Claim'}
                             </Button>
                         )}
-                        {attributedVenueHref && (
+                        
+                        {attributedVenueHref ? (
                             <Link href={attributedVenueHref}>
                                 <Button variant="outline" className="w-full h-14 text-lg font-bold bg-white/10 border-white/30 text-white backdrop-blur-md hover:bg-white/20">
                                     <Building className="mr-2"/>
                                     View Venue
                                 </Button>
                             </Link>
+                        ) : (
+                            <Button variant="outline" className="w-full h-14 text-lg font-bold bg-white/10 border-white/30 text-white backdrop-blur-md" disabled>
+                                <Building className="mr-2"/>
+                                Venue not live yet
+                            </Button>
                         )}
                     </div>
                 </div>
 
-                {/* Social Actions */}
                 <div className="absolute bottom-40 right-4 flex flex-col items-center gap-5 text-white z-10 md:bottom-6">
                     <button className="flex flex-col items-center gap-1" onClick={() => setIsLiked(!isLiked)}>
                         <Heart className={`h-8 w-8 transition-all ${isLiked ? 'text-red-500 fill-current' : ''}`} />

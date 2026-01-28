@@ -610,7 +610,7 @@ export const appData = {
       title: 'Girls\' Night Out - Bondi',
       description: 'Margaritas & shared tapas',
        request: {
-        vibe: 'A fun and energetic girls\' night out. We want to start with margaritas and shared tapas, move to a stylish rooftop bar for more cocktails, and end the night dancing at a place with great energy and music.',
+        vibe: 'A fun and energetic girls\' night out. We want to start with margaritas and shared tapas, move to a stylish rooftop bar for cocktails, and end the night dancing at a place with great energy and music.',
         pace: 4,
         budget: 3,
         travelMode: 'uber',
@@ -742,6 +742,7 @@ export const appData = {
 
 
     
+
 
 
 
