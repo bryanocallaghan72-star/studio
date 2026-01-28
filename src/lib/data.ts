@@ -1,4 +1,5 @@
 
+
 import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift, UserPlus, Star } from 'lucide-react';
 import { collection, writeBatch, getDocs, doc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
@@ -42,7 +43,7 @@ export interface SliceOfLifePost {
   videoUrl: string;
   thumbnailUrl: string;
   duration: number;
-  postType: string;
+  postType: "monetisable" | "discovery";
   likes: number;
   commentsCount: number;
   createdAt: string;
@@ -179,7 +180,7 @@ const rawReelPosts = [
   },
 ];
 
-const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
+const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator' | 'postType'>[] = [
     {
       id: "sol-1",
       creatorId: "shannon",
@@ -188,7 +189,6 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
       videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels_videos_2759484__2160p_.mp4",
       thumbnailUrl: "https://images.pexels.com/videos/2759484/pexels-photo-2759484.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
       duration: 45,
-      postType: "Short Diary",
       likes: 1200,
       commentsCount: 88,
       createdAt: "2024-07-21T08:00:00Z",
@@ -203,7 +203,6 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
       videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-kampus-production-8569201__2160p_.mp4",
       thumbnailUrl: "https://images.pexels.com/videos/8569201/pexels-photo-8569201.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
       duration: 112,
-      postType: "Deep Cut",
       likes: 3400,
       commentsCount: 230,
       createdAt: "2024-07-20T19:30:00Z",
@@ -218,7 +217,6 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
       videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4",
       thumbnailUrl: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?q=80&w=1948&auto=format&fit=crop",
       duration: 25,
-      postType: "Local Spotlight",
       likes: 5600,
       commentsCount: 450,
       createdAt: "2024-07-22T12:00:00Z",
@@ -233,7 +231,6 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
       videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/production_id_4763985__2160p_.mp4",
       thumbnailUrl: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=1000&auto=format&fit=crop",
       duration: 32,
-      postType: "Creator's Confession",
       likes: 4100,
       commentsCount: 312,
       createdAt: "2024-07-23T18:00:00Z",
@@ -249,7 +246,6 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
       videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-taryn-elliott-7876874__2160p_.mp4",
       thumbnailUrl: "https://images.unsplash.com/photo-1571762283944-580798150a58?q=80&w=1000&auto=format&fit=crop",
       duration: 28,
-      postType: "Bondi Moment",
       likes: 2800,
       commentsCount: 150,
       createdAt: "2024-07-24T17:30:00Z",
@@ -265,7 +261,6 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
       videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-gloria-g-2127732-3840x2160-30fps.mp4",
       thumbnailUrl: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=1000&auto=format&fit=crop",
       duration: 18,
-      postType: "Local Spotlight",
       likes: 1900,
       commentsCount: 110,
       createdAt: "2024-07-24T09:00:00Z",
@@ -281,7 +276,6 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
       videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-gloria-g-2127732-3840x2160-30fps.mp4",
       thumbnailUrl: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=2070&auto=format&fit=crop",
       duration: 19,
-      postType: "Local Spotlight",
       likes: 1500,
       commentsCount: 75,
       createdAt: "2024-07-26T13:00:00Z",
@@ -297,7 +291,6 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
       videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-kampus-production-8569201__2160p_.mp4",
       thumbnailUrl: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1974&auto=format&fit=crop",
       duration: 35,
-      postType: "Local Spotlight",
       likes: 2900,
       commentsCount: 180,
       createdAt: "2024-07-25T21:00:00Z",
@@ -313,7 +306,6 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
       videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-gloria-g-2127732-3840x2160-30fps.mp4",
       thumbnailUrl: "https://images.unsplash.com/photo-1627308594190-a057cd4bfac8?q=80&w=2070&auto=format&fit=crop",
       duration: 22,
-      postType: "Local Spotlight",
       likes: 1800,
       commentsCount: 95,
       createdAt: "2024-07-25T09:00:00Z",
@@ -401,7 +393,11 @@ const creators = [
 const enrichedSliceOfLifePosts = rawSliceOfLifePosts.map(post => {
     const creator = creators.find(c => c.id === post.creatorId);
     if (!creator) throw new Error(`Creator not found for post ${post.id}`);
-    return { ...post, creator };
+    
+    // Add postType based on the presence of a relatedDealId
+    const postType = post.relatedDealId ? 'monetisable' : 'discovery';
+    
+    return { ...post, creator, postType };
 }) as SliceOfLifePost[];
 
 const unifiedFeedItems = [
@@ -822,6 +818,7 @@ export const appData = {
 
 
     
+
 
 
 

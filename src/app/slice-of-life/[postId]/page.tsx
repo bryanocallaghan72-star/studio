@@ -134,8 +134,8 @@ export default function SliceOfLifePostPage() {
                         </p>
                     </div>
 
-                    <div className={cn("gap-3 grid", deal && attributedVenueHref ? "grid-cols-2" : "grid-cols-1")}>
-                        {deal && (
+                    <div className={cn("gap-3 grid", post.postType === 'monetisable' && deal && attributedVenueHref ? "grid-cols-2" : "grid-cols-1")}>
+                        {post.postType === 'monetisable' && deal && (
                             <Button className="h-14 text-lg font-bold bg-primary text-primary-foreground" onClick={handleClaim} disabled={!user}>
                                 <Ticket className="mr-2"/>
                                 {user ? 'Claim Perk' : 'Sign in to Claim'}
@@ -143,7 +143,7 @@ export default function SliceOfLifePostPage() {
                         )}
                         
                         {attributedVenueHref ? (
-                            <Link href={attributedVenueHref} className={cn(!deal && "col-span-2")}>
+                            <Link href={attributedVenueHref} className={cn(post.postType === 'discovery' && "col-span-2")}>
                                   <Button variant="outline" className="w-full h-14 text-lg font-bold bg-white/10 border-white/30 text-white backdrop-blur-md hover:bg-white/20">
                                       <Building className="mr-2"/>
                                       View Venue
