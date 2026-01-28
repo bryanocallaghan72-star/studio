@@ -29,7 +29,7 @@ export default function SliceOfLifePostPage() {
     const deal = post?.relatedDealId ? HOT_ITEMS.find(d => d.id === post.relatedDealId) : null;
     
     const venue = post ? findVenueByAnyId(post.venueId) : null;
-    const venueHref = post ? resolveVenueHref(post.venueId) : null;
+    const venueHref = resolveVenueHref(venue);
 
     const [isLiked, setIsLiked] = useState(false);
     const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
@@ -163,11 +163,11 @@ export default function SliceOfLifePostPage() {
                 onPostComment={handlePostComment}
             />
 
-            {deal && (
+            {deal && venue && (
                 <QRCodeDialog
                     isOpen={isQRDialogOpen}
                     onOpenChange={setQRDialogOpen}
-                    deal={deal}
+                    deal={{...deal, venue: venue.name}}
                 />
             )}
         </>

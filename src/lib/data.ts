@@ -230,7 +230,7 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
       likes: 2800,
       commentsCount: 150,
       createdAt: "2024-07-24T17:30:00Z",
-      venueId: "venue_7", // Promenade Bondi - WARNING: This slug does not exist in venues-collection.json
+      venueId: "the-bucket-list",
       relatedDealId: null,
       sourcePlatform: "tiktok"
     },
@@ -246,7 +246,7 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
       likes: 1900,
       commentsCount: 110,
       createdAt: "2024-07-24T09:00:00Z",
-      venueId: "venue_4", // Glory Days - WARNING: This slug does not exist in venues-collection.json
+      venueId: "the-bucket-list",
       relatedDealId: null,
       sourcePlatform: "instagram"
     }
@@ -742,6 +742,7 @@ export const appData = {
 
 
     
+
 
 
 
