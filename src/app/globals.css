@@ -135,27 +135,27 @@ nav, aside {
 /* 🌅 DAWN – "Bondi Sun" (previously Day) */
 [data-theme="dawn"] {
   --bg-gradient: linear-gradient(to bottom, #00BBC4, #FFFFFF);
-  --text-primary: #0A2540;
-  --text-secondary: #355070;
+  --text-primary: #ffdf00;
+  --text-secondary: #ffdf00;
   --card-bg: rgba(255, 255, 255, 0.75);
-  --card-text: #0A2540;
+  --card-text: #ffdf00;
   --border-color: #DCEEF9;
 
   /* ShadCN Variables */
   --background: 183 100% 38%; /* #00BBC4 */
-  --foreground: 212 74% 14%; /* #0A2540 */
+  --foreground: 52 100% 50%; /* #ffdf00 */
   --card: 0 0% 100% / 0.75;
-  --card-foreground: 212 74% 14%;
+  --card-foreground: 52 100% 50%;
   --popover: 0 0% 100% / 0.75;
-  --popover-foreground: 212 74% 14%;
+  --popover-foreground: 52 100% 50%;
   --primary: 45 90% 64%; /* #F6C453 */
   --primary-foreground: 240 0% 10%; /* #1B1B1B */
   --secondary: 0 0% 100% / 0.6;
-  --secondary-foreground: 212 74% 14%;
+  --secondary-foreground: 52 100% 50%;
   --muted: 0 0% 100% / 0.6;
-  --muted-foreground: 212 35% 32%; /* #355070 */
+  --muted-foreground: 52 100% 50%;
   --accent: 207 100% 77%; /* #8EC9FF */
-  --accent-foreground: 212 74% 14%;
+  --accent-foreground: 52 100% 50%;
   --border: 207 83% 92%; /* #DCEEF9 */
   --input: 207 83% 92%;
   --ring: 45 90% 64%;
