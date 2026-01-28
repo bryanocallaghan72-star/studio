@@ -165,27 +165,27 @@ nav, aside {
 /* ☀️ DAY – Ready for new palette */
 [data-theme="day"] {
   --bg-gradient: linear-gradient(to bottom, #ffdf00, #E0F2FF);
-  --text-primary: #1A1A1A;
+  --text-primary: #21F5FF;
   --text-secondary: #4A4A4A;
   --card-bg: rgba(255, 255, 255, 0.72);
-  --card-text: #1A1A1A;
+  --card-text: #21F5FF;
   --border-color: rgba(255, 224, 102, 0.25);
 
   /* ShadCN Variables */
   --background: 52 100% 50%; /* #ffdf00 */
-  --foreground: 0 0% 10%; /* #1A1A1A */
+  --foreground: 182 100% 57%; /* #21F5FF */
   --card: 0 0% 100% / 0.72;
-  --card-foreground: 0 0% 10%;
+  --card-foreground: 182 100% 57%;
   --popover: 0 0% 100% / 0.72;
-  --popover-foreground: 0 0% 10%;
+  --popover-foreground: 182 100% 57%;
   --primary: 48 100% 60%; /* #FFCC33 - yellowMid */
-  --primary-foreground: 0 0% 10%; /* #1A1A1A */
+  --primary-foreground: 182 100% 57%;
   --secondary: 205 100% 94%; /* #E0F2FF - skyLight */
-  --secondary-foreground: 0 0% 10%;
+  --secondary-foreground: 182 100% 57%;
   --muted: 205 100% 94%;
   --muted-foreground: 0 0% 29%; /* #4A4A4A */
   --accent: 207 100% 85%; /* #B3E5FF - sky */
-  --accent-foreground: 0 0% 10%;
+  --accent-foreground: 182 100% 57%;
   --border: 45 100% 70% / 0.25; /* rgba(255, 224, 102, 0.25) */
   --input: 205 100% 94%;
   --ring: 48 100% 60%; /* yellowMid */
