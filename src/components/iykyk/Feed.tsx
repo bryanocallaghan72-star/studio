@@ -18,7 +18,6 @@ import { CommentSheet, type Comment } from "./CommentSheet";
 import { appData } from "@/lib/data";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { useVenues } from "@/hooks/useVenues";
 import { useCreators } from "@/hooks/useCreators";
 import { Skeleton } from "../ui/skeleton";
 
@@ -197,48 +196,14 @@ const FeedSkeleton = () => (
 
 
 export function Feed() {
-  const { venues, isLoading: venuesLoading } = useVenues();
   const { creators, isLoading: creatorsLoading } = useCreators();
 
-  const feedItems = useMemo(() => {
-    if (venuesLoading || creatorsLoading || !venues || !creators) return [];
-
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
-
-    const generatedStoryPosts = venues.map((venue, index) => {
-        const creator = creators[index % creators.length];
-        const photoReference = (venue as any).photoReference;
-
-        const thumbnailUrl = photoReference
-            ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${photoReference}&key=${apiKey}`
-            : 'https://images.unsplash.com/photo-1593384581543-0a96116d34b6?q=80&w=2070&auto=format&fit=crop';
-        
-        return {
-            type: 'story' as const,
-            id: `sol-${venue.slug}`,
-            creatorId: creator.id,
-            venueId: venue.slug,
-            title: `A Vibe at ${venue.name}`,
-            description: (venue as any).description || `Just discovered this gem in Bondi. You have to check it out!`,
-            videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-taryn-elliott-7876874__2160p_.mp4",
-            thumbnailUrl,
-            duration: 28,
-            postType: "Local Spotlight",
-            likes: Math.floor(Math.random() * 5000) + 500,
-            commentsCount: Math.floor(Math.random() * 500) + 20,
-            createdAt: new Date(Date.now() - index * 1000 * 60 * 60).toISOString(), // Stagger creation time
-            creator,
-        };
-    });
-
-    const photoPosts = appData.feedItems.filter(item => item.type === 'photo');
-
-    return [...photoPosts, ...generatedStoryPosts]
-        .sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-  }, [venues, creators, venuesLoading, creatorsLoading]);
+  // The feed items are now sourced directly from the curated appData.
+  // This ensures all posts are high-quality and have valid venue links.
+  const feedItems = appData.feedItems;
   
-  if (venuesLoading || creatorsLoading) {
+  // The loading state now only depends on creators, as venues are no longer needed here.
+  if (creatorsLoading) {
     return <FeedSkeleton />;
   }
   
