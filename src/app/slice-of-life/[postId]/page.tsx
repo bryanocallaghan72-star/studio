@@ -1,63 +1,101 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { notFound, useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { appData } from '@/lib/data';
-import { HOT_ITEMS } from '@/data/seeds/drops';
+import { useVenues } from '@/hooks/useVenues';
+import { useCreators } from '@/hooks/useCreators';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Heart, MessageCircle, Send, MoreVertical, X, Ticket, Building, ArrowLeft } from 'lucide-react';
+import { Heart, MessageCircle, Send, MoreVertical, ArrowLeft, Ticket, Building, Loader2 } from 'lucide-react';
 import { CommentSheet, type Comment } from '@/components/iykyk/CommentSheet';
 import { QRCodeDialog } from '@/components/iykyk/QRCodeDialog';
 import { resolveVenueHref, findVenueByAnyId } from '@/lib/venueUtils';
 import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
+import { HOT_ITEMS } from '@/data/seeds/drops';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const PostPageSkeleton = () => (
+    <div className="relative h-screen w-full flex items-center justify-center bg-black">
+        <Loader2 className="h-8 w-8 text-white animate-spin" />
+    </div>
+);
+
 
 export default function SliceOfLifePostPage() {
     const params = useParams();
     const postId = params.postId as string;
     
-    // 1. Find post and creator right away
-    const post = appData.sliceOfLifePosts.find(p => p.id === postId);
-    const creator = post ? appData.creators.find(c => c.id === post.creatorId) : null;
+    const { venues, isLoading: venuesLoading } = useVenues();
+    const { creators, isLoading: creatorsLoading } = useCreators();
 
-    // 2. Early exit if data is invalid. This prevents hooks from running with bad data.
-    if (!post || !creator) {
-        notFound();
-    }
+    const post = useMemo(() => {
+        if (!venues || venues.length === 0 || !creators || creators.length === 0 || !postId) return null;
 
-    // 3. All hooks are now safe to call below the validation gate.
+        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
+
+        const generatedPosts = venues.map((venue, index) => {
+            const creator = creators[index % creators.length];
+            const photoReference = (venue as any).photoReference;
+
+            const thumbnailUrl = photoReference
+                ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${photoReference}&key=${apiKey}`
+                : 'https://images.unsplash.com/photo-1593384581543-0a96116d34b6?q=80&w=2070&auto=format&fit=crop';
+            
+            return {
+                id: `sol-${venue.slug}`,
+                creatorId: creator.id,
+                venueId: venue.slug,
+                relatedDealId: index % 4 === 0 ? 'hot-2' : null,
+                title: `A Vibe at ${venue.name}`,
+                description: (venue as any).description || `Just discovered this gem in Bondi. You have to check it out! The atmosphere is amazing.`,
+                videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-taryn-elliott-7876874__2160p_.mp4",
+                thumbnailUrl,
+                duration: 28,
+                postType: "Local Spotlight",
+                likes: Math.floor(Math.random() * 5000) + 500,
+                commentsCount: Math.floor(Math.random() * 500) + 20,
+                createdAt: new Date(Date.now() - index * 1000 * 60 * 60).toISOString(),
+                creator,
+            };
+        });
+
+        return generatedPosts.find(p => p.id === postId);
+
+    }, [venues, creators, postId]);
+
     const firestore = useFirestore();
     const { user } = useUser();
     
-    const deal = post.relatedDealId ? HOT_ITEMS.find(d => d.id === post.relatedDealId) : null;
-    
-    const venue = findVenueByAnyId(post.venueId);
-    const venueHref = resolveVenueHref(venue);
-    const attributedVenueHref = venueHref && post.creatorId ? `${venueHref}?creator=${post.creatorId}` : venueHref;
-
     const [isLiked, setIsLiked] = useState(false);
     const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
     const [isQRDialogOpen, setQRDialogOpen] = useState(false);
     const [localComments, setLocalComments] = useState<Comment[]>([]);
-    const [commentCount, setCommentCount] = useState(post.commentsCount);
 
-    const likeCount = isLiked ? post.likes + 1 : post.likes;
+    const commentCount = post ? post.commentsCount + localComments.length : 0;
+    const likeCount = post ? (isLiked ? post.likes + 1 : post.likes) : 0;
+    
+    const { deal, venue, attributedVenueHref } = useMemo(() => {
+        if (!post) return { deal: null, venue: null, attributedVenueHref: null };
+        const deal = post.relatedDealId ? HOT_ITEMS.find(d => d.id === post.relatedDealId) : null;
+        const venue = findVenueByAnyId(post.venueId);
+        const venueHref = resolveVenueHref(venue);
+        const attributedVenueHref = venueHref && post.creatorId ? `${venueHref}?creator=${post.creatorId}` : venueHref;
+        return { deal, venue, attributedVenueHref };
+    }, [post]);
 
-    // 4. Single, correct implementation of handlePostComment.
     const handlePostComment = (commentText: string) => {
         setLocalComments(prevComments => [...prevComments, { author: "You", text: commentText }]);
-        setCommentCount(prevCount => prevCount + 1);
     };
 
     const handleClaim = () => {
-        if (deal && venue) { // Ensure venue is found before claiming
-            if (user && firestore && post.creatorId) {
+        if (deal && venue) {
+            if (user && firestore && post?.creatorId) {
                 const influenceRef = collection(firestore, 'users', post.creatorId, 'influencedActions');
                 const influenceData = {
                     userId: user.uid,
@@ -70,6 +108,16 @@ export default function SliceOfLifePostPage() {
             setQRDialogOpen(true);
         }
     }
+
+    if (venuesLoading || creatorsLoading) {
+        return <PostPageSkeleton />;
+    }
+    
+    if (!post) {
+        notFound();
+    }
+    
+    const creator = post.creator;
 
     return (
         <>
@@ -121,13 +169,18 @@ export default function SliceOfLifePostPage() {
                             </Button>
                         )}
                         
-                        {attributedVenueHref && (
+                        {attributedVenueHref ? (
                             <Link href={attributedVenueHref}>
                                 <Button variant="outline" className="w-full h-14 text-lg font-bold bg-white/10 border-white/30 text-white backdrop-blur-md hover:bg-white/20">
                                     <Building className="mr-2"/>
                                     View Venue
                                 </Button>
                             </Link>
+                        ) : (
+                             <Button variant="outline" className="w-full h-14 text-lg font-bold bg-white/10 border-white/30 text-white backdrop-blur-md" disabled>
+                                <Building className="mr-2"/>
+                                Venue not live yet
+                            </Button>
                         )}
                     </div>
                 </div>
@@ -168,4 +221,3 @@ export default function SliceOfLifePostPage() {
         </>
     );
 }
-
