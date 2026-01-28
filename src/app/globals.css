@@ -134,7 +134,7 @@ nav, aside {
 
 /* 🌅 DAWN – "Bondi Sun" (previously Day) */
 [data-theme="dawn"] {
-  --bg-gradient: linear-gradient(to bottom, #BEE3F8, #FFFFFF);
+  --bg-gradient: linear-gradient(to bottom, #00BBC4, #FFFFFF);
   --text-primary: #0A2540;
   --text-secondary: #355070;
   --card-bg: rgba(255, 255, 255, 0.75);
@@ -142,7 +142,7 @@ nav, aside {
   --border-color: #DCEEF9;
 
   /* ShadCN Variables */
-  --background: 207 83% 86%; /* #BEE3F8 */
+  --background: 183 100% 38%; /* #00BBC4 */
   --foreground: 212 74% 14%; /* #0A2540 */
   --card: 0 0% 100% / 0.75;
   --card-foreground: 212 74% 14%;
