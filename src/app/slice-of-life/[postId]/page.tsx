@@ -16,41 +16,47 @@ import { QRCodeDialog } from '@/components/iykyk/QRCodeDialog';
 import { resolveVenueHref, findVenueByAnyId } from '@/lib/venueUtils';
 import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
 import { collection } from 'firebase/firestore';
+import { cn } from '@/lib/utils';
 
 export default function SliceOfLifePostPage() {
     const params = useParams();
     const postId = params.postId as string;
     
-    const firestore = useFirestore();
-    const { user } = useUser();
-
+    // 1. Find post and creator right away
     const post = appData.sliceOfLifePosts.find(p => p.id === postId);
     const creator = post ? appData.creators.find(c => c.id === post.creatorId) : null;
-    const deal = post?.relatedDealId ? HOT_ITEMS.find(d => d.id === post.relatedDealId) : null;
-    
-    const venue = post ? findVenueByAnyId(post.venueId) : null;
-    const venueHref = resolveVenueHref(venue);
 
-    const [isLiked, setIsLiked] = useState(false);
-    const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
-    const [isQRDialogOpen, setQRDialogOpen] = useState(false);
-    
-    const [localComments, setLocalComments] = useState<Comment[]>([]);
-    const [commentCount, setCommentCount] = useState(post?.commentsCount || 0);
-
+    // 2. Early exit if data is invalid. This prevents hooks from running with bad data.
     if (!post || !creator) {
         notFound();
     }
 
+    // 3. All hooks are now safe to call below the validation gate.
+    const firestore = useFirestore();
+    const { user } = useUser();
+    
+    const deal = post.relatedDealId ? HOT_ITEMS.find(d => d.id === post.relatedDealId) : null;
+    
+    const venue = findVenueByAnyId(post.venueId);
+    const venueHref = resolveVenueHref(venue);
+    const attributedVenueHref = venueHref && post.creatorId ? `${venueHref}?creator=${post.creatorId}` : venueHref;
+
+    const [isLiked, setIsLiked] = useState(false);
+    const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
+    const [isQRDialogOpen, setQRDialogOpen] = useState(false);
+    const [localComments, setLocalComments] = useState<Comment[]>([]);
+    const [commentCount, setCommentCount] = useState(post.commentsCount);
+
     const likeCount = isLiked ? post.likes + 1 : post.likes;
 
+    // 4. Single, correct implementation of handlePostComment.
     const handlePostComment = (commentText: string) => {
-        setLocalComments([...localComments, { author: "You", text: commentText }]);
-        setCommentCount(prev => prev + 1);
+        setLocalComments(prevComments => [...prevComments, { author: "You", text: commentText }]);
+        setCommentCount(prevCount => prevCount + 1);
     };
 
     const handleClaim = () => {
-        if (deal) {
+        if (deal && venue) { // Ensure venue is found before claiming
             if (user && firestore && post.creatorId) {
                 const influenceRef = collection(firestore, 'users', post.creatorId, 'influencedActions');
                 const influenceData = {
@@ -64,8 +70,6 @@ export default function SliceOfLifePostPage() {
             setQRDialogOpen(true);
         }
     }
-
-    const attributedVenueHref = venueHref && post.creatorId ? `${venueHref}?creator=${post.creatorId}` : venueHref;
 
     return (
         <>
@@ -109,7 +113,7 @@ export default function SliceOfLifePostPage() {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className={cn("gap-3 grid", deal && attributedVenueHref ? "grid-cols-2" : "grid-cols-1")}>
                         {deal && (
                             <Button className="h-14 text-lg font-bold bg-primary text-primary-foreground" onClick={handleClaim} disabled={!user}>
                                 <Ticket className="mr-2"/>
@@ -117,18 +121,13 @@ export default function SliceOfLifePostPage() {
                             </Button>
                         )}
                         
-                        {attributedVenueHref ? (
+                        {attributedVenueHref && (
                             <Link href={attributedVenueHref}>
                                 <Button variant="outline" className="w-full h-14 text-lg font-bold bg-white/10 border-white/30 text-white backdrop-blur-md hover:bg-white/20">
                                     <Building className="mr-2"/>
                                     View Venue
                                 </Button>
                             </Link>
-                        ) : (
-                            <Button variant="outline" className="w-full h-14 text-lg font-bold bg-white/10 border-white/30 text-white backdrop-blur-md" disabled>
-                                <Building className="mr-2"/>
-                                Venue not live yet
-                            </Button>
                         )}
                     </div>
                 </div>
@@ -169,3 +168,4 @@ export default function SliceOfLifePostPage() {
         </>
     );
 }
+
