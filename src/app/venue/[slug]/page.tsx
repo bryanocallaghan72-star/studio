@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -176,7 +177,7 @@ export default function VenuePage() {
         trackVenueView({ uid: user.uid, venueId: slug, venueName: venue.name, imageUrl: photoUrl });
         logVaultEvent(user.uid, { type: "VENUE_VIEWED", entityType: "venue", entityId: slug, title: venue.name, subtitle: venue.category, imageUrl: photoUrl, meta: { source: "VenuePage" } });
     }
-  }, [venue, user, slug]);
+  }, [venue, user, slug, photoUrl]);
 
   const { isLoaded, loadError } = useJsApiLoader({
     id: GOOGLE_MAPS_LOADER_ID,
