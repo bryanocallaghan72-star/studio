@@ -105,7 +105,7 @@ export default function SliceOfLifePostPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                 
                 <header className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between p-4">
-                    <Link href="/feed" passHref>
+                    <Link href="/feed">
                         <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
                             <ArrowLeft />
                         </Button>
@@ -143,13 +143,11 @@ export default function SliceOfLifePostPage() {
                         )}
                         
                         {attributedVenueHref ? (
-                            <Link href={attributedVenueHref} legacyBehavior>
-                                <a className={cn(!deal && "col-span-2")}>
+                            <Link href={attributedVenueHref} className={cn(!deal && "col-span-2")}>
                                   <Button variant="outline" className="w-full h-14 text-lg font-bold bg-white/10 border-white/30 text-white backdrop-blur-md hover:bg-white/20">
                                       <Building className="mr-2"/>
                                       View Venue
                                   </Button>
-                                </a>
                             </Link>
                         ) : (
                              <Button variant="outline" className="w-full h-14 text-lg font-bold bg-white/10 border-white/30 text-white backdrop-blur-md" disabled>
