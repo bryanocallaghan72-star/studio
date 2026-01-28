@@ -166,7 +166,7 @@ nav, aside {
 [data-theme="day"] {
   --bg-gradient: linear-gradient(to bottom, #ffdf00, #E0F2FF);
   --text-primary: #00BBC4;
-  --text-secondary: #4A4A4A;
+  --text-secondary: #00BBC4;
   --card-bg: rgba(255, 255, 255, 0.72);
   --card-text: #00BBC4;
   --border-color: rgba(255, 224, 102, 0.25);
@@ -183,7 +183,7 @@ nav, aside {
   --secondary: 205 100% 94%; /* #E0F2FF - skyLight */
   --secondary-foreground: 183 100% 38%;
   --muted: 205 100% 94%;
-  --muted-foreground: 0 0% 29%; /* #4A4A4A */
+  --muted-foreground: 183 100% 38%;
   --accent: 207 100% 85%; /* #B3E5FF - sky */
   --accent-foreground: 183 100% 38%;
   --border: 45 100% 70% / 0.25; /* rgba(255, 224, 102, 0.25) */
