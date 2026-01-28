@@ -326,6 +326,39 @@ export const HOT_ITEMS: HotItem[] = [
       imageId: "sushi-1",
       expiresAt: hoursFromNow(1),
       claims: 19,
+    },
+    {
+      id: 'hot-5',
+      title: "Free House Cocktail",
+      venue: "Pocket Bondi",
+      venueId: "pocket-bondi",
+      description: "First drink on us! Try our signature house cocktail tonight.",
+      imageId: "pocket-bar",
+      expiresAt: hoursFromNow(3),
+      claims: 18,
+      creatorId: "lucas"
+    },
+    {
+        id: 'hot-6',
+        title: "Complimentary Edamame",
+        venue: "Mamasan Bondi",
+        venueId: "mamasan-bondi",
+        description: "Get a free bowl of spicy edamame with any main course.",
+        imageId: "mamasan-restaurant",
+        expiresAt: hoursFromNow(2),
+        claims: 33,
+        creatorId: "jay"
+    },
+    {
+        id: 'hot-7',
+        title: "10% off Vinyl",
+        venue: "Volume 1",
+        venueId: "volume-1-bondi",
+        description: "Get 10% off any vinyl record purchase with your coffee.",
+        imageId: "record-cafe",
+        expiresAt: hoursFromNow(4),
+        claims: 9,
+        creatorId: "alice"
     }
 ];
 
@@ -454,3 +487,4 @@ export const AR_DROPS: ARDrop[] = [
         isSponsored: true,
     }
 ];
+

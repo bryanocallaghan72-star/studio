@@ -510,10 +510,54 @@ export const SEED_VENUES: Venue[] = [
     name: 'Kissed Earth',
     location: {
       latitude: -33.8925,
-      longitude: 151.269
+      longitude: 151.269,
+      address: "Shop 6, 180-186 Campbell Parade, Bondi Beach"
     },
     details: {
-      category: 'Brunch'
+      category: 'Brunch',
+      description: "Premium health and wellness brand with a flagship cafe."
+    }
+  },
+  {
+    id: 'pocket-bondi',
+    slug: 'pocket-bondi',
+    name: 'Pocket Bondi',
+    location: {
+      latitude: -33.8928,
+      longitude: 151.2725,
+      address: "Shop 3, 11-13 Jaques Ave, Bondi Beach"
+    },
+    details: {
+      category: 'Cocktails',
+      description: "An intimate cocktail bar with a focus on creative drinks."
+    }
+  },
+  {
+    id: 'mamasan-bondi',
+    slug: 'mamasan-bondi',
+    name: 'Mamasan Bondi',
+    location: {
+      latitude: -33.8905,
+      longitude: 151.2745,
+      address: "Shop 5, 152-154 Campbell Parade, Bondi Beach"
+    },
+    details: {
+      category: 'Restaurants',
+      description: "Modern Japanese dining with a twist."
+    }
+  },
+  {
+    id: 'volume-1-bondi',
+    slug: 'volume-1-bondi',
+    name: 'Volume 1',
+    location: {
+      latitude: -33.8915,
+      longitude: 151.2695,
+      address: "85 Hall St, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Vibes',
+      description: "A unique space combining a record store with a specialty coffee bar."
     }
   }
 ];
@@ -521,5 +565,6 @@ export const SEED_VENUES: Venue[] = [
 export const SEED_VENUES_BY_SLUG = Object.fromEntries(
   SEED_VENUES.map(v => [v.slug, v])
 ) satisfies Record<string, Venue>;
+
 
 

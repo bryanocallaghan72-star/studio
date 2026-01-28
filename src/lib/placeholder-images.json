@@ -279,6 +279,30 @@
       "imageHint": "augmented reality",
       "width": 2070,
       "height": 2588
+    },
+    {
+      "id": "pocket-bar",
+      "description": "An intimate, cozy cocktail bar with moody lighting.",
+      "imageUrl": "https://images.unsplash.com/photo-1543007168-5fa9b3c5951c?q=80&w=1974&auto=format&fit=crop",
+      "imageHint": "intimate cocktail bar",
+      "width": 1974,
+      "height": 1316
+    },
+    {
+      "id": "mamasan-restaurant",
+      "description": "The interior of a modern, stylish Asian-fusion restaurant.",
+      "imageUrl": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop",
+      "imageHint": "asian restaurant interior",
+      "width": 1974,
+      "height": 1316
+    },
+    {
+      "id": "record-cafe",
+      "description": "A trendy cafe with walls lined with vinyl records for sale.",
+      "imageUrl": "https://images.unsplash.com/photo-1588137593699-a64c6b4e0d9b?q=80&w=1974&auto=format&fit=crop",
+      "imageHint": "record store cafe",
+      "width": 1974,
+      "height": 1316
     }
   ]
 }
