@@ -224,25 +224,25 @@ nav, aside {
 /* 🌙 DUSK – "Deep Ocean" */
 [data-theme="dusk"] {
   --bg-gradient: linear-gradient(to bottom, #3B3C99, #6A5FBF, #F8C8A8);
-  --text-primary: #F8F7F4;
-  --text-secondary: #C7C4D9;
+  --text-primary: #00BBC4;
+  --text-secondary: #00BBC4;
   --card-bg: rgba(255, 255, 255, 0.08);
-  --card-text: #F8F7F4;
+  --card-text: #00BBC4;
   --border-color: #948BBE;
 
   /* ShadCN Variables */
   --background: 239 46% 40%; /* Approx #3B3C99 */
-  --foreground: 40 33% 97%;  /* #F8F7F4 */
+  --foreground: 183 100% 38%;  /* #00BBC4 */
   --card: 0 0% 100% / 0.08;
-  --card-foreground: 40 33% 97%;
+  --card-foreground: 183 100% 38%;
   --popover: 0 0% 100% / 0.1;
-  --popover-foreground: 40 33% 97%;
+  --popover-foreground: 183 100% 38%;
   --primary: 25 100% 77%;   /* #FFB78C */
   --primary-foreground: 239 46% 40%; /* #3B3C99 */
   --secondary: 243 45% 56% / 0.1; /* Approx #6A5FBF with opacity */
-  --secondary-foreground: 40 33% 97%;
+  --secondary-foreground: 183 100% 38%;
   --muted: 243 45% 56% / 0.1;
-  --muted-foreground: 246 21% 82%; /* #C7C4D9 */
+  --muted-foreground: 183 100% 38%;
   --accent: 346 100% 72%;   /* #FF6F91 */
   --accent-foreground: 239 46% 40%; /* #3B3C99 */
   --border: 246 21% 64%;      /* #948BBE */
