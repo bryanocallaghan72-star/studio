@@ -265,6 +265,38 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator'>[] = [
       venueId: "kissed-earth",
       relatedDealId: null,
       sourcePlatform: "instagram"
+    },
+    {
+      id: "sol-8",
+      creatorId: "alice",
+      title: "Salty's is the Vibe",
+      description: "Finally checked out Salty's and it did not disappoint. The energy is electric, the music is on point, and the beachfront view is unbeatable. Perfect spot for a fun night out with the crew. 🤙",
+      videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-kampus-production-8569201__2160p_.mp4",
+      thumbnailUrl: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1974&auto=format&fit=crop",
+      duration: 35,
+      postType: "Local Spotlight",
+      likes: 2900,
+      commentsCount: 180,
+      createdAt: "2024-07-25T21:00:00Z",
+      venueId: "saltys-bondi-beach",
+      relatedDealId: null,
+      sourcePlatform: "tiktok"
+    },
+    {
+      id: "sol-9",
+      creatorId: "emma",
+      title: "Fueling up at Upbeat",
+      description: "Found my new favorite lunch spot! Upbeat Bondi has the most incredible, healthy bowls that taste as good as they look. The perfect post-workout fuel to keep you going. So fresh and delicious!",
+      videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-gloria-g-2127732-3840x2160-30fps.mp4",
+      thumbnailUrl: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=2070&auto=format&fit=crop",
+      duration: 19,
+      postType: "Local Spotlight",
+      likes: 1500,
+      commentsCount: 75,
+      createdAt: "2024-07-26T13:00:00Z",
+      venueId: "upbeat-bondi",
+      relatedDealId: null,
+      sourcePlatform: "instagram"
     }
 ];
 
@@ -767,6 +799,7 @@ export const appData = {
 
 
     
+
 
 
 
