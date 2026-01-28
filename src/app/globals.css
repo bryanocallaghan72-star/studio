@@ -195,27 +195,27 @@ nav, aside {
 /* 🥂 GOLDEN HOUR – "Bondi Therapy" */
 [data-theme="golden"] {
   --bg-gradient: linear-gradient(to bottom, #f7a77b, #d45c55, #2c1f4a);
-  --text-primary: #FFFFFF;
-  --text-secondary: #E5E0FF;
+  --text-primary: #ffdf00;
+  --text-secondary: #ffdf00;
   --card-bg: rgba(255, 255, 255, 0.08);
-  --card-text: #FFFFFF;
+  --card-text: #ffdf00;
   --border-color: #A384A9;
 
   /* ShadCN Variables */
   --background: 25 89% 75%; /* Approx #f7a77b */
-  --foreground: 0 0% 100%;    /* #FFFFFF */
+  --foreground: 52 100% 50%;    /* #ffdf00 */
   --card: 0 0% 100% / 0.08;
-  --card-foreground: 0 0% 100%;
+  --card-foreground: 52 100% 50%;
   --popover: 0 0% 100% / 0.1;
-  --popover-foreground: 0 0% 100%;
+  --popover-foreground: 52 100% 50%;
   --primary: 25 89% 75%; /* #f7a77b */
   --primary-foreground: 257 41% 21%; /* #2c1f4a */
   --secondary: 0 0% 100% / 0.05;
-  --secondary-foreground: 0 0% 100%;
+  --secondary-foreground: 52 100% 50%;
   --muted: 0 0% 100% / 0.05;
-  --muted-foreground: 250 100% 94%; /* #E5E0FF */
+  --muted-foreground: 52 100% 50%;
   --accent: 4 60% 58%; /* #d45c55 */
-  --accent-foreground: 0 0% 100%;
+  --accent-foreground: 52 100% 50%;
   --border: 290 18% 60%; /* #A384A9 */
   --input: 290 18% 60%;
   --ring: 25 89% 75%; /* #f7a77b */
@@ -253,7 +253,7 @@ nav, aside {
 .discover-text-override .card-title,
 .discover-text-override .card-description,
 .discover-text-override .icon-color {
-  color: #ffdf00 !important;
+  color: var(--card-text) !important;
   text-shadow: 0 1px 3px rgba(0,0,0,0.55) !important;
 }
 
