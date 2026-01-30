@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Heart, MessageCircle, Send, MoreVertical, ArrowLeft, Ticket, Building } from 'lucide-react';
+import { Heart, MessageCircle, Send, MoreVertical, ArrowLeft, Ticket, Building, Volume2, VolumeX } from 'lucide-react';
 import { CommentSheet, type Comment } from '@/components/iykyk/CommentSheet';
 import { QRCodeDialog } from '@/components/iykyk/QRCodeDialog';
 import { resolveVenueHref, findVenueByAnyId } from '@/lib/venueUtils';
@@ -33,6 +33,7 @@ export default function SliceOfLifePostPage() {
     }, [postId]);
 
     const [isLiked, setIsLiked] = useState(false);
+    const [isMuted, setIsMuted] = useState(true);
     const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
     const [isQRDialogOpen, setQRDialogOpen] = useState(false);
     const [localComments, setLocalComments] = useState<Comment[]>([]);
@@ -91,16 +92,27 @@ export default function SliceOfLifePostPage() {
     return (
         <>
             <div className="relative h-screen w-full snap-start flex-shrink-0 bg-black">
-                {post.thumbnailUrl ? (
-                    <Image 
-                        src={post.thumbnailUrl}
-                        alt={post.title}
-                        fill
-                        className="object-cover opacity-60"
-                        priority
+                 {post.videoUrl ? (
+                    <video
+                        key={post.id}
+                        src={post.videoUrl}
+                        poster={post.thumbnailUrl}
+                        autoPlay
+                        loop
+                        muted={isMuted}
+                        playsInline
+                        className="absolute top-0 left-0 h-full w-full object-cover"
                     />
                 ) : (
-                    <div className="absolute inset-0 bg-black" />
+                    post.thumbnailUrl && (
+                        <Image
+                            src={post.thumbnailUrl}
+                            alt={post.title}
+                            fill
+                            className="object-cover opacity-60"
+                            priority
+                        />
+                    )
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                 
@@ -136,7 +148,7 @@ export default function SliceOfLifePostPage() {
 
                     <div className={cn("gap-3 grid", post.postType === 'monetisable' && deal && attributedVenueHref ? "grid-cols-2" : "grid-cols-1")}>
                         {post.postType === 'monetisable' && deal && (
-                            <Button className="h-14 text-lg font-bold bg-primary text-primary-foreground" onClick={handleClaim} disabled={!user}>
+                            <Button className="h-14 text-lg font-bold bg-primary text-primary-foreground shadow-lg shadow-primary/30" onClick={handleClaim} disabled={!user}>
                                 <Ticket className="mr-2"/>
                                 {user ? 'Claim Perk' : 'Sign in to Claim'}
                             </Button>
@@ -166,6 +178,9 @@ export default function SliceOfLifePostPage() {
                     <button className="flex flex-col items-center gap-1" onClick={() => setIsCommentSheetOpen(true)}>
                         <MessageCircle className="h-8 w-8" />
                         <span className="text-xs font-semibold">{commentCount.toLocaleString()}</span>
+                    </button>
+                    <button className="flex flex-col items-center gap-1" onClick={() => setIsMuted(!isMuted)}>
+                         {isMuted ? <VolumeX className="h-8 w-8" /> : <Volume2 className="h-8 w-8" />}
                     </button>
                     <button>
                         <Send className="h-8 w-8" />
