@@ -1,4 +1,3 @@
-
 "use client";
 
 import { STAYS } from '@/data/seeds/drops';

@@ -487,4 +487,3 @@ export const AR_DROPS: ARDrop[] = [
         isSponsored: true,
     }
 ];
-
