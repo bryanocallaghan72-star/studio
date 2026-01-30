@@ -13,6 +13,8 @@ import { Header } from '@/components/iykyk/Header';
 import { Sidebar, SidebarProvider, SidebarInset } from '@/components/iykyk/sidebar';
 import { DesktopNavContent } from '@/components/iykyk/DesktopNavContent';
 import { DemoTimeProvider } from '@/context/DemoTimeContext';
+import { SoundProvider } from '@/context/SoundContext';
+import { AmbienceController } from '@/components/iykyk/AmbienceController';
 import GodModeButton from '@/components/iykyk/GodModeButton';
 
 const inter = Inter({
@@ -39,27 +41,30 @@ export default function RootLayout({
       <body className={cn(inter.variable, "font-body antialiased")}>
         <FirebaseClientProvider>
           <DemoTimeProvider>
-            {/* --- This is the new, correct body structure --- */}
-            <SidebarProvider>
-              <div className="flex min-h-screen w-full flex-col bg-background">
-                <div className="md:flex">
-                  <Sidebar collapsible="icon">
-                    <DesktopNavContent />
-                  </Sidebar>
-                  <SidebarInset>
-                    <main className="flex-1">
-                      {/* The ProfilePageClient now includes its own Header */}
-                      {/* <Header /> */}
-                      <div className="flex-1 p-4 md:p-6 pb-24">
-                        {children}
-                      </div>
-                      <MobileNav /> {/* <-- Moved MobileNav here */}
-                    </main>
-                  </SidebarInset>
+            <SoundProvider>
+              <AmbienceController />
+              {/* --- This is the new, correct body structure --- */}
+              <SidebarProvider>
+                <div className="flex min-h-screen w-full flex-col bg-background">
+                  <div className="md:flex">
+                    <Sidebar collapsible="icon">
+                      <DesktopNavContent />
+                    </Sidebar>
+                    <SidebarInset>
+                      <main className="flex-1">
+                        {/* The ProfilePageClient now includes its own Header */}
+                        {/* <Header /> */}
+                        <div className="flex-1 p-4 md:p-6 pb-24">
+                          {children}
+                        </div>
+                        <MobileNav /> {/* <-- Moved MobileNav here */}
+                      </main>
+                    </SidebarInset>
+                  </div>
                 </div>
-              </div>
-            </SidebarProvider>
-            <GodModeButton />
+              </SidebarProvider>
+              <GodModeButton />
+            </SoundProvider>
           </DemoTimeProvider>
         </FirebaseClientProvider>
           <Toaster />

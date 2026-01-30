@@ -14,14 +14,17 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '../ui/skeleton';
 import { useVenues } from '@/hooks/useVenues';
 import type { Venue } from '@/types/venue';
+import { useSoundContext } from '@/context/SoundContext';
 
 
 const VenueCard = memo(({ venue }: { venue: Venue }) => {
     const router = useRouter();
+    const { playClick } = useSoundContext();
 
     const handleMapClick = (e: React.MouseEvent) => {
         e.stopPropagation(); 
         e.preventDefault(); 
+        playClick();
 
         const categoryMap: { [key: string]: string } = {
             "Cafe & Matcha": "Brunch",
@@ -46,7 +49,7 @@ const VenueCard = memo(({ venue }: { venue: Venue }) => {
       : "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop";
 
     return (
-        <Link href={`/venue/${venue.slug}`}>
+        <Link href={`/venue/${venue.slug}`} onClick={playClick}>
             <Card className="overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1">
                  <div className="relative h-40 w-full">
                     <Image

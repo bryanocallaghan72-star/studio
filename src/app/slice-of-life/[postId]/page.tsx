@@ -16,6 +16,7 @@ import { collection } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { HOT_ITEMS } from '@/data/seeds/drops';
 import { appData } from '@/lib/data';
+import { useSoundContext } from '@/context/SoundContext';
 
 export default function SliceOfLifePostPage() {
     const params = useParams();
@@ -24,6 +25,7 @@ export default function SliceOfLifePostPage() {
     
     const firestore = useFirestore();
     const { user } = useUser();
+    const { playClick, playSuccess } = useSoundContext();
     
     // Find the post from the canonical mock data source.
     const post = useMemo(() => {
@@ -64,6 +66,7 @@ export default function SliceOfLifePostPage() {
     };
 
     const handleClaim = () => {
+        playSuccess();
         if (deal && venue) {
             if (user && firestore && post?.creatorId) {
                 const influenceRef = collection(firestore, 'users', post.creatorId, 'influencedActions');
@@ -154,7 +157,7 @@ export default function SliceOfLifePostPage() {
                         )}
                         
                         {attributedVenueHref ? (
-                            <Link href={attributedVenueHref} className={cn(post.postType === 'discovery' && "col-span-2")}>
+                            <Link href={attributedVenueHref} onClick={playClick} className={cn(post.postType === 'discovery' && "col-span-2")}>
                                   <Button variant="outline" className="w-full h-14 text-lg font-bold bg-white/10 border-white/30 text-white backdrop-blur-md hover:bg-white/20">
                                       <Building className="mr-2"/>
                                       View Venue
@@ -170,22 +173,22 @@ export default function SliceOfLifePostPage() {
                 </div>
 
                 <div className="absolute bottom-40 right-4 flex flex-col items-center gap-5 text-white z-10 md:bottom-6">
-                    <button className="flex flex-col items-center gap-1" onClick={() => setIsLiked(!isLiked)}>
+                    <button className="flex flex-col items-center gap-1" onClick={() => { playClick(); setIsLiked(!isLiked); }}>
                         <Heart className={`h-8 w-8 transition-all ${isLiked ? 'text-red-500 fill-current' : ''}`} />
                         <span className="text-xs font-semibold">{likeCount.toLocaleString()}</span>
                     </button>
-                    <button className="flex flex-col items-center gap-1" onClick={() => setIsCommentSheetOpen(true)}>
+                    <button className="flex flex-col items-center gap-1" onClick={() => { playClick(); setIsCommentSheetOpen(true); }}>
                         <MessageCircle className="h-8 w-8" />
                         <span className="text-xs font-semibold">{commentCount.toLocaleString()}</span>
                     </button>
-                    <button className="flex flex-col items-center gap-1" onClick={() => setIsMuted(!isMuted)}>
+                    <button className="flex flex-col items-center gap-1" onClick={() => { playClick(); setIsMuted(!isMuted); }}>
                          {isMuted ? <VolumeX className="h-8 w-8" /> : <Volume2 className="h-8 w-8" />}
                          <span className="text-xs font-semibold">{isMuted ? 'Mute' : 'Sound'}</span>
                     </button>
-                    <button>
+                    <button onClick={playClick}>
                         <Send className="h-8 w-8" />
                     </button>
-                    <button>
+                    <button onClick={playClick}>
                         <MoreVertical className="h-8 w-8" />
                     </button>
                 </div>
