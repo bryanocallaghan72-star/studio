@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -181,6 +180,7 @@ export default function SliceOfLifePostPage() {
                     </button>
                     <button className="flex flex-col items-center gap-1" onClick={() => setIsMuted(!isMuted)}>
                          {isMuted ? <VolumeX className="h-8 w-8" /> : <Volume2 className="h-8 w-8" />}
+                         <span className="text-xs font-semibold">{isMuted ? 'Mute' : 'Sound'}</span>
                     </button>
                     <button>
                         <Send className="h-8 w-8" />
