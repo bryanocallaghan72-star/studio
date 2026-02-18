@@ -19,6 +19,4 @@ if (geminiApiKey) {
 
 export const ai = genkit({
   plugins: plugins,
-  logLevel: 'debug',
-  enableTracingAndMetrics: false,
 });
