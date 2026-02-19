@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -9,8 +10,15 @@ import { Code, Rss, Trophy } from "lucide-react";
 import Link from "next/link";
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 
+type Creator = {
+  id: string;
+  name: string;
+  avatar: string;
+  activity: { name: string; uv: number }[];
+};
+
 // Sort creators by a mock 'score' or just use index for ranking display
-const rankedCreators = appData.creators.slice(0, 10);
+const rankedCreators = appData.creators.slice(0, 10) as Creator[];
 
 const getTrophyColor = (rank: number) => {
   if (rank === 0) return "text-yellow-400"; // Gold
@@ -20,6 +28,12 @@ const getTrophyColor = (rank: number) => {
 }
 
 export default function CodePage() {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   return (
     <section>
       <div className="flex items-center gap-3 mb-4">
@@ -46,17 +60,19 @@ export default function CodePage() {
                 <p className="text-sm text-muted-foreground">@{creator.id}</p>
             </div>
             <div className="w-24 h-12 md:w-32 md:h-16 ml-4">
-                <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={creator.activity}>
-                        <defs>
-                            <linearGradient id={`colorUv-${index}`} x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
-                                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                            </linearGradient>
-                        </defs>
-                        <Area type="monotone" dataKey="uv" stroke="hsl(var(--primary))" strokeWidth={2} fill={`url(#colorUv-${index})`} />
-                    </AreaChart>
-                </ResponsiveContainer>
+                {isClient && (
+                  <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={creator.activity}>
+                          <defs>
+                              <linearGradient id={`colorUv-${index}`} x1="0" y1="0" x2="0" y2="1">
+                                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
+                                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                              </linearGradient>
+                          </defs>
+                          <Area type="monotone" dataKey="uv" stroke="hsl(var(--primary))" strokeWidth={2} fill={`url(#colorUv-${index})`} />
+                      </AreaChart>
+                  </ResponsiveContainer>
+                )}
             </div>
             <div className="hidden sm:flex flex-col sm:flex-row gap-2 ml-4">
                 <Link href={`/profile/${creator.id}`}>
