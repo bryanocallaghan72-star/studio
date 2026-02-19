@@ -1,13 +1,11 @@
 
 import { CommunityChat } from "@/components/iykyk/CommunityChat";
-import { Header } from "@/components/iykyk/Header";
-import { MobileNav } from "@/components/iykyk/MobileNav";
-import { appData } from "@/lib/data";
+import { appData, type SocialActivity } from "@/lib/data";
 import { notFound } from "next/navigation";
 
-export default async function SocialChatPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
-    const activity = appData.socialActivities.find(c => c.id === id);
+export default async function SocialChatPage({ params }: { params: { id: string } }) {
+    const { id } = params;
+    const activity = (appData.socialActivities as SocialActivity[]).find(c => c.id === id);
 
     if (!activity) {
         notFound();
@@ -25,17 +23,6 @@ export default async function SocialChatPage({ params }: { params: Promise<{ id:
     };
 
     return (
-        <div className="flex min-h-screen w-full flex-col bg-background">
-          <div className="md:flex">
-            
-            <main className="flex-1">
-              <Header />
-              <div className="flex-1 flex flex-col pb-24">
-                <CommunityChat community={mockCommunity} />
-              </div>
-            </main>
-          </div>
-          <MobileNav />
-        </div>
-      );
+        <CommunityChat community={mockCommunity} />
+    );
 }
