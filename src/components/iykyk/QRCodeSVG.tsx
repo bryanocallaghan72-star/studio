@@ -49,7 +49,7 @@ export const QRCodeSVG = ({ className }: { className?: string }) => {
         <rect x="160" y="144" width="8" height="8" fill="#000000" />
         <rect x="184" y="144" width="8" height="8" fill="#000000" />
         <rect x="208" y="144" width="8" height="8" fill="#000000" />
-        <rect x="112" y_ ="160" width="8" height="8" fill="#000000" />
+        <rect x="112" y="160" width="8" height="8" fill="#000000" />
         <rect x="128" y="160" width="8" height="8" fill="#000000" />
         <rect x="144" y="168" width="8" height="8" fill="#000000" />
         <rect x="104" y="176" width="8" height="8" fill="#000000" />

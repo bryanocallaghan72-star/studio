@@ -41,24 +41,23 @@ export interface SeedResult {
 function createFirestorePayload(venue: Venue): object {
   const latitude = venue.location?.latitude ?? venue.latitude ?? 0;
   const longitude = venue.location?.longitude ?? venue.longitude ?? 0;
-  
-  // Ensure the payload matches the security rules for creation.
+
   return {
     ...venue,
-    slug: venue.slug, // Rule: slug must match doc ID
-    name: venue.name,   // Rule: name must be a string
-    placeId: `seed:${venue.slug}`, // Rule: placeId must be a string
-    latitude: latitude, // Rule: must be a top-level number
-    longitude: longitude, // Rule: must be a top-level number
-    
-    // Also ensure the canonical nested structure is preserved.
+    slug: venue.slug,
+    name: venue.name,
+    placeId: `seed:${venue.slug}`,
+    latitude,
+    longitude,
+
     location: {
-      ...venue.location,
-      latitude: latitude,
-      longitude: longitude,
+      ...(venue.location ?? {}),
+      latitude,
+      longitude,
     },
   };
 }
+
 
 
 /**

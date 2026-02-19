@@ -14,7 +14,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
 import { doc, collection } from 'firebase/firestore';
 import { useVenues } from '@/hooks/useVenues';
-import { useClassDrops, type ClassDrop } from '@/hooks/useClassDrops';
+import { useClassDrops } from '@/hooks/useClassDrops';
+import type { ClassDrop } from '@/data/seeds/drops';
 import { useCreators } from '@/hooks/useCreators';
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
@@ -64,12 +65,16 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
 const ClassDropCard = ({ drop, venueName, onClaim, creator }: { drop: ClassDrop, venueName: string, onClaim: (drop: ClassDrop) => void, creator: any }) => {
     const [formattedTime, setFormattedTime] = useState<string | null>(null);
     const { user } = useUser();
+    const [hasUserClaimed, setHasUserClaimed] = useState(false);
 
      useEffect(() => {
         setFormattedTime(new Date(drop.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
     }, [drop.startTime]);
 
-    const handleClaim = () => onClaim(drop);
+    const handleClaim = () => {
+        setHasUserClaimed(true);
+        onClaim(drop);
+      };      
 
     return (
         <Card key={drop.id} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-pink-500">
@@ -117,9 +122,9 @@ const ClassDropCard = ({ drop, venueName, onClaim, creator }: { drop: ClassDrop,
                     <Button
                         className="w-full mt-3 font-bold bg-white text-black hover:bg-gray-200"
                         onClick={handleClaim}
-                        disabled={drop.hasUserClaimed || !user}
+                        disabled={hasUserClaimed || !user}
                     >
-                        {drop.hasUserClaimed ? 'Claimed' : 'Claim Spot'}
+                        {hasUserClaimed ? 'Claimed' : 'Claim Spot'}
                     </Button>
                 </div>
             </CardContent>

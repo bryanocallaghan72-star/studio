@@ -1,3 +1,4 @@
+
 "use client";
 import { useState } from "react";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -18,7 +19,10 @@ const formatLikes = (likes: number) => {
 }
 
 
-const ReelPlayer = ({ reel, priority }: { reel: (typeof reelsData)[0], priority?: boolean }) => {
+import type { Reel } from '@/lib/data';
+
+const ReelPlayer = ({ reel, priority }: { reel: Reel; priority?: boolean }) => {
+
     const image = PlaceHolderImages.find((img) => img.id === reel.imageId);
     const [isLiked, setIsLiked] = useState(false);
     const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
@@ -92,7 +96,7 @@ const ReelPlayer = ({ reel, priority }: { reel: (typeof reelsData)[0], priority?
         <CommentSheet 
             isOpen={isCommentSheetOpen}
             onOpenChange={setIsCommentSheetOpen}
-            comments={reel.commentData}
+            comments={reel.commentData || []}
             commentCount={reel.comments}
             onPostComment={() => {}}
         />

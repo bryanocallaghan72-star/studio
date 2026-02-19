@@ -43,21 +43,33 @@ export function IykykSeeder() {
         let writtenCount = 0;
 
         SEED_VENUES.forEach((venue) => {
+            // 🔐 Guard: skip venues without location
+            if (!venue.location) {
+                console.warn(`Skipping venue without location: ${venue.slug}`);
+                return;
+            }
+        
             const docRef = doc(venuesCollection, venue.slug);
+        
             const enrichedVenue = {
                 ...venue,
                 image: `https://picsum.photos/seed/${venue.slug}/800/600`,
                 location: {
                     ...venue.location,
-                    geopoint: new GeoPoint(venue.location.latitude, venue.location.longitude),
+                    geopoint: new GeoPoint(
+                        venue.location.latitude,
+                        venue.location.longitude
+                    ),
                 },
-                isFire: Math.random() > 0.7, // ~30% are on fire
+                isFire: Math.random() > 0.7,
                 trendingScore: Math.floor(Math.random() * 100),
                 lastUpdated: serverTimestamp(),
             };
+        
             batch.set(docRef, enrichedVenue, { merge: true });
             writtenCount++;
         });
+        
 
         try {
             await batch.commit();

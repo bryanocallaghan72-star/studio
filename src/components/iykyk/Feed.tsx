@@ -35,7 +35,8 @@ const PhotoPost = memo(({ item, priority }: { item: any, priority?: boolean }) =
   const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
   
   const [localComments, setLocalComments] = useState<Comment[]>(item.commentData || []);
-  const [commentCount, setCommentCount] = useState(item.comments || 0);
+  const [commentCount, setCommentCount] = useState<number>(item.comments ?? 0);
+
 
   const likeCount = isLiked ? item.likes + 1 : item.likes;
   const creator = appData.creators.find(c => c.id === item.creator.id);

@@ -3,6 +3,9 @@
 import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift, UserPlus, Star } from 'lucide-react';
 import { collection, writeBatch, getDocs, doc } from 'firebase/firestore';
 
+import type { LucideIcon } from 'lucide-react';
+
+
 export type Community = {
   id: string;
   name: string;
@@ -52,7 +55,92 @@ export interface SliceOfLifePost {
     avatar: string;
   }
 }
+export interface AppData {
+  feedItems: FeedItem[];
+  sliceOfLifePosts: SliceOfLifePost[];
+  reelsData: Reel[];
+  quests: unknown[];
+  rewards: unknown[];
+  socialActivities: SocialActivity[];
+  styleItems: unknown[];
+  creators: {
+    id: string;
+    name: string;
+    bio: string;
+    avatar: string;
+    x: string;
+    y: string;
+    activity: { name: string; uv: number }[];
+  }[];
+  categories: Record<string, CategoryMeta>;
+  communities: Community[];
+  mockMessages: MockMessage[];
+  surprises: unknown[];
+  mapMyDayOptions: unknown[];
+  map: {
+    pins: {
+      id: number;
+      name: string;
+      slug: string;
+      type: string;
+      description: string;
+      x: string;
+      y: string;
+      latitude: number;
+      longitude: number;
+      openingHours: string;
+      vibeTags: string[];
+      currentVibe: string;
+    }[];
+  };
+  groupEventsOptions: unknown[];
+}
+export type CategoryMeta = {
+  icon: LucideIcon;
+  color: string;
+  textColor: string;
+};
+export type MockMessage = {
+  id: number;
+  author: string;
+  avatar: string;
+  text: string;
+};
+export type PhotoFeedItem = {
+  id: string;
+  type: 'photo';
+  createdAt: string;
+  imageId: string;
+  creator: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
+  likes: number;
+  comments: number;
+  commentData: { author: string; text: string }[];
+};
 
+export type StoryFeedItem = SliceOfLifePost & {
+  type: 'story';
+};
+
+export type FeedItem = PhotoFeedItem | StoryFeedItem;
+
+export interface Reel {
+  id: string;
+  imageId: string;
+  description: string;
+  videoUrl?: string;
+  likes: number;
+  comments: number;
+  commentData?: { author: string; text: string }[];
+  creator: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
+}
 
 // MVP Seeding Function
 export const seedVenuesToFirestore = async (firestore: any) => {
@@ -85,13 +173,10 @@ export const seedVenuesToFirestore = async (firestore: any) => {
 }
 
 // Raw data for different content types
-const rawPhotoPosts = [
+const rawPhotoPosts: Omit<PhotoFeedItem, 'type'>[] = [
   {
-      id: 7,
-      type: "photo",
+      id: "7",
       creator: { id: "emma", name: "emma", avatar: "https://github.com/emma.png" },
-      venue: "Balance Moves Pilates & Barre Studio",
-      venueId: "balance-moves-pilates",
       description: "Finding my balance and flow at this beautiful studio. The perfect space to reset mind and body. 🧘‍♀️ #pilates #bondiwellness #iykykactive",
       imageId: "pilates-1",
       likes: 834,
@@ -100,11 +185,8 @@ const rawPhotoPosts = [
       createdAt: "2024-07-26T14:00:00Z"
   },
   {
-      id: 6,
-      type: "photo",
+      id: "6",
       creator: { id: "alice", name: "alice", avatar: "https://github.com/alice.png" },
-      venue: "Tuchuzy",
-      venueId: "tuchuzy",
       description: "Obsessed with the new collection at Tuchuzy. The perfect spot for finding designer gems. ✨ #iykykstyle #bondifashion",
       imageId: "style-1",
       likes: 621,
@@ -113,11 +195,8 @@ const rawPhotoPosts = [
       createdAt: "2024-07-22T12:00:00Z"
   },
   {
-      id: 1,
-      type: "photo",
+      id: "1",
       creator: { id: "jay", name: "jay", avatar: "https://github.com/jay.png" },
-      venue: "Raw Bar",
-      venueId: "raw-bar",
       description: "Finally found the best sushi in Bondi. That crispy salmon roll is a game changer. 🍣",
       imageId: "sushi-1",
       likes: 245,
@@ -129,11 +208,8 @@ const rawPhotoPosts = [
       createdAt: "2024-07-22T11:00:00Z"
   },
   {
-      id: 2,
-      type: "photo",
+      id: "2",
       creator: { id: "alice", name: "alice", avatar: "https://github.com/alice.png" },
-      venue: "Hotel Ravesis",
-      venueId: "hotel-ravesis",
       description: "Sunset vibes and perfect cocktails. My kind of Tuesday.",
       imageId: "community-sushi",
       likes: 482,
@@ -143,39 +219,39 @@ const rawPhotoPosts = [
   },
 ];
 
-const rawReelPosts = [
+const rawReelPosts: Reel[] = [
     {
-      id: 1,
-      creator: { name: "jay", avatar: "https://github.com/jay.png" },
+      id: "1",
+      creator: { id: "jay", name: "jay", avatar: "https://github.com/jay.png" },
       description: "Can't get enough of this place #sushi #bondi",
       imageId: "sushi-1",
       videoUrl: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4",
       likes: 12500,
       comments: 789,
-      commentData: [],
-      createdAt: "2024-07-22T10:00:00Z"
+      commentData: [
+        { author: "alice", text: "I need to go back!" },
+        { author: "lucas", text: "So good!" },
+      ]
     },
     {
-        id: 2,
-        creator: { name: "alice", avatar: "https://github.com/alice.png" },
+        id: "2",
+        creator: { id: "alice", name: "alice", avatar: "https://github.com/alice.png" },
         description: "Perfect cocktails for a perfect night",
         imageId: "community-sushi",
         videoUrl: "https://test-videos.co.uk/vids/elephantsdream/mp4/h264/720/Elephants_Dream_720_10s_1MB.mp4",
         likes: 8300,
         comments: 452,
-        commentData: [],
-        createdAt: "2024-07-21T19:00:00Z"
+        commentData: []
     },
     {
-      id: 3,
-      creator: { name: "emma", avatar: "https://github.com/emma.png" },
+      id: "3",
+      creator: { id: "emma", name: "emma", avatar: "https://github.com/emma.png" },
       description: "Finding my balance at Balance Moves Pilates & Barre Studio. Such an amazing space! #pilates #bondiwellness",
       imageId: "pilates-1",
       videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-gloria-g-2127732-3840x2160-30fps.mp4",
       likes: 9800,
       comments: 620,
-      commentData: [],
-      createdAt: "2024-07-26T15:00:00Z"
+      commentData: []
   },
 ];
 
@@ -404,13 +480,13 @@ const enrichedSliceOfLifePosts = rawSliceOfLifePosts
   })
   .filter((post): post is SliceOfLifePost => post !== null); // Type guard to filter out nulls and satisfy TypeScript
 
-const unifiedFeedItems = [
+const unifiedFeedItems: FeedItem[] = [
   ...rawPhotoPosts.map(p => ({ ...p, type: 'photo' as const })),
   ...enrichedSliceOfLifePosts.map(p => ({ ...p, type: 'story' as const })),
 ].sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
 
-export const appData = {
+export const appData: AppData = {
   feedItems: unifiedFeedItems,
   sliceOfLifePosts: enrichedSliceOfLifePosts,
   reelsData: rawReelPosts,

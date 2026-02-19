@@ -9,7 +9,8 @@ import { Ticket, Utensils, Droplet, ShoppingBag, Calendar, CalendarCheck2 } from
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { QRCodeDialog } from './QRCodeDialog';
-import { useDeals, type Deal } from '@/hooks/useDeals';
+import { useDeals } from '@/hooks/useDeals';
+import type { Deal } from '@/data/seeds/drops';
 import { useVenues } from '@/hooks/useVenues';
 import { Skeleton } from '../ui/skeleton';
 
