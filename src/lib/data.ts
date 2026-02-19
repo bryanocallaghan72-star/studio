@@ -2,7 +2,6 @@
 
 import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift, UserPlus, Star } from 'lucide-react';
 import { collection, writeBatch, getDocs, doc } from 'firebase/firestore';
-import { useFirestore } from '@/firebase';
 
 export type Community = {
   id: string;
@@ -394,7 +393,6 @@ const enrichedSliceOfLifePosts = rawSliceOfLifePosts
   .map(post => {
     const creator = creators.find(c => c.id === post.creatorId);
     if (!creator) {
-      // This is a more robust way to handle missing data without crashing the app.
       console.warn(`Creator with id '${post.creatorId}' not found for Slice of Life post '${post.id}'. Skipping post.`);
       return null;
     }
@@ -820,20 +818,3 @@ export const appData = {
     }
   ]
 };
-    
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
