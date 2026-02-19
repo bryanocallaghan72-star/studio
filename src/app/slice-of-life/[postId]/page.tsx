@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { notFound, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -85,8 +85,19 @@ export default function SliceOfLifePostPage() {
     
     // Guard clause to handle case where post is not found.
     if (!post) {
-        // This renders Next.js's standard 404 page.
-        notFound();
+        // Client-side fallback to prevent build/runtime errors from notFound()
+        return (
+            <div className="flex h-screen w-full flex-col items-center justify-center bg-black text-white p-4 text-center">
+                <h2 className="text-2xl font-bold">Post Not Found</h2>
+                <p className="mt-2 text-white/80">This slice of life may have been deleted or the link is incorrect.</p>
+                <Link href="/feed" className="mt-6">
+                    <Button variant="outline" className="bg-white/20 border-white/30 text-white backdrop-blur-md hover:bg-white/30">
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Back to Feed
+                    </Button>
+                </Link>
+            </div>
+        );
     }
     
     // post is guaranteed to exist beyond this point.

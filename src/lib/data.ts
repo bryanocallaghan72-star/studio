@@ -390,15 +390,21 @@ const creators = [
     }
   ];
 
-const enrichedSliceOfLifePosts = rawSliceOfLifePosts.map(post => {
+const enrichedSliceOfLifePosts = rawSliceOfLifePosts
+  .map(post => {
     const creator = creators.find(c => c.id === post.creatorId);
-    if (!creator) throw new Error(`Creator not found for post ${post.id}`);
-    
+    if (!creator) {
+      // This is a more robust way to handle missing data without crashing the app.
+      console.warn(`Creator with id '${post.creatorId}' not found for Slice of Life post '${post.id}'. Skipping post.`);
+      return null;
+    }
+
     // Add postType based on the presence of a relatedDealId
     const postType = post.relatedDealId ? 'monetisable' : 'discovery';
     
     return { ...post, creator, postType };
-}) as SliceOfLifePost[];
+  })
+  .filter((post): post is SliceOfLifePost => post !== null); // Type guard to filter out nulls and satisfy TypeScript
 
 const unifiedFeedItems = [
   ...rawPhotoPosts.map(p => ({ ...p, type: 'photo' as const })),
@@ -818,6 +824,7 @@ export const appData = {
 
 
     
+
 
 
 
