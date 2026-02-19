@@ -15,7 +15,7 @@ import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { HOT_ITEMS } from '@/data/seeds/drops';
-import { appData } from '@/lib/data';
+import { appData, type SliceOfLifePost } from '@/lib/data';
 import { useSoundContext } from '@/context/SoundContext';
 
 export default function SliceOfLifePostPage() {
@@ -30,7 +30,8 @@ export default function SliceOfLifePostPage() {
     // Find the post from the canonical mock data source.
     const post = useMemo(() => {
         if (!postId) return null;
-        return appData.sliceOfLifePosts.find(p => p.id === postId);
+        // Use the imported SliceOfLifePost type for safety
+        return (appData.sliceOfLifePosts as SliceOfLifePost[]).find(p => p.id === postId);
     }, [postId]);
 
     const [isLiked, setIsLiked] = useState(false);
