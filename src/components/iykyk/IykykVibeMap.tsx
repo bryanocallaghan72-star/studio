@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useMemo, useEffect, useState, CSSProperties } from "react";
@@ -63,8 +62,10 @@ export function IykykVibeMap() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const activeTab = searchParams.get('category') || 'All';
-  const venueSlug = searchParams.get('venue');
+  
+  // Safely access search parameters, accounting for null during SSR in Next.js 15
+  const activeTab = searchParams?.get('category') || 'All';
+  const venueSlug = searchParams?.get('venue');
   
   const [center, setCenter] = useState(defaultCenter);
   const [zoom, setZoom] = useState(venueSlug ? 17 : 15);
@@ -83,37 +84,19 @@ export function IykykVibeMap() {
       return query(venuesCollection, where('slug', '==', venueSlug));
     }
     
-    // This logic can be simplified if categories are consistent
-    const categoryMap: { [key: string]: string[] } = {
-        Brunch: ["Brunch", "Cafe & Matcha", "Viral Matcha", "Aesthetic Brunch"],
-        Nightlife: ["Nightlife", "Social Dining", "Beachfront Bar", "Cocktail Bar", "Italo Disco Dining"],
-        Vibes: ["Vibes", "Beach Club Vibe", "Iconic View"],
-        Sushi: ["Sushi", "Sushi & Sake"],
-    };
-
-    const relevantCategories = categoryMap[activeTab] || [activeTab];
-
-    if (activeTab === 'All') {
-      return venuesCollection;
-    }
-
-    // This now queries against the canonical `details.category` or the legacy `category`
-    // Firestore does not support OR queries on different fields, so we filter client-side for now.
-    // A more robust solution would be a data migration or more complex query structure.
     return venuesCollection;
-  }, [firestore, activeTab, venueSlug]);
+  }, [firestore, venueSlug]);
 
   const { data: venues, isLoading: isVenuesLoading } = useCollection<WithId<Venue>>(venuesQuery);
   const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
-  // Adapt fetched venues to the flat structure the map expects
   const mapPins = useMemo(() => {
     if (!venues) return [];
     
     return venues
-      .map(venueToMapPin) // Use the adapter
-      .filter((pin): pin is MapPinData => pin !== null) // Filter out invalid venues
-      .filter(pin => { // Apply client-side category filtering
+      .map(venueToMapPin)
+      .filter((pin): pin is MapPinData => pin !== null)
+      .filter(pin => {
         if (activeTab === 'All' || venueSlug) return true;
 
         const categoryMap: { [key: string]: string[] } = {
@@ -142,7 +125,7 @@ export function IykykVibeMap() {
       const pin = mapPins[0];
       setCenter({ lat: pin.latitude, lng: pin.longitude });
       setZoom(17);
-    } else if (!venueSlug) { // Avoid resetting view if we're just focused on one venue
+    } else if (!venueSlug) {
       setCenter(defaultCenter);
       setZoom(15);
     }
@@ -150,13 +133,12 @@ export function IykykVibeMap() {
 
 
   const handleTabChange = (category: string) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams?.toString() || "");
     if (category === 'All') {
         params.delete('category');
     } else {
         params.set('category', category);
     }
-    // Remove venue param when changing tabs to show all relevant pins
     params.delete('venue'); 
     setSelectedPlace(null);
     setSearchValue("");
@@ -195,7 +177,6 @@ export function IykykVibeMap() {
     const location = selectedPlace.geometry?.location;
 
     if (!place_id || !name || !location) {
-        console.error("Selected place is missing required information.");
         setIsSaving(false);
         return;
     }
@@ -218,14 +199,13 @@ export function IykykVibeMap() {
             slug: slug,
             placeId: place_id,
             name: name,
-            // Saving in the new, nested structure
             location: {
                 address: formatted_address || vicinity || 'Address not available',
                 latitude: location.lat(),
                 longitude: location.lng(),
             },
             details: {
-                category: "Vibes", // Default category
+                category: "Vibes",
                 description: "",
             },
             updatedAt: serverTimestamp(),
@@ -233,7 +213,6 @@ export function IykykVibeMap() {
         };
 
         await setDoc(venueRef, venueData, { merge: true });
-
         router.push(`/venue/${slug}`);
 
     } catch (error) {
@@ -251,11 +230,11 @@ export function IykykVibeMap() {
   }), []);
 
   if (loadError) {
-    return <div className="text-destructive p-6">Error loading maps. Please check your API key and ensure the Maps JavaScript API is enabled in your Google Cloud project.</div>;
+    return <div className="text-destructive p-6">Error loading maps.</div>;
   }
   
   if (!googleMapsApiKey) {
-    return <div className="p-6 text-center text-muted-foreground">Google Maps API key is missing. Please add it to your environment variables to enable the map.</div>;
+    return <div className="p-6 text-center text-muted-foreground">Google Maps API key is missing.</div>;
   }
 
   const categoryData = {
@@ -345,7 +324,7 @@ export function IykykVibeMap() {
                 >
                   {mapPins && mapPins.map(pin => {
                     const category = categoryData[pin.category as keyof typeof categoryData] || categoryData.Vibes;
-                    const color = category ? category.color : '#FF7F50'; // default color
+                    const color = category ? category.color : '#FF7F50';
                     const pinSvg = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
                       `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="${color}" /><circle cx="12" cy="10" r="3" fill="white" stroke="none"/></svg>`
                     )}`;

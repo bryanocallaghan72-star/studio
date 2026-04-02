@@ -68,52 +68,58 @@ export function useARVenues() {
   const sortedVenues = useMemo(() => {
     if (!rawVenues) return [];
 
-    const processedVenues: ARVenue[] = rawVenues
-      .map((venue) => {
-        // --- ADAPTER LOGIC ---
-        // Prioritize new nested structure, fall back to legacy flat structure.
-        const latitude = venue.location?.latitude ?? venue.latitude;
-        const longitude = venue.location?.longitude ?? venue.longitude;
-        const category = venue.details?.category ?? venue.category;
+    // Map the raw data to ARVenue shape, allowing nulls for invalid data
+    const mappedVenues = rawVenues.map((venue) => {
+      // --- ADAPTER LOGIC ---
+      // Prioritize new nested structure, fall back to legacy flat structure.
+      const latitude = venue.location?.latitude ?? venue.latitude;
+      const longitude = venue.location?.longitude ?? venue.longitude;
+      const category = venue.details?.category ?? venue.category;
 
-        // --- VALIDATION ---
-        // Ensure we have valid coordinates before proceeding.
-        if (typeof latitude !== 'number' || typeof longitude !== 'number') {
-          return null;
-        }
+      // --- VALIDATION ---
+      // Ensure we have valid coordinates before proceeding.
+      if (typeof latitude !== 'number' || typeof longitude !== 'number') {
+        return null;
+      }
 
-        // --- DISTANCE CALCULATION ---
-        const distanceMeters = userCoords
-          ? Math.round(
-              getDistanceFromLatLonInM(
-                userCoords.latitude,
-                userCoords.longitude,
-                latitude,
-                longitude
-              )
+      // --- DISTANCE CALCULATION ---
+      const distanceMeters = userCoords
+        ? Math.round(
+            getDistanceFromLatLonInM(
+              userCoords.latitude,
+              userCoords.longitude,
+              latitude,
+              longitude
             )
-          : undefined;
-        
-        // --- RETURN CLEAN, FLAT SHAPE ---
-        return {
-          id: venue.id,
-          slug: venue.slug,
-          name: venue.name,
-          latitude,
-          longitude,
-          category,
-          distanceMeters,
-          vibe: venue.vibe,
-          isSponsor: venue.isSponsored,
-        };
-      })
-      .filter((v): v is ARVenue => v !== null); // Filter out any invalid venues
+          )
+        : undefined;
+      
+      // --- RETURN CLEAN, FLAT SHAPE ---
+      const arVenue: ARVenue = {
+        id: venue.id,
+        slug: venue.slug,
+        name: venue.name,
+        latitude,
+        longitude,
+        category,
+        distanceMeters,
+        vibe: venue.vibe,
+        isSponsor: venue.isSponsored,
+      };
+      
+      return arVenue;
+    });
+
+    // Filter out null values and use a type guard to ensure processedVenues is ARVenue[]
+    const processedVenues: ARVenue[] = mappedVenues.filter((v): v is ARVenue => v !== null);
 
     // --- SORTING ---
     // If we have user coordinates, sort by distance. Otherwise, maintain Firestore's order.
     if (userCoords) {
-      return processedVenues.sort((a, b) => {
-        return (a.distanceMeters ?? Infinity) - (b.distanceMeters ?? Infinity);
+      return [...processedVenues].sort((a, b) => {
+        const distA = a.distanceMeters ?? Infinity;
+        const distB = b.distanceMeters ?? Infinity;
+        return distA - distB;
       });
     }
 
