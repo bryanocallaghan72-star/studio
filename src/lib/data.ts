@@ -1,10 +1,5 @@
-
-
 import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift, UserPlus, Star } from 'lucide-react';
-import { collection, writeBatch, getDocs, doc } from 'firebase/firestore';
-
 import type { LucideIcon } from 'lucide-react';
-
 
 export type Community = {
   id: string;
@@ -55,6 +50,16 @@ export interface SliceOfLifePost {
     avatar: string;
   }
 }
+
+export interface ItineraryOption {
+  id: string;
+  title: string;
+  description: string;
+  request: any;
+  mockItinerary: any[];
+  curatedMessage: string;
+}
+
 export interface AppData {
   feedItems: FeedItem[];
   sliceOfLifePosts: SliceOfLifePost[];
@@ -76,7 +81,7 @@ export interface AppData {
   communities: Community[];
   mockMessages: MockMessage[];
   surprises: unknown[];
-  mapMyDayOptions: unknown[];
+  mapMyDayOptions: ItineraryOption[];
   map: {
     pins: {
       id: number;
@@ -93,7 +98,7 @@ export interface AppData {
       currentVibe: string;
     }[];
   };
-  groupEventsOptions: unknown[];
+  groupEventsOptions: ItineraryOption[];
 }
 export type CategoryMeta = {
   icon: LucideIcon;
@@ -140,36 +145,6 @@ export interface Reel {
     name: string;
     avatar: string;
   };
-}
-
-// MVP Seeding Function
-export const seedVenuesToFirestore = async (firestore: any) => {
-    if (!firestore) {
-        console.error("Firestore instance is not available. Seeding cannot proceed.");
-        return { success: false, message: 'Firestore not initialized.' };
-    }
-    const venuesCollection = collection(firestore, 'venues');
-    
-    try {
-        const snapshot = await getDocs(venuesCollection);
-        if (!snapshot.empty) {
-            console.log('Venues collection already exists. Seeding skipped.');
-            return { success: true, message: 'Seeding skipped, venues already exist.' };
-        }
-
-        const batch = writeBatch(firestore);
-        appData.map.pins.forEach(venue => {
-            const docRef = doc(venuesCollection, venue.slug);
-            batch.set(docRef, venue);
-        });
-
-        await batch.commit();
-        console.log('Successfully seeded venues to Firestore.');
-        return { success: true, message: 'Successfully seeded venues to Firestore.' };
-    } catch (error) {
-        console.error('Error seeding venues:', error);
-        return { success: false, message: 'Error seeding venues.' };
-    }
 }
 
 // Raw data for different content types

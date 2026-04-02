@@ -1,75 +1,497 @@
-
 /**
- * @fileoverview Defines the canonical type definitions for Venue-related data.
- * These types serve as a single source of truth for the shape of venue objects
- * throughout the application, independent of the data source (Firestore, local mock data, etc.).
+ * @fileoverview Baseline seed data for all venues in the application.
+ * This data should be considered the canonical source for venue identity, location,
+ * and primary category. It is used to populate the Firestore 'venues' collection.
+ *
+ * It uses the strict `Venue` type definition.
  */
 
-/**
- * A union type representing the possible pricing tiers for a venue.
- * 1 = $, 2 = $$, 3 = $$$, 4 = $$$$
- */
-export type PriceTier = 1 | 2 | 3 | 4;
-
-/**
- * A union type for the primary category of a venue.
- * This can be expanded as more categories are officially supported.
- */
-export type VenueCategory =
-  | 'Vibes'
-  | 'Nightlife'
-  | 'Brunch'
-  | 'Sushi'
-  | 'Restaurants'
-  | 'Cocktails'
-  | 'Health & Fitness'
-  | 'Surf'
-  | 'Retail'
-  | 'Events';
-
-/**
- * Represents the geographical location and address of a venue.
- */
-export interface VenueLocation {
-  latitude: number;
-  longitude: number;
-  address?: string;
-}
-
-/**
- * Contains the descriptive and categorical details of a venue.
- * All fields are optional to allow for progressive enrichment of venue data.
- */
-export interface VenueDetails {
-  description?: string;
-  category?: VenueCategory;
-  subCategory?: string;
-  priceTier?: PriceTier;
-  openingHours?: string;
-  vibeTags?: string[];
-  currentVibe?: string;
-}
-
-/**
- * The core Venue entity, combining essential identifiers with optional
- * location and detail objects. This is the primary object representing a venue.
- */
-export interface Venue {
-  // Essential Identifiers
-  id: string;   // Typically same as slug (Firestore doc ID)
+export type Venue = {
+  id: string;
   slug: string;
   name: string;
 
-  // Canonical structured fields (preferred)
-  location?: VenueLocation;
-  details?: VenueDetails;
-
-  // Legacy/compat convenience fields (avoid adding new usage)
+  // legacy flat fields
   latitude?: number;
   longitude?: number;
   address?: string;
-  category?: VenueCategory;
-  description?: string;
+  category?: string;
 
-  isSponsored?: boolean;
-}
+  // new nested fields
+  location?: {
+    latitude: number;
+    longitude: number;
+    address?: string;
+  };
+
+  details?: {
+    category?: string;
+    description?: string;
+    openingHours?: string;
+    vibeTags?: string[];
+    currentVibe?: string;
+  };
+};
+
+export const SEED_VENUES: Venue[] = [
+  {
+    id: 'bondi-icebergs',
+    slug: 'bondi-icebergs',
+    name: 'Bondi Icebergs',
+    location: {
+      latitude: -33.8953,
+      longitude: 151.274,
+      address: "1 Notts Ave, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Vibes',
+      description: "Iconic ocean views and fine dining.",
+      openingHours: "6am - 6:30pm",
+      vibeTags: ["Iconic", "Views", "Swim"],
+      currentVibe: "Buzzing"
+    },
+  },
+  {
+    id: 'hotel-ravesis',
+    slug: 'hotel-ravesis',
+    name: 'Hotel Ravesis',
+    location: {
+      latitude: -33.8913,
+      longitude: 151.276,
+      address: "118 Campbell Parade, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Nightlife',
+      description: "Stylish beachfront bar and restaurant.",
+      openingHours: "12pm - 12am",
+      vibeTags: ["Stylish", "Rooftop", "Cocktails"],
+      currentVibe: "Packed"
+    },
+  },
+  {
+    id: 'the-depot',
+    slug: 'the-depot',
+    name: 'The Depot',
+    location: {
+      latitude: -33.8943,
+      longitude: 151.27,
+      address: "286 Campbell Parade, North Bondi NSW 2026"
+    },
+    details: {
+      category: 'Brunch',
+      description: "Popular spot for brunch and coffee.",
+      openingHours: "7am - 3pm",
+      vibeTags: ["Casual", "Local Fav", "Coffee"],
+      currentVibe: "Chill"
+    },
+  },
+    {
+    id: 'bondi-beach',
+    slug: 'bondi-beach',
+    name: 'Bondi Beach',
+    location: {
+      latitude: -33.8917,
+      longitude: 151.277,
+      address: "Bondi Beach, NSW 2026"
+    },
+    details: {
+      category: 'Vibes',
+      description: "World-famous beach with golden sands and surf.",
+      openingHours: "24/7",
+      vibeTags: ["Beach", "Surf", "Sun"],
+      currentVibe: "Buzzing"
+    },
+  },
+  {
+    id: 'raw-bar',
+    slug: 'raw-bar',
+    name: 'Raw Bar',
+    location: {
+      latitude: -33.8895,
+      longitude: 151.274,
+      address: "1/136 Wairoa Ave, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Sushi',
+      description: "Authentic Japanese sushi and sashimi.",
+      openingHours: "12pm - 10pm",
+      vibeTags: ["Authentic", "Sushi", "Fresh"],
+      currentVibe: "Buzzing"
+    },
+  },
+  {
+    id: 'speedos-cafe',
+    slug: 'speedos-cafe',
+    name: "Speedo's Cafe",
+    location: {
+      latitude: -33.8888,
+      longitude: 151.277,
+      address: "126 Ramsgate Ave, North Bondi NSW 2026"
+    },
+    details: {
+      category: 'Brunch',
+      description: "Insta-famous colorful brunch dishes.",
+      openingHours: "7am - 4pm",
+      vibeTags: ["Instagrammable", "Healthy", "Brunch"],
+      currentVibe: "Packed"
+    },
+  },
+  {
+    id: 'tottis',
+    slug: 'tottis',
+    name: "Totti's",
+    location: {
+      latitude: -33.895,
+      longitude: 151.268,
+      address: "283 Bondi Rd, Bondi NSW 2026"
+    },
+    details: {
+      category: 'Restaurants',
+      description: "Vibrant Italian restaurant with a leafy courtyard.",
+      openingHours: "12pm - 11pm",
+      vibeTags: ["Italian", "Courtyard", "Group Friendly"],
+      currentVibe: "Packed"
+    },
+  },
+  {
+    id: 'the-corner-house',
+    slug: 'the-corner-house',
+    name: 'The Corner House',
+    location: {
+      latitude: -33.892,
+      longitude: 151.271,
+      address: "281 Bondi Rd, Bondi NSW 2026"
+    },
+    details: {
+      category: 'Cocktails',
+      description: "Cozy bar with a great cocktail list.",
+      openingHours: "4pm - 12am",
+      vibeTags: ["Cozy", "Cocktails", "Local"],
+      currentVibe: "Buzzing"
+    },
+  },
+  {
+    id: 'harrys-bondi',
+    slug: 'harrys-bondi',
+    name: "Harry's Bondi",
+    location: {
+      latitude: -33.889,
+      longitude: 151.276,
+      address: "2/136 Wairoa Ave, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Brunch',
+      description: "Classic brunch fare with a modern twist.",
+      openingHours: "7am - 3pm",
+      vibeTags: ["Brunch", "Modern", "Coffee"],
+      currentVibe: "Buzzing"
+    },
+  },
+  {
+    id: 'lulu',
+    slug: 'lulu',
+    name: 'Lulu',
+    location: {
+      latitude: -33.8935,
+      longitude: 151.27,
+      address: "276 Campbell Parade, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Restaurants',
+      description: "Modern Pan-Asian cuisine in a chic setting.",
+      openingHours: "5pm - 11pm",
+      vibeTags: ["Pan-Asian", "Chic", "Dinner"],
+      currentVibe: "Buzzing"
+    },
+  },
+  {
+    id: 'bills',
+    slug: 'bills',
+    name: 'Bills',
+    location: {
+      latitude: -33.891,
+      longitude: 151.27,
+      address: "79 Hall St, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Brunch',
+      description: "Famous for ricotta hotcakes and scrambled eggs.",
+      openingHours: "7:30am - 3pm",
+      vibeTags: ["Iconic", "Brunch", "Hotcakes"],
+      currentVibe: "Packed"
+    },
+  },
+  {
+    id: 'seans',
+    slug: 'seans',
+    name: "Sean's",
+    location: {
+      latitude: -33.887,
+      longitude: 151.278,
+      address: "270 Campbell Parade, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Restaurants',
+      description: "Farm-to-table dining with ocean views.",
+      openingHours: "6pm - 10pm",
+      vibeTags: ["Farm-to-Table", "Fine Dining", "Views"],
+      currentVibe: "Buzzing"
+    },
+  },
+  {
+    id: 'la-piadina',
+    slug: 'la-piadina',
+    name: 'La Piadina',
+    location: {
+      latitude: -33.89,
+      longitude: 151.273,
+      address: "106-110 Glenayr Ave, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Restaurants',
+      description: "Authentic Italian flatbread sandwiches.",
+      openingHours: "11am - 9pm",
+      vibeTags: ["Quick", "Italian", "Lunch"],
+      currentVibe: "Chill"
+    },
+  },
+  {
+    id: 'the-bucket-list',
+    slug: 'the-bucket-list',
+    name: 'The Bucket List',
+    location: {
+      latitude: -33.89,
+      longitude: 151.277,
+      address: "Bondi Pavilion, Queen Elizabeth Dr, Bondi Beach"
+    },
+    details: {
+      category: 'Nightlife',
+      description: "Casual beachside bar with a lively atmosphere.",
+      openingHours: "12pm - 12am",
+      vibeTags: ["Beachy", "Casual", "Lively"],
+      currentVibe: "Packed"
+    },
+  },
+  {
+    id: 'porch-and-parlour',
+    slug: 'porch-and-parlour',
+    name: 'Porch and Parlour',
+    location: {
+      latitude: -33.888,
+      longitude: 151.276,
+      address: "17-18/110 Ramsgate Ave, North Bondi NSW 2026"
+    },
+    details: {
+      category: 'Brunch',
+      description: "Bohemian-style cafe with healthy options.",
+      openingHours: "6:30am - 3pm",
+      vibeTags: ["Bohemian", "Healthy", "Coffee"],
+      currentVibe: "Buzzing"
+    },
+  },
+  {
+    id: 'fluidform-pilates',
+    slug: 'fluidform-pilates',
+    name: 'Fluidform Pilates',
+    location: {
+      latitude: -33.892,
+      longitude: 151.272,
+      address: "1/284-294 Campbell Parade, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Health & Fitness',
+      description: "Boutique pilates studio.",
+      openingHours: "6am - 7pm",
+      vibeTags: ["Pilates", "Wellness", "Modern"],
+      currentVibe: "Chill"
+    },
+  },
+  {
+    id: 'chiswick',
+    slug: 'chiswick',
+    name: 'Chiswick',
+    location: {
+      latitude: -33.896,
+      longitude: 151.266,
+      address: "65 Ocean St, Woollahra NSW 2025"
+    },
+    details: {
+      category: 'Restaurants',
+      description: "Elegant garden-to-plate dining experience.",
+      openingHours: "12pm - 10pm",
+      vibeTags: ["Seasonal", "Elegant", "Garden"],
+      currentVibe: "Buzzing"
+    },
+  },
+  {
+    id: 'north-bondi-fish',
+    slug: 'north-bondi-fish',
+    name: 'North Bondi Fish',
+    location: {
+      latitude: -33.887,
+      longitude: 151.277,
+      address: "120 Ramsgate Ave, North Bondi NSW 2026"
+    },
+    details: {
+      category: 'Restaurants',
+      description: "Fresh seafood in a relaxed setting.",
+      openingHours: "12pm - 10pm",
+      vibeTags: ["Seafood", "Beachfront", "Relaxed"],
+      currentVibe: "Buzzing"
+    },
+  },
+  {
+    id: 'lets-go-surfing',
+    slug: 'lets-go-surfing',
+    name: 'Lets Go Surfing',
+    location: {
+      latitude: -33.886,
+      longitude: 151.277,
+      address: "128 Ramsgate Ave, North Bondi NSW 2026"
+    },
+    details: {
+      category: 'Surf',
+      description: "Learn to surf with the best in Bondi.",
+      openingHours: "7am - 5pm",
+      vibeTags: ["Surfing", "Lessons", "Beginner Friendly"],
+      currentVibe: "Buzzing"
+    },
+  },
+  {
+    id: 'tuchuzy',
+    slug: 'tuchuzy',
+    name: 'Tuchuzy',
+    location: {
+      latitude: -33.893,
+      longitude: 151.271,
+      address: "9/178 Campbell Parade, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Retail',
+      description: "Iconic Bondi boutique with curated designer collections.",
+      openingHours: "10am - 6pm",
+      vibeTags: ["Designer", "Boutique", "Fashion"],
+      currentVibe: "Chill"
+    },
+  },
+  {
+    id: 'venroy',
+    slug: 'venroy',
+    name: 'Venroy',
+    location: {
+      latitude: -33.892,
+      longitude: 151.273,
+      address: "2/180-186 Campbell Parade, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Retail',
+      description: "Leisurewear for a global nomadic life. Born in Bondi.",
+      openingHours: "10am - 6pm",
+      vibeTags: ["Leisurewear", "Local", "Minimalist"],
+      currentVibe: "Chill"
+    },
+  },
+  {
+    id: 'aquabumps',
+    slug: 'aquabumps',
+    name: 'Aquabumps',
+    location: {
+      latitude: -33.894,
+      longitude: 151.268,
+      address: "151 Curlewis St, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Retail',
+      description: "Gallery showcasing incredible surf and ocean photography.",
+      openingHours: "10am - 5pm",
+      vibeTags: ["Art", "Photography", "Ocean"],
+      currentVibe: "Chill"
+    },
+  },
+  {
+    id: 'bondi-markets',
+    slug: 'bondi-markets',
+    name: 'Bondi Markets',
+    location: {
+      latitude: -33.89,
+      longitude: 151.275,
+      address: "Campbell Parade, Bondi Beach NSW 2026"
+    },
+    details: {
+      category: 'Retail',
+      description: "Sunday markets for unique finds from local designers.",
+      openingHours: "10am - 4pm (Sun)",
+      vibeTags: ["Market", "Local", "Unique"],
+      currentVibe: "Buzzing"
+    },
+  },
+  {
+    id: 'bondi-to-bronte-coastal-walk',
+    slug: 'bondi-to-bronte-coastal-walk',
+    name: 'Bondi to Bronte Coastal Walk',
+    location: {
+      latitude: -33.903,
+      longitude: 151.276,
+      address: "Bondi to Bronte Coastal Walk"
+    },
+    details: {
+      category: 'Vibes',
+      description: "One of the most scenic coastal walks in the world.",
+      openingHours: "24/7",
+      vibeTags: ["Walk", "Scenic", "Nature"],
+      currentVibe: "Chill"
+    },
+  },
+  {
+    id: 'iberica-bondi',
+    slug: 'iberica-bondi',
+    name: 'Iberica Bondi',
+    location: {
+      latitude: -33.8908,
+      longitude: 151.2721
+    },
+    details: {
+      category: 'Restaurants'
+    }
+  },
+  {
+    id: 'upbeat-bondi',
+    slug: 'upbeat-bondi',
+    name: 'Upbeat Bondi',
+    location: {
+      latitude: -33.8938,
+      longitude: 151.2675
+    },
+    details: {
+      category: 'Brunch'
+    }
+  },
+  {
+    id: 'saltys-bondi-beach',
+    slug: 'saltys-bondi-beach',
+    name: "Salty's Bondi Beach",
+    location: {
+      latitude: -33.8899,
+      longitude: 151.2755
+    },
+    details: {
+      category: 'Nightlife'
+    }
+  },
+  {
+    id: 'kissed-earth',
+    slug: 'kissed-earth',
+    name: 'Kissed Earth',
+    location: {
+      latitude: -33.8925,
+      longitude: 151.269
+    },
+    details: {
+      category: 'Brunch'
+    }
+  }
+];
+
+export const SEED_VENUES_BY_SLUG = Object.fromEntries(
+  SEED_VENUES.map(v => [v.slug, v])
+) satisfies Record<string, Venue>;

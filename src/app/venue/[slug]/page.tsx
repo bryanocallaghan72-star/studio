@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -136,7 +135,7 @@ function VenueNotFound() {
 
 export default function VenuePage() {
   const params = useParams();
-  const slug = params.slug as string;
+  const slug = params?.slug as string | undefined;
   const { toast } = useToast();
 
   const firestore = useFirestore();
@@ -173,7 +172,7 @@ export default function VenuePage() {
   }, [venue]);
 
   useEffect(() => {
-    if (venue && user) {
+    if (venue && user && slug) {
         trackVenueView({ uid: user.uid, venueId: slug, venueName: venue.name, imageUrl: photoUrl });
         logVaultEvent(user.uid, { type: "VENUE_VIEWED", entityType: "venue", entityId: slug, title: venue.name, subtitle: venue.category, imageUrl: photoUrl, meta: { source: "VenuePage" } });
     }
@@ -235,7 +234,8 @@ export default function VenuePage() {
     }, 500);
   };
 
-  if (isVenueLoading) {
+  // Prevent crash during pre-render
+  if (isVenueLoading || !slug) {
     return <VenuePageSkeleton />;
   }
 

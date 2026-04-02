@@ -15,6 +15,7 @@ export type MapPinData = {
   category: string;
   address: string;
 };
+  
 
 /**
  * A pure function that adapts a canonical Venue object into the flat
@@ -26,14 +27,11 @@ export type MapPinData = {
  * @returns {MapPinData | null} A flat object for the map pin, or null if the venue has invalid coordinates.
  */
 export function venueToMapPin(venue: Venue): MapPinData | null {
-  // Use fallback logic: nested field ?? legacy flat field
   const latitude = venue.location?.latitude ?? venue.latitude;
   const longitude = venue.location?.longitude ?? venue.longitude;
   const category = venue.details?.category ?? venue.category ?? 'Vibes';
   const address = venue.location?.address ?? venue.address ?? '';
 
-  // Validate that we have usable coordinates before returning data.
-  // This prevents pins from appearing at [0, 0] (Null Island).
   if (typeof latitude !== 'number' || typeof longitude !== 'number') {
     return null;
   }

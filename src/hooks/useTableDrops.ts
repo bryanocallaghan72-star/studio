@@ -3,7 +3,7 @@
 
 import { TABLE_DROPS } from '@/data/seeds/drops';
 import type { TableDrop } from '@/data/seeds/drops';
-
+export type { TableDrop } from '@/data/seeds/tableDrops';
 /**
  * Hook to fetch table drop data.
  * In Phase 1, this returns mock data. It will be updated to fetch from

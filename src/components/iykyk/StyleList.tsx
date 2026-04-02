@@ -12,10 +12,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { QRCodeSVG } from './QRCodeSVG';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useStyleDrops, type StyleDrop } from '@/hooks/useStyleDrops';
+import { useStyleDrops } from '@/hooks/useStyleDrops';
+import type { StyleDrop } from '@/data/seeds/drops';
 import { useVenues } from '@/hooks/useVenues';
 import { appData } from '@/lib/data'; // Keep for creators until useCreators is made
-
+type StyleDropWithClaim = StyleDrop & {
+    hasUserClaimed: boolean;
+  };
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
     const [isClient, setIsClient] = useState(false);
@@ -59,7 +62,7 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     );
 };
 
-const StyleDropCard = ({ drop, venueName, onClaim }: { drop: StyleDrop, venueName: string, onClaim: (drop: StyleDrop) => void }) => {
+const StyleDropCard = ({ drop, venueName, onClaim }: { drop: StyleDropWithClaim, venueName: string, onClaim: (drop: StyleDropWithClaim) => void }) => {
     const creator = drop.creatorPickHandle ? appData.creators.find(c => c.id === drop.creatorPickHandle) : null;
     const router = useRouter();
 
@@ -121,6 +124,7 @@ const StyleDropCard = ({ drop, venueName, onClaim }: { drop: StyleDrop, venueNam
                         className="w-full mt-3 font-bold bg-white text-black hover:bg-gray-200"
                         onClick={handleClaim}
                         disabled={drop.hasUserClaimed}
+
                     >
                         {drop.hasUserClaimed ? 'Claimed' :
                          drop.priceToClaimCents > 0 ? `Claim for $${drop.priceToClaimCents / 100}` : 'Claim Free Access'}
@@ -166,10 +170,16 @@ export function StyleList() {
         setConfirmingDrop(null);
     };
     
-    const liveDrops = (styleDrops || [])
-        .filter(drop => new Date(drop.expiresAt).getTime() > Date.now())
-        .map(drop => ({ ...drop, hasUserClaimed: claimedDrops.includes(drop.id) }))
-        .sort((a, b) => new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime());
+    const liveDrops: StyleDropWithClaim[] = (styleDrops ?? [])
+    .filter((drop) => new Date(drop.expiresAt).getTime() > Date.now())
+    .map((drop) => ({
+      ...drop,
+      hasUserClaimed: claimedDrops.includes(drop.id),
+    }))
+    .sort(
+      (a, b) =>
+        new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime()
+    );
     
     const isLoading = areDropsLoading || areVenuesLoading;
 

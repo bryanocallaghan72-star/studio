@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Heart, MessageCircle, Send, MoreVertical, ArrowLeft, Ticket, Building, Volume2, VolumeX } from 'lucide-react';
+import { Heart, MessageCircle, Send, MoreVertical, ArrowLeft, Ticket, Building, Volume2, VolumeX, Loader2 } from 'lucide-react';
 import { CommentSheet, type Comment } from '@/components/iykyk/CommentSheet';
 import { QRCodeDialog } from '@/components/iykyk/QRCodeDialog';
 import { resolveVenueHref, findVenueByAnyId } from '@/lib/venueUtils';
@@ -20,8 +20,8 @@ import { useSoundContext } from '@/context/SoundContext';
 
 export default function SliceOfLifePostPage() {
     const params = useParams();
-    // Ensure postId is read correctly from the URL parameter.
-    const postId = params.postId as string;
+    // Safely read postId from params, accounting for null during SSR.
+    const postId = params?.postId as string | undefined;
     
     const firestore = useFirestore();
     const { user } = useUser();
@@ -30,7 +30,6 @@ export default function SliceOfLifePostPage() {
     // Find the post from the canonical mock data source.
     const post = useMemo(() => {
         if (!postId) return null;
-        // Use the imported SliceOfLifePost type for safety
         return (appData.sliceOfLifePosts as SliceOfLifePost[]).find(p => p.id === postId);
     }, [postId]);
 
@@ -40,7 +39,6 @@ export default function SliceOfLifePostPage() {
     const [isQRDialogOpen, setQRDialogOpen] = useState(false);
     const [localComments, setLocalComments] = useState<Comment[]>([]);
 
-    // This logic runs after post is validated, preventing runtime errors.
     const commentCount = post ? post.commentsCount + localComments.length : 0;
     const likeCount = post ? (isLiked ? post.likes + 1 : post.likes) : 0;
     
@@ -48,20 +46,13 @@ export default function SliceOfLifePostPage() {
         if (!post) return { deal: null, venue: null, attributedVenueHref: null };
         
         const deal = post.relatedDealId ? HOT_ITEMS.find(d => d.id === post.relatedDealId) : null;
-        
-        // Find the full venue object for other UI elements (like the QR dialog)
         const venue = findVenueByAnyId(post.venueId);
-
-        // Directly use the post's venueId (which should be a slug) to generate the href.
         const venueHref = resolveVenueHref(post.venueId);
-        
-        // Add creator attribution to the link
         const attributedHref = venueHref && post.creatorId ? `${venueHref}?creator=${post.creatorId}` : venueHref;
         
         return { deal, venue, attributedVenueHref: attributedHref };
     }, [post]);
 
-    // Single, correct handlePostComment function
     const handlePostComment = (commentText: string) => {
         setLocalComments(prevComments => [...prevComments, { author: "You", text: commentText }]);
     };
@@ -83,9 +74,16 @@ export default function SliceOfLifePostPage() {
         }
     }
     
-    // Guard clause to handle case where post is not found.
+    // Guard clause for SSR and invalid IDs
+    if (!postId) {
+        return (
+            <div className="flex h-screen w-full items-center justify-center bg-black">
+                <Loader2 className="h-8 w-8 animate-spin text-white" />
+            </div>
+        );
+    }
+
     if (!post) {
-        // Client-side fallback to prevent build/runtime errors from notFound()
         return (
             <div className="flex h-screen w-full flex-col items-center justify-center bg-black text-white p-4 text-center">
                 <h2 className="text-2xl font-bold">Post Not Found</h2>
@@ -100,7 +98,6 @@ export default function SliceOfLifePostPage() {
         );
     }
     
-    // post is guaranteed to exist beyond this point.
     const creator = post.creator;
 
     return (

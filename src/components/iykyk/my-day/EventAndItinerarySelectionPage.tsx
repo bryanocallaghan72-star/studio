@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { appData } from '@/lib/data';
+import { appData, type ItineraryOption } from '@/lib/data';
 
 type EventAndItinerarySelectionPageProps = {
     onSelectVibe: (option: any) => void;
@@ -42,7 +42,7 @@ export const EventAndItinerarySelectionPage = ({ onSelectVibe }: EventAndItinera
                 </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {activeTab === 'solo' ? (appData.mapMyDayOptions.map(option => (
+                {activeTab === 'solo' ? (appData.mapMyDayOptions.map((option: ItineraryOption) => (
                     <Card key={option.id} className="rounded-2xl p-6 shadow-xl flex flex-col items-center justify-between text-center transition-all hover:shadow-2xl hover:-translate-y-1">
                         <CardHeader className="p-0">
                             <CardTitle className="text-lg font-bold">{option.title}</CardTitle>
@@ -52,7 +52,7 @@ export const EventAndItinerarySelectionPage = ({ onSelectVibe }: EventAndItinera
                             <Button onClick={() => onSelectVibe(option)} className="w-full font-bold shadow-lg">View Itinerary</Button>
                         </CardContent>
                     </Card>
-                ))) : (appData.groupEventsOptions.map(option => (
+                ))) : (appData.groupEventsOptions.map((option: ItineraryOption) => (
                     <Card key={option.id} className="rounded-2xl p-6 shadow-xl flex flex-col items-center justify-between text-center transition-all hover:shadow-2xl hover:-translate-y-1">
                         <CardHeader className="p-0">
                             <CardTitle className="text-lg font-bold">{option.title}</CardTitle>

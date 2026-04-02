@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import type { Community } from '@/lib/data';
 
 // This type should align with the data stored in the 'socials' Firestore collection.
-// Based on SocialPageClient.tsx and the data model.
 type SocialActivity = {
     id: string;
     title: string;
@@ -26,7 +25,7 @@ type SocialActivity = {
 
 export default function SocialChatPage() {
     const params = useParams();
-    const id = params.id as string;
+    const id = params?.id as string | undefined;
     const firestore = useFirestore();
 
     const socialDocRef = useMemoFirebase(() => {
@@ -36,7 +35,8 @@ export default function SocialChatPage() {
 
     const { data: activity, isLoading, error } = useDoc<SocialActivity>(socialDocRef);
 
-    if (isLoading) {
+    // Safeguard against null params or loading state during SSR
+    if (isLoading || !id) {
         return (
             <div className="flex h-full min-h-[50vh] items-center justify-center">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
