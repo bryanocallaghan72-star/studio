@@ -20,6 +20,8 @@ import {
 import { CATEGORIES } from "@/config/categories";
 import type { Venue } from '@/types/venue';
 import { venueToMapPin, type MapPinData } from "@/adapters/venueToMapPin";
+import { useMapTheme, type MapPhase } from "@/hooks/useMapTheme";
+import { useDemoTime } from "@/context/DemoTimeContext";
 
 // Map container style
 const containerStyle = {
@@ -33,35 +35,11 @@ const defaultCenter = {
   lng: 151.276
 };
 
-// Custom map styles to match the app theme
-const mapStyles = [
-  { elementType: "geometry", stylers: [{ color: "#212121" }] },
-  { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
-  { elementType: "labels.text.stroke", stylers: [{ color: "#212121" }] },
-  { featureType: "administrative", elementType: "geometry", stylers: [{ color: "#757575" }] },
-  { featureType: "administrative.country", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] },
-  { featureType: "administrative.land_parcel", stylers: [{ visibility: "off" }] },
-  { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#bdbdbd" }] },
-  { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
-  { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#181818" }] },
-  { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
-  { featureType: "poi.park", elementType: "labels.text.stroke", stylers: [{ color: "#1b1b1b" }] },
-  { featureType: "road", elementType: "geometry.fill", stylers: [{ color: "#2d2d2d" }] },
-  { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#8a8a8a" }] },
-  { featureType: "road.arterial", elementType: "geometry", stylers: [{ color: "#373737" }] },
-  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#3c3c3c" }] },
-  { featureType: "road.highway.controlled_access", elementType: "geometry", stylers: [{ color: "#4e4e4e" }] },
-  { featureType: "road.local", elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
-  { featureType: "transit", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
-  { featureType: "water", elementType: "geometry", stylers: [{ color: "#000000" }] },
-  { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#3d3d3d" }] },
-];
-
 export function IykykVibeMap() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { currentPhase } = useDemoTime();
   
   // Safely access search parameters, accounting for null during SSR in Next.js 15
   const activeTab = searchParams?.get('category') || 'All';
@@ -76,6 +54,9 @@ export function IykykVibeMap() {
 
   const firestore = useFirestore();
   const { user, isUserLoading } = useUser();
+  
+  const mapStyles = useMapTheme(currentPhase as MapPhase);
+
   const venuesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     const venuesCollection = collection(firestore, 'venues');
@@ -227,7 +208,7 @@ export function IykykVibeMap() {
     disableDefaultUI: true,
     zoomControl: true,
     styles: mapStyles,
-  }), []);
+  }), [mapStyles]);
 
   if (loadError) {
     return <div className="text-destructive p-6">Error loading maps.</div>;
