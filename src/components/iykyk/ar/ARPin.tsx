@@ -1,4 +1,3 @@
-
 'use client';
 
 import { motion } from 'framer-motion';
@@ -8,13 +7,13 @@ import { ColorPinSVG } from '../ColorPinSVG';
 import { ARPinData } from './ARPinLayer';
 
 const typeColorMap: Record<string, string> = {
-  'Sponsored Drop': '#a855f7', // purple-500
-  'Daily Drop': '#f97316',     // orange-500
-  'Fire': '#ef4444',             // red-500
-  'Deals': '#22c55e',          // green-500
-  'Quest': '#eab308',         // yellow-500
-  'Reward': '#eab308',        // yellow-500
-  'Default': '#3b82f6',         // blue-500
+  'Sponsored Drop': 'hsl(var(--color-cat-lens))',
+  'Daily Drop': 'hsl(var(--color-cat-fire))',
+  'Fire': 'hsl(var(--color-cat-fire))',
+  'Deals': '#22c55e',
+  'Quest': '#eab308',
+  'Reward': '#eab308',
+  'Default': 'hsl(var(--color-cat-fire))',
 };
 
 const getPinColor = (type: string): string => {
