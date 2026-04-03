@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -75,7 +76,7 @@ const StyleDropCard = ({ drop, venueName, onClaim }: { drop: StyleDropWithClaim,
     };
 
     return (
-        <Card key={drop.id} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-rose-500">
+        <Card key={drop.id} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-brand-style">
             <div className="absolute inset-0">
                 <Image
                     src={drop.venueImageUrl}
@@ -89,7 +90,7 @@ const StyleDropCard = ({ drop, venueName, onClaim }: { drop: StyleDropWithClaim,
             <CardContent className="relative z-10 flex flex-col justify-end h-full p-6 text-white min-h-[350px]">
                 <div>
                     <div className="flex items-center justify-between mb-2">
-                         <Badge variant="destructive" className="flex items-center gap-2 w-min whitespace-nowrap bg-rose-500/80 border-rose-400 text-white">
+                         <Badge variant="destructive" className="flex items-center gap-2 w-min whitespace-nowrap bg-brand-style/80 border-brand-style/70 text-white">
                             <Ticket className="h-4 w-4" />
                             <span>DROP</span>
                         </Badge>
@@ -116,7 +117,7 @@ const StyleDropCard = ({ drop, venueName, onClaim }: { drop: StyleDropWithClaim,
                      </div>
                 </div>
                 <div className='mt-6'>
-                    <div className="flex items-center justify-between rounded-lg bg-rose-600/80 p-3 backdrop-blur-sm border border-white/30">
+                    <div className="flex items-center justify-between rounded-lg bg-brand-style/80 p-3 backdrop-blur-sm border border-white/30">
                         <p className="text-sm font-medium text-white/90">Drop expires in:</p>
                         <Countdown expiresAt={drop.expiresAt} />
                     </div>
@@ -187,7 +188,7 @@ export function StyleList() {
         <>
             <section>
                 <div className="flex items-center gap-3 mb-4">
-                    <Shirt className="h-8 w-8 text-rose-500" />
+                    <Shirt className="h-8 w-8 text-brand-style" />
                     <div>
                         <h2 className="text-3xl font-bold tracking-tight">iykyk Style Drops</h2>
                         <p className="text-muted-foreground">Exclusive access and offers from Bondi's fashion scene.</p>
@@ -226,7 +227,7 @@ export function StyleList() {
                             </DialogHeader>
                             <DialogFooter>
                                 <Button variant="outline" onClick={() => setConfirmingDrop(null)}>Cancel</Button>
-                                <Button className="bg-rose-500 hover:bg-rose-600" onClick={handleConfirmClaim}>Confirm</Button>
+                                <Button className="bg-brand-style hover:bg-brand-style/80" onClick={handleConfirmClaim}>Confirm</Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>

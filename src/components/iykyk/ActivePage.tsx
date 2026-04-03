@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -76,7 +77,7 @@ const ClassDropCard = ({ drop, venueName, onClaim, creator }: { drop: ClassDrop,
       };      
 
     return (
-        <Card key={drop.id} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-pink-500">
+        <Card key={drop.id} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-brand-active">
             <div className="absolute inset-0">
                 <Image
                     src={drop.classImageUrl}
@@ -90,7 +91,7 @@ const ClassDropCard = ({ drop, venueName, onClaim, creator }: { drop: ClassDrop,
             <CardContent className="relative z-10 flex flex-col justify-end h-full p-6 text-white min-h-[350px]">
                 <div>
                     <div className="flex items-center justify-between mb-2">
-                         <Badge variant="destructive" className="flex items-center gap-2 w-min whitespace-nowrap bg-pink-500/80 border-pink-400 text-white">
+                         <Badge variant="destructive" className="flex items-center gap-2 w-min whitespace-nowrap bg-brand-active/80 border-brand-active/70 text-white">
                             <Zap className="h-4 w-4" />
                             <span>DROP</span>
                         </Badge>
@@ -114,7 +115,7 @@ const ClassDropCard = ({ drop, venueName, onClaim, creator }: { drop: ClassDrop,
                     )}
                 </div>
                 <div className='mt-6'>
-                    <div className="flex items-center justify-between rounded-lg bg-pink-600/80 p-3 backdrop-blur-sm border border-white/30">
+                    <div className="flex items-center justify-between rounded-lg bg-brand-active/80 p-3 backdrop-blur-sm border border-white/30">
                         <p className="text-sm font-medium text-white/90">Drop expires in:</p>
                         <Countdown expiresAt={drop.expiresAt} />
                     </div>
@@ -219,7 +220,7 @@ export function ActivePage() {
         <>
             <section>
                 <div className="flex items-center gap-3 mb-4">
-                    <Dumbbell className="h-8 w-8 text-pink-500" />
+                    <Dumbbell className="h-8 w-8 text-brand-active" />
                     <div>
                         <h2 className="text-3xl font-bold tracking-tight">iykyk Active</h2>
                         <p className="text-muted-foreground">Last-minute spots at Bondi's top studios. Claim yours.</p>
@@ -280,7 +281,7 @@ export function ActivePage() {
                             </DialogHeader>
                             <DialogFooter>
                                 <Button variant="outline" onClick={() => setConfirmingDrop(null)}>Cancel</Button>
-                                <Button className="bg-pink-500 hover:bg-pink-600" onClick={handleConfirmClaim}>Confirm</Button>
+                                <Button className="bg-brand-active hover:bg-brand-active/80" onClick={handleConfirmClaim}>Confirm</Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
