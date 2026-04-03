@@ -1,9 +1,8 @@
-
 'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Flame, Layers } from 'lucide-react';
+import { ArrowLeft, Flame, Layers, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ARLayerSlider } from '@/components/iykyk/ar/ARLayerSlider';
 import { ARPinLayer } from '@/components/iykyk/ar/ARPinLayer';
@@ -48,7 +47,7 @@ export default function ARPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
-        <div className="rounded-full bg-black/60 px-4 py-1.5 backdrop-blur-md border border-white/15 shadow-lg">
+        <div className="rounded-full bg-glass-dark px-4 py-1.5 backdrop-blur-md border border-white/15 shadow-lg">
           <p className="text-xs font-medium text-white/80 tracking-wide">
             iykyk Lens · {LENS_LABELS[activeLayer]}
           </p>

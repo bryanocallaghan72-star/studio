@@ -134,7 +134,7 @@ const StoryPost = memo(({ item, priority }: { item: any, priority?: boolean }) =
                 
                 <div className="absolute inset-0 flex flex-col justify-end p-6 text-white z-10">
                     <div className="space-y-3">
-                        <Badge variant="secondary" className="w-fit bg-white/20 border-white/30 text-white backdrop-blur-md">
+                        <Badge variant="secondary" className="w-fit bg-glass-light border-white/30 text-white backdrop-blur-md">
                             <BookHeart className="h-4 w-4 mr-2"/>
                             {item.postType || 'Story'}
                         </Badge>

@@ -141,7 +141,7 @@ export default function SliceOfLifePostPage() {
 
                 <div className="absolute inset-0 flex flex-col justify-end p-6 text-white z-10">
                     <div className="space-y-3 mb-4">
-                        <Badge variant="secondary" className="w-fit bg-white/20 border-white/30 text-white backdrop-blur-md">
+                        <Badge variant="secondary" className="w-fit bg-glass-light border-white/30 text-white backdrop-blur-md">
                             {post.postType}
                         </Badge>
                         <h2 className="text-3xl font-bold tracking-tight">{post.title}</h2>
@@ -167,13 +167,13 @@ export default function SliceOfLifePostPage() {
                         
                         {attributedVenueHref ? (
                             <Link href={attributedVenueHref} onClick={playClick} className={cn(post.postType === 'discovery' && "col-span-2")}>
-                                  <Button variant="outline" className="w-full h-14 text-lg font-bold bg-white/10 border-white/30 text-white backdrop-blur-md hover:bg-white/20">
+                                  <Button variant="outline" className="w-full h-14 text-lg font-bold bg-glass-light-soft border-white/30 text-white backdrop-blur-md hover:bg-white/20">
                                       <Building className="mr-2"/>
                                       View Venue
                                   </Button>
                             </Link>
                         ) : (
-                             <Button variant="outline" className="w-full h-14 text-lg font-bold bg-white/10 border-white/30 text-white backdrop-blur-md" disabled>
+                             <Button variant="outline" className="w-full h-14 text-lg font-bold bg-glass-light-soft border-white/30 text-white backdrop-blur-md" disabled>
                                 <Building className="mr-2"/>
                                 Venue not live yet
                             </Button>

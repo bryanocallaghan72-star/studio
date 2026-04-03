@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useRef } from 'react';
@@ -79,7 +78,7 @@ export function ARLayerSlider({ activeLayer, setActiveLayer }: ARLayerSliderProp
                             onClick={() => setActiveLayer(layer.id)}
                             className={cn(
                                 "relative z-10 rounded-full transition-all duration-300 mx-auto",
-                                isActive ? 'bg-white text-black scale-110 shadow-lg' : 'bg-black/50 text-white hover:bg-white/20'
+                                isActive ? 'bg-white text-black scale-110 shadow-lg' : 'bg-glass-dark text-white hover:bg-white/20'
                             )}
                         >
                             <Icon className="h-5 w-5 m-1.5" />

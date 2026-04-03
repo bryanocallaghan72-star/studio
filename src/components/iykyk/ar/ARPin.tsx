@@ -61,7 +61,7 @@ export function ARPin({ pin }: ARPinProps) {
 
               <div
                   className={cn(
-                  'mt-2 rounded-full border-2 border-white/30 bg-black/60 px-4 py-1.5 text-center shadow-lg backdrop-blur-md transition-all group-hover:scale-110 group-hover:border-white/50'
+                  'mt-2 rounded-full border-2 border-white/30 bg-glass-dark px-4 py-1.5 text-center shadow-lg backdrop-blur-md transition-all group-hover:scale-110 group-hover:border-white/50'
                   )}
               >
                   <p className="font-bold text-white text-sm whitespace-nowrap">{pin.name}</p>
