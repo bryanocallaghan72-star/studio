@@ -1,4 +1,3 @@
-
 'use client';
 
 import { motion } from 'framer-motion';
@@ -8,13 +7,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 
-const cardColorStyles: { [key: string]: { glow: string; text: string } } = {
-  water: { glow: 'from-sky-500/50', text: 'text-sky-300' },
-  fire: { glow: 'from-rose-500/50', text: 'text-rose-300' },
-  earth: { glow: 'from-emerald-500/50', text: 'text-emerald-300' },
+// Map alignment internal types to semantic glow tokens
+const cardColorStyles: Record<string, { glow: string; text: string; token?: string }> = {
+  water: { glow: 'glow-from', text: 'glow-text', token: 'energy' },
+  fire: { glow: 'glow-from', text: 'glow-text', token: 'love' },
+  earth: { glow: 'glow-from', text: 'glow-text', token: 'abundance' },
   air: { glow: 'from-slate-500/50', text: 'text-slate-300' },
   social: { glow: 'from-indigo-500/50', text: 'text-indigo-300' },
-  calm: { glow: 'from-purple-500/50', text: 'text-purple-300' },
+  calm: { glow: 'glow-from', text: 'glow-text', token: 'clarity' },
 };
 
 const DailyCardSkeleton = () => (
@@ -47,11 +47,12 @@ export function AlignmentPage() {
             <p className="text-muted-foreground mt-2">Your daily energy card and Bondi ritual.</p>
         </div>
 
-        <div className="relative w-full max-w-md">
+        <div data-glow={styles.token} className="relative w-full max-w-md">
             {/* Background Glow */}
             <motion.div
                 className={cn(
-                    "absolute -inset-4 bg-gradient-to-br to-transparent rounded-3xl blur-2xl opacity-60",
+                    "absolute -inset-4 rounded-3xl blur-2xl opacity-60",
+                    !styles.token && "bg-gradient-to-br to-transparent",
                     styles.glow
                 )}
                 animate={{ opacity: [0.4, 0.7, 0.4] }}

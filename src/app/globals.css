@@ -339,3 +339,41 @@ nav, aside {
   color: var(--text-primary) !important;
   text-shadow: none !important;
 }
+
+/* iykyk alignment glow tokens */
+[data-glow="energy"] {
+  --glow-from:   rgba(14, 165, 233, 0.5);
+  --glow-text:   #7dd3fc;
+  --glow-border: rgba(14, 165, 233, 0.2);
+}
+[data-glow="love"] {
+  --glow-from:   rgba(244, 63, 94, 0.5);
+  --glow-text:   #fda4af;
+  --glow-border: rgba(244, 63, 94, 0.2);
+}
+[data-glow="abundance"] {
+  --glow-from:   rgba(16, 185, 129, 0.5);
+  --glow-text:   #6ee7b7;
+  --glow-border: rgba(16, 185, 129, 0.2);
+}
+[data-glow="clarity"] {
+  --glow-from:   rgba(139, 92, 246, 0.5);
+  --glow-text:   #c4b5fd;
+  --glow-border: rgba(139, 92, 246, 0.2);
+}
+[data-glow="grounding"] {
+  --glow-from:   rgba(245, 158, 11, 0.5);
+  --glow-text:   #fcd34d;
+  --glow-border: rgba(245, 158, 11, 0.2);
+}
+
+/* Glow utility classes — consumed by AlignmentPage */
+.glow-from  { background: linear-gradient(to top, var(--glow-from), transparent); }
+.glow-text  { color: var(--glow-text); }
+.glow-border{ border-color: var(--glow-border); }
+
+:root {
+  --glow-from:   rgba(14, 165, 233, 0.5);
+  --glow-text:   #7dd3fc;
+  --glow-border: rgba(14, 165, 233, 0.2);
+}
