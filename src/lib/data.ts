@@ -116,6 +116,8 @@ export type PhotoFeedItem = {
   type: 'photo';
   createdAt: string;
   imageId: string;
+  description: string;
+  venue?: string;
   creator: {
     id: string;
     name: string;
@@ -448,7 +450,7 @@ const enrichedSliceOfLifePosts = rawSliceOfLifePosts
       return null;
     }
 
-    // Add postType based on the presence of a relatedDealId
+    // Add postType based on the presence of a related deal ID
     const postType = post.relatedDealId ? 'monetisable' : 'discovery';
     
     return { ...post, creator, postType };

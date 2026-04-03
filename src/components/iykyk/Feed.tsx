@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState, memo, useMemo } from "react";
+import { useState, memo, useMemo, useEffect } from "react";
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,7 +10,6 @@ import {
   MoreVertical,
   Send,
   BookHeart,
-  Loader2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CommentSheet, type Comment } from "./CommentSheet";
@@ -28,8 +26,6 @@ const formatLikes = (likes: number) => {
     return likes.toString();
 }
 
-// Individual Post Components for each type
-
 const PhotoPost = memo(({ item, priority }: { item: any, priority?: boolean }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
@@ -37,9 +33,8 @@ const PhotoPost = memo(({ item, priority }: { item: any, priority?: boolean }) =
   const [localComments, setLocalComments] = useState<Comment[]>(item.commentData || []);
   const [commentCount, setCommentCount] = useState<number>(item.comments ?? 0);
 
-
   const likeCount = isLiked ? item.likes + 1 : item.likes;
-  const creator = appData.creators.find(c => c.id === item.creator.id);
+  const creator = item.creator ? appData.creators.find(c => c.id === item.creator.id) : null;
   const image = PlaceHolderImages.find(img => img.id === item.imageId);
 
   const handlePostComment = (commentText: string) => {
@@ -91,7 +86,7 @@ const PhotoPost = memo(({ item, priority }: { item: any, priority?: boolean }) =
             </div>
             <p className="text-sm font-semibold">{likeCount.toLocaleString()} likes</p>
              <p className="text-sm">
-              <span className="font-semibold">{creator?.name || item.creator.name}</span>
+              <span className="font-semibold">{creator?.name || item.creator?.name || 'User'}</span>
               <span className="ml-1">{item.description}</span>
             </p>
             {commentCount > 0 && (
@@ -118,6 +113,7 @@ PhotoPost.displayName = 'PhotoPost';
 const StoryPost = memo(({ item, priority }: { item: any, priority?: boolean }) => {
     const [isLiked, setIsLiked] = useState(false);
     const likeCount = isLiked ? item.likes + 1 : item.likes;
+    const creator = item.creator;
 
     return (
        <Card className="w-full max-w-lg mx-auto rounded-none border-x-0 border-t-0 sm:rounded-lg sm:border overflow-hidden">
@@ -140,13 +136,13 @@ const StoryPost = memo(({ item, priority }: { item: any, priority?: boolean }) =
                         </Badge>
                         <h2 className="text-3xl font-bold tracking-tight">{item.title}</h2>
                         <div className="flex items-center gap-3">
-                            {item.creator && (
+                            {creator && (
                                 <div className="flex items-center gap-3 group">
                                     <Avatar className="h-10 w-10 border-2 border-white/50 transition-colors">
-                                        <AvatarImage src={item.creator.avatar} />
-                                        <AvatarFallback>{item.creator.name.charAt(0)}</AvatarFallback>
+                                        <AvatarImage src={creator.avatar} />
+                                        <AvatarFallback>{creator.name.charAt(0)}</AvatarFallback>
                                     </Avatar>
-                                    <span className="font-semibold">@{item.creator.name}</span>
+                                    <span className="font-semibold">@{creator.name}</span>
                                 </div>
                             )}
                         </div>
@@ -154,9 +150,9 @@ const StoryPost = memo(({ item, priority }: { item: any, priority?: boolean }) =
                 </div>
 
                  <div className="absolute bottom-6 right-6 flex flex-col items-center gap-6 text-white z-10">
-                    <div className="flex flex-col items-center gap-1">
+                    <div className="flex flex-col items-center gap-1" onClick={(e) => { e.preventDefault(); setIsLiked(!isLiked); }}>
                         <Heart className={`h-8 w-8 transition-all ${isLiked ? 'text-red-500 fill-current' : ''}`} />
-                        <span className="text-xs font-semibold">{item.likes}</span>
+                        <span className="text-xs font-semibold">{likeCount}</span>
                     </div>
                     <div className="flex flex-col items-center gap-1">
                         <MessageCircle className="h-8 w-8" />
@@ -198,13 +194,18 @@ const FeedSkeleton = () => (
 
 export function Feed() {
   const { creators, isLoading: creatorsLoading } = useCreators();
+  const [isClient, setIsClient] = useState(false);
 
-  // The feed items are now sourced directly from the curated appData.
-  // This ensures all posts are high-quality and have valid venue links.
-  const feedItems = appData.feedItems;
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const feedItems = useMemo(() => {
+    if (!isClient) return [];
+    return appData.feedItems;
+  }, [isClient]);
   
-  // The loading state now only depends on creators, as venues are no longer needed here.
-  if (creatorsLoading) {
+  if (creatorsLoading || !isClient) {
     return <FeedSkeleton />;
   }
   

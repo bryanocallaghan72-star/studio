@@ -39,15 +39,20 @@ const SOUNDS = {
 
 export const SoundProvider = ({ children }: { children: ReactNode }) => {
   const [isMuted, setIsMuted] = useLocalStorage('iykyk-sound-muted', true);
+  const [isClient, setIsClient] = useState(false);
   const activeAmbienceRef = useRef<{ stop: () => void; theme: Theme } | null>(null);
 
-  const [playClickSfx] = useSound(SOUNDS.click, { volume: 0.2, soundEnabled: !isMuted });
-  const [playSuccessSfx] = useSound(SOUNDS.success, { volume: 0.3, soundEnabled: !isMuted });
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const [playClickSfx] = useSound(SOUNDS.click, { volume: 0.2, soundEnabled: !isMuted && isClient });
+  const [playSuccessSfx] = useSound(SOUNDS.success, { volume: 0.3, soundEnabled: !isMuted && isClient });
   
-  const [playDawn, { stop: stopDawn }] = useSound(SOUNDS.ambience.dawn, { volume: 0.4, loop: true, soundEnabled: !isMuted });
-  const [playDay, { stop: stopDay }] = useSound(SOUNDS.ambience.day, { volume: 0.4, loop: true, soundEnabled: !isMuted });
-  const [playGolden, { stop: stopGolden }] = useSound(SOUNDS.ambience.golden, { volume: 0.4, loop: true, soundEnabled: !isMuted });
-  const [playDusk, { stop: stopDusk }] = useSound(SOUNDS.ambience.dusk, { volume: 0.4, loop: true, soundEnabled: !isMuted });
+  const [playDawn, { stop: stopDawn }] = useSound(SOUNDS.ambience.dawn, { volume: 0.4, loop: true, soundEnabled: !isMuted && isClient });
+  const [playDay, { stop: stopDay }] = useSound(SOUNDS.ambience.day, { volume: 0.4, loop: true, soundEnabled: !isMuted && isClient });
+  const [playGolden, { stop: stopGolden }] = useSound(SOUNDS.ambience.golden, { volume: 0.4, loop: true, soundEnabled: !isMuted && isClient });
+  const [playDusk, { stop: stopDusk }] = useSound(SOUNDS.ambience.dusk, { volume: 0.4, loop: true, soundEnabled: !isMuted && isClient });
 
   const ambiencePlayers = {
       dawn: { play: playDawn, stop: stopDawn },
@@ -64,6 +69,7 @@ export const SoundProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const playAmbience = useCallback((theme: Theme) => {
+    if (!isClient) return;
     if (activeAmbienceRef.current?.theme === theme) {
       return; // Already playing
     }
@@ -75,7 +81,7 @@ export const SoundProvider = ({ children }: { children: ReactNode }) => {
     const player = ambiencePlayers[theme];
     player.play();
     activeAmbienceRef.current = { stop: player.stop, theme };
-  }, [ambiencePlayers, stopAmbience]);
+  }, [ambiencePlayers, stopAmbience, isClient]);
 
   const toggleMute = useCallback(() => {
     const newMutedState = !isMuted;
@@ -85,7 +91,6 @@ export const SoundProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [isMuted, setIsMuted, stopAmbience]);
   
-  // When mute state changes globally, stop ambience if newly muted.
   useEffect(() => {
     if (isMuted) {
       stopAmbience();

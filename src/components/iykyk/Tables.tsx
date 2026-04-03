@@ -17,6 +17,10 @@ import { useTableDrops, type TableDrop } from '@/hooks/useTableDrops';
 import { useVenues } from '@/hooks/useVenues';
 import { useCreators } from '@/hooks/useCreators';
 
+type TableDropWithClaim = TableDrop & {
+    hasUserClaimed: boolean;
+};
+
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
     const [isClient, setIsClient] = useState(false);
@@ -60,7 +64,7 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     );
 };
 
-const TableDropCard = ({ drop, onClaim, venueName, creator }: { drop: TableDrop, onClaim: (drop: TableDrop) => void, venueName: string, creator: any }) => {
+const TableDropCard = ({ drop, onClaim, venueName, creator }: { drop: TableDropWithClaim, onClaim: (drop: TableDropWithClaim) => void, venueName: string, creator: any }) => {
     const [formattedTimes, setFormattedTimes] = useState<{ start: string; end: string } | null>(null);
     const { user } = useUser();
 
@@ -117,7 +121,7 @@ const TableDropCard = ({ drop, onClaim, venueName, creator }: { drop: TableDrop,
                 </div>
                 <div className='mt-6'>
                     <div className="flex items-center justify-between rounded-lg bg-destructive/80 p-3 backdrop-blur-sm border border-destructive-foreground/30">
-                        <p className="text-sm font-medium text-white/90">Drop expires in:</p>
+                        <p className="text-sm font-medium text-destructive-foreground">Drop expires in:</p>
                         <Countdown expiresAt={drop.expiresAt} />
                     </div>
                     <Button
@@ -168,7 +172,7 @@ export function Tables() {
         }, {} as Record<string, (typeof venues)[number]>);
     }, [venues]);
 
-    const handleClaimClick = (drop: TableDrop) => {
+    const handleClaimClick = (drop: TableDropWithClaim) => {
         setConfirmingDrop(drop);
     };
 

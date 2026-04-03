@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
@@ -19,12 +18,13 @@ import { Skeleton } from '../ui/skeleton';
 import { useCreators } from '@/hooks/useCreators';
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
-    const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
+    const [timeLeft, setTimeLeft] = useState(0);
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
         setIsClient(true);
-    }, []);
+        setTimeLeft(new Date(expiresAt).getTime() - Date.now());
+    }, [expiresAt]);
 
     useEffect(() => {
         if (!isClient) return;
@@ -72,6 +72,7 @@ const HotNowSkeleton = () => (
 export function HotNow() {
     const [selectedDeal, setSelectedDeal] = useState<HotItem | null>(null);
     const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
+    const [isClient, setIsClient] = useState(false);
     const firestore = useFirestore();
     const { user } = useUser();
 
@@ -79,6 +80,10 @@ export function HotNow() {
     const { venues, isLoading: areVenuesLoading } = useVenues();
     const { creatorsById, isLoading: areCreatorsLoading } = useCreators();
     
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
     const venuesBySlug = useMemo(() => {
         if (!venues) return {};
         return venues.reduce((acc, venue) => {
@@ -96,10 +101,8 @@ export function HotNow() {
 
         if (!user || !firestore) return;
 
-        // Use live venue name if available, otherwise fallback to mock data
         const venueName = venuesBySlug[item.venueId]?.name ?? item.venue;
 
-        // Log the claim for the user
         const claimedDealRef = doc(firestore, 'users', user.uid, 'claimedDeals', item.id);
         const claimData = {
             itemId: item.id,
@@ -111,7 +114,6 @@ export function HotNow() {
         };
         setDocumentNonBlocking(claimedDealRef, claimData, { merge: true });
 
-        // If there's a creator, log the influenced action
         if (item.creatorId) {
             const influenceRef = doc(collection(firestore, 'users', item.creatorId, 'influencedActions'));
             const influenceData = {
@@ -125,12 +127,12 @@ export function HotNow() {
         }
     };
     
-    const isLoading = areItemsLoading || areVenuesLoading || areCreatorsLoading;
+    const isLoading = areItemsLoading || areVenuesLoading || areCreatorsLoading || !isClient;
 
     const activeItems = useMemo(() => {
-        if (!hotItems) return [];
+        if (!hotItems || !isClient) return [];
         return hotItems.filter(item => new Date(item.expiresAt).getTime() > Date.now());
-    }, [hotItems]);
+    }, [hotItems, isClient]);
 
 
     return (
@@ -150,7 +152,7 @@ export function HotNow() {
                             const venueName = venuesBySlug[item.venueId]?.name ?? item.venue;
 
                             return (
-                                <Card key={item.id} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-primary">
+                                <Card key={item.id} className="group relative overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 border-2 border-transparent hover:border-primary">
                                     <div className="absolute inset-0">
                                     {image ? (
                                         <>
