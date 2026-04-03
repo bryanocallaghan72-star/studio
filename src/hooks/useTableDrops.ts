@@ -1,9 +1,8 @@
-
 "use client";
 
 import { TABLE_DROPS } from '@/data/seeds/drops';
 import type { TableDrop } from '@/data/seeds/drops';
-export type { TableDrop } from '@/data/seeds/drops';
+
 /**
  * Hook to fetch table drop data.
  * In Phase 1, this returns mock data. It will be updated to fetch from
@@ -20,3 +19,5 @@ export function useTableDrops() {
     error: null,
   };
 }
+
+export type { TableDrop };
