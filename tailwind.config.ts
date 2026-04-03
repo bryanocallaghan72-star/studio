@@ -1,4 +1,3 @@
-
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -67,6 +66,44 @@ export default {
           border: 'hsl(var(--border))',
           ring: 'hsl(var(--ring))',
         },
+        /* iykyk design tokens */
+        cat: {
+          brunch: 'hsl(var(--color-cat-brunch))',
+          nightlife: 'hsl(var(--color-cat-nightlife))',
+          sushi: 'hsl(var(--color-cat-sushi))',
+          fire: 'hsl(var(--color-cat-fire))',
+          active: 'hsl(var(--color-cat-active))',
+          style: 'hsl(var(--color-cat-style))',
+          lens: 'hsl(var(--color-cat-lens))',
+          stays: 'hsl(var(--color-cat-stays))',
+        },
+        urgency: 'hsl(var(--color-urgency))',
+        brand: {
+          ar: 'hsl(var(--color-brand-ar))',
+          active: 'hsl(var(--color-brand-active))',
+          style: 'hsl(var(--color-brand-style))',
+        },
+        glass: {
+          dark: 'var(--glass-dark)',
+          light: 'var(--glass-light)',
+          border: 'var(--glass-border)',
+          'dark-soft': 'var(--glass-dark-soft)',
+          'light-soft': 'var(--glass-light-soft)',
+        },
+        phase: {
+          bg: 'var(--phase-bg)',
+          'bg-mid': 'var(--phase-bg-mid)',
+          accent: 'var(--phase-accent)',
+          'accent-soft': 'var(--phase-accent-soft)',
+          text: 'var(--phase-text)',
+          'text-muted': 'var(--phase-text-muted)',
+          border: 'var(--phase-border)',
+          scrim: 'var(--phase-scrim)',
+          badge: {
+            bg: 'var(--phase-badge-bg)',
+            text: 'var(--phase-badge-text)',
+          }
+        }
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -86,7 +123,7 @@ export default {
           from: {
             height: 'var(--radix-accordion-content-height)',
           },
-to: {
+          to: {
             height: '0',
           },
         },
