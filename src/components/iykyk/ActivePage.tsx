@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -19,12 +18,13 @@ import type { ClassDrop } from '@/data/seeds/drops';
 import { useCreators } from '@/hooks/useCreators';
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
-    const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
+    const [timeLeft, setTimeLeft] = useState(0);
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
         setIsClient(true);
-    }, []);
+        setTimeLeft(new Date(expiresAt).getTime() - Date.now());
+    }, [expiresAt]);
 
     useEffect(() => {
         if (!isClient) return;
@@ -43,7 +43,7 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     }, [isClient, expiresAt]);
 
     if (!isClient) {
-        return <span className="font-mono text-lg font-semibold text-white">Loading...</span>;
+        return <span className="font-mono text-lg font-semibold text-white">00:00:00</span>;
     }
 
     if (timeLeft <= 0) {
@@ -60,7 +60,6 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
         </span>
     );
 };
-
 
 const ClassDropCard = ({ drop, venueName, onClaim, creator }: { drop: ClassDrop, venueName: string, onClaim: (drop: ClassDrop) => void, creator: any }) => {
     const [formattedTime, setFormattedTime] = useState<string | null>(null);
@@ -176,7 +175,6 @@ export function ActivePage() {
         setSuccessfulDrop(confirmingDrop);
         setConfirmingDrop(null);
 
-        // Log the claim for the user
         const claimedDealRef = doc(firestore, 'users', user.uid, 'claimedDeals', confirmingDrop.id);
         const claimData = {
             itemId: confirmingDrop.id,
@@ -188,7 +186,6 @@ export function ActivePage() {
         };
         setDocumentNonBlocking(claimedDealRef, claimData, { merge: true });
         
-        // Log influence for instructor
         if (confirmingDrop.instructorHandle) {
             const influenceRef = doc(collection(firestore, 'users', confirmingDrop.instructorHandle, 'influencedActions'));
             const influenceData = {
@@ -202,14 +199,21 @@ export function ActivePage() {
         }
     };
     
-    const liveDrops = (classDrops || [])
-        .filter(drop => new Date(drop.expiresAt).getTime() > Date.now())
-        .map(drop => ({ ...drop, hasUserClaimed: claimedDrops.includes(drop.id) }))
-        .sort((a, b) => new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime());
+    const liveDrops = useMemo(() => {
+        if (!isClient || !classDrops) return [];
+        return classDrops
+            .filter(drop => new Date(drop.expiresAt).getTime() > Date.now())
+            .map(drop => ({ ...drop, hasUserClaimed: claimedDrops.includes(drop.id) }))
+            .sort((a, b) => new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime());
+    }, [classDrops, isClient, claimedDrops]);
     
-    const favoriteDrops = liveDrops.filter(drop => drop.isFavoriteVenue);
+    const favoriteDrops = useMemo(() => liveDrops.filter(drop => drop.isFavoriteVenue), [liveDrops]);
     
     const isLoading = !isClient || areDropsLoading || areVenuesLoading || areCreatorsLoading;
+
+    if (!isClient) {
+        return <ActivePageSkeleton />;
+    }
 
     return (
         <>

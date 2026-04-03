@@ -443,7 +443,7 @@ const creators = [
   ];
 
 const enrichedSliceOfLifePosts = rawSliceOfLifePosts
-  .map(post => {
+  .map((post): SliceOfLifePost | null => {
     const creator = creators.find(c => c.id === post.creatorId);
     if (!creator) {
       console.warn(`Creator with id '${post.creatorId}' not found for Slice of Life post '${post.id}'. Skipping post.`);
@@ -818,7 +818,7 @@ export const appData: AppData = {
       { id: 10, name: "Harry's Bondi", slug: "harrys-bondi", type: "Brunch", description: "Classic brunch fare with a modern twist.", x: "65%", y: "45%", latitude: -33.889, longitude: 151.276, openingHours: "7am - 3pm", vibeTags: ["Brunch", "Modern", "Coffee"], currentVibe: "Buzzing" },
       { id: 11, name: "Lulu", slug: "lulu", type: "Restaurants", description: "Modern Pan-Asian cuisine in a chic setting.", x: "20%", y: "70%", latitude: -33.8935, longitude: 151.27, openingHours: "5pm - 11pm", vibeTags: ["Pan-Asian", "Chic", "Dinner"], currentVibe: "Buzzing" },
       { id: 15, name: "Bills", slug: "bills", type: "Brunch", description: "Famous for ricotta hotcakes and scrambled eggs.", x: "15%", y: "80%", latitude: -33.891, longitude: 151.27, openingHours: "7:30am - 3pm", vibeTags: ["Iconic", "Brunch", "Hotcakes"], currentVibe: "Packed" },
-      { id: 16, name: "Sean's", slug: "seans", type: "Restaurants", description: "Farm-to-table dining with ocean views.", x: "60%", y: "15%", latitude: -33.887, longitude: 151.278, openingHours: "6pm - 10pm", vibeTags: ["Farm-to-Table", "Fine Dining", "Views"], currentVibe: "Buzzing" },
+      { id: 16, name: "Sean\'s", slug: "seans", type: "Restaurants", description: "Farm-to-table dining with ocean views.", x: "60%", y: "15%", latitude: -33.887, longitude: 151.278, openingHours: "6pm - 10pm", vibeTags: ["Farm-to-Table", "Fine Dining", "Views"], currentVibe: "Buzzing" },
       { id: 17, name: "La Piadina", slug: "la-piadina", type: "Restaurants", description: "Authentic Italian flatbread sandwiches.", x: "50%", y: "40%", latitude: -33.890, longitude: 151.273, openingHours: "11am - 9pm", vibeTags: ["Quick", "Italian", "Lunch"], currentVibe: "Chill" },
       { id: 18, name: "The Bucket List", slug: "the-bucket-list", type: "Nightlife", description: "Casual beachside bar with a lively atmosphere.", x: "75%", y: "30%", latitude: -33.890, longitude: 151.277, openingHours: "12pm - 12am", vibeTags: ["Beachy", "Casual", "Lively"], currentVibe: "Packed" },
       { id: 19, name: "Porch and Parlour", slug: "porch-and-parlour", type: "Brunch", description: "Bohemian-style cafe with healthy options.", x: "50%", y: "55%", latitude: -33.888, longitude: 151.276, openingHours: "6:30am - 3pm", vibeTags: ["Bohemian", "Healthy", "Coffee"], currentVibe: "Buzzing" },

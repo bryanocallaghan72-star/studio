@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -22,12 +21,13 @@ type TableDropWithClaim = TableDrop & {
 };
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
-    const [timeLeft, setTimeLeft] = useState(new Date(expiresAt).getTime() - Date.now());
+    const [timeLeft, setTimeLeft] = useState(0);
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
         setIsClient(true);
-    }, []);
+        setTimeLeft(new Date(expiresAt).getTime() - Date.now());
+    }, [expiresAt]);
 
     useEffect(() => {
         if (!isClient) return;
@@ -46,7 +46,7 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     }, [isClient, expiresAt]);
 
     if (!isClient) {
-        return <span className="font-mono text-lg font-semibold text-white">Loading...</span>;
+        return <span className="font-mono text-lg font-semibold text-white">00:00:00</span>;
     }
 
     if (timeLeft <= 0) {
@@ -69,13 +69,11 @@ const TableDropCard = ({ drop, onClaim, venueName, creator }: { drop: TableDropW
     const { user } = useUser();
 
     useEffect(() => {
-        // Format times on the client to avoid hydration mismatch
         setFormattedTimes({
             start: new Date(drop.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             end: new Date(drop.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         });
     }, [drop.startTime, drop.endTime]);
-
 
     const handleClaim = () => {
         onClaim(drop);
@@ -145,7 +143,6 @@ const TablesSkeleton = () => (
     </div>
 );
 
-
 export function Tables() {
     const [claimedDrops, setClaimedDrops] = useState<string[]>([]);
     const [confirmingDrop, setConfirmingDrop] = useState<TableDrop | null>(null);
@@ -183,12 +180,10 @@ export function Tables() {
         const venue = venueKey ? venuesBySlug[venueKey] : undefined;
         const venueName = venue?.name ?? confirmingDrop.venueName;
 
-        // Optimistically update UI
         setClaimedDrops(prev => [...prev, confirmingDrop!.id]);
         setSuccessfulDrop(confirmingDrop);
         setConfirmingDrop(null);
 
-        // Log claim for user
         const claimedDealRef = doc(firestore, 'users', user.uid, 'claimedDeals', confirmingDrop.id);
         const claimData = {
             itemId: confirmingDrop.id,
@@ -200,7 +195,6 @@ export function Tables() {
         };
         setDocumentNonBlocking(claimedDealRef, claimData, { merge: true });
 
-        // Log influence for creator
         if (confirmingDrop.creatorPickHandle) {
             const influenceRef = doc(collection(firestore, 'users', confirmingDrop.creatorPickHandle, 'influencedActions'));
             const influenceData = {
@@ -214,15 +208,22 @@ export function Tables() {
         }
     };
     
-    const liveDrops = tableDrops
-        .filter(drop => new Date(drop.expiresAt).getTime() > Date.now())
-        .map(drop => ({ ...drop, hasUserClaimed: claimedDrops.includes(drop.id) }))
-        .sort((a, b) => new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime());
+    const liveDrops = useMemo(() => {
+        if (!isClient || !tableDrops) return [];
+        return tableDrops
+            .filter(drop => new Date(drop.expiresAt).getTime() > Date.now())
+            .map(drop => ({ ...drop, hasUserClaimed: claimedDrops.includes(drop.id) }))
+            .sort((a, b) => new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime());
+    }, [tableDrops, isClient, claimedDrops]);
 
-    const favoriteDrops = liveDrops.filter(drop => drop.isFavoriteVenue);
+    const favoriteDrops = useMemo(() => liveDrops.filter(drop => drop.isFavoriteVenue), [liveDrops]);
 
     const isLoading = !isClient || areDropsLoading || areVenuesLoading || areCreatorsLoading;
     
+    if (!isClient) {
+        return <TablesSkeleton />;
+    }
+
     return (
         <>
             <section>
@@ -277,7 +278,6 @@ export function Tables() {
                 )}
             </section>
             
-            {/* Confirmation Modal */}
             {confirmingDrop && (() => {
                 const venue = venuesBySlug[confirmingDrop.venueId];
                 const venueName = venue?.name ?? confirmingDrop.venueName;
@@ -300,7 +300,6 @@ export function Tables() {
                 )
             })()}
 
-            {/* Success "Golden Ticket" Modal */}
             {successfulDrop && (() => {
                 const venue = venuesBySlug[successfulDrop.venueId];
                 const venueName = venue?.name ?? successfulDrop.venueName;
@@ -320,7 +319,6 @@ export function Tables() {
                                     <p className="font-semibold">Please arrive by {new Date(new Date(successfulDrop.startTime).getTime() + 15 * 60000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                                 </div>
 
-                                {/* Placeholder for QR Code */}
                                 <div className="bg-white p-3 rounded-lg shadow-inner">
                                     <svg width="128" height="128" viewBox="0 0 100 100"><path fill="#000" d="M0 0h30v30H0z m10 10h10v10H10zM70 0h30v30H70z m10 10h10v10H80zM0 70h30v30H0z m10 10h10v10H10zM40 0h10v10H40z m20 0h10v10H60zM40 20h10v10H40z m20 10h10v10H60z m-30 10h10v10H30z m30 0h10v10H60z m-20 0h10v10H40zM30 50h10v10H30z m20 0h10v10H50zM70 40h10v10H70z m10 10h10v10H80z m-10 10h10v10H70z m10 10h10v10H80zM40 70h10v10H40z m20 0h10v10H60z m-30 20h10v10H30z m30 0h10v10H60z m-20 0h10v10H40z"/></svg>
                                 </div>

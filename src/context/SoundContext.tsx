@@ -37,15 +37,21 @@ const SOUNDS = {
   },
 };
 
-export const SoundProvider = ({ children }: { children: ReactNode }) => {
-  const [isMuted, setIsMuted] = useLocalStorage('iykyk-sound-muted', true);
-  const [isClient, setIsClient] = useState(false);
-  const activeAmbienceRef = useRef<{ stop: () => void; theme: Theme } | null>(null);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
+/**
+ * SoundManager handles the actual useSound hooks to ensure they
+ * only run on the client side, preventing SSR crashes.
+ */
+function SoundManager({ 
+  children, 
+  isMuted, 
+  isClient, 
+  setPlayers 
+}: { 
+  children: ReactNode; 
+  isMuted: boolean; 
+  isClient: boolean;
+  setPlayers: (players: any) => void;
+}) {
   const [playClickSfx] = useSound(SOUNDS.click, { volume: 0.2, soundEnabled: !isMuted && isClient });
   const [playSuccessSfx] = useSound(SOUNDS.success, { volume: 0.3, soundEnabled: !isMuted && isClient });
   
@@ -54,13 +60,34 @@ export const SoundProvider = ({ children }: { children: ReactNode }) => {
   const [playGolden, { stop: stopGolden }] = useSound(SOUNDS.ambience.golden, { volume: 0.4, loop: true, soundEnabled: !isMuted && isClient });
   const [playDusk, { stop: stopDusk }] = useSound(SOUNDS.ambience.dusk, { volume: 0.4, loop: true, soundEnabled: !isMuted && isClient });
 
-  const ambiencePlayers = {
-      dawn: { play: playDawn, stop: stopDawn },
-      day: { play: playDay, stop: stopDay },
-      golden: { play: playGolden, stop: stopGolden },
-      dusk: { play: playDusk, stop: stopDusk },
-  };
-  
+  useEffect(() => {
+    if (isClient) {
+      setPlayers({
+        click: playClickSfx,
+        success: playSuccessSfx,
+        ambience: {
+          dawn: { play: playDawn, stop: stopDawn },
+          day: { play: playDay, stop: stopDay },
+          golden: { play: playGolden, stop: stopGolden },
+          dusk: { play: playDusk, stop: stopDusk },
+        }
+      });
+    }
+  }, [isClient, isMuted, playClickSfx, playSuccessSfx, playDawn, stopDawn, playDay, stopDay, playGolden, stopGolden, playDusk, stopDusk, setPlayers]);
+
+  return <>{children}</>;
+}
+
+export const SoundProvider = ({ children }: { children: ReactNode }) => {
+  const [isMuted, setIsMuted] = useLocalStorage('iykyk-sound-muted', true);
+  const [isClient, setIsClient] = useState(false);
+  const [players, setPlayers] = useState<any>(null);
+  const activeAmbienceRef = useRef<{ stop: () => void; theme: Theme } | null>(null);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const stopAmbience = useCallback(() => {
     if (activeAmbienceRef.current) {
         activeAmbienceRef.current.stop();
@@ -69,19 +96,19 @@ export const SoundProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const playAmbience = useCallback((theme: Theme) => {
-    if (!isClient) return;
+    if (!isClient || !players?.ambience) return;
     if (activeAmbienceRef.current?.theme === theme) {
-      return; // Already playing
+      return;
     }
     
-    if (activeAmbienceRef.current) {
-      stopAmbience();
-    }
+    stopAmbience();
     
-    const player = ambiencePlayers[theme];
-    player.play();
-    activeAmbienceRef.current = { stop: player.stop, theme };
-  }, [ambiencePlayers, stopAmbience, isClient]);
+    const player = players.ambience[theme];
+    if (player) {
+      player.play();
+      activeAmbienceRef.current = { stop: player.stop, theme };
+    }
+  }, [players, stopAmbience, isClient]);
 
   const toggleMute = useCallback(() => {
     const newMutedState = !isMuted;
@@ -97,17 +124,22 @@ export const SoundProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [isMuted, stopAmbience]);
 
-
   const value = {
     isMuted: isMuted ?? true,
     toggleMute,
-    playClick: playClickSfx as () => void,
-    playSuccess: playSuccessSfx as () => void,
+    playClick: () => players?.click?.(),
+    playSuccess: () => players?.success?.(),
     playAmbience,
     stopAmbience
   };
 
-  return <SoundContext.Provider value={value}>{children}</SoundContext.Provider>;
+  return (
+    <SoundContext.Provider value={value}>
+      <SoundManager isMuted={!!isMuted} isClient={isClient} setPlayers={setPlayers}>
+        {children}
+      </SoundManager>
+    </SoundContext.Provider>
+  );
 };
 
 export const useSoundContext = () => {
