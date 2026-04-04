@@ -30,6 +30,7 @@ import {
   GOOGLE_MAPS_LIBRARIES,
   GOOGLE_MAPS_REGION,
   GOOGLE_MAPS_LANGUAGE,
+  isValidGoogleMapsKey,
 } from "@/lib/googleMaps";
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -154,13 +155,15 @@ export default function VenuePage() {
   const [priceTier, setPriceTier] = useState<string | undefined>(undefined);
   const [isSaving, setIsSaving] = useState(false);
 
+  const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const isKeyValid = isValidGoogleMapsKey(googleMapsApiKey);
+
   useEffect(() => {
-    if (venue?.photoReference) {
-      const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
-      const url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${venue.photoReference}&key=${apiKey}`;
+    if (venue?.photoReference && isKeyValid) {
+      const url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${venue.photoReference}&key=${googleMapsApiKey}`;
       setPhotoUrl(url);
     }
-  }, [venue]);
+  }, [venue, isKeyValid, googleMapsApiKey]);
 
 
   useEffect(() => {
@@ -180,7 +183,7 @@ export default function VenuePage() {
 
   const { isLoaded, loadError } = useJsApiLoader({
     id: GOOGLE_MAPS_LOADER_ID,
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
+    googleMapsApiKey: isKeyValid ? googleMapsApiKey : "",
     libraries: GOOGLE_MAPS_LIBRARIES,
     region: GOOGLE_MAPS_REGION,
     language: GOOGLE_MAPS_LANGUAGE,
@@ -346,7 +349,11 @@ export default function VenuePage() {
 
         <Card className="h-64 overflow-hidden">
           {loadError && <div>Map cannot be loaded right now.</div>}
-          {isLoaded && !loadError ? (
+          {!isKeyValid ? (
+            <div className="flex items-center justify-center h-full bg-muted p-4 text-center">
+              <p className="text-sm text-muted-foreground">Google Maps key missing or invalid.</p>
+            </div>
+          ) : isLoaded && !loadError ? (
             <GoogleMap
               mapContainerStyle={mapContainerStyle}
               center={center}

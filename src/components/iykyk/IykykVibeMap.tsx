@@ -16,6 +16,7 @@ import {
   GOOGLE_MAPS_LIBRARIES,
   GOOGLE_MAPS_REGION,
   GOOGLE_MAPS_LANGUAGE,
+  isValidGoogleMapsKey,
 } from "@/lib/googleMaps";
 import { CATEGORIES } from "@/config/categories";
 import type { Venue } from '@/types/venue';
@@ -69,7 +70,8 @@ export function IykykVibeMap() {
   }, [firestore, venueSlug]);
 
   const { data: venues, isLoading: isVenuesLoading } = useCollection<WithId<Venue>>(venuesQuery);
-  const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
+  const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const isKeyValid = isValidGoogleMapsKey(googleMapsApiKey);
 
   const mapPins = useMemo(() => {
     if (!venues) return [];
@@ -95,7 +97,7 @@ export function IykykVibeMap() {
 
   const { isLoaded, loadError } = useJsApiLoader({
     id: GOOGLE_MAPS_LOADER_ID,
-    googleMapsApiKey,
+    googleMapsApiKey: isKeyValid ? googleMapsApiKey : "",
     libraries: GOOGLE_MAPS_LIBRARIES,
     region: GOOGLE_MAPS_REGION,
     language: GOOGLE_MAPS_LANGUAGE,
@@ -211,11 +213,21 @@ export function IykykVibeMap() {
   }), [mapStyles]);
 
   if (loadError) {
-    return <div className="text-destructive p-6">Error loading maps.</div>;
+    return <div className="text-destructive p-6">Error loading maps. Check your API key.</div>;
   }
   
-  if (!googleMapsApiKey) {
-    return <div className="p-6 text-center text-muted-foreground">Google Maps API key is missing.</div>;
+  if (!isKeyValid) {
+    return (
+      <div className="p-10 text-center flex flex-col items-center justify-center h-full space-y-4">
+        <div className="bg-destructive/10 p-4 rounded-full">
+          <Utensils className="h-10 w-10 text-destructive" />
+        </div>
+        <h3 className="text-xl font-bold">Google Maps API Key Missing</h3>
+        <p className="text-muted-foreground max-w-xs">
+          Please set a valid <code>GOOGLE_MAPS_API_KEY</code> in your environment variables to view the vibe map.
+        </p>
+      </div>
+    );
   }
 
   const categoryData = {
