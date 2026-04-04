@@ -58,7 +58,7 @@ const nextConfig = {
   // This maps the non-prefixed GOOGLE_MAPS_API_KEY (often used for secrets) 
   // to the NEXT_PUBLIC_ version required by client components.
   env: {
-    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || process.env.GOOGLE_MAPS_API_KEY || "",
   }
 };
 

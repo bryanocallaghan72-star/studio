@@ -224,7 +224,7 @@ export function IykykVibeMap() {
         </div>
         <h3 className="text-xl font-bold">Google Maps API Key Missing</h3>
         <p className="text-muted-foreground max-w-xs">
-          Please set a valid <code>GOOGLE_MAPS_API_KEY</code> in your environment variables to view the vibe map.
+          Please set a valid <code>NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code> in your environment variables to view the vibe map.
         </p>
       </div>
     );

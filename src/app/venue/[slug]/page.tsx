@@ -351,7 +351,7 @@ export default function VenuePage() {
           {loadError && <div>Map cannot be loaded right now.</div>}
           {!isKeyValid ? (
             <div className="flex items-center justify-center h-full bg-muted p-4 text-center">
-              <p className="text-sm text-muted-foreground">Google Maps key missing or invalid.</p>
+              <p className="text-sm text-muted-foreground">Google Maps key missing. Please set <code>NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code>.</p>
             </div>
           ) : isLoaded && !loadError ? (
             <GoogleMap
