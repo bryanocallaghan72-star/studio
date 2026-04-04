@@ -3,17 +3,9 @@
 import { useMemo } from 'react';
 
 /**
- * Type workaround for Google Maps if global types are not installed.
+ * The Google Maps types are provided by the @react-google-maps/api package.
+ * We no longer need the custom declare global workaround as it caused conflicts.
  */
-declare global {
-  namespace google.maps {
-    interface MapTypeStyle {
-      elementType?: string;
-      featureType?: string;
-      stylers: Array<Record<string, string | number | boolean>>;
-    }
-  }
-}
 
 export const MAP_THEMES = {
   dawn: {
