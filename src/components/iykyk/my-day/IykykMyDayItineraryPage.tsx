@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -47,7 +46,7 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
     
     const getImageForStop = (stop: ItineraryStop) => {
         const venue = appData.map.pins.find(v => v.name === stop.location);
-        if (!venue) return PlaceHolderImages[0]; // fallback
+        if (!venue) return PlaceHolderImages[0];
         
         const typeToImage: { [key: string]: string } = {
             'Brunch': 'coffee-1',
@@ -72,18 +71,18 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 300 }}
             transition={{ duration: 0.3 }}
-            className="flex flex-col h-full bg-background overflow-y-auto p-6"
+            className="flex flex-col h-full bg-[#080a0d] overflow-y-auto p-6"
         >
-            <div className="flex items-center justify-between mb-4">
-                <Button onClick={onBack} variant="ghost" size="icon" className="text-foreground hover:bg-accent"><ArrowLeft size={24} /></Button>
+            <div className="flex items-center justify-between mb-8">
+                <Button onClick={onBack} variant="ghost" size="icon" className="text-[#f4f0e8] hover:bg-white/5"><ArrowLeft size={20} /></Button>
                 <div className='text-center'>
-                    <h2 className="text-2xl font-bold text-foreground">{itineraryData.title}</h2>
-                    <p className="text-muted-foreground text-sm">{itineraryData.description}</p>
+                    <h2 className="text-xl font-bold text-[#f4f0e8]">{itineraryData.title}</h2>
+                    <p className="text-[11px] font-semibold tracking-wider uppercase text-muted-foreground">{itineraryData.description}</p>
                 </div>
                 <div className="w-10"></div>
             </div>
 
-            <div className="flex-grow space-y-4 pt-4">
+            <div className="flex-grow space-y-4">
                 <AnimatePresence>
                     {itineraryData.stops.map((stop: ItineraryStop) => {
                         const HoldIcon = stop.isHeld ? Lock : LockOpen;
@@ -97,18 +96,18 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.2 }}
                             >
-                                <Card className={cn('rounded-2xl p-4 shadow-lg flex items-center transition-all duration-300 bg-card', stop.isHeld ? 'border-2 border-primary' : 'border-transparent')}>
+                                <Card className={cn('rounded-2xl p-4 shadow-lg flex items-center transition-all duration-300 bg-[#0d1117]', stop.isHeld ? 'border-2' : 'border-white/[0.06]')} style={{ borderColor: stop.isHeld ? 'var(--phase-accent)' : undefined }}>
                                     <Button onClick={() => onToggleHold(stop)} variant="ghost" size="icon" className="flex-shrink-0 mr-4 group">
-                                        <HoldIcon size={24} className={stop.isHeld ? 'text-primary' : 'text-muted-foreground group-hover:text-primary transition-colors'} />
+                                        <HoldIcon size={20} className={stop.isHeld ? '' : 'text-muted-foreground group-hover:opacity-100 transition-opacity'} style={{ color: stop.isHeld ? 'var(--phase-accent)' : undefined }} />
                                     </Button>
-                                    <div className="w-16 h-16 bg-primary/20 rounded-xl overflow-hidden flex-shrink-0">
-                                        <Image src={image.imageUrl} alt={stop.location} width={64} height={64} className="w-full h-full object-cover" data-ai-hint={image.imageHint} />
+                                    <div className="w-14 h-14 bg-white/5 rounded-xl overflow-hidden flex-shrink-0 border border-white/5">
+                                        <Image src={image.imageUrl} alt={stop.location} width={56} height={56} className="w-full h-full object-cover" data-ai-hint={image.imageHint} />
                                     </div>
                                     <div className="ml-4 flex-grow">
-                                        <p className="font-semibold text-foreground">{stop.title}</p>
-                                        <p className="text-sm text-muted-foreground">{stop.location}</p>
+                                        <p className="text-[10px] font-bold tracking-wider uppercase" style={{ color: 'var(--phase-accent)' }}>{stop.time}</p>
+                                        <p className="text-[15px] font-semibold text-[#f4f0e8] leading-tight mt-0.5">{stop.location}</p>
                                     </div>
-                                    <Button onClick={() => setEditingItem(stop)} variant="ghost" size="icon" className="text-muted-foreground hover:text-primary transition-colors flex-shrink-0 ml-4"><RefreshCw size={20} /></Button>
+                                    <Button onClick={() => setEditingItem(stop)} variant="ghost" size="icon" className="text-muted-foreground hover:bg-white/5 flex-shrink-0 ml-2"><RefreshCw size={16} /></Button>
                                 </Card>
                             </motion.div>
                         );
@@ -116,40 +115,37 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
                 </AnimatePresence>
             </div>
 
-            <div className="mt-auto flex space-x-4 pt-4 sticky bottom-0 bg-background py-4">
-                <Button className="flex-grow h-14 font-bold text-lg shadow-2xl" onClick={() => onStartPlan(itineraryData)}>Start Plan</Button>
-                <Button variant="outline" className="flex-grow h-14 font-bold text-lg shadow-2xl bg-card" onClick={onShuffle} disabled={isPending}>
-                    {isPending ? <Loader2 className="animate-spin mr-2" /> : <Shuffle className="mr-2" />}
+            <div className="mt-8 flex space-x-3 sticky bottom-0 bg-[#080a0d] py-4">
+                <Button className="flex-grow h-12 btn-phase-cta" onClick={() => onStartPlan(itineraryData)}>Start Plan</Button>
+                <Button variant="outline" className="flex-grow h-12 btn-phase-ghost" onClick={onShuffle} disabled={isPending}>
+                    {isPending ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <Shuffle className="mr-2 h-4 w-4" />}
                     Shuffle
                 </Button>
             </div>
 
             {editingItem && (
                 <Dialog open={!!editingItem} onOpenChange={() => setEditingItem(null)}>
-                    <DialogContent>
+                    <DialogContent className="bg-card border-border rounded-2xl">
                         <DialogHeader>
-                            <DialogTitle>Swap {editingItem.location}</DialogTitle>
-                            <DialogDescription>Find an alternative for your itinerary.</DialogDescription>
+                            <DialogTitle className="text-[#f4f0e8]">Swap Stop</DialogTitle>
+                            <DialogDescription className="text-muted-foreground">Find an alternative for your itinerary.</DialogDescription>
                         </DialogHeader>
                         <div className="relative mb-4">
-                            <Search size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                            <Input type="text" value={swapQuery} onChange={(e) => setSwapQuery(e.target.value)} placeholder={`Search ${getItemType(editingItem)} venues...`} className="w-full pl-10 pr-4 py-3" />
+                            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                            <Input type="text" value={swapQuery} onChange={(e) => setSwapQuery(e.target.value)} placeholder={`Search ${getItemType(editingItem)} venues...`} className="w-full pl-10 pr-4 py-2 bg-white/5 border-white/10 text-[#f4f0e8]" />
                         </div>
-                        <div className="space-y-4 max-h-64 overflow-y-auto">
-                            {filteredSwapOptions.map((item, index) => {
-                                const image = PlaceHolderImages.find(p => p.id === 'sushi-1')!;
-                                return (
-                                    <button key={index} onClick={() => handleSwapClick(editingItem, item)} className="w-full flex items-center bg-secondary rounded-xl p-3 shadow-lg transition-transform duration-100 hover:scale-[1.02] active:scale-[0.98]">
-                                        <div className="w-16 h-16 bg-gray-700 rounded-xl overflow-hidden flex-shrink-0">
-                                            <Image src={image.imageUrl} alt={item.name} width={64} height={64} className="w-full h-full object-cover" data-ai-hint={image.imageHint} />
-                                        </div>
-                                        <div className="ml-4 text-left">
-                                            <p className="text-foreground font-semibold">{item.name}</p>
-                                            <p className="text-sm text-muted-foreground line-clamp-2">{item.description}</p>
-                                        </div>
-                                    </button>
-                                )
-                            })}
+                        <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
+                            {filteredSwapOptions.map((item, index) => (
+                                <button key={index} onClick={() => handleSwapClick(editingItem, item)} className="w-full flex items-center bg-white/5 border border-white/5 rounded-xl p-3 transition-all hover:bg-white/10 hover:border-white/10">
+                                    <div className="w-12 h-12 bg-white/5 rounded-lg overflow-hidden flex-shrink-0">
+                                        <Image src={PlaceHolderImages.find(p => p.id === 'sushi-1')!.imageUrl} alt={item.name} width={48} height={48} className="w-full h-full object-cover" />
+                                    </div>
+                                    <div className="ml-4 text-left">
+                                        <p className="text-[#f4f0e8] font-semibold text-sm">{item.name}</p>
+                                        <p className="text-[11px] text-muted-foreground line-clamp-1">{item.description}</p>
+                                    </div>
+                                </button>
+                            ))}
                         </div>
                     </DialogContent>
                 </Dialog>

@@ -9,7 +9,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { EventAndItinerarySelectionPage } from './my-day/EventAndItinerarySelectionPage';
 import { IykykMyDayItineraryPage } from './my-day/IykykMyDayItineraryPage';
-import { appData } from '@/lib/data';
 import { generateItinerary } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 
@@ -81,14 +80,13 @@ export function IykykMyDay() {
 
         const request = {
             ...currentVibe.request,
-            heldStops: heldStops.map(({ id, isHeld, ...rest }) => rest), // Remove client-side fields
+            heldStops: heldStops.map(({ id, isHeld, ...rest }) => rest),
             numberOfNewStops: unlockedStopsCount,
         };
 
         const result = await generateItinerary(request);
 
         if (result.success) {
-            // Re-add client-side IDs to new stops
             const newStopsWithIds = result.success.stops.map((stop, index) => ({
                 ...stop,
                 id: `${stop.title}-${index}-${Date.now()}`
@@ -138,7 +136,7 @@ export function IykykMyDay() {
     }
 
     return (
-        <Card className="w-full flex flex-col min-h-[40rem] overflow-hidden bg-transparent border-none shadow-none relative">
+        <div className="w-full flex flex-col min-h-[40rem] overflow-hidden bg-background border-none relative">
             <AnimatePresence mode="wait">
                 {isShuffling && view === 'itinerary' && (
                     <motion.div
@@ -148,7 +146,7 @@ export function IykykMyDay() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                     >
-                       <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                       <Loader2 className="h-10 w-10 animate-spin" style={{ color: 'var(--phase-accent)' }} />
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -158,13 +156,13 @@ export function IykykMyDay() {
             </AnimatePresence>
 
             <Dialog open={isConfirmationOpen} onOpenChange={setConfirmationOpen}>
-                <DialogContent>
+                <DialogContent className="bg-card border-border rounded-2xl">
                     <DialogHeader className="items-center text-center">
-                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 mb-2">
-                          <CheckCircle2 className="h-6 w-6 text-green-600" />
+                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100/10 mb-2">
+                          <CheckCircle2 className="h-6 w-6 text-green-500" />
                         </div>
-                        <DialogTitle>{itinerary?.title}</DialogTitle>
-                        <DialogDescription className="text-center pt-2">
+                        <DialogTitle className="text-hero !text-2xl">{itinerary?.title}</DialogTitle>
+                        <DialogDescription className="text-center pt-2 text-muted-foreground">
                             {getConfirmationMessage()}
                         </DialogDescription>
                     </DialogHeader>
@@ -176,15 +174,15 @@ export function IykykMyDay() {
                                 return timeA.getTime() - timeB.getTime();
                             }).map((stop, index) => (
                                 <div key={index} className="flex items-center justify-center gap-4">
-                                    <div className="text-lg font-bold text-primary">{stop.time}</div>
-                                    <div className="font-semibold">{stop.location}</div>
+                                    <div className="text-lg font-bold" style={{ color: 'var(--phase-accent)' }}>{stop.time}</div>
+                                    <div className="font-semibold text-card-foreground">{stop.location}</div>
                                 </div>
                             ))}
                         </div>
                     )}
-                    <Button onClick={() => setConfirmationOpen(false)} className="w-full">Let's Go!</Button>
+                    <Button onClick={() => setConfirmationOpen(false)} className="w-full btn-phase-cta h-12">Let's Go!</Button>
                 </DialogContent>
             </Dialog>
-        </Card>
+        </div>
     );
 }

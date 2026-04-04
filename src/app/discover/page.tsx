@@ -1,8 +1,7 @@
-
 'use client';
 
 import { MobileNav } from "@/components/iykyk/MobileNav";
-import { Card, CardDescription, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
 import { featureData } from '@/lib/features';
@@ -10,6 +9,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from "@/components/ui/button";
 import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code, Utensils, Star, Wrench } from 'lucide-react';
 import { SurpriseMe } from "@/components/iykyk/SurpriseMe";
+import { useDemoTime } from "@/context/DemoTimeContext";
 
 const iconMap: { [key: string]: React.ElementType } = {
     Sparkles,
@@ -32,57 +32,47 @@ const iconMap: { [key: string]: React.ElementType } = {
 };
 
 export default function DiscoverPage() {
+  const { currentPhase } = useDemoTime();
 
   return (
-    <div className="discover-text-override flex min-h-screen w-full flex-col bg-background">
-      
-      <div className="flex flex-1 flex-col pb-24">
-        <div className="p-4 md:p-6 text-center">
-            <h2 className="text-3xl font-bold tracking-tight">Your Cultural Concierge</h2>
-            <p className="text-muted-foreground mt-2">Your real-time cultural portal to Bondi.</p>
+    <div className="flex min-h-screen w-full flex-col">
+      <div className="flex flex-1 flex-col pb-24 max-w-lg mx-auto w-full">
+        <div className="p-8 pt-12 text-center space-y-2">
+            <h2 className="text-hero leading-tight">Your Cultural Concierge</h2>
+            <p className="text-[13px] font-light text-muted-foreground">Your real-time cultural portal to Bondi.</p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 px-4 md:px-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2">
             {featureData.map((feature) => {
                 const image = PlaceHolderImages.find(img => img.id === feature.imageId);
-                const Icon = iconMap[feature.icon as keyof typeof iconMap];
+                const displayTitle = feature.title.replace('iykyk ', '');
 
                 return (
                   <Link key={feature.title} href={feature.href}>
-                      <Card className="group relative w-full overflow-hidden rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 bg-card h-48 flex items-end justify-start">
-                          {image ? (
-                            <>
-                              <Image
-                                src={image.imageUrl}
-                                alt={feature.title}
-                                width={image.width}
-                                height={image.height}
-                                className="absolute inset-0 object-cover w-full h-full transition-transform group-hover:scale-105"
-                                data-ai-hint={image.imageHint}
-                              />
-                               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
-                            </>
-                          ) : (
-                            <div className="absolute inset-0 bg-secondary" />
+                      <Card className="group relative w-full aspect-[4/3] overflow-hidden rounded-2xl border-border bg-card">
+                          {image && (
+                            <Image
+                              src={image.imageUrl}
+                              alt={feature.title}
+                              fill
+                              className="absolute inset-0 object-cover transition-transform duration-700 group-hover:scale-110"
+                              data-ai-hint={image.imageHint}
+                            />
                           )}
+                          
+                          <div className="absolute inset-0 scrim-bottom" />
                          
-                          <div className="relative z-10 p-4 w-full">
-                             <div className="flex items-center gap-3">
-                                  <div className="rounded-full bg-black/30 backdrop-blur-sm p-3">
-                                     {Icon && <Icon className="h-6 w-6 icon-color" />}
-                                  </div>
-                                  <div>
-                                     <CardTitle
-                                        className="card-title text-lg font-semibold"
-                                      >
-                                        {feature.title}
-                                      </CardTitle>
-                                     <CardDescription
-                                        className="card-description"
-                                      >
-                                        {feature.description}
-                                      </CardDescription>
-                                  </div>
+                          <div className="absolute inset-0 flex flex-col justify-end p-5">
+                             <div className="space-y-1">
+                                  <p className="text-[10px] font-bold tracking-[0.1em] uppercase" style={{ color: 'var(--phase-accent)' }}>
+                                    {feature.icon}
+                                  </p>
+                                  <CardTitle className="text-[15px] font-semibold text-card-foreground">
+                                    {displayTitle}
+                                  </CardTitle>
+                                  <p className="text-[11px] leading-relaxed text-muted-foreground line-clamp-2">
+                                    {feature.description}
+                                  </p>
                               </div>
                           </div>
                       </Card>
@@ -91,32 +81,30 @@ export default function DiscoverPage() {
             })}
         </div>
 
-        <div className="px-4 md:px-6 mt-8 space-y-8">
+        <div className="px-4 mt-12 space-y-12">
              <SurpriseMe />
 
-            <Card>
-                <div className="p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                        <Camera className="h-8 w-8 text-purple-500" />
-                        <h2 className="text-3xl font-bold tracking-tight">iykyk Lens</h2>
-                    </div>
-                    <p className="text-muted-foreground">
-                        The future: an AR-powered view of your city's vibe.
-                    </p>
-                     <p className="text-sm font-semibold text-purple-500 mt-2">Walk to Unlock</p>
-                    <Link href="/ar">
-                        <Button variant="secondary" className="w-full bg-purple-500/10 text-purple-500 hover:bg-purple-500/20 mt-4">
-                           <Sparkles className="mr-2 h-5 w-5" />
-                            Launch AR Mode
-                        </Button>
-                    </Link>
+            <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                    <Camera className="h-5 w-5" style={{ color: 'var(--phase-accent)' }} />
+                    <h2 className="text-xl font-bold tracking-tight text-hero !text-2xl">iykyk Lens</h2>
                 </div>
-            </Card>
+                <p className="text-[13px] font-light text-muted-foreground leading-relaxed">
+                    The future: an AR-powered view of your city's vibe.
+                    <span className="block font-semibold mt-1" style={{ color: 'var(--phase-accent)' }}>Walk to Unlock</span>
+                </p>
+                <Link href="/ar">
+                    <Button variant="outline" className="w-full btn-phase-cta h-12">
+                       <Sparkles className="mr-2 h-4 w-4" />
+                        Launch AR Mode
+                    </Button>
+                </Link>
+            </div>
 
-            <div className="text-center">
-                <Button asChild variant="outline">
+            <div className="text-center pb-8">
+                <Button asChild variant="ghost" className="text-section-label">
                     <Link href="/admin">
-                        <Wrench className="mr-2 h-4 w-4" />
+                        <Wrench className="mr-2 h-3 w-3" />
                         Admin Panel
                     </Link>
                 </Button>

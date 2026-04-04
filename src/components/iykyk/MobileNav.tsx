@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -30,7 +29,7 @@ export function MobileNav() {
   const isProfileActive = pathname.startsWith('/profile');
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 p-1 backdrop-blur-sm md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/[0.04] bg-[#080a0d] px-2 py-3 backdrop-blur-md md:hidden">
       <div className="grid h-full max-w-lg grid-cols-6 mx-auto">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
@@ -38,29 +37,37 @@ export function MobileNav() {
             <Link
               key={item.label}
               href={item.href}
-              className={cn(
-                'group flex flex-col items-center justify-center p-2 rounded-lg transition-colors',
-                isActive
-                  ? 'text-primary'
-                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
-              )}
+              className="relative flex flex-col items-center justify-center p-2 rounded-lg transition-colors"
             >
-              <item.icon className="h-6 w-6" />
-              <span className="text-xs font-medium sr-only">{item.label}</span>
+              <item.icon 
+                className="h-6 w-6 transition-colors duration-300" 
+                style={{ color: isActive ? 'var(--phase-accent)' : 'rgba(244, 240, 232, 0.2)' }}
+              />
+              {isActive && (
+                <div 
+                  className="absolute -bottom-1 h-1 w-1 rounded-full animate-in fade-in zoom-in duration-500"
+                  style={{ backgroundColor: 'var(--phase-accent)' }}
+                />
+              )}
+              <span className="sr-only">{item.label}</span>
             </Link>
           );
         })}
         <Link
           href={profileHref}
-          className={cn(
-            'group flex flex-col items-center justify-center p-2 rounded-lg transition-colors',
-            isProfileActive
-              ? 'text-primary'
-              : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
-          )}
+          className="relative flex flex-col items-center justify-center p-2 rounded-lg transition-colors"
         >
-          <User className="h-6 w-6" />
-          <span className="text-xs font-medium sr-only">Profile</span>
+          <User 
+            className="h-6 w-6 transition-colors duration-300"
+            style={{ color: isProfileActive ? 'var(--phase-accent)' : 'rgba(244, 240, 232, 0.2)' }}
+          />
+          {isProfileActive && (
+            <div 
+              className="absolute -bottom-1 h-1 w-1 rounded-full animate-in fade-in zoom-in duration-500"
+              style={{ backgroundColor: 'var(--phase-accent)' }}
+            />
+          )}
+          <span className="sr-only">Profile</span>
         </Link>
       </div>
     </nav>
