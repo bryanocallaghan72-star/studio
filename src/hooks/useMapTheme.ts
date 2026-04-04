@@ -3,8 +3,9 @@
 import { useMemo } from 'react';
 
 /**
+ * @fileoverview Hook to manage Google Maps JSON themes for each phase.
  * The Google Maps types are provided by the @react-google-maps/api package.
- * We no longer need the custom declare global workaround as it caused conflicts.
+ * We have removed the manual declare global block to avoid type conflicts with the library.
  */
 
 export const MAP_THEMES = {
@@ -48,6 +49,10 @@ export const MAP_THEMES = {
 
 export type MapPhase = keyof typeof MAP_THEMES;
 
+/**
+ * Builds the styles array for Google Maps.
+ * Uses the native google.maps.MapTypeStyle type from the library.
+ */
 function buildMapStyles(phase: MapPhase): google.maps.MapTypeStyle[] {
   const t = MAP_THEMES[phase];
   return [
