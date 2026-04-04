@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
 export default function LandingPage() {
@@ -12,7 +11,8 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-black text-white">
+    <div className="fixed inset-0 z-[10001] flex flex-col items-center justify-center overflow-hidden bg-[#0a0c0f] text-[#f4f0e8]">
+      {/* Cinematic Video Background */}
       <video
         src="https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-taryn-elliott-7876874__2160p_.mp4"
         poster="https://images.unsplash.com/photo-1593384581543-0a96116d34b6?q=80&w=2070&auto=format&fit=crop"
@@ -20,29 +20,43 @@ export default function LandingPage() {
         loop
         muted
         playsInline
-        className="absolute top-0 left-0 h-full w-full object-cover"
-        data-ai-hint="Bondi sunset"
+        className="absolute inset-0 h-full w-full object-cover"
+        style={{ width: '100%', height: '100%' }}
       />
-      <div className="absolute inset-0 bg-black/50" />
+      
+      {/* Premium Overlay Gradient */}
+      <div 
+        className="absolute inset-0" 
+        style={{ 
+          background: 'linear-gradient(180deg, rgba(8,10,13,0.4) 0%, rgba(8,10,13,0.2) 40%, rgba(8,10,13,0.6) 100%)' 
+        }} 
+      />
+
       <motion.div
-        className="relative z-10 text-center px-6"
+        className="relative z-10 text-center px-6 flex flex-col items-center"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
+        transition={{ duration: 1.2, ease: 'easeOut' }}
       >
-        <h1 className="text-6xl font-black tracking-tighter text-[#f4f0e8] md:text-8xl">
+        <h1 className="text-[clamp(48px,8vw,80px)] font-bold tracking-[-0.04em] leading-none text-[#f4f0e8] lowercase">
           iykyk
         </h1>
-        <p className="mt-4 text-lg text-[#f4f0e8]/60 font-light tracking-wide md:text-xl">
+        <p className="mt-[12px] text-[clamp(14px,2vw,18px)] font-light tracking-[0.1em] text-[#f4f0e8]/60 uppercase">
           Your Cultural Concierge for Bondi
         </p>
-        <Button
+        
+        <button
           onClick={handleEnter}
-          className="mt-12 h-14 rounded-full border border-[#f4f0e8]/30 bg-transparent px-12 text-lg font-medium text-[#f4f0e8] backdrop-blur-md transition-all hover:bg-[#f4f0e8]/10 active:scale-95"
+          className="mt-[48px] px-[40px] py-[14px] text-[13px] font-medium tracking-[0.15em] uppercase text-[#f4f0e8] border border-[#f4f0e8]/30 rounded-[32px] bg-transparent transition-all duration-500 hover:bg-[#f4f0e8]/10 hover:border-[#f4f0e8]/60 active:scale-95 backdrop-blur-sm"
         >
           Enter Bondi
-        </Button>
+        </button>
       </motion.div>
+
+      {/* Subtle Attribution */}
+      <div className="absolute bottom-10 text-[10px] font-semibold text-[#f4f0e8]/20 tracking-[0.2em] uppercase">
+        Lifestyle OS v1.0
+      </div>
     </div>
   );
 }
