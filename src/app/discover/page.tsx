@@ -46,11 +46,15 @@ export default function DiscoverPage() {
             {featureData.map((feature) => {
                 const image = PlaceHolderImages.find(img => img.id === feature.imageId);
                 const displayTitle = feature.title.replace('iykyk ', '');
+                const Icon = iconMap[feature.icon];
+
+                // Day mode specific instruction: use fallback for Alignment
+                const useAlignmentDayFallback = displayTitle === 'Alignment' && currentPhase === 'day';
 
                 return (
                   <Link key={feature.title} href={feature.href}>
                       <Card className="group relative w-full aspect-[4/3] overflow-hidden rounded-2xl border-border bg-card">
-                          {image && (
+                          {image && !useAlignmentDayFallback ? (
                             <Image
                               src={image.imageUrl}
                               alt={feature.title}
@@ -58,6 +62,15 @@ export default function DiscoverPage() {
                               className="absolute inset-0 object-cover transition-transform duration-700 group-hover:scale-110"
                               data-ai-hint={image.imageHint}
                             />
+                          ) : (
+                            <div className="absolute inset-0 flex items-center justify-center bg-phase-bg-mid">
+                                {Icon && (
+                                  <Icon 
+                                    className="h-20 w-20 opacity-[0.08]" 
+                                    style={{ color: 'var(--phase-accent)' }} 
+                                  />
+                                )}
+                            </div>
                           )}
                           
                           <div className="absolute inset-0 scrim-bottom" />
