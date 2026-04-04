@@ -12,7 +12,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden bg-black text-white">
+    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-black text-white">
       <video
         src="https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-taryn-elliott-7876874__2160p_.mp4"
         poster="https://images.unsplash.com/photo-1593384581543-0a96116d34b6?q=80&w=2070&auto=format&fit=crop"
