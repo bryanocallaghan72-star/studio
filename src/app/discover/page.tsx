@@ -73,17 +73,35 @@ export default function DiscoverPage() {
                             </div>
                           )}
                           
-                          <div className="absolute inset-0 scrim-bottom" />
+                          {/* Strengthened Scrim Overlay */}
+                          <div 
+                            className="absolute inset-0" 
+                            style={{ 
+                              background: 'linear-gradient(to top, rgba(8,10,13,0.96) 0%, rgba(8,10,13,0.75) 35%, rgba(8,10,13,0.3) 60%, transparent 100%)' 
+                            }} 
+                          />
                          
-                          <div className="absolute inset-0 flex flex-col justify-end p-5">
+                          <div className="absolute inset-0 flex flex-col justify-end p-5 z-10">
                              <div className="space-y-1">
-                                  <p className="text-[10px] font-bold tracking-[0.1em] uppercase" style={{ color: 'var(--phase-accent)' }}>
+                                  {/* Eyebrow Label: Spec color with shadow */}
+                                  <p 
+                                    className="text-[10px] font-bold tracking-[0.1em] uppercase" 
+                                    style={{ 
+                                      color: '#c4762a',
+                                      textShadow: '0 1px 4px rgba(0,0,0,0.5)'
+                                    }}
+                                  >
                                     {feature.icon}
                                   </p>
-                                  <CardTitle className="text-[15px] font-semibold text-card-foreground">
+                                  {/* Title: Spec white bold */}
+                                  <CardTitle className="text-[15px] font-semibold text-white">
                                     {displayTitle}
                                   </CardTitle>
-                                  <p className="text-[11px] leading-relaxed text-muted-foreground line-clamp-2">
+                                  {/* Description: Spec white/75 */}
+                                  <p 
+                                    className="text-[11px] leading-relaxed line-clamp-2"
+                                    style={{ color: 'rgba(255,255,255,0.75)' }}
+                                  >
                                     {feature.description}
                                   </p>
                               </div>
