@@ -11,18 +11,24 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="fixed inset-0 z-[10001] flex flex-col items-center justify-center overflow-hidden bg-[#0a0c0f] text-[#f4f0e8]">
+    <div className="fixed inset-0 z-[10001] flex flex-col items-center justify-center overflow-hidden bg-[#0a0c0f] text-[#f4f0e8] w-full h-[100dvh]">
       {/* Cinematic Video Background */}
       <video
-        src="https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-taryn-elliott-7876874__2160p_.mp4"
-        poster="https://images.unsplash.com/photo-1593384581543-0a96116d34b6?q=80&w=2070&auto=format&fit=crop"
         autoPlay
-        loop
         muted
+        loop
         playsInline
-        className="absolute inset-0 h-full w-full object-cover"
-        style={{ width: '100%', height: '100%' }}
-      />
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          opacity: 0.7
+        }}
+      >
+        <source src="/videos/bondi-hero.mp4" type="video/mp4" />
+      </video>
       
       {/* Premium Overlay Gradient */}
       <div 
