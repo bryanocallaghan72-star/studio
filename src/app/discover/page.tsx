@@ -35,11 +35,21 @@ export default function DiscoverPage() {
   const { currentPhase } = useDemoTime();
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-[#05014a]">
+    <div className="flex min-h-screen w-full flex-col bg-[#f2ece0]">
       <div className="flex flex-1 flex-col pb-24 max-w-lg mx-auto w-full">
         <div className="p-8 pt-12 text-center space-y-2">
-            <h2 className="text-hero leading-tight">Your Cultural Concierge</h2>
-            <p className="text-[13px] font-light text-muted-foreground">Your real-time cultural portal to Bondi.</p>
+            <h2 
+              className="text-hero leading-tight" 
+              style={{ color: '#1a1208', fontWeight: 500 }}
+            >
+              Your Cultural Concierge
+            </h2>
+            <p 
+              className="text-[13px] font-light" 
+              style={{ color: 'rgba(26,18,8,0.45)' }}
+            >
+              Your real-time cultural portal to Bondi.
+            </p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2">
