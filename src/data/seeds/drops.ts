@@ -274,7 +274,7 @@ export const STYLE_DROPS: StyleDrop[] = [
       id: 'style-drop-3',
       venueName: 'Aquabumps',
       venueId: 'aquabumps',
-      venueImageUrl: 'https://images.unsplash.com/photo-1534279435138-3e414156d05f?q=80&w=2070&auto=format&fit=crop',
+      venueImageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80',
       title: 'Signed Mini-Print',
       description: 'Claim a free, signed mini-print from photographer Eugene Tan. Today only.',
       expiresAt: hoursFromNow(8),
