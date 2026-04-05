@@ -30,7 +30,10 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="fixed inset-0 z-[10001] flex flex-col items-center justify-center overflow-hidden bg-[#05014a] text-[#f4f0e8] w-full h-[100dvh]">
+    <div 
+      className="fixed inset-0 z-[10001] flex flex-col items-center justify-start overflow-hidden bg-[#05014a] text-[#f4f0e8] w-full h-[100dvh]"
+      style={{ paddingTop: 'clamp(80px, 15vh, 140px)' }}
+    >
       
       {/* Background Video */}
       <video
