@@ -13,6 +13,7 @@ import { useDeals } from '@/hooks/useDeals';
 import type { Deal } from '@/data/seeds/drops';
 import { useVenues } from '@/hooks/useVenues';
 import { Skeleton } from '../ui/skeleton';
+import { cn } from '@/lib/utils';
 
 const categories = [
     { name: 'All', icon: Ticket },
@@ -25,18 +26,8 @@ const categories = [
 
 
 const DealCardSkeleton = () => (
-  <Card className="group overflow-hidden relative bg-card">
-    <Skeleton className="h-48 w-full" />
-    <CardContent className="p-4">
-      <div className="flex justify-between items-start">
-        <div>
-          <Skeleton className="h-5 w-40 mb-2" />
-          <Skeleton className="h-4 w-24" />
-          <Skeleton className="h-3 w-32 mt-2" />
-        </div>
-        <Skeleton className="h-9 w-20" />
-      </div>
-    </CardContent>
+  <Card className="group overflow-hidden relative bg-card h-64">
+    <Skeleton className="h-full w-full" />
   </Card>
 );
 
@@ -72,10 +63,8 @@ export function Deals() {
         if (!deals) return [];
         return deals.filter(deal => {
             if (activeCategory === 'All') return true;
-            // Corrected and safe-guarded filtering logic
             if (activeCategory === 'Weekend') return deal.tags?.includes('Weekend');
             if (activeCategory === 'Mid-week') return !deal.tags?.includes('Weekend');
-            // Default category filtering
             return deal.category === activeCategory;
         });
     }, [deals, activeCategory]);
@@ -83,88 +72,101 @@ export function Deals() {
     const isLoading = areDealsLoading || areVenuesLoading;
 
     return (
-        <>
-            <section>
-                <div className="flex items-center gap-3 mb-4">
-                     <Ticket className="h-8 w-8 text-accent" />
-                     <h2 className="text-3xl font-bold tracking-tight">iykyk Deals</h2>
+        <div className="flex flex-col bg-[#f2ece0] min-h-screen p-4 md:p-6 pb-32">
+            <header className="mb-6">
+                <div className="flex items-center gap-3 mb-1">
+                     <Ticket className="h-8 w-8 text-[#c4762a]" />
+                     <h2 className="text-3xl font-black tracking-tighter text-[#1a1208] italic uppercase">DEALS</h2>
                 </div>
-                <p className="text-muted-foreground mb-6">Exclusive offers, perks, and creator-powered funnels.</p>
+                <p className="text-[13px] font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest leading-none">Exclusive Bondi perks · curated</p>
+            </header>
 
-                <div className="flex overflow-x-auto pb-4 mb-6 scrollbar-hide -mx-4 px-4">
-                    {categories.map((category) => {
-                        const Icon = category.icon;
-                        return (
-                            <Button
-                                key={category.name}
-                                variant={activeCategory === category.name ? 'default' : 'outline'}
-                                onClick={() => setActiveCategory(category.name)}
-                                className="flex-shrink-0 mr-2 shadow-sm"
-                            >
-                                <Icon className="mr-2 h-4 w-4" />
-                                {category.name}
-                            </Button>
-                        )
-                    })}
-                </div>
+            <div className="flex overflow-x-auto pb-4 mb-6 scrollbar-hide -mx-4 px-4 gap-2">
+                {categories.map((category) => {
+                    const Icon = category.icon;
+                    const isActive = activeCategory === category.name;
+                    return (
+                        <button
+                            key={category.name}
+                            onClick={() => setActiveCategory(category.name)}
+                            className={cn(
+                                "flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold transition-all duration-200",
+                                isActive 
+                                    ? "bg-[#1a1208] text-white shadow-md" 
+                                    : "bg-[rgba(26,18,8,0.06)] text-[rgba(26,18,8,0.45)] hover:bg-[rgba(26,18,8,0.1)]"
+                            )}
+                        >
+                            <Icon className="h-3.5 w-3.5" />
+                            {category.name}
+                        </button>
+                    )
+                })}
+            </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
-                    {isLoading ? (
-                      <>
-                        <DealCardSkeleton />
-                        <DealCardSkeleton />
-                      </>
-                    ) : (
-                      filteredDeals.map(deal => {
-                         const image = PlaceHolderImages.find(img => img.id === deal.imageId);
-                         // Resolve venue name using the live data, with a fallback
-                         const venueName = venuesBySlug[deal.venueSlug]?.name ?? "A special place";
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
+                {isLoading ? (
+                  <>
+                    <DealCardSkeleton />
+                    <DealCardSkeleton />
+                  </>
+                ) : (
+                  filteredDeals.map(deal => {
+                     const image = PlaceHolderImages.find(img => img.id === deal.imageId);
+                     const venueName = venuesBySlug[deal.venueSlug]?.name ?? "A special place";
 
-                         return (
-                            <Card key={deal.id} className="group overflow-hidden relative transition-all hover:shadow-xl hover:-translate-y-1 bg-card">
-                                <div className="relative h-48 w-full">
-                                    {image ? (
-                                        <>
-                                            <Image
-                                                src={image.imageUrl}
-                                                alt={deal.description}
-                                                fill
-                                                className="object-cover w-full h-full transition-transform group-hover:scale-105"
-                                                data-ai-hint={image.imageHint}
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                                        </>
-                                    ) : (
-                                        <div className="bg-secondary h-full w-full"/>
-                                    )}
-                                </div>
-                                <CardContent className="p-4">
-                                    <div className="flex justify-between items-start">
-                                        <div>
-                                            <h3 className="text-lg font-bold">{deal.title}</h3>
-                                            <p className="text-sm text-muted-foreground">{venueName}</p>
-                                            <p className="text-xs text-accent mt-2 font-semibold">{deal.validity}</p>
-                                        </div>
-                                        <Button 
-                                            variant="secondary"
-                                            onClick={() => handleClaimDeal(deal, venueName)}
-                                        >
-                                            Claim
-                                        </Button>
+                     return (
+                        <Card key={deal.id} className="group overflow-hidden relative aspect-[16/10] transition-all hover:shadow-xl border border-black/[0.08] rounded-2xl bg-white">
+                            <div className="absolute inset-0">
+                                {image ? (
+                                    <>
+                                        <Image
+                                            src={image.imageUrl}
+                                            alt={deal.description}
+                                            fill
+                                            unoptimized
+                                            className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
+                                            data-ai-hint={image.imageHint}
+                                        />
+                                        <div 
+                                            className="absolute inset-0" 
+                                            style={{ background: 'linear-gradient(to top, rgba(8,10,13,0.85) 0%, rgba(8,10,13,0.4) 35%, transparent 55%)' }} 
+                                        />
+                                    </>
+                                ) : (
+                                    <div className="bg-secondary h-full w-full"/>
+                                )}
+                            </div>
+                            
+                            <Badge className="absolute top-3 right-3 bg-[#c4762a] text-white border-none font-black text-[10px] tracking-widest px-2 py-0.5 z-10 shadow-lg">
+                                DEAL
+                            </Badge>
+
+                            <div className="absolute inset-0 flex flex-col justify-end p-5 text-white">
+                                <div className="flex justify-between items-end gap-4">
+                                    <div className="space-y-0.5">
+                                        <h3 className="text-xl font-bold leading-tight">{deal.title}</h3>
+                                        <p className="text-sm text-white/60 font-medium">{venueName} · {deal.validity}</p>
                                     </div>
-                                    <Badge className="absolute top-2 right-2 border-accent text-accent bg-background">DEAL</Badge>
-                                </CardContent>
-                            </Card>
-                         )
-                      })
-                    )}
-                </div>
-                 {filteredDeals.length === 0 && !isLoading && (
-                    <div className="text-center py-12">
-                        <p className="text-muted-foreground">No deals available in this category right now.</p>
-                    </div>
+                                    <Button 
+                                        className="bg-[#c4762a] hover:bg-[#b06824] text-white font-bold rounded-full px-6 h-10 shadow-lg shadow-[#c4762a]/20 transition-all active:scale-95 flex-shrink-0"
+                                        onClick={() => handleClaimDeal(deal, venueName)}
+                                    >
+                                        Claim
+                                    </Button>
+                                </div>
+                            </div>
+                        </Card>
+                     )
+                  })
                 )}
-            </section>
+            </div>
+             {filteredDeals.length === 0 && !isLoading && (
+                <div className="text-center py-24 px-6 border-2 border-dashed border-black/[0.05] rounded-3xl">
+                    <p className="text-sm font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest">No deals active</p>
+                    <p className="text-xs text-[rgba(26,18,8,0.30)] mt-2">Check back soon or try another category.</p>
+                </div>
+            )}
+
              {selectedDeal && (
                 <QRCodeDialog
                     isOpen={isQRDialogOpen}
@@ -172,6 +174,6 @@ export function Deals() {
                     deal={selectedDeal}
                 />
             )}
-        </>
+        </div>
     );
 }
