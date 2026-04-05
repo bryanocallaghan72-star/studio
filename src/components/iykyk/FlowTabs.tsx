@@ -4,7 +4,7 @@
 import { useState, useEffect, memo, useMemo } from 'react';
 import { Moon, Sparkles, Sun, MapPin, Coffee, Utensils, Beer, Waves } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import Link from 'next/link';
@@ -43,38 +43,45 @@ const VenueCard = memo(({ venue }: { venue: Venue }) => {
         router.push(`/map?category=${mapCategory}`);
     };
     
-    // Safely access properties. Fallback for image to avoid crashes.
     const imageUrl = venue.details?.category === 'Brunch' 
       ? "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1000&auto=format&fit=crop"
       : "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop";
 
     return (
         <Link href={`/venue/${venue.slug}`} onClick={playClick}>
-            <Card className="overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1">
-                 <div className="relative h-40 w-full">
+            <Card className="group relative h-64 overflow-hidden rounded-2xl border border-black/[0.08] shadow-sm transition-all hover:shadow-xl hover:-translate-y-1">
+                 <div className="absolute inset-0">
                     <Image
                         src={imageUrl}
                         alt={venue.name}
                         fill
-                        className="object-cover"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    {/* Editorial Scrim Overlay */}
+                    <div 
+                        className="absolute inset-0" 
+                        style={{ background: 'linear-gradient(to top, rgba(8,10,13,0.85) 0%, rgba(8,10,13,0.4) 35%, transparent 60%)' }} 
                     />
                  </div>
-                <CardHeader>
+                
+                <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
                     <div className="flex items-start justify-between gap-2">
-                        <div>
-                            <CardTitle className="text-lg">{venue.name}</CardTitle>
-                            {/* Safely access nested address */}
-                            <CardDescription>{venue.location?.address}</CardDescription>
+                        <div className="space-y-0.5">
+                            <h3 className="text-lg font-bold leading-tight">{venue.name}</h3>
+                            <p className="text-xs text-white/60 line-clamp-1 flex items-center gap-1">
+                                <MapPin size={10} />
+                                {venue.location?.address}
+                            </p>
                         </div>
-                        <button onClick={handleMapClick} className="p-2 rounded-full hover:bg-secondary transition-colors flex-shrink-0">
-                            <MapPin className="h-5 w-5 text-muted-foreground" />
-                        </button>
+                        {venue.details?.category && (
+                            <Badge 
+                                className="bg-white/20 text-white text-[10px] font-bold backdrop-blur-md border-none uppercase tracking-wider rounded-full px-2 py-0.5"
+                            >
+                                {venue.details.category}
+                            </Badge>
+                        )}
                     </div>
-                     <div className="flex pt-2">
-                        {/* Safely access nested category */}
-                        {venue.details?.category && <Badge variant="outline" className="border-accent text-accent">{venue.details.category}</Badge>}
-                    </div>
-                </CardHeader>
+                </div>
             </Card>
         </Link>
     );
@@ -83,7 +90,6 @@ VenueCard.displayName = 'VenueCard';
 
 
 const getVenuesForTime = (time: 'morning' | 'day' | 'golden' | 'dusk', allVenues: Venue[]) => {
-    // This logic will be enhanced in a future step. For now, we just filter by some basic category.
     const morningCats = ['Brunch', 'Cafe & Matcha', 'Viral Matcha', 'Aesthetic Brunch'];
     const dayCats = ['Brunch', 'Sushi', 'Vibes', 'Beach Club Vibe', 'Iconic View'];
     const goldenCats = ['Sushi', 'Nightlife', 'Vibes', 'Cocktail Bar', 'Social Dining', 'Beachfront Bar'];
@@ -97,9 +103,8 @@ const getVenuesForTime = (time: 'morning' | 'day' | 'golden' | 'dusk', allVenues
         case 'dusk': relevantCategories = duskCats; break;
     }
     
-    // Filter safely using the canonical `details.category` field
     return allVenues.filter(p => {
-        const category = p.details?.category; // Use optional chaining
+        const category = p.details?.category;
         return category && relevantCategories.includes(category);
     });
 };
@@ -144,23 +149,23 @@ const SUBCATEGORY_ICONS: Record<SubCategory, React.ElementType> = {
 
 export function FlowTabsSkeleton() {
     return (
-        <div>
-            <h2 className="text-3xl font-bold tracking-tight mb-2">iykyk Flow</h2>
-            <p className="text-muted-foreground mb-4">Time-of-day rhythm for what's good, right now.</p>
-            <div className="grid grid-cols-4 gap-2 rounded-lg bg-card border p-1">
-                <Skeleton className="h-8 w-full" />
-                <Skeleton className="h-8 w-full" />
-                <Skeleton className="h-8 w-full" />
-                <Skeleton className="h-8 w-full" />
+        <div className="flex flex-col bg-[#f2ece0] p-4 md:p-6 min-h-screen">
+            <h2 className="text-3xl font-black tracking-tighter text-[#1a1208] italic uppercase mb-2">FLOW</h2>
+            <p className="text-[13px] font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest mb-6">Bondi's rhythm · right now</p>
+            <div className="grid grid-cols-4 gap-2 rounded-full bg-[rgba(26,18,8,0.06)] p-1 h-12">
+                <Skeleton className="h-full w-full rounded-full" />
+                <Skeleton className="h-full w-full rounded-full" />
+                <Skeleton className="h-full w-full rounded-full" />
+                <Skeleton className="h-full w-full rounded-full" />
             </div>
-             <div className="mt-4 mb-6 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                <Skeleton className="h-8 w-24 rounded-full" />
-                <Skeleton className="h-8 w-24 rounded-full" />
+             <div className="mt-6 mb-8 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                <Skeleton className="h-9 w-24 rounded-full" />
+                <Skeleton className="h-9 w-24 rounded-full" />
              </div>
              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                <Skeleton className="h-64 w-full rounded-lg" />
-                <Skeleton className="h-64 w-full rounded-lg" />
-                <Skeleton className="h-64 w-full rounded-lg" />
+                <Skeleton className="h-64 w-full rounded-2xl" />
+                <Skeleton className="h-64 w-full rounded-2xl" />
+                <Skeleton className="h-64 w-full rounded-2xl" />
             </div>
         </div>
     )
@@ -172,7 +177,6 @@ export function FlowTabs() {
   const { venues, isLoading, error } = useVenues();
   
   useEffect(() => {
-    // isClient check is implicitly handled by useEffect.
     const currentHour = new Date().getHours();
     const newActiveTab = getCurrentTimeCategory(currentHour);
     setActiveTab(newActiveTab);
@@ -184,7 +188,7 @@ export function FlowTabs() {
     return [
         { value: 'morning' as const, label: 'Morning', icon: Sun, venues: getVenuesForTime('morning', venues) },
         { value: 'day' as const, label: 'Day', icon: Sparkles, venues: getVenuesForTime('day', venues) },
-        { value: 'golden' as const, label: 'Golden Hour', icon: Sparkles, venues: getVenuesForTime('golden', venues) },
+        { value: 'golden' as const, label: 'Golden', icon: Sparkles, venues: getVenuesForTime('golden', venues) },
         { value: 'dusk' as const, label: 'Night', icon: Moon, venues: getVenuesForTime('dusk', venues) },
       ]
   }, [venues]);
@@ -201,7 +205,6 @@ export function FlowTabs() {
         return venuesForTime;
     }
     return venuesForTime.filter(venue => {
-        // Filter safely using canonical details field and optional chaining
         const category = venue.details?.category;
         if (!category) return false;
         
@@ -217,48 +220,60 @@ export function FlowTabs() {
   }
   
   if (error) {
-    return <div className="text-destructive">Error loading venues.</div>;
+    return <div className="text-destructive p-6">Error loading venues.</div>;
   }
 
   return (
-    <div>
-      <h2 className="text-3xl font-bold tracking-tight mb-2">iykyk Flow</h2>
-      <p className="text-muted-foreground mb-4">Time-of-day rhythm for what's good, right now.</p>
+    <div className="flex flex-col bg-[#f2ece0] p-4 md:p-6 min-h-screen pb-32">
+      <header className="mb-6">
+        <h2 className="text-3xl font-black tracking-tighter text-[#1a1208] italic uppercase mb-1">FLOW</h2>
+        <p className="text-[13px] font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest leading-none">Bondi's rhythm · right now</p>
+      </header>
+
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 bg-card border">
+        <TabsList className="grid w-full grid-cols-4 bg-[rgba(26,18,8,0.06)] rounded-full p-1 h-12 border-none">
           {tabData.map(tab => (
-            <TabsTrigger key={tab.value} value={tab.value}>
-                <tab.icon className="mr-2 h-5 w-5"/>
+            <TabsTrigger 
+                key={tab.value} 
+                value={tab.value}
+                className="rounded-full text-[12px] font-bold transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#1a1208] data-[state=active]:shadow-sm data-[state=active]:border-[0.5px] data-[state=active]:border-black/5 text-[rgba(26,18,8,0.40)]"
+            >
+                <tab.icon className="mr-1.5 h-3.5 w-3.5"/>
                 {tab.label}
             </TabsTrigger>
           ))}
         </TabsList>
 
-        <div className="mt-4 mb-6 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="mt-6 mb-8 flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4">
             {availableSubcategories.map(subCategory => {
                 const Icon = SUBCATEGORY_ICONS[subCategory];
+                const isActive = activeSubCategory === subCategory;
                 return (
-                    <Button 
+                    <button 
                         key={subCategory}
-                        variant={activeSubCategory === subCategory ? 'default' : 'outline'}
-                        size="sm"
                         onClick={() => setActiveSubCategory(subCategory)}
-                        className="flex-shrink-0"
+                        className={cn(
+                            "flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold transition-all duration-200",
+                            isActive 
+                                ? "bg-[#1a1208] text-white shadow-md" 
+                                : "bg-[rgba(26,18,8,0.06)] text-[rgba(26,18,8,0.50)] hover:bg-[rgba(26,18,8,0.1)]"
+                        )}
                     >
-                        <Icon className="mr-2 h-4 w-4" />
+                        <Icon className="h-3.5 w-3.5" />
                         {subCategory}
-                    </Button>
+                    </button>
                 )
             })}
         </div>
 
-        <TabsContent value={activeTab} forceMount>
+        <TabsContent value={activeTab} forceMount className="mt-0">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredVenues.map(venue => <VenueCard key={venue.id} venue={venue} />)}
             </div>
              {filteredVenues.length === 0 && (
-                <div className="text-center py-12 text-muted-foreground">
-                    No venues match this vibe right now.
+                <div className="text-center py-24 px-6 border-2 border-dashed border-black/[0.05] rounded-3xl">
+                    <p className="text-sm font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest">Quiet in this phase</p>
+                    <p className="text-xs text-[rgba(26,18,8,0.30)] mt-2">Try another time of day or clear your filters.</p>
                 </div>
             )}
         </TabsContent>
