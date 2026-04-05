@@ -10,7 +10,6 @@ import {
   User,
   Dumbbell,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { useUser } from '@/firebase';
 
 const navItems = [
@@ -28,47 +27,45 @@ export function MobileNav() {
   const profileHref = user ? `/profile/${user.uid}` : '/login';
   const isProfileActive = pathname.startsWith('/profile');
 
+  // Combine items for a unified rendering logic
+  const allItems = [
+    ...navItems,
+    { href: profileHref, icon: User, label: 'Profile', isProfile: true }
+  ];
+
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/[0.04] bg-[#080a0d] px-2 py-3 backdrop-blur-md md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-[rgba(0,0,0,0.06)] bg-[#f2ece0] h-[64px] md:hidden">
       <div className="grid h-full max-w-lg grid-cols-6 mx-auto">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href;
+        {allItems.map((item) => {
+          const isActive = 'isProfile' in item 
+            ? isProfileActive 
+            : pathname === item.href;
+          
+          const Icon = item.icon;
+
           return (
             <Link
               key={item.label}
               href={item.href}
-              className="relative flex flex-col items-center justify-center p-2 rounded-lg transition-colors"
+              className="flex flex-col items-center justify-center h-full"
             >
-              <item.icon 
-                className="h-6 w-6 transition-colors duration-300" 
-                style={{ color: isActive ? 'var(--phase-accent)' : 'rgba(244, 240, 232, 0.2)' }}
-              />
-              {isActive && (
-                <div 
-                  className="absolute -bottom-1 h-1 w-1 rounded-full animate-in fade-in zoom-in duration-500"
-                  style={{ backgroundColor: 'var(--phase-accent)' }}
+              <div className="flex flex-col items-center justify-center">
+                <Icon 
+                  className="h-6 w-6 transition-colors duration-200" 
+                  style={{ color: isActive ? '#c4762a' : 'rgba(26,18,8,0.25)' }}
                 />
-              )}
+                <div className="h-1 mt-1">
+                  {isActive && (
+                    <div 
+                      className="w-1 h-1 rounded-full bg-[#c4762a] animate-in fade-in zoom-in duration-300"
+                    />
+                  )}
+                </div>
+              </div>
               <span className="sr-only">{item.label}</span>
             </Link>
           );
         })}
-        <Link
-          href={profileHref}
-          className="relative flex flex-col items-center justify-center p-2 rounded-lg transition-colors"
-        >
-          <User 
-            className="h-6 w-6 transition-colors duration-300"
-            style={{ color: isProfileActive ? 'var(--phase-accent)' : 'rgba(244, 240, 232, 0.2)' }}
-          />
-          {isProfileActive && (
-            <div 
-              className="absolute -bottom-1 h-1 w-1 rounded-full animate-in fade-in zoom-in duration-500"
-              style={{ backgroundColor: 'var(--phase-accent)' }}
-            />
-          )}
-          <span className="sr-only">Profile</span>
-        </Link>
       </div>
     </nav>
   );
