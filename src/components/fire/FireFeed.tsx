@@ -44,7 +44,11 @@ const MOCK_FIRE_DROPS: FireDrop[] = [
   },
 ];
 
-export function FireFeed() {
+interface FireFeedProps {
+  onClaim?: (venue: string, offer: string) => void;
+}
+
+export function FireFeed({ onClaim }: FireFeedProps) {
   return (
     <div className="mx-auto w-full max-w-lg space-y-8">
       <div className="flex flex-col gap-1 px-1">
@@ -62,7 +66,7 @@ export function FireFeed() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: index * 0.1 }}
           >
-            <FireCard drop={drop} />
+            <FireCard drop={drop} onClaim={() => onClaim?.(drop.venue, drop.offer)} />
           </motion.div>
         ))}
       </div>

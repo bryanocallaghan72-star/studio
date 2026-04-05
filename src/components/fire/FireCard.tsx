@@ -39,7 +39,7 @@ const Countdown = ({ minutes }: { minutes: number }) => {
   );
 };
 
-export function FireCard({ drop }: { drop: FireDrop }) {
+export function FireCard({ drop, onClaim }: { drop: FireDrop; onClaim: () => void }) {
   return (
     <Card className="group relative overflow-hidden rounded-[24px] border-none bg-white shadow-xl shadow-black/5 transition-all active:scale-[0.98]">
       <div className="relative aspect-[16/10] w-full overflow-hidden">
@@ -94,7 +94,7 @@ export function FireCard({ drop }: { drop: FireDrop }) {
             </div>
             <Button 
               className="h-auto rounded-2xl bg-[#c4762a] hover:bg-[#a66324] text-white font-black text-lg py-0 flex flex-col items-center justify-center gap-0 shadow-lg active:scale-95 transition-all"
-              onClick={() => {}}
+              onClick={onClaim}
             >
               <Ticket size={18} className="mb-0.5" />
               <span className="uppercase tracking-tighter">Claim</span>

@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { MapPin, Heart, MessageCircle, MoreHorizontal, Check, Ticket, Play } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { ClaimModal } from '@/components/claim/ClaimModal';
 
 export interface FeedPost {
   id: string;
@@ -30,6 +30,8 @@ interface FeedCardProps {
 }
 
 export function FeedCard({ post, index }: FeedCardProps) {
+  const [isClaimModalOpen, setClaimModalOpen] = useState(false);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -122,13 +124,25 @@ export function FeedCard({ post, index }: FeedCardProps) {
           </div>
 
           {post.hasDrop && (
-            <button className="flex items-center gap-1.5 rounded-full bg-[#c4762a] px-4 py-2 text-[12px] font-bold text-white shadow-md transition-all hover:bg-[#b06824] active:scale-95">
+            <button 
+              onClick={() => setClaimModalOpen(true)}
+              className="flex items-center gap-1.5 rounded-full bg-[#c4762a] px-4 py-2 text-[12px] font-bold text-white shadow-md transition-all hover:bg-[#b06824] active:scale-95"
+            >
               <Ticket size={14} strokeWidth={2.5} />
               {post.dropLabel}
             </button>
           )}
         </div>
       </div>
+
+      {/* Claim Modal Instance */}
+      <ClaimModal
+        isOpen={isClaimModalOpen}
+        onClose={() => setClaimModalOpen(false)}
+        venueName={post.venue}
+        offerText={post.dropLabel || ''}
+        creatorHandle={post.creator}
+      />
     </motion.div>
   );
 }
