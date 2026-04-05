@@ -57,15 +57,21 @@ export default function DiscoverPage() {
                 const image = PlaceHolderImages.find(img => img.id === feature.imageId);
                 const displayTitle = feature.title.replace('iykyk ', '');
                 const Icon = iconMap[feature.icon];
+                const isAlignment = displayTitle === 'Alignment';
 
                 // Day mode specific instruction: use fallback for Alignment
-                const useAlignmentDayFallback = displayTitle === 'Alignment' && currentPhase === 'day';
+                const useAlignmentDayFallback = isAlignment && currentPhase === 'day';
 
                 return (
                   <Link key={feature.title} href={feature.href}>
                       <Card 
-                        className="group relative w-full aspect-[4/3] overflow-hidden rounded-2xl bg-card border-none"
-                        style={{ border: '0.5px solid rgba(0,0,0,0.08)' }}
+                        className="group relative w-full aspect-[4/3] overflow-hidden rounded-2xl border-none"
+                        style={{ 
+                          border: '0.5px solid rgba(0,0,0,0.08)',
+                          background: isAlignment 
+                            ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' 
+                            : 'hsl(var(--card))'
+                        }}
                       >
                           {image && !useAlignmentDayFallback ? (
                             <Image
@@ -74,6 +80,10 @@ export default function DiscoverPage() {
                               fill
                               className="absolute inset-0 object-cover transition-transform duration-700 group-hover:scale-110"
                               data-ai-hint={image.imageHint}
+                              onError={(e) => {
+                                // Hide the broken image to reveal the styled fallback background
+                                e.currentTarget.style.display = 'none';
+                              }}
                             />
                           ) : (
                             <div className="absolute inset-0 flex items-center justify-center bg-phase-bg-mid">
