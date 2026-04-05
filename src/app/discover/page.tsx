@@ -7,7 +7,7 @@ import Image from "next/image";
 import { featureData } from '@/lib/features';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from "@/components/ui/button";
-import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code, Utensils, Star, Wrench } from 'lucide-react';
+import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code, Utensils, Star, Wrench, Dumbbell } from 'lucide-react';
 import { SurpriseMe } from "@/components/iykyk/SurpriseMe";
 import { useDemoTime } from "@/context/DemoTimeContext";
 
@@ -29,6 +29,7 @@ const iconMap: { [key: string]: React.ElementType } = {
     Utensils,
     Star,
     Wrench,
+    Dumbbell,
 };
 
 export default function DiscoverPage() {
@@ -106,16 +107,18 @@ export default function DiscoverPage() {
                          
                           <div className="absolute inset-0 flex flex-col justify-end p-5 z-10">
                              <div className="space-y-1">
-                                  {/* Eyebrow Label: Spec color with shadow */}
-                                  <p 
-                                    className="text-[10px] font-bold tracking-[0.1em] uppercase" 
-                                    style={{ 
-                                      color: '#c4762a',
-                                      textShadow: '0 1px 4px rgba(0,0,0,0.5)'
-                                    }}
-                                  >
-                                    {feature.icon}
-                                  </p>
+                                  {/* Eyebrow Label: Render visual icon component instead of text label */}
+                                  <div className="mb-1">
+                                    {Icon && (
+                                      <Icon 
+                                        className="h-4 w-4" 
+                                        style={{ 
+                                          color: '#c4762a',
+                                          filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.5))'
+                                        }} 
+                                      />
+                                    )}
+                                  </div>
                                   {/* Title: Spec white bold */}
                                   <CardTitle className="text-[15px] font-semibold text-white">
                                     {displayTitle}
