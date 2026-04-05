@@ -142,6 +142,7 @@ export function FeedCard({ post, index }: FeedCardProps) {
         venueName={post.venue}
         offerText={post.dropLabel || ''}
         creatorHandle={post.creator}
+        source="feed"
       />
     </motion.div>
   );

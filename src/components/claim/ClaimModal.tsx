@@ -2,23 +2,29 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Copy, Check, UserCheck } from 'lucide-react';
+import { Copy, Check, UserCheck, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
+import { collection, serverTimestamp } from 'firebase/firestore';
 
 interface ClaimModalProps {
   isOpen: boolean;
   onClose: () => void;
   venueName: string;
   offerText: string;
-  creatorHandle: string;
+  creatorHandle?: string;
+  source: 'fire' | 'feed' | 'discover';
 }
 
 type Step = 'INTENT' | 'CODE' | 'SUCCESS';
 
-export function ClaimModal({ isOpen, onClose, venueName, offerText, creatorHandle }: ClaimModalProps) {
+export function ClaimModal({ isOpen, onClose, venueName, offerText, creatorHandle, source }: ClaimModalProps) {
   const [step, setStep] = useState<Step>('INTENT');
   const [code, setCode] = useState('');
   const [copied, setCopied] = useState(false);
+  
+  const firestore = useFirestore();
+  const { user } = useUser();
 
   useEffect(() => {
     if (isOpen) {
@@ -37,6 +43,25 @@ export function ClaimModal({ isOpen, onClose, venueName, offerText, creatorHandl
     navigator.clipboard.writeText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleCommitClaim = () => {
+    setStep('SUCCESS');
+    
+    // Log the claim to Firestore for venue attribution
+    if (user && firestore) {
+      const claimsRef = collection(firestore, 'claims');
+      addDocumentNonBlocking(claimsRef, {
+        venueName,
+        offerText,
+        source,
+        userId: user.uid,
+        userEmail: user.email,
+        claimedAt: serverTimestamp(),
+        code,
+        creatorHandle: source === 'fire' ? 'venue_direct' : (creatorHandle || 'anonymous')
+      });
+    }
   };
 
   return (
@@ -73,8 +98,10 @@ export function ClaimModal({ isOpen, onClose, venueName, offerText, creatorHandl
                   <div className="my-6 h-[0.5px] w-full bg-black/5" />
                   
                   <p className="text-sm leading-relaxed text-[#1a1208]/60">
-                    This perk is creator-verified and expires when the timer runs out. 
-                    Show your code at the venue to redeem.
+                    {source === 'fire' 
+                      ? "This is a live offer posted directly by the venue. Limited spots — show your code when you arrive."
+                      : "This perk is creator-verified and expires when the timer runs out. Show your code at the venue to redeem."
+                    }
                   </p>
                   
                   <div className="mt-8 flex w-full flex-col gap-3">
@@ -131,14 +158,19 @@ export function ClaimModal({ isOpen, onClose, venueName, offerText, creatorHandl
                   
                   <div className="flex items-center gap-2 text-[12px] font-medium text-[#1a1208]/50">
                     <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#c4762a]/10">
-                      <UserCheck size={12} className="text-[#c4762a]" />
+                      {source === 'fire' ? <Building2 size={12} className="text-[#c4762a]" /> : <UserCheck size={12} className="text-[#c4762a]" />}
                     </div>
-                    <span>Drop by @{creatorHandle} · Verified Bondi local</span>
+                    <span>
+                      {source === 'fire' 
+                        ? "Live offer · Posted by venue · Powered by IYKYK"
+                        : `Drop by @${creatorHandle} · Verified Bondi local`
+                      }
+                    </span>
                   </div>
                   
                   <div className="mt-8 flex w-full flex-col gap-3">
                     <Button 
-                      onClick={() => setStep('SUCCESS')}
+                      onClick={handleCommitClaim}
                       className="h-14 w-full rounded-2xl bg-[#c4762a] text-lg font-bold text-white shadow-lg shadow-[#c4762a]/20 hover:bg-[#b06824]"
                     >
                       I'm Heading There 🤙
@@ -164,9 +196,9 @@ export function ClaimModal({ isOpen, onClose, venueName, offerText, creatorHandl
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-                      className="absolute inset-0 rounded-full bg-green-500/10"
+                      className="absolute inset-0 rounded-full bg-[#c4762a]/10"
                     />
-                    <svg className="h-20 w-20 text-green-500" viewBox="0 0 100 100">
+                    <svg className="h-20 w-20 text-[#c4762a]" viewBox="0 0 100 100">
                       <motion.circle
                         cx="50"
                         cy="50"
@@ -200,7 +232,7 @@ export function ClaimModal({ isOpen, onClose, venueName, offerText, creatorHandl
                   <div className="mt-10 w-full">
                     <Button 
                       onClick={onClose}
-                      className="h-14 w-full rounded-2xl bg-[#1a1208] text-lg font-bold text-white shadow-xl active:scale-95 transition-all"
+                      className="h-14 w-full rounded-2xl bg-[#c4762a] text-lg font-bold text-white shadow-xl active:scale-95 transition-all hover:bg-[#b06824]"
                     >
                       See you in Bondi
                     </Button>

@@ -16,7 +16,7 @@ export default function FirePage() {
         onClose={() => setClaimData(null)}
         venueName={claimData?.venue || ''}
         offerText={claimData?.offer || ''}
-        creatorHandle="alice"
+        source="fire"
       />
     </div>
   );
