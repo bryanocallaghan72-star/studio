@@ -71,13 +71,13 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 300 }}
             transition={{ duration: 0.3 }}
-            className="flex flex-col h-full bg-[#080a0d] overflow-y-auto p-6"
+            className="flex flex-col h-full bg-[#f2ece0] overflow-y-auto p-6"
         >
             <div className="flex items-center justify-between mb-8">
-                <Button onClick={onBack} variant="ghost" size="icon" className="text-[#f4f0e8] hover:bg-white/5"><ArrowLeft size={20} /></Button>
+                <Button onClick={onBack} variant="ghost" size="icon" className="text-[#1a1208] hover:bg-black/5"><ArrowLeft size={20} /></Button>
                 <div className='text-center'>
-                    <h2 className="text-xl font-bold text-[#f4f0e8]">{itineraryData.title}</h2>
-                    <p className="text-[11px] font-semibold tracking-wider uppercase text-muted-foreground">{itineraryData.description}</p>
+                    <h2 className="text-xl font-bold text-[#1a1208]">{itineraryData.title}</h2>
+                    <p className="text-[11px] font-bold tracking-wider uppercase text-[rgba(26,18,8,0.40)]">{itineraryData.description}</p>
                 </div>
                 <div className="w-10"></div>
             </div>
@@ -96,18 +96,18 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.2 }}
                             >
-                                <Card className={cn('rounded-2xl p-4 shadow-lg flex items-center transition-all duration-300 bg-[#0d1117]', stop.isHeld ? 'border-2' : 'border-white/[0.06]')} style={{ borderColor: stop.isHeld ? 'var(--phase-accent)' : undefined }}>
+                                <Card className={cn('rounded-2xl p-4 border border-black/[0.08] shadow-sm flex items-center transition-all duration-300 bg-white', stop.isHeld ? 'ring-2 ring-[#c4762a] ring-offset-2' : '')}>
                                     <Button onClick={() => onToggleHold(stop)} variant="ghost" size="icon" className="flex-shrink-0 mr-4 group">
-                                        <HoldIcon size={20} className={stop.isHeld ? '' : 'text-muted-foreground group-hover:opacity-100 transition-opacity'} style={{ color: stop.isHeld ? 'var(--phase-accent)' : undefined }} />
+                                        <HoldIcon size={20} className={stop.isHeld ? 'text-[#c4762a]' : 'text-[rgba(26,18,8,0.30)] group-hover:text-[#c4762a] transition-colors'} />
                                     </Button>
-                                    <div className="w-14 h-14 bg-white/5 rounded-xl overflow-hidden flex-shrink-0 border border-white/5">
+                                    <div className="w-14 h-14 bg-black/[0.03] rounded-xl overflow-hidden flex-shrink-0 border border-black/[0.05]">
                                         <Image src={image.imageUrl} alt={stop.location} width={56} height={56} className="w-full h-full object-cover" data-ai-hint={image.imageHint} />
                                     </div>
                                     <div className="ml-4 flex-grow">
-                                        <p className="text-[10px] font-bold tracking-wider uppercase" style={{ color: 'var(--phase-accent)' }}>{stop.time}</p>
-                                        <p className="text-[15px] font-semibold text-[#f4f0e8] leading-tight mt-0.5">{stop.location}</p>
+                                        <p className="text-[10px] font-black tracking-wider uppercase text-[#c4762a]">{stop.time}</p>
+                                        <p className="text-[15px] font-bold text-[#1a1208] leading-tight mt-0.5">{stop.location}</p>
                                     </div>
-                                    <Button onClick={() => setEditingItem(stop)} variant="ghost" size="icon" className="text-muted-foreground hover:bg-white/5 flex-shrink-0 ml-2"><RefreshCw size={16} /></Button>
+                                    <Button onClick={() => setEditingItem(stop)} variant="ghost" size="icon" className="text-[rgba(26,18,8,0.35)] hover:bg-black/5 flex-shrink-0 ml-2"><RefreshCw size={16} /></Button>
                                 </Card>
                             </motion.div>
                         );
@@ -115,9 +115,19 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
                 </AnimatePresence>
             </div>
 
-            <div className="mt-8 flex space-x-3 sticky bottom-0 bg-[#080a0d] py-4">
-                <Button className="flex-grow h-12 btn-phase-cta" onClick={() => onStartPlan(itineraryData)}>Start Plan</Button>
-                <Button variant="outline" className="flex-grow h-12 btn-phase-ghost" onClick={onShuffle} disabled={isPending}>
+            <div className="mt-8 flex space-x-3 sticky bottom-0 bg-[#f2ece0] py-4">
+                <Button 
+                    className="flex-grow h-14 bg-[#c4762a] text-white hover:bg-[#b06824] rounded-2xl font-black shadow-lg shadow-[#c4762a]/20" 
+                    onClick={() => onStartPlan(itineraryData)}
+                >
+                    Start Plan
+                </Button>
+                <Button 
+                    variant="outline" 
+                    className="flex-grow h-14 border-black/[0.08] bg-white text-[#1a1208] hover:bg-black/5 rounded-2xl font-bold" 
+                    onClick={onShuffle} 
+                    disabled={isPending}
+                >
                     {isPending ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <Shuffle className="mr-2 h-4 w-4" />}
                     Shuffle
                 </Button>
@@ -125,24 +135,30 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
 
             {editingItem && (
                 <Dialog open={!!editingItem} onOpenChange={() => setEditingItem(null)}>
-                    <DialogContent className="bg-card border-border rounded-2xl">
+                    <DialogContent className="bg-white border-none rounded-3xl shadow-2xl">
                         <DialogHeader>
-                            <DialogTitle className="text-[#f4f0e8]">Swap Stop</DialogTitle>
-                            <DialogDescription className="text-muted-foreground">Find an alternative for your itinerary.</DialogDescription>
+                            <DialogTitle className="text-[#1a1208] text-xl font-bold">Swap Stop</DialogTitle>
+                            <DialogDescription className="text-[rgba(26,18,8,0.50)]">Find an alternative for your itinerary.</DialogDescription>
                         </DialogHeader>
-                        <div className="relative mb-4">
-                            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                            <Input type="text" value={swapQuery} onChange={(e) => setSwapQuery(e.target.value)} placeholder={`Search ${getItemType(editingItem)} venues...`} className="w-full pl-10 pr-4 py-2 bg-white/5 border-white/10 text-[#f4f0e8]" />
+                        <div className="relative mb-4 mt-2">
+                            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[rgba(26,18,8,0.30)]" />
+                            <Input 
+                                type="text" 
+                                value={swapQuery} 
+                                onChange={(e) => setSwapQuery(e.target.value)} 
+                                placeholder={`Search ${getItemType(editingItem)} venues...`} 
+                                className="w-full pl-10 pr-4 py-2.5 bg-[rgba(26,18,8,0.04)] border-none text-[#1a1208] placeholder:text-[rgba(26,18,8,0.30)] rounded-xl" 
+                            />
                         </div>
                         <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
                             {filteredSwapOptions.map((item, index) => (
-                                <button key={index} onClick={() => handleSwapClick(editingItem, item)} className="w-full flex items-center bg-white/5 border border-white/5 rounded-xl p-3 transition-all hover:bg-white/10 hover:border-white/10">
-                                    <div className="w-12 h-12 bg-white/5 rounded-lg overflow-hidden flex-shrink-0">
+                                <button key={index} onClick={() => handleSwapClick(editingItem, item)} className="w-full flex items-center bg-white border border-black/[0.06] rounded-2xl p-3 transition-all hover:bg-black/[0.02] hover:border-black/[0.12] active:scale-[0.98]">
+                                    <div className="w-12 h-12 bg-black/[0.03] rounded-xl overflow-hidden flex-shrink-0">
                                         <Image src={PlaceHolderImages.find(p => p.id === 'sushi-1')!.imageUrl} alt={item.name} width={48} height={48} className="w-full h-full object-cover" />
                                     </div>
                                     <div className="ml-4 text-left">
-                                        <p className="text-[#f4f0e8] font-semibold text-sm">{item.name}</p>
-                                        <p className="text-[11px] text-muted-foreground line-clamp-1">{item.description}</p>
+                                        <p className="text-[#1a1208] font-bold text-sm">{item.name}</p>
+                                        <p className="text-[11px] text-[rgba(26,18,8,0.50)] line-clamp-1">{item.description}</p>
                                     </div>
                                 </button>
                             ))}
