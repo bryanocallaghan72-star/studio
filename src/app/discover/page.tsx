@@ -63,7 +63,10 @@ export default function DiscoverPage() {
 
                 return (
                   <Link key={feature.title} href={feature.href}>
-                      <Card className="group relative w-full aspect-[4/3] overflow-hidden rounded-2xl border-border bg-card">
+                      <Card 
+                        className="group relative w-full aspect-[4/3] overflow-hidden rounded-2xl bg-card border-none"
+                        style={{ border: '0.5px solid rgba(0,0,0,0.08)' }}
+                      >
                           {image && !useAlignmentDayFallback ? (
                             <Image
                               src={image.imageUrl}
