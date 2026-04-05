@@ -2,17 +2,26 @@
 
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function LandingPage() {
   const router = useRouter();
   const [showContent, setShowContent] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     // Fade in the UI content over the background video after a short delay
     const timer = setTimeout(() => {
       setShowContent(true);
     }, 800);
+
+    // Explicitly trigger play to ensure video starts after hydration
+    if (videoRef.current) {
+      videoRef.current.play().catch(error => {
+        console.error("Video autoplay failed:", error);
+      });
+    }
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -23,21 +32,16 @@ export default function LandingPage() {
   return (
     <div className="fixed inset-0 z-[10001] flex flex-col items-center justify-center overflow-hidden bg-[#05014a] text-[#f4f0e8] w-full h-[100dvh]">
       
-      {/* Background Video - Now looping */}
+      {/* Background Video */}
       <video
+        ref={videoRef}
         autoPlay
         muted
         loop
         playsInline
-        className="pointer-events-none"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          zIndex: 5,
-        }}
+        preload="auto"
+        className="pointer-events-none absolute inset-0 w-full h-full object-cover"
+        style={{ zIndex: 5 }}
       >
         <source src="/iykyk-Loading.mp4" type="video/mp4" />
       </video>
