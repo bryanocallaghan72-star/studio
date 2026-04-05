@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { Sparkles, MapPin } from 'lucide-react';
+import { Sparkles, MapPin, RefreshCw } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { getSurpriseForNow } from '@/lib/get-surprise';
 import type { SurpriseOption, Vibe } from '@/lib/surprise-options';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 
 const VIBE_LABELS: { id: Vibe; label: string }[] = [
   { id: 'active', label: 'Active' },
@@ -18,29 +19,28 @@ const VIBE_LABELS: { id: Vibe; label: string }[] = [
 
 
 const SurpriseMePlaceholder = () => (
-    <Card className="bg-card/80 backdrop-blur shadow-md border border-border/60">
-        <CardContent className="p-4 flex flex-col gap-3">
+    <Card className="bg-white border border-black/[0.08] shadow-sm rounded-2xl">
+        <CardContent className="p-5 flex flex-col gap-4">
              <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-primary" />
-                    <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    <Sparkles className="h-4 w-4 text-[#c4762a]" />
+                    <span className="text-[#c4762a] font-bold tracking-widest text-[11px] uppercase">
                         Surprise Me
                     </span>
                 </div>
-                 <Skeleton className="h-5 w-20 rounded-full" />
+                 <Skeleton className="h-5 w-20 rounded-full bg-[rgba(26,18,8,0.06)]" />
             </div>
-             <div className="flex gap-2 mt-1">
-                <Skeleton className="h-7 w-20 rounded-full" />
-                <Skeleton className="h-7 w-20 rounded-full" />
-                <Skeleton className="h-7 w-20 rounded-full" />
+             <div className="flex gap-2">
+                <Skeleton className="h-8 w-20 rounded-full bg-[rgba(26,18,8,0.06)]" />
+                <Skeleton className="h-8 w-20 rounded-full bg-[rgba(26,18,8,0.06)]" />
+                <Skeleton className="h-8 w-20 rounded-full bg-[rgba(26,18,8,0.06)]" />
             </div>
-            <div className="mt-3 space-y-2">
-                <Skeleton className="h-5 w-3/4" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-4/5" />
+            <div className="space-y-2">
+                <Skeleton className="h-5 w-3/4 bg-[rgba(26,18,8,0.06)]" />
+                <Skeleton className="h-4 w-full bg-[rgba(26,18,8,0.06)]" />
             </div>
-             <div className="flex items-center justify-between gap-2 mt-3">
-                 <Skeleton className="h-8 w-32 rounded-md" />
+             <div className="mt-2">
+                 <Skeleton className="h-10 w-full rounded-xl bg-[rgba(26,18,8,0.06)]" />
             </div>
         </CardContent>
     </Card>
@@ -75,17 +75,17 @@ export function SurpriseMe() {
   if (!current) {
     // Fallback if no candidates are found
     return (
-      <Card className="bg-card/80 backdrop-blur shadow-md border border-border/60">
-        <CardContent className="p-4 flex flex-col gap-3">
+      <Card className="bg-white border border-black/[0.08] shadow-sm rounded-2xl">
+        <CardContent className="p-5 flex flex-col gap-3">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-primary" />
-              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <Sparkles className="h-4 w-4 text-[#c4762a]" />
+              <span className="text-[#c4762a] font-bold tracking-widest text-[11px] uppercase">
                 Surprise Me
               </span>
             </div>
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-[rgba(26,18,8,0.50)]">
             No ideas for this vibe right now. Try another vibe.
           </p>
         </CardContent>
@@ -94,68 +94,70 @@ export function SurpriseMe() {
   }
 
   return (
-    <Card className="bg-card/80 backdrop-blur shadow-md border border-border/60">
-      <CardContent className="p-4 flex flex-col gap-3">
+    <Card className="bg-white border border-black/[0.08] shadow-sm rounded-2xl">
+      <CardContent className="p-5 flex flex-col gap-4">
         {/* Header */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-primary" />
-            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <Sparkles className="h-4 w-4 text-[#c4762a]" />
+            <span className="text-[#c4762a] font-bold tracking-widest text-[11px] uppercase">
               Surprise Me
             </span>
           </div>
-          <Badge variant="secondary" className="text-[10px]">
+          <Badge variant="secondary" className="bg-[rgba(26,18,8,0.06)] text-[#1a1208] border-none text-[10px] font-bold uppercase tracking-tight px-2 py-0.5">
             Bondi · {vibeLabel}
           </Badge>
         </div>
 
         {/* Vibe selector */}
-        <div className="flex gap-2 mt-1">
-          {VIBE_LABELS.map((v) => (
-            <Button
-              key={v.id}
-              type="button"
-              size="sm"
-              variant={v.id === vibe ? 'default' : 'outline'}
-              className="h-7 px-3 text-xs"
-              onClick={() => {
-                setVibe(v.id);
-                const next = getSurpriseForNow(v.id);
-                setCurrent(next);
-              }}
-            >
-              {v.label}
-            </Button>
-          ))}
+        <div className="flex gap-2">
+          {VIBE_LABELS.map((v) => {
+            const isActive = v.id === vibe;
+            return (
+              <button
+                key={v.id}
+                onClick={() => {
+                  setVibe(v.id);
+                  const next = getSurpriseForNow(v.id);
+                  setCurrent(next);
+                }}
+                className={cn(
+                  "px-4 py-1.5 rounded-full text-[12px] font-bold transition-all duration-200",
+                  isActive 
+                    ? "bg-[#c4762a] text-white shadow-md shadow-[#c4762a]/10" 
+                    : "bg-[rgba(26,18,8,0.06)] text-[rgba(26,18,8,0.50)] hover:bg-[rgba(26,18,8,0.1)]"
+                )}
+              >
+                {v.label}
+              </button>
+            )
+          })}
         </div>
 
         {/* Content */}
-        <div className="mt-3">
-          <h3 className="text-lg font-semibold leading-snug">
+        <div className="space-y-1">
+          <h3 className="text-lg font-bold text-[#1a1208] leading-snug">
             {current?.title}
           </h3>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="text-sm text-[rgba(26,18,8,0.55)] leading-relaxed">
             {current?.description}
           </p>
+          {current?.locationHint && (
+            <div className="flex items-center gap-1.5 text-[11px] font-medium text-[rgba(26,18,8,0.40)] pt-1 uppercase tracking-tight">
+              <MapPin className="h-3 w-3" />
+              <span>{current.locationHint}</span>
+            </div>
+          )}
         </div>
 
-        {current?.locationHint && (
-          <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-            <MapPin className="h-3 w-3" />
-            <span>{current.locationHint}</span>
-          </div>
-        )}
-
         {/* Actions */}
-        <div className="flex items-center justify-between gap-2 mt-3">
+        <div className="pt-1">
           <Button
             type="button"
-            size="sm"
-            variant="outline"
-            className="text-xs"
+            className="w-full bg-[#c4762a] hover:bg-[#b06824] text-white font-bold rounded-xl h-11 shadow-lg shadow-[#c4762a]/15"
             onClick={handleSurprise}
           >
-            <Sparkles className="h-3 w-3 mr-1" />
+            <RefreshCw className="h-4 w-4 mr-2" />
             Surprise me again
           </Button>
         </div>
