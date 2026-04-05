@@ -15,6 +15,7 @@ import { doc, collection } from 'firebase/firestore';
 import { useTableDrops, type TableDrop } from '@/hooks/useTableDrops';
 import { useVenues } from '@/hooks/useVenues';
 import { useCreators } from '@/hooks/useCreators';
+import { cn } from '@/lib/utils';
 
 type TableDropWithClaim = TableDrop & {
     hasUserClaimed: boolean;
@@ -80,27 +81,28 @@ const TableDropCard = ({ drop, onClaim, venueName, creator }: { drop: TableDropW
     }
 
     return (
-        <Card key={drop.id} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-primary">
+        <Card key={drop.id} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-[#c4762a]/50 rounded-2xl bg-white shadow-sm">
             <div className="absolute inset-0">
                 <Image
                     src={drop.venueImageUrl}
                     alt={venueName}
                     fill
-                    className="object-cover transition-transform group-hover:scale-105"
+                    unoptimized
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
                     data-ai-hint="restaurant interior"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
             </div>
-            <CardContent className="relative z-10 flex flex-col justify-end h-full p-6 text-white min-h-[300px]">
-                <div>
-                    <div className="flex items-center justify-between mb-2">
-                        <Badge variant="destructive" className="flex items-center gap-2 w-min whitespace-nowrap text-white">
-                            <Utensils className="h-4 w-4" />
+            <CardContent className="relative z-10 flex flex-col justify-end h-full p-6 text-white min-h-[350px]">
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <Badge className="bg-[#c4762a] text-white border-none text-[10px] font-black uppercase tracking-widest px-2 py-0.5 shadow-lg">
+                            <Utensils size={10} className="mr-1 fill-current" />
                             <span>DROP</span>
                         </Badge>
                         {creator && (
-                            <div className='flex items-center gap-2 text-xs font-semibold bg-black/30 backdrop-blur-sm p-1 rounded-full'>
-                                <Avatar className="h-6 w-6">
+                            <div className='flex items-center gap-2 text-[11px] font-bold bg-black/30 backdrop-blur-md px-2 py-1 rounded-full border border-white/10'>
+                                <Avatar className="h-5 w-5">
                                     <AvatarImage src={creator.avatar} alt={creator.name} />
                                     <AvatarFallback>{creator.name.charAt(0)}</AvatarFallback>
                                 </Avatar>
@@ -108,26 +110,28 @@ const TableDropCard = ({ drop, onClaim, venueName, creator }: { drop: TableDropW
                             </div>
                         )}
                     </div>
-                    <h3 className="text-2xl font-bold leading-tight text-white" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.55)" }}>
-                        {venueName}{drop.tableLabel && ` – ${drop.tableLabel}`}
-                    </h3>
-                    {formattedTimes ? (
-                         <p className="text-white/90 mt-1">Table for {drop.partySize} • {formattedTimes.start} – {formattedTimes.end}</p>
-                    ) : (
-                        <Skeleton className="h-5 w-48 mt-1 bg-white/20" />
-                    )}
+                    <div>
+                        <h3 className="text-2xl font-bold leading-tight text-white" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.55)" }}>
+                            {venueName}{drop.tableLabel && ` – ${drop.tableLabel}`}
+                        </h3>
+                        {formattedTimes ? (
+                             <p className="text-white/90 mt-1 font-medium">Table for {drop.partySize} • {formattedTimes.start} – {formattedTimes.end}</p>
+                        ) : (
+                            <Skeleton className="h-5 w-48 mt-1 bg-white/20" />
+                        )}
+                    </div>
                 </div>
                 <div className='mt-6'>
-                    <div className="flex items-center justify-between rounded-lg bg-destructive/80 p-3 backdrop-blur-sm border border-destructive-foreground/30">
-                        <p className="text-sm font-medium text-destructive-foreground">Drop expires in:</p>
+                    <div className="flex items-center justify-between rounded-xl bg-[#c4762a]/80 p-3 backdrop-blur-md border border-white/10">
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-white/80">Drop expires in:</p>
                         <Countdown expiresAt={drop.expiresAt} />
                     </div>
                     <Button
-                        className="w-full mt-3 font-bold"
+                        className="w-full mt-3 h-12 bg-[#c4762a] text-white hover:bg-[#b06824] rounded-2xl font-bold shadow-lg shadow-[#c4762a]/20 transition-all active:scale-95"
                         onClick={handleClaim}
                         disabled={drop.hasUserClaimed || !user}
                     >
-                        {drop.hasUserClaimed ? 'Claimed' : 
+                        {drop.hasUserClaimed ? 'Spot Secured' : 
                          drop.priceToClaimCents > 0 ? `Claim Table ($${drop.priceToClaimCents / 100})` : 'Claim Table'}
                     </Button>
                 </div>
@@ -138,8 +142,8 @@ const TableDropCard = ({ drop, onClaim, venueName, creator }: { drop: TableDropW
 
 const TablesSkeleton = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
-        <Skeleton className="h-[350px] w-full rounded-2xl" />
-        <Skeleton className="h-[350px] w-full rounded-2xl" />
+        <Skeleton className="h-[400px] w-full rounded-2xl" />
+        <Skeleton className="h-[400px] w-full rounded-2xl" />
     </div>
 );
 
@@ -225,75 +229,90 @@ export function Tables() {
     }
 
     return (
-        <>
-            <section>
-                <div className="flex items-center gap-3 mb-4">
-                    <Utensils className="h-8 w-8 text-primary" />
+        <div className="flex min-h-screen w-full flex-col bg-[#f2ece0] p-4 md:p-6 pb-32">
+            <header className="mb-8">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-xl bg-[#c4762a]/10">
+                        <Utensils className="h-6 w-6 text-[#c4762a]" />
+                    </div>
                     <div>
-                        <h2 className="text-3xl font-bold tracking-tight">iykyk Tables</h2>
-                        <p className="text-muted-foreground">Last-minute tables at your favourite spots. Claim before they’re gone.</p>
+                        <h1 className="text-3xl font-black tracking-tighter text-[#1a1208] uppercase italic">TABLES</h1>
+                        <p className="text-[13px] font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest">Last-minute tables · Bondi</p>
                     </div>
                 </div>
+            </header>
 
-                {isLoading ? <TablesSkeleton /> : (
-                    <Tabs defaultValue="live" className="w-full mt-4">
-                        <TabsList className="grid w-full grid-cols-2">
-                            <TabsTrigger value="hit-list">My Hit List</TabsTrigger>
-                            <TabsTrigger value="live">Live Drops</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="hit-list" className="mt-6">
-                            {favoriteDrops.length > 0 ? (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    {favoriteDrops.map(drop => {
-                                        const venue = venuesBySlug[drop.venueId];
-                                        const venueName = venue?.name ?? drop.venueName;
-                                        const creator = drop.creatorPickHandle ? creatorsById[drop.creatorPickHandle] : null;
-                                        return <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} venueName={venueName} creator={creator} />
-                                    })}
-                                </div>
-                            ) : (
-                                <div className="text-center py-20">
-                                    <p className="text-muted-foreground">No drops from your hit list yet.</p>
-                                    <p className="text-sm text-muted-foreground/80 mt-2">Add favourites in Vibe, Fire or the map to see their tables here.</p>
-                                </div>
-                            )}
-                        </TabsContent>
-                        <TabsContent value="live" className="mt-6">
-                            {liveDrops.length > 0 ? (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    {liveDrops.map(drop => {
-                                        const venue = venuesBySlug[drop.venueId];
-                                        const venueName = venue?.name ?? drop.venueName;
-                                        const creator = drop.creatorPickHandle ? creatorsById[drop.creatorPickHandle] : null;
-                                        return <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} venueName={venueName} creator={creator} />
-                                    })}
-                                </div>
-                            ) : (
-                                <div className="text-center py-20">
-                                    <p className="text-muted-foreground">No live drops right now. Check back soon!</p>
-                                </div>
-                            )}
-                        </TabsContent>
-                    </Tabs>
-                )}
-            </section>
+            {isLoading ? <TablesSkeleton /> : (
+                <Tabs defaultValue="live" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2 bg-[rgba(26,18,8,0.06)] rounded-full p-1 h-12 border-none">
+                        <TabsTrigger 
+                            value="hit-list"
+                            className="rounded-full text-[13px] font-bold data-[state=active]:bg-white data-[state=active]:text-[#1a1208] data-[state=active]:shadow-sm text-[rgba(26,18,8,0.40)]"
+                        >
+                            My Hit List
+                        </TabsTrigger>
+                        <TabsTrigger 
+                            value="live"
+                            className="rounded-full text-[13px] font-bold data-[state=active]:bg-white data-[state=active]:text-[#1a1208] data-[state=active]:shadow-sm text-[rgba(26,18,8,0.40)]"
+                        >
+                            Live Drops
+                        </TabsTrigger>
+                    </TabsList>
+                    
+                    <TabsContent value="hit-list" className="mt-8">
+                        {favoriteDrops.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                {favoriteDrops.map(drop => {
+                                    const venue = venuesBySlug[drop.venueId];
+                                    const venueName = venue?.name ?? drop.venueName;
+                                    const creator = drop.creatorPickHandle ? creatorsById[drop.creatorPickHandle] : null;
+                                    return <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} venueName={venueName} creator={creator} />
+                                })}
+                            </div>
+                        ) : (
+                            <div className="text-center py-24 px-6 border-2 border-dashed border-black/[0.05] rounded-3xl">
+                                <p className="text-sm font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest">No matching drops</p>
+                                <p className="text-xs text-[rgba(26,18,8,0.30)] mt-2">Add favorites from the Map or Feed to see their tables here first.</p>
+                            </div>
+                        )}
+                    </TabsContent>
+                    
+                    <TabsContent value="live" className="mt-8">
+                        {liveDrops.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                {liveDrops.map(drop => {
+                                    const venue = venuesBySlug[drop.venueId];
+                                    const venueName = venue?.name ?? drop.venueName;
+                                    const creator = drop.creatorPickHandle ? creatorsById[drop.creatorPickHandle] : null;
+                                    return <TableDropCard key={drop.id} drop={drop} onClaim={handleClaimClick} venueName={venueName} creator={creator} />
+                                })}
+                            </div>
+                        ) : (
+                            <div className="text-center py-24">
+                                <p className="text-sm font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest">No live drops</p>
+                                <p className="text-xs text-[rgba(26,18,8,0.30)] mt-2">Check back soon for last-minute table drops in Bondi.</p>
+                            </div>
+                        )}
+                    </TabsContent>
+                </Tabs>
+            )}
             
             {confirmingDrop && (() => {
                 const venue = venuesBySlug[confirmingDrop.venueId];
                 const venueName = venue?.name ?? confirmingDrop.venueName;
                 return (
                     <Dialog open={!!confirmingDrop} onOpenChange={() => setConfirmingDrop(null)}>
-                        <DialogContent>
+                        <DialogContent className="bg-[#f2ece0] border-none rounded-3xl shadow-2xl">
                             <DialogHeader>
-                                <DialogTitle>Claim this table?</DialogTitle>
-                                <DialogDescription>
-                                    You are about to claim a table for {confirmingDrop.partySize} at <strong>{venueName}</strong> from {new Date(confirmingDrop.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.
-                                    {confirmingDrop.priceToClaimCents > 0 && ` A fee of $${confirmingDrop.priceToClaimCents / 100} will be charged.`}
+                                <DialogTitle className="text-xl font-bold text-[#1a1208]">Confirm Your Table</DialogTitle>
+                                <DialogDescription className="text-[rgba(26,18,8,0.60)]">
+                                    You're claiming a table for {confirmingDrop.partySize} at <strong>{venueName}</strong> from {new Date(confirmingDrop.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.
+                                    {confirmingDrop.priceToClaimCents > 0 && ` A reservation fee of $${confirmingDrop.priceToClaimCents / 100} applies.`}
                                 </DialogDescription>
                             </DialogHeader>
-                            <DialogFooter>
-                                <Button variant="outline" onClick={() => setConfirmingDrop(null)}>Cancel</Button>
-                                <Button onClick={handleConfirmClaim}>Confirm</Button>
+                            <DialogFooter className="mt-4 gap-2 flex-col sm:flex-row">
+                                <Button variant="ghost" onClick={() => setConfirmingDrop(null)} className="text-[rgba(26,18,8,0.40)]">Cancel</Button>
+                                <Button className="bg-[#c4762a] hover:bg-[#b06824] text-white font-bold rounded-xl h-12" onClick={handleConfirmClaim}>Confirm Claim</Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
@@ -306,33 +325,43 @@ export function Tables() {
                 return (
                     <Dialog open={!!successfulDrop} onOpenChange={() => setSuccessfulDrop(null)}>
                         <DialogContent className="p-0 border-0 bg-transparent shadow-none max-w-sm">
-                           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-yellow-300 to-amber-500 shadow-2xl border border-amber-300 text-black">
+                           <div className="relative overflow-hidden rounded-3xl bg-[#f2ece0] shadow-2xl border-none text-[#1a1208]">
                              <div className="p-8 flex flex-col items-center text-center">
-                                <CheckCircle className="h-16 w-16 text-white mb-4" />
-                                <h2 className="text-2xl font-bold tracking-tight">Table Claimed!</h2>
-                                <p className="font-semibold mt-2">You claimed a table at</p>
-                                <p className="text-3xl font-bold">{venueName}</p>
+                                <div className="h-20 w-20 flex items-center justify-center rounded-full bg-[#c4762a]/10 mb-6">
+                                    <CheckCircle className="h-10 w-10 text-[#c4762a]" />
+                                </div>
+                                <h2 className="text-3xl font-black tracking-tighter uppercase italic">YOU'RE IN</h2>
+                                <p className="font-bold mt-2 text-[rgba(26,18,8,0.50)] uppercase tracking-widest text-[10px]">Table Claimed at</p>
+                                <p className="text-2xl font-bold mt-1">{venueName}</p>
                                 
-                                <div className="my-6 w-full space-y-2 text-left bg-black/5 p-4 rounded-lg">
-                                    <p><strong>Party Size:</strong> {successfulDrop.partySize}</p>
-                                    <p><strong>Time:</strong> {new Date(successfulDrop.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                                    <p className="font-semibold">Please arrive by {new Date(new Date(successfulDrop.startTime).getTime() + 15 * 60000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                <div className="my-6 w-full space-y-2 text-left bg-white/50 p-5 rounded-2xl border border-black/[0.05]">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[11px] font-bold text-[rgba(26,18,8,0.40)] uppercase">Party Size</span>
+                                        <span className="font-bold">{successfulDrop.partySize} People</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[11px] font-bold text-[rgba(26,18,8,0.40)] uppercase">Time</span>
+                                        <span className="font-bold">{new Date(successfulDrop.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                    </div>
+                                    <div className="pt-2 border-t border-black/[0.05] mt-2">
+                                        <p className="text-[10px] text-center text-[rgba(26,18,8,0.40)] italic font-medium">Please arrive by {new Date(new Date(successfulDrop.startTime).getTime() + 15 * 60000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                    </div>
                                 </div>
 
-                                <div className="bg-white p-3 rounded-lg shadow-inner">
-                                    <svg width="128" height="128" viewBox="0 0 100 100"><path fill="#000" d="M0 0h30v30H0z m10 10h10v10H10zM70 0h30v30H70z m10 10h10v10H80zM0 70h30v30H0z m10 10h10v10H10zM40 0h10v10H40z m20 0h10v10H60zM40 20h10v10H40z m20 10h10v10H60z m-30 10h10v10H30z m30 0h10v10H60z m-20 0h10v10H40zM30 50h10v10H30z m20 0h10v10H50zM70 40h10v10H70z m10 10h10v10H80z m-10 10h10v10H70z m10 10h10v10H80zM40 70h10v10H40z m20 0h10v10H60z m-30 20h10v10H30z m30 0h10v10H60z m-20 0h10v10H40z"/></svg>
+                                <div className="bg-white p-4 rounded-2xl shadow-inner border border-black/[0.05]">
+                                    <svg width="128" height="128" viewBox="0 0 100 100" className="opacity-90"><path fill="#1a1208" d="M0 0h30v30H0z m10 10h10v10H10zM70 0h30v30H70z m10 10h10v10H80zM0 70h30v30H0z m10 10h10v10H10zM40 0h10v10H40z m20 0h10v10H60zM40 20h10v10H40z m20 10h10v10H60z m-30 10h10v10H30z m30 0h10v10H60z m-20 0h10v10H40zM30 50h10v10H30z m20 0h10v10H50zM70 40h10v10H70z m10 10h10v10H80z m-10 10h10v10H70z m10 10h10v10H80zM40 70h10v10H40z m20 0h10v10H60z m-30 20h10v10H30z m30 0h10v10H60z m-20 0h10v10H40z"/></svg>
                                 </div>
                                 
-                                <p className="text-xs mt-4 opacity-70">Show this screen upon arrival.</p>
+                                <p className="text-[10px] mt-6 font-bold text-[rgba(26,18,8,0.30)] uppercase tracking-widest">Show this screen upon arrival</p>
                              </div>
-                             <DialogFooter className="p-4 bg-black/10">
-                                <Button className="w-full bg-white text-black hover:bg-white/90" onClick={() => setSuccessfulDrop(null)}>Done</Button>
-                             </DialogFooter>
+                             <div className="p-4 bg-black/[0.03] border-t border-black/[0.05]">
+                                <Button className="w-full h-14 bg-[#c4762a] hover:bg-[#b06824] text-white font-black text-lg rounded-2xl shadow-xl shadow-[#c4762a]/20" onClick={() => setSuccessfulDrop(null)}>DONE</Button>
+                             </div>
                            </div>
                         </DialogContent>
                     </Dialog>
                 )
             })()}
-        </>
+        </div>
     );
 }
