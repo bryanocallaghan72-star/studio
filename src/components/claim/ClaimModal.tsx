@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Copy, Check, UserCheck, Smartphone } from 'lucide-react';
+import { Copy, Check, UserCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ClaimModalProps {
@@ -208,7 +208,7 @@ export function ClaimModal({ isOpen, onClose, venueName, offerText, creatorHandl
                 </motion.div>
               )}
             </div>
-          </div>
+          </motion.div>
         </div>
       )}
     </AnimatePresence>
