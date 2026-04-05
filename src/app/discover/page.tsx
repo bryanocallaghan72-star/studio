@@ -1,6 +1,5 @@
 'use client';
 
-import { MobileNav } from "@/components/iykyk/MobileNav";
 import { Card, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
@@ -37,7 +36,7 @@ export default function DiscoverPage() {
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-[#f2ece0]">
-      <div className="flex flex-1 flex-col pb-24 max-w-lg mx-auto w-full">
+      <div className="flex flex-1 flex-col pb-32 max-w-lg mx-auto w-full">
         <div className="p-8 pt-12 text-center space-y-2">
             <h2 
               className="text-hero leading-tight" 
@@ -168,7 +167,6 @@ export default function DiscoverPage() {
             </div>
         </div>
       </div>
-      <MobileNav />
     </div>
   );
 }

@@ -1,4 +1,3 @@
-
 // In app/layout.tsx
 
 import type {Metadata} from 'next';
@@ -6,16 +5,12 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { Inter } from 'next/font/google';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
-import { MobileNav } from '@/components/iykyk/MobileNav';
 import { cn } from '@/lib/utils';
-import { Header } from '@/components/iykyk/Header';
-// --- Corrected import path ---
-import { Sidebar, SidebarProvider, SidebarInset } from '@/components/iykyk/sidebar';
-import { DesktopNavContent } from '@/components/iykyk/DesktopNavContent';
 import { DemoTimeProvider } from '@/context/DemoTimeContext';
 import { SoundProvider } from '@/context/SoundContext';
 import { AmbienceController } from '@/components/iykyk/AmbienceController';
 import GodModeButton from '@/components/iykyk/GodModeButton';
+import { BottomNav } from '@/components/layout/BottomNav';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -36,38 +31,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-      </head>
       <body className={cn(inter.variable, "font-body antialiased")}>
         <FirebaseClientProvider>
           <DemoTimeProvider>
             <SoundProvider>
               <AmbienceController />
-              {/* --- This is the new, correct body structure --- */}
-              <SidebarProvider>
-                <div className="flex min-h-screen w-full flex-col bg-background">
-                  <div className="md:flex">
-                    <Sidebar collapsible="icon">
-                      <DesktopNavContent />
-                    </Sidebar>
-                    <SidebarInset>
-                      <main className="flex-1">
-                        {/* The ProfilePageClient now includes its own Header */}
-                        {/* <Header /> */}
-                        <div className="flex-1 p-4 md:p-6 pb-24">
-                          {children}
-                        </div>
-                        <MobileNav /> {/* <-- Moved MobileNav here */}
-                      </main>
-                    </SidebarInset>
-                  </div>
-                </div>
-              </SidebarProvider>
+              <div className="flex min-h-screen w-full flex-col bg-background">
+                <main className="flex-1 flex flex-col">
+                  {children}
+                </main>
+                <BottomNav />
+              </div>
               <GodModeButton />
             </SoundProvider>
           </DemoTimeProvider>
         </FirebaseClientProvider>
-          <Toaster />
+        <Toaster />
       </body>
     </html>
   );
