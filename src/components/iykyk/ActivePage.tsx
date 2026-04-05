@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -83,6 +82,7 @@ const ClassDropCard = ({ drop, venueName, onClaim }: { drop: ClassDrop, venueNam
                     src={drop.classImageUrl}
                     alt={drop.className}
                     fill
+                    unoptimized
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                     data-ai-hint="fitness class"
                 />
