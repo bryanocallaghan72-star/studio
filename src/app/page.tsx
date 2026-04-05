@@ -34,6 +34,18 @@ export default function LandingPage() {
       className="fixed inset-0 z-[10001] flex flex-col items-center justify-start overflow-hidden bg-[#05014a] text-[#f4f0e8] w-full h-[100dvh]"
       style={{ paddingTop: 'clamp(80px, 15vh, 140px)' }}
     >
+      {/* Scoped CSS to hide potential Gemini/AI widgets on this page only */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        [data-gemini], 
+        .gemini-widget,
+        button[aria-label*="Gemini"],
+        button[aria-label*="Google"],
+        .google-ai-widget,
+        [class*="gemini"],
+        [id*="gemini"] {
+          display: none !important;
+        }
+      ` }} />
       
       {/* Background Video */}
       <video
@@ -91,7 +103,7 @@ export default function LandingPage() {
         className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-[#f4f0e8]/20 tracking-[0.2em] uppercase z-20 whitespace-nowrap"
         style={{
           opacity: showContent ? 1 : 0,
-          transition: 'opacity(1.5s ease)',
+          transition: 'opacity 1.5s ease',
         }}
       >
         Lifestyle OS v1.0
