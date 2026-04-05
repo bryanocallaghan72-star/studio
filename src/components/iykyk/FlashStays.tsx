@@ -42,11 +42,11 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     }, [isClient, expiresAt]);
 
     if (!isClient) {
-        return <span className="font-mono text-lg font-semibold text-background">Loading...</span>;
+        return <span className="font-mono text-lg font-semibold text-white">Loading...</span>;
     }
 
     if (timeLeft <= 0) {
-        return <span className="font-mono text-lg font-bold text-destructive-foreground">ENDED</span>;
+        return <span className="font-mono text-lg font-bold text-white">ENDED</span>;
     }
 
     const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
@@ -54,7 +54,7 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     const seconds = Math.floor((timeLeft / 1000) % 60);
 
     return (
-        <span className="font-mono text-lg font-semibold text-background">
+        <span className="font-mono text-lg font-semibold text-white">
             {String(hours).padStart(2, '0')}:{String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
         </span>
     );
@@ -104,19 +104,26 @@ export function FlashStays() {
     const activeStays = stays.filter(item => item.endsIn && new Date(Date.now() + item.endsIn).getTime() > Date.now());
 
     return (
-        <>
+        <div className="flex flex-col bg-[#f2ece0] min-h-screen p-4 md:p-6 pb-32">
             <section>
-                <div className="flex items-center gap-3 mb-4">
-                    <Zap className="h-8 w-8 text-purple-500 animate-pulse" />
-                    <h2 className="text-3xl font-bold tracking-tight">iykyk Flash Stays</h2>
-                </div>
-                <p className="text-muted-foreground mb-4">Last-minute deals on creator-approved stays. Book it before it's gone!</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <header className="mb-8">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-xl bg-[#c4762a]/10">
+                            <Zap className="h-6 w-6 text-[#c4762a]" />
+                        </div>
+                        <div>
+                            <h1 className="text-3xl font-black tracking-tighter text-[#1a1208] uppercase italic">FLASH</h1>
+                            <p className="text-[13px] font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest">Last-minute · Creator picks</p>
+                        </div>
+                    </div>
+                </header>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     {activeStays.map(stay => {
                         const image = stay.imageId ? PlaceHolderImages.find(img => img.id === stay.imageId) : null;
                         const creator = stay.creatorId ? creatorsById[stay.creatorId] : null;
                         return (
-                            <Card key={stay.id} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-primary">
+                            <Card key={stay.id} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-none rounded-2xl aspect-[4/5] md:aspect-[16/10] bg-white">
                                 <div className="absolute inset-0">
                                 {image ? (
                                     <>
@@ -124,23 +131,23 @@ export function FlashStays() {
                                             src={image.imageUrl}
                                             alt={stay.description}
                                             fill
-                                            className="object-cover transition-transform group-hover:scale-105"
+                                            className="object-cover transition-transform duration-700 group-hover:scale-105"
                                             data-ai-hint={image.imageHint}
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                                     </>
                                 ) : <div className="bg-secondary h-full w-full"/>}
                                 </div>
-                                <CardContent className="relative z-10 flex flex-col justify-end h-full p-6 text-white min-h-[300px]">
-                                    <div>
-                                        <div className="flex items-center justify-between mb-2">
-                                            <Badge variant="destructive" className="flex items-center gap-2 w-min whitespace-nowrap bg-purple-500 hover:bg-purple-600">
-                                                <Zap className="h-4 w-4" />
+                                <CardContent className="relative z-10 flex flex-col justify-end h-full p-6 text-white">
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between">
+                                            <Badge className="flex items-center gap-2 w-min whitespace-nowrap bg-[#c4762a] text-white border-none px-2.5 py-1 text-[10px] font-black uppercase tracking-widest shadow-lg">
+                                                <Zap size={12} className="fill-current" />
                                                 <span>FLASH</span>
                                             </Badge>
                                              {creator && (
-                                                <div className='flex items-center gap-2 text-xs font-semibold bg-black/30 backdrop-blur-sm p-1 rounded-full'>
-                                                    <Avatar className="h-6 w-6">
+                                                <div className='flex items-center gap-2 text-[11px] font-bold bg-black/30 backdrop-blur-md px-2 py-1 rounded-full border border-white/10'>
+                                                    <Avatar className="h-5 w-5">
                                                         <AvatarImage src={creator.avatar} alt={creator.name} />
                                                         <AvatarFallback>{creator.name.charAt(0)}</AvatarFallback>
                                                     </Avatar>
@@ -148,17 +155,20 @@ export function FlashStays() {
                                                 </div>
                                             )}
                                         </div>
-                                        <h3 className="text-2xl font-bold leading-tight">{stay.title}</h3>
-                                        <p className="text-white/90 mt-1">${stay.pricePerNight} / night</p>
-                                    </div>
-                                    <div className='mt-6'>
-                                        <div className="flex items-center justify-between rounded-lg bg-destructive/80 p-3 backdrop-blur-sm border border-destructive-foreground/30">
-                                            <p className="text-sm font-medium text-destructive-foreground">Deal ends in:</p>
+                                        <div>
+                                            <h3 className="text-2xl font-bold leading-tight text-white">{stay.title}</h3>
+                                            <p className="text-[#c4762a] font-black text-lg mt-1">
+                                                ${stay.pricePerNight} <span className="text-white/60 text-xs font-normal">/ night</span>
+                                            </p>
+                                        </div>
+                                        
+                                        <div className="bg-[#c4762a]/80 p-3 rounded-xl backdrop-blur-sm border border-white/10 flex items-center justify-between">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-white/80">Deal ends in:</p>
                                             <Countdown expiresAt={new Date(Date.now() + stay.endsIn).toISOString()} />
                                         </div>
+
                                         <Button 
-                                            variant="secondary" 
-                                            className="w-full mt-3 font-bold"
+                                            className="w-full h-12 bg-[#c4762a] hover:bg-[#b06824] text-white font-bold rounded-2xl shadow-lg shadow-[#c4762a]/20 transition-all active:scale-95"
                                             onClick={() => handleBookNow(stay)}
                                             disabled={!user}
                                         >
@@ -174,28 +184,28 @@ export function FlashStays() {
             </section>
             {selectedStay && (
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogContent>
+                    <DialogContent className="bg-[#f2ece0] border-none rounded-3xl shadow-2xl">
                         <DialogHeader className="items-center text-center">
-                            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 mb-2">
-                                <CheckCircle className="h-6 w-6 text-green-600" />
+                            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#c4762a]/10 mb-4">
+                                <CheckCircle className="h-8 w-8 text-[#c4762a]" />
                             </div>
-                            <DialogTitle className="text-2xl">Your stay is booked!</DialogTitle>
-                            <DialogDescription>
+                            <DialogTitle className="text-2xl font-bold text-[#1a1208]">Your stay is booked!</DialogTitle>
+                            <DialogDescription className="text-[rgba(26,18,8,0.60)]">
                                 You're all set for your trip to Bondi. Enjoy your stay at {selectedStay.title}.
                             </DialogDescription>
                         </DialogHeader>
-                        <DialogFooter className="flex-col sm:flex-col sm:space-x-0 gap-2">
+                        <DialogFooter className="flex-col sm:flex-col sm:space-x-0 gap-2 mt-4">
                             <Link href="/my-day" className="w-full">
-                                <Button className="w-full h-12">
-                                    <CalendarPlus className="mr-2"/>
+                                <Button className="w-full h-14 bg-[#c4762a] hover:bg-[#b06824] text-white font-black text-lg rounded-2xl shadow-xl shadow-[#c4762a]/20">
+                                    <CalendarPlus className="mr-2 h-5 w-5"/>
                                     Plan Your Itinerary
                                 </Button>
                             </Link>
-                             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Close</Button>
+                             <Button variant="ghost" onClick={() => setIsDialogOpen(false)} className="text-[rgba(26,18,8,0.40)]">Close</Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
             )}
-        </>
+        </div>
     );
 }
