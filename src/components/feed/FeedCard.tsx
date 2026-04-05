@@ -51,7 +51,7 @@ export function FeedCard({ post, index }: FeedCardProps) {
         <div 
           className="absolute inset-0 z-10" 
           style={{ 
-            background: 'linear-gradient(to top, rgba(8,10,13,0.96) 0%, rgba(8,10,13,0.75) 35%, transparent 100%)' 
+            background: 'linear-gradient(to top, rgba(8,10,13,0.82) 0%, rgba(8,10,13,0.45) 30%, transparent 65%)' 
           }} 
         />
 
