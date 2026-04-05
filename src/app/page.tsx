@@ -57,7 +57,7 @@ export default function LandingPage() {
         }} 
       />
 
-      {/* Main Landing UI Content */}
+      {/* Top Branding Content */}
       <div
         className="relative z-20 text-center px-6 flex flex-col items-center"
         style={{
@@ -71,21 +71,27 @@ export default function LandingPage() {
         <p className="mt-[12px] text-[clamp(14px,2vw,18px)] font-light tracking-[0.1em] text-[#f4f0e8]/60 uppercase">
           Your Cultural Concierge for Bondi
         </p>
-        
-        <button
-          onClick={handleEnter}
-          className="mt-[48px] px-[40px] py-[14px] text-[13px] font-medium tracking-[0.15em] uppercase text-[#f4f0e8] border border-[#f4f0e8]/30 rounded-[32px] bg-transparent transition-all duration-500 hover:bg-[#f4f0e8]/10 hover:border-[#f4f0e8]/60 active:scale-95 backdrop-blur-sm"
-        >
-          Enter Bondi
-        </button>
       </div>
 
-      {/* Subtle Attribution */}
-      <div 
-        className="absolute bottom-10 text-[10px] font-semibold text-[#f4f0e8]/20 tracking-[0.2em] uppercase z-20"
+      {/* Bottom CTA Button */}
+      <button
+        onClick={handleEnter}
+        className="absolute bottom-[clamp(40px,8vh,80px)] left-1/2 -translate-x-1/2 z-30 px-[40px] py-[14px] text-[13px] font-medium tracking-[0.15em] uppercase text-[#f4f0e8] border border-[#f4f0e8]/30 rounded-[32px] bg-transparent transition-all duration-500 hover:bg-[#f4f0e8]/10 hover:border-[#f4f0e8]/60 active:scale-95 backdrop-blur-sm whitespace-nowrap"
         style={{
           opacity: showContent ? 1 : 0,
           transition: 'opacity 1.5s ease',
+          transitionDelay: '0.4s'
+        }}
+      >
+        Enter Bondi
+      </button>
+
+      {/* Subtle Attribution */}
+      <div 
+        className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-[#f4f0e8]/20 tracking-[0.2em] uppercase z-20 whitespace-nowrap"
+        style={{
+          opacity: showContent ? 1 : 0,
+          transition: 'opacity(1.5s ease)',
         }}
       >
         Lifestyle OS v1.0
