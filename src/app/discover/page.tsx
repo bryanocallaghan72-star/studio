@@ -35,7 +35,7 @@ export default function DiscoverPage() {
   const { currentPhase } = useDemoTime();
 
   return (
-    <div className="flex min-h-screen w-full flex-col">
+    <div className="flex min-h-screen w-full flex-col bg-[#05014a]">
       <div className="flex flex-1 flex-col pb-24 max-w-lg mx-auto w-full">
         <div className="p-8 pt-12 text-center space-y-2">
             <h2 className="text-hero leading-tight">Your Cultural Concierge</h2>
