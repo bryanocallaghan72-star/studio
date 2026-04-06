@@ -193,18 +193,20 @@ export function ProfilePageClient({ uid }: { uid: string }) {
           <div className="flex justify-center w-full bg-[rgba(26,18,8,0.06)] rounded-full p-1 shadow-inner border border-black/[0.03]">
             <button 
               className={cn(
-                "flex-1 px-4 py-2.5 rounded-full text-[13px] font-bold transition-all duration-300",
+                "flex-1 px-4 py-2.5 rounded-full text-[13px] font-bold transition-all duration-300 outline-none focus:outline-none focus:ring-0 focus:shadow-none active:outline-none",
                 activeTab === 'Profile' ? 'bg-white text-[#1a1208] shadow-sm border border-black/5' : 'text-[rgba(26,18,8,0.40)]'
               )} 
+              style={{ outline: 'none', boxShadow: 'none' }}
               onClick={() => setActiveTab('Profile')}
             >
               Profile
             </button>
             <button 
               className={cn(
-                "flex-1 px-4 py-2.5 rounded-full text-[13px] font-bold transition-all duration-300",
+                "flex-1 px-4 py-2.5 rounded-full text-[13px] font-bold transition-all duration-300 outline-none focus:outline-none focus:ring-0 focus:shadow-none active:outline-none",
                 activeTab === 'Insights' ? 'bg-white text-[#1a1208] shadow-sm border border-black/5' : 'text-[rgba(26,18,8,0.40)]'
               )} 
+              style={{ outline: 'none', boxShadow: 'none' }}
               onClick={() => setActiveTab('Insights')}
             >
               Insights
