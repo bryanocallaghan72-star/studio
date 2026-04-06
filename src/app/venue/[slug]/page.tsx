@@ -249,9 +249,12 @@ export default function VenuePage() {
   const center = { lat: venue.latitude, lng: venue.longitude };
 
   return (
-    <div className="space-y-6">
-      <Card className="overflow-hidden -mx-4 -mt-6 md:-mx-6 md:-mt-6 rounded-none md:rounded-b-2xl shadow-lg">
-          <div className="relative h-64 w-full bg-secondary">
+    <div className="space-y-6 bg-[#f2ece0] min-h-screen pb-32">
+      <Card className="overflow-hidden -mx-4 -mt-6 md:-mx-6 md:-mt-6 rounded-none md:rounded-b-3xl shadow-lg border-none">
+          <div 
+            className="relative h-64 w-full"
+            style={{ background: 'linear-gradient(135deg, #1a1208 0%, #3d2a10 50%, #c4762a 100%)' }}
+          >
               {(photoUrl) ? (
                   <Image
                       src={photoUrl}
@@ -261,72 +264,92 @@ export default function VenuePage() {
                       priority
                   />
               ) : (
-                  <div className="flex items-center justify-center h-full bg-muted">
-                      <Building className="h-16 w-16 text-muted-foreground" />
+                  <div className="flex items-center justify-center h-full bg-transparent">
+                      <Building className="h-16 w-16 text-white/20" />
                   </div>
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="absolute bottom-0 left-0 p-4 md:p-6">
-                  <Badge variant="secondary">{venue.category}</Badge>
+                  <Badge variant="secondary" className="bg-white/20 text-white backdrop-blur-md border-none">{venue.category}</Badge>
                   <h1 className="text-4xl font-bold tracking-tight mt-2 text-white" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{venue.name}</h1>
               </div>
           </div>
       </Card>
       
-      <div className='p-4 md:p-0 space-y-6'>
-        <div className="flex items-center gap-4 text-muted-foreground">
-            <p className="flex items-center gap-2">
+      <div className='p-4 md:p-0 space-y-6 max-w-lg mx-auto'>
+        <div className="flex items-center gap-4 text-[rgba(26,18,8,0.50)]">
+            <p className="flex items-center gap-2 text-sm font-medium">
                 <MapPin className="h-4 w-4" />
                 {venue.address}
             </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-sm">
             {venue.priceTier && (
-              <Badge variant="outline" className="text-base">{venue.priceTier}</Badge>
+              <Badge variant="outline" className="text-sm font-bold border-black/10 text-[#1a1208]">{venue.priceTier}</Badge>
             )}
             {venue.subCategory && (
-              <Badge variant="outline">{venue.subCategory}</Badge>
+              <Badge variant="outline" className="text-xs font-semibold border-black/10 text-[#1a1208]">{venue.subCategory}</Badge>
             )}
             {venue.vibeTags && venue.vibeTags.map(tag => (
-              <Badge key={tag} variant="secondary">{tag}</Badge>
+              <Badge key={tag} variant="secondary" className="bg-black/5 text-[rgba(26,18,8,0.60)] border-none">{tag}</Badge>
             ))}
         </div>
 
-        {venue.description && <p className="text-foreground/80 text-lg">{venue.description}</p>}
+        {venue.description && <p className="text-[#1a1208]/80 text-lg leading-relaxed">{venue.description}</p>}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-          <Button onClick={handleGetDirections} size="lg">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <Button 
+            onClick={handleGetDirections} 
+            size="lg" 
+            className="bg-[#c4762a] hover:bg-[#b06824] text-white font-bold rounded-2xl h-14 shadow-lg shadow-[#c4762a]/20"
+          >
             <Navigation className="mr-2" />
             Get Directions
           </Button>
-          <Button onClick={handleShare} variant="outline" size="lg">
+          <Button 
+            onClick={handleShare} 
+            variant="outline" 
+            size="lg"
+            className="bg-white border-black/[0.08] text-[#1a1208] font-bold rounded-2xl h-14 shadow-sm"
+          >
             <Share2 className="mr-2" />
             Share
           </Button>
-          <Button onClick={handleStubSave} variant="outline" size="lg">
+          <Button 
+            onClick={handleStubSave} 
+            variant="outline" 
+            size="lg"
+            className="bg-white border-black/[0.08] text-[#1a1208] font-bold rounded-2xl h-14 shadow-sm"
+          >
             <Bookmark className="mr-2" />
             Save
           </Button>
         </div>
 
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden bg-white border-black/[0.08] rounded-[24px] shadow-sm">
           <CardHeader>
-            <CardTitle>Edit Venue Details</CardTitle>
-            <CardDescription>Add more specific details to help others discover this venue.</CardDescription>
+            <CardTitle className="text-[#1a1208] font-bold">Edit Venue Details</CardTitle>
+            <CardDescription className="text-[rgba(26,18,8,0.50)]">Add more specific details to help others discover this venue.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                      <Label htmlFor="subCategory">Sub-category</Label>
-                      <Input id="subCategory" value={subCategory} onChange={e => setSubCategory(e.target.value)} placeholder="e.g., Cocktail Bar, Pilates Studio" />
+                      <Label htmlFor="subCategory" className="text-[#1a1208] font-medium text-sm">Sub-category</Label>
+                      <Input 
+                        id="subCategory" 
+                        value={subCategory} 
+                        onChange={e => setSubCategory(e.target.value)} 
+                        placeholder="e.g., Cocktail Bar, Pilates Studio" 
+                        className="bg-[#f2ece0] border-black/[0.08] text-[#1a1208] placeholder:text-[rgba(26,18,8,0.30)] rounded-xl"
+                      />
                   </div>
                   <div className="space-y-2">
-                      <Label htmlFor="priceTier">Price Tier</Label>
+                      <Label htmlFor="priceTier" className="text-[#1a1208] font-medium text-sm">Price Tier</Label>
                       <Select value={priceTier} onValueChange={setPriceTier}>
-                          <SelectTrigger id="priceTier">
+                          <SelectTrigger id="priceTier" className="bg-[#f2ece0] border-black/[0.08] text-[#1a1208] rounded-xl">
                               <SelectValue placeholder="Select price tier" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="bg-white border-black/[0.08]">
                               <SelectItem value="$">$ (Inexpensive)</SelectItem>
                               <SelectItem value="$$">$$ (Moderate)</SelectItem>
                               <SelectItem value="$$$">$$$ (Pricey)</SelectItem>
@@ -336,10 +359,20 @@ export default function VenuePage() {
                   </div>
               </div>
               <div className="space-y-2">
-                  <Label htmlFor="vibeTags">Vibe Tags (comma-separated)</Label>
-                  <Input id="vibeTags" value={vibeTags} onChange={e => setVibeTags(e.target.value)} placeholder="e.g., Casual, Rooftop, Live Music" />
+                  <Label htmlFor="vibeTags" className="text-[#1a1208] font-medium text-sm">Vibe Tags (comma-separated)</Label>
+                  <Input 
+                    id="vibeTags" 
+                    value={vibeTags} 
+                    onChange={e => setVibeTags(e.target.value)} 
+                    placeholder="e.g., Casual, Rooftop, Live Music" 
+                    className="bg-[#f2ece0] border-black/[0.08] text-[#1a1208] placeholder:text-[rgba(26,18,8,0.30)] rounded-xl"
+                  />
               </div>
-              <Button onClick={handleEnrichmentSave} disabled={isSaving || !user}>
+              <Button 
+                onClick={handleEnrichmentSave} 
+                disabled={isSaving || !user}
+                className="w-full h-12 bg-[#c4762a] hover:bg-[#b06824] text-white font-bold rounded-xl mt-2"
+              >
                   {isSaving ? <Loader2 className="mr-2 animate-spin" /> : <Save className="mr-2" />}
                   {isSaving ? "Saving..." : user ? "Save Details" : "Sign in to Save"}
               </Button>
@@ -347,11 +380,11 @@ export default function VenuePage() {
         </Card>
 
 
-        <Card className="h-64 overflow-hidden">
+        <Card className="h-64 overflow-hidden rounded-[24px] border-black/[0.08] shadow-sm bg-white">
           {loadError && <div>Map cannot be loaded right now.</div>}
           {!isKeyValid ? (
-            <div className="flex items-center justify-center h-full bg-muted p-4 text-center">
-              <p className="text-sm text-muted-foreground">Google Maps key missing. Please set <code>NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code>.</p>
+            <div className="flex items-center justify-center h-full bg-black/5 p-4 text-center">
+              <p className="text-sm text-[rgba(26,18,8,0.40)] font-medium">Google Maps key missing. Please set <code>NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code>.</p>
             </div>
           ) : isLoaded && !loadError ? (
             <GoogleMap
@@ -363,8 +396,8 @@ export default function VenuePage() {
               <MarkerF position={center} />
             </GoogleMap>
           ) : (
-            <div className="flex items-center justify-center h-full bg-muted">
-                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            <div className="flex items-center justify-center h-full bg-black/5">
+                  <Loader2 className="h-8 w-8 animate-spin text-[rgba(26,18,8,0.20)]" />
             </div>
           )}
         </Card>
