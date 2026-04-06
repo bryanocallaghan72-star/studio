@@ -136,7 +136,6 @@ export function ProfilePageClient({ uid }: { uid: string }) {
     );
   }
 
-  const bannerImage = userProfile.bannerUrl || "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop";
   const avatarImage = userProfile.avatarUrl || `https://api.dicebear.com/8.x/lorelei/svg?seed=${userProfile.username}`;
 
   return (
@@ -145,14 +144,19 @@ export function ProfilePageClient({ uid }: { uid: string }) {
         
         {/* Profile Header Card */}
         <div className="space-y-0">
-          <div className="relative h-32 w-full bg-secondary rounded-t-3xl overflow-hidden">
-             <Image 
-                src={bannerImage}
-                alt="Banner"
-                fill
-                className="object-cover"
-                priority
-             />
+          <div 
+            className="relative h-32 w-full rounded-t-3xl overflow-hidden"
+            style={{ background: 'linear-gradient(135deg, #1a1208 0%, #3d2a10 50%, #c4762a 100%)' }}
+          >
+             {userProfile.bannerUrl && (
+               <Image 
+                  src={userProfile.bannerUrl}
+                  alt="Banner"
+                  fill
+                  className="object-cover"
+                  priority
+               />
+             )}
           </div>
           <div className="bg-white border-x border-b border-black/[0.06] rounded-b-3xl p-6 relative">
             <div className="absolute -top-12 left-6">
