@@ -3,14 +3,14 @@
 import { useMemo, useState } from 'react';
 import Image from "next/image";
 import Link from "next/link";
-import { Rss, Star, MapPin, Loader2, Edit, TrendingUp, Users, Ticket } from "lucide-react";
-import { collection, doc } from 'firebase/firestore';
+import { Rss, Star, MapPin, Loader2, Edit, Ticket, Users } from "lucide-react";
+import { doc } from 'firebase/firestore';
 
 import { Header } from "@/components/iykyk/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useDoc, useFirestore, useMemoFirebase, useCollection } from '@/firebase';
+import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { useUser } from '@/firebase/auth/use-user';
 import { appData } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -19,6 +19,8 @@ import { WithId } from '@/firebase/firestore/use-collection';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useClaimedDeals } from '@/hooks/useClaimedDeals';
 import { useCreators } from '@/hooks/useCreators';
+import { CreatorInsights } from '@/components/iykyk/CreatorInsights';
+import { cn } from '@/lib/utils';
 
 // Update user profile type to include new optional fields
 type UserProfile = WithId<{
@@ -28,10 +30,10 @@ type UserProfile = WithId<{
   bannerUrl?: string;
 }>;
 
-
 export function ProfilePageClient({ uid }: { uid: string }) {
   const { user: currentUser } = useUser();
   const firestore = useFirestore();
+  const [activeTab, setActiveTab] = useState<'Profile' | 'Insights'>('Profile');
 
   const { creatorsById } = useCreators();
 
@@ -49,7 +51,7 @@ export function ProfilePageClient({ uid }: { uid: string }) {
   
   const { data: firestoreUserProfile, isLoading: isFirestoreLoading } = useDoc<UserProfile>(userDocRef);
   
-  // Use our new hook to get the count of claimed deals for the viewed profile
+  // Use our hook to get the count of claimed deals for the viewed profile
   const { count: claimsCount, isLoading: isClaimsLoading } = useClaimedDeals(uid);
   
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
@@ -61,7 +63,7 @@ export function ProfilePageClient({ uid }: { uid: string }) {
         id: mockUserProfile.id,
         username: mockUserProfile.name,
         bio: mockUserProfile.bio,
-        avatarUrl: mockUserProfile.avatar, // Use mock avatar as avatarUrl
+        avatarUrl: mockUserProfile.avatar,
         bannerUrl: undefined,
       };
     }
@@ -75,27 +77,25 @@ export function ProfilePageClient({ uid }: { uid: string }) {
     return [...appData.map.pins].sort(() => 0.5 - Math.random()).slice(0, 3);
   }, [uid]);
 
-  
   const isLoading = shouldFetchFirestore ? isFirestoreLoading : false;
-  
   const followerCount = mockUserProfile ? Math.floor(Math.random() * 5000 + 1000) : 0;
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="mt-4 text-muted-foreground">Loading Profile...</p>
+      <div className="flex min-h-screen w-full flex-col items-center justify-center bg-[#f2ece0]">
+        <Loader2 className="h-10 w-10 animate-spin text-[#c4762a]" />
+        <p className="mt-4 text-[11px] font-bold text-[#c4762a] uppercase tracking-widest">Loading Profile...</p>
       </div>
     );
   }
 
   if (!userProfile) {
     return (
-       <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background">
-        <h1 className="text-2xl font-bold">Profile Not Found</h1>
-        <p className="text-muted-foreground">We couldn't find a user with that ID.</p>
-        <Link href="/discover" className="mt-4">
-          <Button>Go to Discover</Button>
+       <div className="flex min-h-screen w-full flex-col items-center justify-center bg-[#f2ece0] p-6 text-center">
+        <h1 className="text-2xl font-bold text-[#1a1208]">Profile Not Found</h1>
+        <p className="text-[13px] text-[rgba(26,18,8,0.50)] mt-2">We couldn't find a user with that ID.</p>
+        <Link href="/discover" className="mt-8 w-full max-w-xs">
+          <Button className="w-full h-12 bg-[#c4762a] rounded-2xl font-bold">Go to Discover</Button>
         </Link>
       </div>
     )
@@ -105,127 +105,161 @@ export function ProfilePageClient({ uid }: { uid: string }) {
     if (isClaimsLoading) {
       return (
         <div className="grid grid-cols-2 gap-4">
-          <Skeleton className="h-[88px] w-full" />
-          <Skeleton className="h-[88px] w-full" />
+          <Skeleton className="h-[88px] w-full rounded-2xl" />
+          <Skeleton className="h-[88px] w-full rounded-2xl" />
         </div>
       );
     }
 
     return (
       <div className="grid grid-cols-2 gap-4">
-          <div className="flex items-center gap-3 rounded-lg border p-4">
-              <div className="p-3 rounded-full bg-primary/10">
-                  <Ticket className="h-6 w-6 text-primary" />
+          <div className="flex items-center gap-3 rounded-2xl border border-black/[0.06] bg-white p-4">
+              <div className="p-2.5 rounded-xl bg-[#c4762a]/10">
+                  <Ticket className="h-5 w-5 text-[#c4762a]" />
               </div>
               <div>
-                  <p className="text-2xl font-bold">{claimsCount}</p>
-                  <p className="text-sm text-muted-foreground">Deals Claimed</p>
+                  <p className="text-xl font-black text-[#c4762a] leading-none">{claimsCount}</p>
+                  <p className="text-[10px] font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-tight mt-1">Claims</p>
               </div>
           </div>
-          <div className="flex items-center gap-3 rounded-lg border p-4">
-              <div className="p-3 rounded-full bg-primary/10">
-                  <Users className="h-6 w-6 text-primary" />
+          <div className="flex items-center gap-3 rounded-2xl border border-black/[0.06] bg-white p-4">
+              <div className="p-2.5 rounded-xl bg-[#c4762a]/10">
+                  <Users className="h-5 w-5 text-[#c4762a]" />
               </div>
               <div>
-                  <p className="text-2xl font-bold">{followerCount.toLocaleString()}</p>
-                  <p className="text-sm text-muted-foreground">Followers</p>
+                  <p className="text-xl font-black text-[#c4762a] leading-none">{followerCount.toLocaleString()}</p>
+                  <p className="text-[10px] font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-tight mt-1">Followers</p>
               </div>
           </div>
       </div>
     );
   }
 
-  // Use bannerUrl if available, otherwise fallback to default
   const bannerImage = userProfile.bannerUrl || "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop";
-  // Use avatarUrl if available, otherwise fallback to Dicebear
   const avatarImage = userProfile.avatarUrl || `https://api.dicebear.com/8.x/lorelei/svg?seed=${userProfile.username}`;
 
   return (
-    <>
-      <main className="flex flex-1 flex-col gap-8 pb-24">
+    <div className="flex min-h-screen w-full flex-col bg-[#f2ece0] p-4 md:p-6 pb-32">
+      <main className="flex flex-1 flex-col gap-8 max-w-lg mx-auto w-full">
         
-        <Card className="overflow-hidden border-none shadow-none bg-transparent">
-          <div className="relative h-40 w-full bg-secondary rounded-2xl">
+        {/* Profile Header Card */}
+        <div className="space-y-0">
+          <div className="relative h-32 w-full bg-secondary rounded-t-3xl overflow-hidden">
              <Image 
                 src={bannerImage}
-                alt={`${userProfile.username}'s banner`}
+                alt="Banner"
                 fill
-                className="object-cover rounded-2xl"
-                data-ai-hint="abstract gradient"
+                className="object-cover"
                 priority
              />
           </div>
-          <CardContent className="p-0">
-            <div className="flex items-end gap-4 -mt-16 px-6">
-              <Avatar className="h-28 w-28 border-4 border-background">
+          <div className="bg-white border-x border-b border-black/[0.06] rounded-b-3xl p-6 relative">
+            <div className="absolute -top-12 left-6">
+              <Avatar className="h-24 w-24 border-[6px] border-white shadow-lg">
                 <AvatarImage src={avatarImage} alt={userProfile.username} />
-                <AvatarFallback>{userProfile.username.charAt(0).toUpperCase()}</AvatarFallback>
+                <AvatarFallback className="text-2xl font-black">{userProfile.username.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
             </div>
-             <div className="px-6 mt-4 space-y-4">
-                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight">{userProfile.username}</h1>
-                    <p className="text-sm text-muted-foreground">@{userProfile.isMock ? userProfile.id : userProfile.username}</p>
-                 </div>
-                <p className="text-muted-foreground">{userProfile.bio || "No bio yet."}</p>
+            <div className="flex justify-end pt-2">
                 {isOwner && !userProfile.isMock ? (
-                  <Button onClick={() => setEditDialogOpen(true)}>
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit Profile
+                  <Button onClick={() => setEditDialogOpen(true)} variant="outline" size="sm" className="h-9 rounded-xl border-black/[0.08] font-bold text-[13px]">
+                    <Edit className="mr-2 h-3.5 w-3.5" />
+                    Edit
                   </Button>
                 ) : !isOwner && (
-                  <Button>
-                      <Rss className="mr-2 h-4 w-4" />
+                  <Button size="sm" className="h-9 rounded-xl bg-[#c4762a] hover:bg-[#b06824] font-bold text-[13px] px-6">
+                      <Rss className="mr-2 h-3.5 w-3.5" />
                       Follow
                   </Button>
                 )}
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-            <CardHeader>
-                <CardTitle>Impact</CardTitle>
-            </CardHeader>
-            <CardContent>
-                {renderImpactStats()}
-            </CardContent>
-        </Card>
-
-
-        <section>
-            <h2 className="text-2xl font-bold tracking-tight mb-4 flex items-center gap-2">
-                <Star className="text-accent"/>
-                Pins
-            </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                {userPins.map(spot => {
-                    const imageId = spot.type === 'Sushi' ? 'sushi-1' : spot.type === 'Nightlife' ? 'nightlife-1' : 'coffee-1';
-                    const image = PlaceHolderImages.find(img => img.id === imageId);
-                    return (
-                        <Link key={spot.id} href={`/venue/${spot.slug}`}>
-                            <Card className="group overflow-hidden relative aspect-square transition-all hover:shadow-xl hover:-translate-y-1">
-                                {image && <>
-                                    <Image 
-                                        src={image.imageUrl}
-                                        alt={spot.name}
-                                        fill
-                                        className="object-cover w-full h-full transition-transform group-hover:scale-105"
-                                        data-ai-hint={image.imageHint}
-                                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                                </>}
-                                <div className="absolute bottom-0 left-0 p-3 w-full">
-                                    <h3 className="font-semibold text-white text-sm line-clamp-1">{spot.name}</h3>
-                                    <p className="text-xs text-white/80 flex items-center gap-1"><MapPin className="h-3 w-3"/>{spot.type}</p>
-                                </div>
-                            </Card>
-                        </Link>
-                    )
-                })}
+             <div className="mt-4 space-y-3">
+                 <div>
+                    <h1 className="text-2xl font-black tracking-tight text-[#1a1208] leading-tight">{userProfile.username}</h1>
+                    <p className="text-[13px] font-bold text-[rgba(26,18,8,0.40)]">@{userProfile.isMock ? userProfile.id : userProfile.username}</p>
+                 </div>
+                <p className="text-[14px] leading-relaxed text-[rgba(26,18,8,0.65)]">{userProfile.bio || "No bio yet."}</p>
             </div>
-        </section>
+          </div>
+        </div>
+
+        {/* Owner-Only Tab Toggle */}
+        {isOwner && (
+          <div className="flex justify-center w-full bg-[rgba(26,18,8,0.06)] rounded-full p-1 shadow-inner border border-black/[0.03]">
+            <button 
+              className={cn(
+                "flex-1 px-4 py-2.5 rounded-full text-[13px] font-bold transition-all duration-300",
+                activeTab === 'Profile' ? 'bg-white text-[#1a1208] shadow-sm border border-black/5' : 'text-[rgba(26,18,8,0.40)]'
+              )} 
+              onClick={() => setActiveTab('Profile')}
+            >
+              Profile
+            </button>
+            <button 
+              className={cn(
+                "flex-1 px-4 py-2.5 rounded-full text-[13px] font-bold transition-all duration-300",
+                activeTab === 'Insights' ? 'bg-white text-[#1a1208] shadow-sm border border-black/5' : 'text-[rgba(26,18,8,0.40)]'
+              )} 
+              onClick={() => setActiveTab('Insights')}
+            >
+              Insights
+            </button>
+          </div>
+        )}
+
+        {/* Conditional Tab Rendering */}
+        {isOwner && activeTab === 'Insights' ? (
+          <CreatorInsights creatorId={uid} />
+        ) : (
+          <div className="space-y-8 animate-in fade-in duration-500 slide-in-from-bottom-2">
+            <section className="space-y-4">
+                <h2 className="text-[10px] font-bold uppercase tracking-[0.15em] text-[rgba(26,18,8,0.40)]">Impact</h2>
+                {renderImpactStats()}
+            </section>
+
+            <section className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-[10px] font-bold uppercase tracking-[0.15em] text-[rgba(26,18,8,0.40)]">Pinned Vibes</h2>
+                  <Badge variant="outline" className="border-black/[0.08] text-[10px] font-bold text-[rgba(26,18,8,0.40)]">
+                    {userPins.length} SPOTS
+                  </Badge>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                    {userPins.map(spot => {
+                        const typeToImageId: Record<string, string> = {
+                          'Sushi': 'sushi-1',
+                          'Nightlife': 'nightlife-1',
+                          'Brunch': 'coffee-1',
+                          'Vibes': 'morning-1'
+                        };
+                        const imageId = typeToImageId[spot.type] || 'morning-1';
+                        const image = PlaceHolderImages.find(img => img.id === imageId);
+                        return (
+                            <Link key={spot.id} href={`/venue/${spot.slug}`}>
+                                <Card className="group overflow-hidden relative aspect-square transition-all hover:shadow-lg border-none rounded-2xl bg-white">
+                                    {image && <>
+                                        <Image 
+                                            src={image.imageUrl}
+                                            alt={spot.name}
+                                            fill
+                                            className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
+                                            data-ai-hint={image.imageHint}
+                                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                                    </>}
+                                    <div className="absolute bottom-0 left-0 p-4 w-full">
+                                        <h3 className="font-bold text-white text-[13px] line-clamp-1 leading-tight">{spot.name}</h3>
+                                        <p className="text-[10px] font-bold text-white/60 flex items-center gap-1 uppercase tracking-tight mt-0.5"><MapPin className="h-2.5 w-2.5"/>{spot.type}</p>
+                                    </div>
+                                </Card>
+                            </Link>
+                        )
+                    })}
+                </div>
+            </section>
+          </div>
+        )}
 
       </main>
       {isOwner && !userProfile.isMock && firestoreUserProfile && (
@@ -235,6 +269,6 @@ export function ProfilePageClient({ uid }: { uid: string }) {
           userProfile={firestoreUserProfile}
         />
       )}
-    </>
+    </div>
   );
 }
