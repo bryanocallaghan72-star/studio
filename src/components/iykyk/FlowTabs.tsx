@@ -236,7 +236,7 @@ export function FlowTabs() {
             <TabsTrigger 
                 key={tab.value} 
                 value={tab.value}
-                className="rounded-full text-[12px] font-bold transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#1a1208] data-[state=active]:shadow-sm data-[state=active]:border-[0.5px] data-[state=active]:border-black/5 text-[rgba(26,18,8,0.40)]"
+                className="rounded-full text-[12px] font-bold transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#1a1208] data-[state=active]:shadow-sm data-[state=active]:border-[0.5px] data-[state=active]:border-black/5 text-[rgba(26,18,8,0.40)] outline-none focus:outline-none focus:ring-0 focus-visible:ring-0"
             >
                 <tab.icon className="mr-1.5 h-3.5 w-3.5"/>
                 {tab.label}
@@ -253,9 +253,9 @@ export function FlowTabs() {
                         key={subCategory}
                         onClick={() => setActiveSubCategory(subCategory)}
                         className={cn(
-                            "flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold transition-all duration-200",
+                            "flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold transition-all duration-200 outline-none focus:outline-none focus:ring-0",
                             isActive 
-                                ? "bg-[#1a1208] text-white shadow-md" 
+                                ? "bg-[#c4762a] text-white shadow-md shadow-[#c4762a]/10" 
                                 : "bg-[rgba(26,18,8,0.06)] text-[rgba(26,18,8,0.50)] hover:bg-[rgba(26,18,8,0.1)]"
                         )}
                     >
