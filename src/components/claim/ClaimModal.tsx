@@ -39,28 +39,52 @@ export function ClaimModal({ isOpen, onClose, venueName, offerText, creatorHandl
     }
   }, [isOpen]);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(code);
+      } else {
+        // Fallback for non-secure contexts or older mobile browsers
+        const el = document.createElement('textarea');
+        el.value = code;
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Copy failed:', err);
+      // Still show the "success" state to the user to avoid frustration on mobile
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   const handleCommitClaim = () => {
     setStep('SUCCESS');
     
-    // Log the claim to Firestore for venue attribution
-    if (user && firestore) {
-      const claimsRef = collection(firestore, 'claims');
-      addDocumentNonBlocking(claimsRef, {
-        venueName,
-        offerText,
-        source,
-        userId: user.uid,
-        userEmail: user.email,
-        claimedAt: serverTimestamp(),
-        code,
-        creatorHandle: source === 'fire' ? 'venue_direct' : (creatorHandle || 'anonymous')
-      });
+    try {
+      // Log the claim to Firestore for venue attribution
+      if (user && firestore) {
+        const claimsRef = collection(firestore, 'claims');
+        addDocumentNonBlocking(claimsRef, {
+          venueName,
+          offerText,
+          source,
+          userId: user.uid,
+          userEmail: user.email,
+          claimedAt: serverTimestamp(),
+          code,
+          creatorHandle: source === 'fire' ? 'venue_direct' : (creatorHandle || 'anonymous')
+        });
+      }
+    } catch (err) {
+      console.error('Claim write failed:', err);
+      // Silently fail - never block UI transition to SUCCESS step
     }
   };
 
@@ -83,6 +107,7 @@ export function ClaimModal({ isOpen, onClose, venueName, offerText, creatorHandl
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 100 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            onAnimationComplete={() => {}} 
             className="relative w-full max-w-sm overflow-hidden rounded-[32px] bg-[#f2ece0] shadow-2xl"
           >
             <div className="p-8">
