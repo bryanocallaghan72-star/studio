@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Utensils, CheckCircle } from "lucide-react";
+import { Utensils, CheckCircle, Copy, Check } from "lucide-react";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -151,6 +151,8 @@ export function Tables() {
     const [claimedDrops, setClaimedDrops] = useState<string[]>([]);
     const [confirmingDrop, setConfirmingDrop] = useState<TableDrop | null>(null);
     const [successfulDrop, setSuccessfulDrop] = useState<TableDrop | null>(null);
+    const [redemptionCode, setRedemptionCode] = useState('');
+    const [copied, setCopied] = useState(false);
     const [isClient, setIsClient] = useState(false);
     const firestore = useFirestore();
     const { user } = useUser();
@@ -162,6 +164,39 @@ export function Tables() {
     useEffect(() => {
         setIsClient(true);
     }, []);
+
+    useEffect(() => {
+        if (successfulDrop) {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let result = 'BND-';
+            for (let i = 0; i < 3; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            setRedemptionCode(result);
+        }
+    }, [successfulDrop]);
+
+    const handleCopy = async () => {
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(redemptionCode);
+            } else {
+                const el = document.createElement("textarea");
+                el.value = redemptionCode;
+                el.style.position = "absolute";
+                el.style.left = "-9999px";
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand("copy");
+                document.body.removeChild(el);
+            }
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        }
+    };
 
     const venuesBySlug = useMemo(() => {
         if (!venues) return {};
@@ -348,11 +383,21 @@ export function Tables() {
                                     </div>
                                 </div>
 
-                                <div className="bg-white p-4 rounded-2xl shadow-inner border border-black/[0.05]">
-                                    <svg width="128" height="128" viewBox="0 0 100 100" className="opacity-90"><path fill="#1a1208" d="M0 0h30v30H0z m10 10h10v10H10zM70 0h30v30H70z m10 10h10v10H80zM0 70h30v30H0z m10 10h10v10H10zM40 0h10v10H40z m20 0h10v10H60zM40 20h10v10H40z m20 10h10v10H60z m-30 10h10v10H30z m30 0h10v10H60z m-20 0h10v10H40zM30 50h10v10H30z m20 0h10v10H50zM70 40h10v10H70z m10 10h10v10H80z m-10 10h10v10H70z m10 10h10v10H80zM40 70h10v10H40z m20 0h10v10H60z m-30 20h10v10H30z m30 0h10v10H60z m-20 0h10v10H40z"/></svg>
+                                <div className="relative w-full mb-6">
+                                    <div className="flex items-center justify-center rounded-2xl border border-black/[0.08] bg-white py-6 px-6 shadow-sm">
+                                        <span className="font-mono text-4xl font-black tracking-[0.2em] text-[#1a1208]">
+                                            {redemptionCode}
+                                        </span>
+                                    </div>
+                                    <button
+                                        onClick={handleCopy}
+                                        className="absolute -right-2 -top-2 flex h-10 w-10 items-center justify-center rounded-full bg-[#c4762a] text-white shadow-lg transition-transform active:scale-90"
+                                    >
+                                        {copied ? <Check size={18} /> : <Copy size={18} />}
+                                    </button>
                                 </div>
                                 
-                                <p className="text-[10px] mt-6 font-bold text-[rgba(26,18,8,0.30)] uppercase tracking-widest">Show this screen upon arrival</p>
+                                <p className="text-[10px] mt-2 font-bold text-[rgba(26,18,8,0.30)] uppercase tracking-widest">Show this code upon arrival</p>
                              </div>
                              <div className="p-4 bg-black/[0.03] border-t border-black/[0.05]">
                                 <Button className="w-full h-14 bg-[#c4762a] hover:bg-[#b06824] text-white font-black text-lg rounded-2xl shadow-xl shadow-[#c4762a]/20" onClick={() => setSuccessfulDrop(null)}>DONE</Button>

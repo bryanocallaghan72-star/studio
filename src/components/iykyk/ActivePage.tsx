@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dumbbell, CheckCircle, Zap, Clock } from "lucide-react";
+import { Dumbbell, CheckCircle, Zap, Clock, Copy, Check } from "lucide-react";
 import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
@@ -144,6 +144,8 @@ export function ActivePage() {
     const [claimedDrops, setClaimedDrops] = useState<string[]>([]);
     const [confirmingDrop, setConfirmingDrop] = useState<ClassDrop | null>(null);
     const [successfulDrop, setSuccessfulDrop] = useState<ClassDrop | null>(null);
+    const [redemptionCode, setRedemptionCode] = useState('');
+    const [copied, setCopied] = useState(false);
     const firestore = useFirestore();
     const { user } = useUser();
     
@@ -154,6 +156,39 @@ export function ActivePage() {
     useEffect(() => {
         setIsClient(true);
     }, []);
+
+    useEffect(() => {
+        if (successfulDrop) {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let result = 'BND-';
+            for (let i = 0; i < 3; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            setRedemptionCode(result);
+        }
+    }, [successfulDrop]);
+
+    const handleCopy = async () => {
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(redemptionCode);
+            } else {
+                const el = document.createElement("textarea");
+                el.value = redemptionCode;
+                el.style.position = "absolute";
+                el.style.left = "-9999px";
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand("copy");
+                document.body.removeChild(el);
+            }
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        }
+    };
 
     const venuesBySlug = useMemo(() => {
         if (!venues) return {};
@@ -315,6 +350,21 @@ export function ActivePage() {
                                 Your spot for <strong>{successfulDrop.className}</strong> at {venueName} is secured. Show your confirmation upon arrival.
                             </p>
                         </div>
+
+                        <div className="relative w-full mb-6">
+                            <div className="flex items-center justify-center rounded-2xl border border-black/[0.08] bg-white py-6 px-6 shadow-sm">
+                                <span className="font-mono text-4xl font-black tracking-[0.2em] text-[#1a1208]">
+                                    {redemptionCode}
+                                </span>
+                            </div>
+                            <button
+                                onClick={handleCopy}
+                                className="absolute -right-2 -top-2 flex h-10 w-10 items-center justify-center rounded-full bg-[#c4762a] text-white shadow-lg transition-transform active:scale-90"
+                            >
+                                {copied ? <Check size={18} /> : <Copy size={18} />}
+                            </button>
+                        </div>
+
                          <DialogFooter>
                              <Button className="w-full h-14 bg-[#c4762a] hover:bg-[#b06824] text-white font-black text-lg rounded-2xl shadow-xl shadow-[#c4762a]/20" onClick={() => setSuccessfulDrop(null)}>
                                 LET'S MOVE 🤙

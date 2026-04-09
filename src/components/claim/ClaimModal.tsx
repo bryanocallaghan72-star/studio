@@ -158,7 +158,7 @@ export function ClaimModal({ isOpen, onClose, venueName, offerText, creatorHandl
                   
                   <div className="relative mt-4 w-full">
                     <div className="flex items-center justify-center rounded-2xl border border-black/[0.08] bg-white py-5 px-6 shadow-sm">
-                      <span className="font-mono text-4xl font-black tracking-[0.15em] text-[#1a1208]">
+                      <span className="font-mono text-4xl font-black tracking-[0.2em] text-[#1a1208]">
                         {code}
                       </span>
                     </div>

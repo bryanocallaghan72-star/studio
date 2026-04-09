@@ -1,11 +1,10 @@
-
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Zap, Ticket, Bed } from "lucide-react";
+import { Zap, Ticket, Bed, Copy, Check } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -64,10 +63,45 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
 export function FlashStays() {
     const [selectedStay, setSelectedStay] = useState<ReturnType<typeof useStays>['stays'][0] | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [redemptionCode, setRedemptionCode] = useState('');
+    const [copied, setCopied] = useState(false);
     const firestore = useFirestore();
     const { user } = useUser();
     const { creatorsById } = useCreators();
     const { stays } = useStays();
+
+    useEffect(() => {
+        if (isDialogOpen) {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let result = 'BND-';
+            for (let i = 0; i < 3; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            setRedemptionCode(result);
+        }
+    }, [isDialogOpen]);
+
+    const handleCopy = async () => {
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(redemptionCode);
+            } else {
+                const el = document.createElement("textarea");
+                el.value = redemptionCode;
+                el.style.position = "absolute";
+                el.style.left = "-9999px";
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand("copy");
+                document.body.removeChild(el);
+            }
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        }
+    };
 
     const handleBookNow = (stay: ReturnType<typeof useStays>['stays'][0]) => {
         setSelectedStay(stay);
@@ -184,7 +218,7 @@ export function FlashStays() {
             </section>
             {selectedStay && (
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogContent className="bg-[#f2ece0] border-none rounded-3xl shadow-2xl">
+                    <DialogContent className="bg-[#f2ece0] border-none rounded-3xl shadow-2xl max-w-sm">
                         <DialogHeader className="items-center text-center">
                             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#c4762a]/10 mb-4">
                                 <CheckCircle className="h-8 w-8 text-[#c4762a]" />
@@ -194,6 +228,26 @@ export function FlashStays() {
                                 You're all set for your trip to Bondi. Enjoy your stay at {selectedStay.title}.
                             </DialogDescription>
                         </DialogHeader>
+                        
+                        <div className="flex flex-col items-center justify-center space-y-4 py-4">
+                            <div className="relative w-full">
+                                <div className="flex items-center justify-center rounded-2xl border border-black/[0.08] bg-white py-6 px-6 shadow-sm">
+                                    <span className="font-mono text-4xl font-black tracking-[0.2em] text-[#1a1208]">
+                                        {redemptionCode}
+                                    </span>
+                                </div>
+                                <button
+                                    onClick={handleCopy}
+                                    className="absolute -right-2 -top-2 flex h-10 w-10 items-center justify-center rounded-full bg-[#c4762a] text-white shadow-lg transition-transform active:scale-90"
+                                >
+                                    {copied ? <Check size={18} /> : <Copy size={18} />}
+                                </button>
+                            </div>
+                            <p className="text-[10px] font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest">
+                                Booking Ref: {redemptionCode}
+                            </p>
+                        </div>
+
                         <DialogFooter className="flex-col sm:flex-col sm:space-x-0 gap-2 mt-4">
                             <Link href="/my-day" className="w-full">
                                 <Button className="w-full h-14 bg-[#c4762a] hover:bg-[#b06824] text-white font-black text-lg rounded-2xl shadow-xl shadow-[#c4762a]/20">

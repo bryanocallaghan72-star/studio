@@ -4,12 +4,11 @@ import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Shirt, CheckCircle, Ticket, MapPin } from "lucide-react";
+import { Shirt, CheckCircle, Ticket, MapPin, Copy, Check } from "lucide-react";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
-import { QRCodeSVG } from './QRCodeSVG';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useStyleDrops } from '@/hooks/useStyleDrops';
@@ -136,6 +135,8 @@ export function StyleList() {
     const [claimedDrops, setClaimedDrops] = useState<string[]>([]);
     const [confirmingDrop, setConfirmingDrop] = useState<StyleDrop | null>(null);
     const [successfulDrop, setSuccessfulDrop] = useState<StyleDrop | null>(null);
+    const [redemptionCode, setRedemptionCode] = useState('');
+    const [copied, setCopied] = useState(false);
 
     const { styleDrops, isLoading: areDropsLoading } = useStyleDrops();
     const { venues, isLoading: areVenuesLoading } = useVenues();
@@ -150,6 +151,38 @@ export function StyleList() {
         }, {} as Record<string, (typeof venues)[number]>);
     }, [venues]);
 
+    useEffect(() => {
+        if (successfulDrop) {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let result = 'BND-';
+            for (let i = 0; i < 3; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            setRedemptionCode(result);
+        }
+    }, [successfulDrop]);
+
+    const handleCopy = async () => {
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(redemptionCode);
+            } else {
+                const el = document.createElement("textarea");
+                el.value = redemptionCode;
+                el.style.position = "absolute";
+                el.style.left = "-9999px";
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand("copy");
+                document.body.removeChild(el);
+            }
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        }
+    };
 
     const handleClaimClick = (drop: StyleDrop) => setConfirmingDrop(drop);
 
@@ -242,7 +275,19 @@ export function StyleList() {
                             </p>
                         </div>
                         <div className="flex flex-col items-center justify-center space-y-4 p-4 bg-white/50 rounded-2xl mb-6">
-                          <QRCodeSVG className="h-40 w-48" />
+                          <div className="relative w-full">
+                            <div className="flex items-center justify-center rounded-2xl border border-black/[0.08] bg-white py-6 px-6 shadow-sm">
+                                <span className="font-mono text-4xl font-black tracking-[0.2em] text-[#1a1208]">
+                                    {redemptionCode}
+                                </span>
+                            </div>
+                            <button
+                                onClick={handleCopy}
+                                className="absolute -right-2 -top-2 flex h-10 w-10 items-center justify-center rounded-full bg-[#c4762a] text-white shadow-lg transition-transform active:scale-90"
+                            >
+                                {copied ? <Check size={18} /> : <Copy size={18} />}
+                            </button>
+                          </div>
                           <p className="text-[10px] font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest">
                             Store ID: STYLE-{successfulDrop.id.slice(-4).toUpperCase()}
                           </p>
