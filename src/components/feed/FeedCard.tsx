@@ -31,6 +31,21 @@ interface FeedCardProps {
 
 export function FeedCard({ post, index }: FeedCardProps) {
   const [isClaimModalOpen, setClaimModalOpen] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(post.likes);
+
+  const handleLikeToggle = () => {
+    if (liked) {
+      setLikeCount(prev => prev - 1);
+    } else {
+      setLikeCount(prev => prev + 1);
+    }
+    setLiked(!liked);
+  };
+
+  const handleCommentClick = () => {
+    console.log('Open comments for post:', post.id);
+  };
 
   return (
     <motion.div
@@ -71,7 +86,7 @@ export function FeedCard({ post, index }: FeedCardProps) {
           </div>
           
           <Link 
-            href={post.venuePath}
+            href={post.venuePath || '/discover'}
             className="flex items-center gap-1.5 rounded-full bg-black/40 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-md transition-all active:scale-95"
           >
             <MapPin size={12} className="text-white/80" />
@@ -82,15 +97,15 @@ export function FeedCard({ post, index }: FeedCardProps) {
 
       {/* Card Body */}
       <div className="p-4">
-        {/* Row 1: Creator Info */}
+        {/* Row 1: Creator Info (Tappable) */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#c4762a] text-[12px] font-bold text-white uppercase">
+          <Link href={`/profile/${post.creator}`} className="flex items-center gap-3 group transition-opacity active:opacity-70">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#c4762a] text-[12px] font-bold text-white uppercase group-hover:ring-2 group-hover:ring-[#c4762a]/20">
               {post.creator.charAt(0)}
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
-                <span className="text-sm font-semibold text-[#1a1208]">{post.creator}</span>
+                <span className="text-sm font-semibold text-[#1a1208] group-hover:underline">{post.creator}</span>
                 {post.verified && (
                   <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#c4762a]">
                     <Check size={8} strokeWidth={4} className="text-white" />
@@ -99,7 +114,7 @@ export function FeedCard({ post, index }: FeedCardProps) {
               </div>
               <span className="text-[11px] text-[#1a1208]/45">{post.location}</span>
             </div>
-          </div>
+          </Link>
           <button className="text-[#1a1208]/40 hover:text-[#1a1208]">
             <MoreHorizontal size={20} />
           </button>
@@ -113,14 +128,25 @@ export function FeedCard({ post, index }: FeedCardProps) {
         {/* Row 3: Actions */}
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5 text-[13px] font-medium text-[#1a1208]/50">
-              <Heart size={18} strokeWidth={2} />
-              {post.likes}
-            </div>
-            <div className="flex items-center gap-1.5 text-[13px] font-medium text-[#1a1208]/50">
+            <button 
+              onClick={handleLikeToggle}
+              className={`flex items-center gap-1.5 text-[13px] font-medium transition-colors ${liked ? 'text-[#c4762a]' : 'text-[#1a1208]/50 hover:text-[#1a1208]'}`}
+            >
+              <Heart 
+                size={18} 
+                strokeWidth={2} 
+                fill={liked ? "#c4762a" : "none"} 
+                stroke={liked ? "#c4762a" : "currentColor"} 
+              />
+              {likeCount}
+            </button>
+            <button 
+              onClick={handleCommentClick}
+              className="flex items-center gap-1.5 text-[13px] font-medium text-[#1a1208]/50 hover:text-[#1a1208]"
+            >
               <MessageCircle size={18} strokeWidth={2} />
               {post.comments}
-            </div>
+            </button>
           </div>
 
           {post.hasDrop && (
