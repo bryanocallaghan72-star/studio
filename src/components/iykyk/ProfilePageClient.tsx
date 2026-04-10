@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { Rss, Star, MapPin, Loader2, Edit, Ticket, Users } from "lucide-react";
@@ -35,29 +35,44 @@ export function ProfilePageClient({ uid }: { uid: string }) {
   const { user: currentUser } = useUser();
   const firestore = useFirestore();
   const [activeTab, setActiveTab] = useState<'Profile' | 'Insights'>('Profile');
+  const [profileError, setProfileError] = useState(false);
 
   const { creatorsById } = useCreators();
 
+  // Check if this is a known mock creator from our local data
   const mockUserProfile = useMemo(() => {
     return creatorsById[uid];
   }, [uid, creatorsById]);
 
-  const shouldFetchFirestore = !mockUserProfile;
+  const isMockUser = !!mockUserProfile;
   const isOwner = currentUser && currentUser.uid === uid;
+  const shouldFetchFirestore = !isMockUser;
 
   const userDocRef = useMemoFirebase(() => {
+    // Defensively skip Firestore if it's a mock user or we have no DB instance
     if (!shouldFetchFirestore || !firestore || !uid) return null;
     return doc(firestore, 'users', uid);
   }, [firestore, uid, shouldFetchFirestore]);
   
-  const { data: firestoreUserProfile, isLoading: isFirestoreLoading } = useDoc<UserProfile>(userDocRef);
+  const { data: firestoreUserProfile, isLoading: isFirestoreLoading, error: firestoreError } = useDoc<UserProfile>(userDocRef);
   
-  // Use our hook to get the count of claimed deals for the viewed profile
-  const { count: claimsCount, isLoading: isClaimsLoading } = useClaimedDeals(uid);
+  // Rules restrict claimedDeals to owners only. 
+  // We gate the hook to avoid permission error crashes for visitors.
+  const shouldFetchClaims = !isMockUser && isOwner;
+  const { count: claimsCount, isLoading: isClaimsLoading, error: claimsError } = useClaimedDeals(shouldFetchClaims ? uid : undefined);
   
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
+
+  // Sync hook errors to local state to trigger fallbacks
+  useEffect(() => {
+    if (firestoreError || claimsError) {
+      console.warn("Handled profile read error:", firestoreError || claimsError);
+      setProfileError(true);
+    }
+  }, [firestoreError, claimsError]);
   
   const userProfile = useMemo(() => {
+    // 1. Prioritize local mock data (e.g. /profile/alice)
     if (mockUserProfile) {
       return {
         isMock: true,
@@ -68,11 +83,23 @@ export function ProfilePageClient({ uid }: { uid: string }) {
         bannerUrl: undefined,
       };
     }
+    // 2. Use real Firestore data if available
     if (firestoreUserProfile) {
       return { isMock: false, ...firestoreUserProfile };
     }
+    // 3. Graceful fallback for non-existent real users or errors
+    if (profileError || (!isFirestoreLoading && !firestoreUserProfile && shouldFetchFirestore)) {
+        return {
+            isMock: true,
+            id: uid,
+            username: uid,
+            bio: 'Bondi local 🌊',
+            avatarUrl: null,
+            bannerUrl: undefined,
+        };
+    }
     return null;
-  }, [mockUserProfile, firestoreUserProfile]);
+  }, [mockUserProfile, firestoreUserProfile, profileError, isFirestoreLoading, shouldFetchFirestore, uid]);
   
   const userPins = useMemo(() => {
     return [...appData.map.pins].sort(() => 0.5 - Math.random()).slice(0, 3);
@@ -253,7 +280,7 @@ export function ProfilePageClient({ uid }: { uid: string }) {
                                             data-ai-hint={image.imageHint}
                                             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                                     </>}
                                     <div className="absolute bottom-0 left-0 p-4 w-full">
                                         <h3 className="font-bold text-white text-[13px] line-clamp-1 leading-tight">{spot.name}</h3>
