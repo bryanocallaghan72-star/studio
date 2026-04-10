@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Heart, MessageCircle, MoreHorizontal, Check, Ticket, Play } from 'lucide-react';
 import { ClaimModal } from '@/components/claim/ClaimModal';
 
@@ -33,6 +33,7 @@ export function FeedCard({ post, index }: FeedCardProps) {
   const [isClaimModalOpen, setClaimModalOpen] = useState(false);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(post.likes);
+  const [showComments, setShowComments] = useState(false);
 
   const handleLikeToggle = () => {
     if (liked) {
@@ -41,10 +42,6 @@ export function FeedCard({ post, index }: FeedCardProps) {
       setLikeCount(prev => prev + 1);
     }
     setLiked(!liked);
-  };
-
-  const handleCommentClick = () => {
-    console.log('Open comments for post:', post.id);
   };
 
   return (
@@ -125,6 +122,52 @@ export function FeedCard({ post, index }: FeedCardProps) {
           {post.caption}
         </p>
 
+        {/* Comment Section (Toggleable) */}
+        <AnimatePresence>
+          {showComments && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              {/* Comment input row */}
+              <div className="flex items-center gap-3 mt-4">
+                <div className="w-7 h-7 rounded-full bg-[#c4762a] text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                  U
+                </div>
+                <input 
+                  type="text" 
+                  placeholder="Add a comment..."
+                  className="bg-[rgba(26,18,8,0.04)] border border-black/[0.08] rounded-full px-4 py-2 text-sm flex-1 outline-none focus:outline-none"
+                />
+              </div>
+              
+              {/* Mock comments */}
+              <div className="mt-4 space-y-3 pb-2">
+                <div className="flex gap-2 items-start">
+                  <div className="w-6 h-6 rounded-full bg-[rgba(26,18,8,0.10)] text-[#1a1208] text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                    J
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-[#1a1208] font-semibold text-xs">@jay</span>
+                    <span className="text-[rgba(26,18,8,0.70)] text-xs ml-1">This place is unreal every time 🔥</span>
+                  </div>
+                </div>
+                <div className="flex gap-2 items-start">
+                  <div className="w-6 h-6 rounded-full bg-[rgba(26,18,8,0.10)] text-[#1a1208] text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                    M
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-[#1a1208] font-semibold text-xs">@maya</span>
+                    <span className="text-[rgba(26,18,8,0.70)] text-xs ml-1">The omakase is next level, go</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Row 3: Actions */}
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -141,8 +184,9 @@ export function FeedCard({ post, index }: FeedCardProps) {
               {likeCount}
             </button>
             <button 
-              onClick={handleCommentClick}
-              className="flex items-center gap-1.5 text-[13px] font-medium text-[#1a1208]/50 hover:text-[#1a1208]"
+              onClick={() => setShowComments(!showComments)}
+              className="flex items-center gap-1.5 text-[13px] font-medium text-[#1a1208]/50 hover:text-[#1a1208] outline-none focus:outline-none focus:ring-0 focus:shadow-none"
+              style={{ outline: 'none', boxShadow: 'none' }}
             >
               <MessageCircle size={18} strokeWidth={2} />
               {post.comments}
