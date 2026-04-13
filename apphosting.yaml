@@ -8,16 +8,11 @@ runConfig:
   # memoryMiB: 512
 
 # Environment variables and secrets.
-# env:
-  # Configure environment variables.
-  # See https://firebase.google.com/docs/app-hosting/configure#user-defined-environment
-  # - variable: MESSAGE
-  #   value: Hello world!
-  #   availability:
-  #     - BUILD
-  #     - RUNTIME
-
+env:
   # Grant access to secrets in Cloud Secret Manager.
-  # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
-  # - variable: MY_SECRET
-  #   secret: mySecretRef
+  # This secret must be available during BUILD for Next.js to inline it.
+  - variable: GOOGLE_MAPS_API_KEY
+    secret: google_maps_api_key
+    availability:
+      - BUILD
+      - RUNTIME
