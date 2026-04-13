@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useMemo, useEffect, useState, CSSProperties } from "react";
@@ -278,22 +279,18 @@ export function IykykVibeMap() {
                 {mapFilterCategories.map((categoryKey) => {
                     const category = categoryData[categoryKey as keyof typeof categoryData];
                     if (!category) return null;
-                    const {icon: Icon, color, textColor} = category;
+                    const {icon: Icon} = category;
 
                     return (
                         <button
                             key={categoryKey}
                             onClick={() => handleTabChange(categoryKey)}
-                            data-active={activeTab === categoryKey}
                             className={cn(
-                                "flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full mx-1 transition-all duration-300 inline-flex items-center shadow-sm",
-                                "bg-card text-foreground hover:bg-secondary",
-                                "data-[active=true]:bg-[--active-bg] data-[active=true]:text-[--active-text]"
+                                "flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full mx-1 transition-all duration-300 inline-flex items-center shadow-sm outline-none focus:outline-none focus:ring-0",
+                                activeTab === categoryKey 
+                                    ? "bg-[#c4762a] text-white" 
+                                    : "bg-[rgba(26,18,8,0.06)] text-[rgba(26,18,8,0.50)] hover:bg-[rgba(26,18,8,0.1)]"
                             )}
-                            style={{
-                                "--active-bg": color,
-                                "--active-text": textColor,
-                            } as CSSProperties}
                         >
                             <Icon className="mr-2 h-4 w-4" />
                             {categoryKey}
