@@ -3,7 +3,7 @@
 
 import { useMemo, useEffect, useState, CSSProperties } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { Loader2, Search, PlusCircle, Utensils } from "lucide-react";
+import { Loader2, Search, PlusCircle, Utensils, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GoogleMap, useJsApiLoader, MarkerF, Autocomplete } from "@react-google-maps/api";
 import { resolveVenueHref } from "@/lib/venueUtils";
@@ -53,11 +53,18 @@ export function IykykVibeMap() {
   const [searchValue, setSearchValue] = useState("");
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [currentOrigin, setCurrentOrigin] = useState("");
 
   const firestore = useFirestore();
   const { user, isUserLoading } = useUser();
   
   const mapStyles = useMapTheme(currentPhase as MapPhase);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setCurrentOrigin(window.location.origin);
+    }
+  }, []);
 
   const venuesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -214,7 +221,23 @@ export function IykykVibeMap() {
   }), [mapStyles]);
 
   if (loadError) {
-    return <div className="text-destructive p-6">Error loading maps. Check your API key.</div>;
+    return (
+      <div className="p-10 text-center flex flex-col items-center justify-center h-full space-y-4 bg-destructive/5 rounded-2xl border border-destructive/10 m-4">
+        <div className="bg-destructive/10 p-4 rounded-full text-destructive">
+          <AlertTriangle className="h-10 w-10" />
+        </div>
+        <h3 className="text-xl font-bold text-foreground">Map Load Error</h3>
+        <p className="text-muted-foreground max-w-md text-sm">
+          The Google Maps API failed to load. This is often due to <strong>Referrer Restrictions</strong> on your API key in the Cloud Console.
+        </p>
+        <div className="bg-card p-3 rounded-lg border border-border text-xs font-mono break-all select-all text-card-foreground">
+          {currentOrigin}
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Ensure the domain above is authorized in your <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Google Cloud Console</a>.
+        </p>
+      </div>
+    );
   }
   
   if (!isKeyValid) {

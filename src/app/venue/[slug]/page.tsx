@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -154,9 +155,16 @@ export default function VenuePage() {
   const [vibeTags, setVibeTags] = useState('');
   const [priceTier, setPriceTier] = useState<string | undefined>(undefined);
   const [isSaving, setIsSaving] = useState(false);
+  const [currentOrigin, setCurrentOrigin] = useState("");
 
   const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const isKeyValid = isValidGoogleMapsKey(googleMapsApiKey);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setCurrentOrigin(window.location.origin);
+    }
+  }, []);
 
   useEffect(() => {
     if (venue?.photoReference && isKeyValid) {
@@ -381,8 +389,17 @@ export default function VenuePage() {
 
 
         <Card className="h-64 overflow-hidden rounded-[24px] border-black/[0.08] shadow-sm bg-white">
-          {loadError && <div>Map cannot be loaded right now.</div>}
-          {!isKeyValid ? (
+          {loadError && (
+            <div className="p-6 text-center flex flex-col items-center justify-center h-full space-y-2">
+              <AlertTriangle className="h-8 w-8 text-destructive opacity-50" />
+              <p className="text-xs font-bold text-foreground uppercase tracking-widest">Map Load Error</p>
+              <p className="text-[10px] text-muted-foreground max-w-[200px]">
+                Please authorize this domain in your Google Cloud Console:
+              </p>
+              <code className="text-[9px] bg-muted px-2 py-1 rounded break-all">{currentOrigin}</code>
+            </div>
+          )}
+          {!isKeyValid && !loadError ? (
             <div className="flex items-center justify-center h-full bg-black/5 p-4 text-center">
               <p className="text-sm text-[rgba(26,18,8,0.40)] font-medium">Google Maps key missing. Please set <code>NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code>.</p>
             </div>
@@ -395,7 +412,7 @@ export default function VenuePage() {
             >
               <MarkerF position={center} />
             </GoogleMap>
-          ) : (
+          ) : !loadError && (
             <div className="flex items-center justify-center h-full bg-black/5">
                   <Loader2 className="h-8 w-8 animate-spin text-[rgba(26,18,8,0.20)]" />
             </div>
