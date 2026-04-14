@@ -3,7 +3,7 @@
 
 import { useMemo, useEffect, useState, CSSProperties } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { Loader2, Search, PlusCircle, Utensils, AlertTriangle } from "lucide-react";
+import { Loader2, Search, PlusCircle, Utensils, AlertTriangle, Beer, Dumbbell, Waves, Shirt, Sun, Coffee } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GoogleMap, useJsApiLoader, MarkerF, Autocomplete } from "@react-google-maps/api";
 import { resolveVenueHref } from "@/lib/venueUtils";
@@ -255,8 +255,23 @@ export function IykykVibeMap() {
   }
 
   const categoryData = {
-      ...CATEGORIES,
-      "Sushi": { icon: Utensils, color: '#2dd4bf', textColor: '#0f172a' },
+    ...CATEGORIES,
+    "Sushi": { icon: Utensils, color: '#2dd4bf', textColor: '#0f172a' },
+    "Restaurants": { icon: Utensils, color: '#c4762a', textColor: '#ffffff' },
+    "Cocktails": { icon: Beer, color: '#8b5cf6', textColor: '#ffffff' },
+    "Health & Fitness": { icon: Dumbbell, color: '#ec4899', textColor: '#ffffff' },
+    "Surf": { icon: Waves, color: '#38bdf8', textColor: '#ffffff' },
+    "Retail": { icon: Shirt, color: '#f43f5e', textColor: '#ffffff' },
+    "Cafe & Matcha": { icon: Coffee, color: '#f59e0b', textColor: '#ffffff' },
+    "Viral Matcha": { icon: Coffee, color: '#84cc16', textColor: '#ffffff' },
+    "Aesthetic Brunch": { icon: Coffee, color: '#f59e0b', textColor: '#ffffff' },
+    "Beach Club Vibe": { icon: Sun, color: '#fbbf24', textColor: '#0f172a' },
+    "Social Dining": { icon: Utensils, color: '#c4762a', textColor: '#ffffff' },
+    "Iconic View": { icon: Sun, color: '#fbbf24', textColor: '#0f172a' },
+    "Beachfront Bar": { icon: Beer, color: '#38bdf8', textColor: '#ffffff' },
+    "Sushi & Sake": { icon: Utensils, color: '#2dd4bf', textColor: '#0f172a' },
+    "Italo Disco Dining": { icon: Utensils, color: '#d946ef', textColor: '#ffffff' },
+    "Cocktail Bar": { icon: Beer, color: '#8b5cf6', textColor: '#ffffff' },
   }
 
   const mapFilterCategories = ["All", "Brunch", "Nightlife", "Sushi", "Vibes"];
