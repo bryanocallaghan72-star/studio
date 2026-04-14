@@ -47,19 +47,36 @@
     font-family: system-ui, -apple-system, 'SF Pro Display', sans-serif;
     @apply antialiased;
   }
-  [data-theme="golden"] body,
-  [data-theme="golden"] {
+
+  html[data-theme="day"] body {
+    background: #f2ece0 !important;
+    color: #1a1208 !important;
+  }
+
+  html[data-theme="golden"] body {
     background: linear-gradient(
       160deg,
       #e8502a 0%,
       #c4762a 30%,
       #d4608a 60%,
       #c4507a 100%
-    ) !important;
+    ) fixed !important;
+    min-height: 100vh;
+    color: #2a0e05 !important;
   }
-  [data-theme="day"] body,
-  [data-theme="day"] {
-    background: #f2ece0 !important;
+
+  html[data-theme="dawn"] body {
+    background: linear-gradient(
+      to bottom, #0a0e17, #080a0d
+    ) fixed !important;
+    min-height: 100vh;
+  }
+
+  html[data-theme="dusk"] body {
+    background: linear-gradient(
+      to bottom, #050505, #080a0d
+    ) fixed !important;
+    min-height: 100vh;
   }
 }
 
