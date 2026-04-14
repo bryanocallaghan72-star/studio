@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
-import { Bell } from 'lucide-react';
+import React, { useState } from 'react';
+import { Bell, Plus } from 'lucide-react';
 import { FeedCard, type FeedPost } from '@/components/feed/FeedCard';
+import { CreatePostSheet } from '@/components/feed/CreatePostSheet';
 
 const MOCK_POSTS: FeedPost[] = [
   {
@@ -70,6 +71,8 @@ const MOCK_POSTS: FeedPost[] = [
 ];
 
 export default function FeedPage() {
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+
   return (
     <div className="flex min-h-screen flex-col bg-[#f2ece0]">
       {/* Sticky Premium Header */}
@@ -95,6 +98,21 @@ export default function FeedPage() {
           ))}
         </div>
       </main>
+
+      {/* Floating Create Button */}
+      <button 
+        onClick={() => setIsCreateOpen(true)}
+        className="fixed bottom-24 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#c4762a] text-white shadow-lg shadow-[#c4762a]/30 transition-transform active:scale-90 hover:bg-[#b06824] focus:outline-none"
+        aria-label="Create new post"
+      >
+        <Plus size={28} strokeWidth={3} />
+      </button>
+
+      {/* Create Post Sheet Overlay */}
+      <CreatePostSheet 
+        isOpen={isCreateOpen} 
+        onClose={() => setIsCreateOpen(false)} 
+      />
     </div>
   );
 }
