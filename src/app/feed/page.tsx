@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Bell, Plus } from 'lucide-react';
+import { Bell, Plus, Loader2 } from 'lucide-react';
 import { FeedCard, type FeedPost } from '@/components/feed/FeedCard';
 import { CreatePostSheet } from '@/components/feed/CreatePostSheet';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, orderBy, query, limit } from 'firebase/firestore';
 
 const MOCK_POSTS: FeedPost[] = [
   {
@@ -72,6 +74,37 @@ const MOCK_POSTS: FeedPost[] = [
 
 export default function FeedPage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const firestore = useFirestore();
+
+  const postsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(
+      collection(firestore, 'posts'),
+      orderBy('createdAt', 'desc'),
+      limit(50)
+    );
+  }, [firestore]);
+
+  const { data: livePostsRaw, isLoading } = useCollection<any>(postsQuery);
+
+  const livePosts: FeedPost[] = (livePostsRaw || []).map((doc) => ({
+    id: doc.id,
+    creator: doc.creatorId ?? 'anonymous',
+    verified: false,
+    location: doc.location || 'Bondi',
+    image: doc.imageUrl || '',
+    caption: doc.caption || '',
+    venue: doc.venueName || '',
+    venuePath: '',
+    likes: doc.likes ?? 0,
+    comments: doc.comments ?? 0,
+    phase: 'DAY',
+    hasDrop: false,
+    isReel: false,
+  }));
+
+  const showMockPosts = livePosts.length < 5;
+  const allPosts = showMockPosts ? [...livePosts, ...MOCK_POSTS] : livePosts;
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f2ece0]">
@@ -92,11 +125,17 @@ export default function FeedPage() {
 
       {/* Main Feed Scroll Zone */}
       <main className="flex-1 pb-[100px]">
-        <div className="flex flex-col">
-          {MOCK_POSTS.map((post, index) => (
-            <FeedCard key={post.id} post={post} index={index} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-24">
+            <Loader2 className="h-10 w-10 animate-spin text-[#c4762a]" />
+          </div>
+        ) : (
+          <div className="flex flex-col">
+            {allPosts.map((post, index) => (
+              <FeedCard key={post.id} post={post} index={index} />
+            ))}
+          </div>
+        )}
       </main>
 
       {/* Floating Create Button */}
