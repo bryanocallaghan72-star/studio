@@ -16,6 +16,7 @@ export type Venue = {
   longitude?: number;
   address?: string;
   category?: string;
+  vibeTags?: string[];
 
   // new nested fields
   location?: {
