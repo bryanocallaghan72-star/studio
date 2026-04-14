@@ -108,43 +108,52 @@
 
 [data-theme="golden"] {
   --phase-accent:        #c4762a;
-  --phase-text:          #1a0e05;
-  --phase-muted:         #9a6a30;
-  --phase-glow:          #e8a050;
+  --phase-text:          #2a0e05;
+  --phase-muted:         #c4762a;
+  --phase-glow:          #e8502a;
 
-  --background:          32 45% 88%;
-  --foreground:          25 70% 6%;
-  --card:                35 40% 94%;
-  --card-foreground:     25 70% 6%;
-  --popover:             35 40% 94%;
-  --popover-foreground:  25 70% 6%;
-  --primary:             28 56% 47%;
+  --background:          18 55% 82%;
+  --foreground:          15 80% 8%;
+  --card:                22 50% 88%;
+  --card-foreground:     15 80% 8%;
+  --popover:             22 50% 88%;
+  --popover-foreground:  15 80% 8%;
+  --primary:             18 70% 48%;
   --primary-foreground:  0 0% 100%;
-  --secondary:           32 35% 82%;
-  --secondary-foreground: 25 70% 6%;
-  --muted:               32 30% 82%;
-  --muted-foreground:    25 40% 35%;
-  --accent:              32 35% 82%;
-  --accent-foreground:   25 70% 6%;
-  --border:              25 40% 6% / 0.08;
-  --input:               25 40% 6% / 0.06;
-  --ring:                28 56% 47% / 0.3;
+  --secondary:           340 40% 78%;
+  --secondary-foreground: 15 80% 8%;
+  --muted:               340 30% 78%;
+  --muted-foreground:    15 50% 30%;
+  --accent:              340 40% 78%;
+  --accent-foreground:   15 80% 8%;
+  --border:              15 50% 8% / 0.10;
+  --input:               15 50% 8% / 0.07;
+  --ring:                18 70% 48% / 0.3;
 
   --bg-gradient: linear-gradient(
-    to bottom,
-    #f5e8d0,
-    #edd8b8
+    160deg,
+    #e8502a 0%,
+    #c4762a 30%,
+    #d4608a 60%,
+    #c4507a 100%
   );
 
-  --glass-dark:          rgba(26, 14, 5, 0.6);
-  --glass-light:         rgba(245, 232, 208, 0.7);
-  --glass-border:        rgba(26, 14, 5, 0.08);
-  --glass-dark-soft:     rgba(26, 14, 5, 0.35);
-  --glass-light-soft:    rgba(245, 232, 208, 0.4);
+  --glass-dark:          rgba(42, 14, 5, 0.65);
+  --glass-light:         rgba(232, 80, 42, 0.15);
+  --glass-border:        rgba(42, 14, 5, 0.10);
+  --glass-dark-soft:     rgba(42, 14, 5, 0.35);
+  --glass-light-soft:    rgba(232, 180, 140, 0.25);
 }
 
 [data-theme="golden"] .app-theme-wrapper {
-  background-color: #f5e8d0 !important;
+  background: linear-gradient(
+    160deg,
+    #e8502a 0%,
+    #c4762a 30%,
+    #d4608a 60%,
+    #c4507a 100%
+  ) !important;
+  min-height: 100vh;
 }
 
 [data-theme="dusk"] {
@@ -167,9 +176,9 @@
 
 [data-theme="golden"] .scrim-bottom {
   background: linear-gradient(
-    to top, 
-    rgba(245,232,208,0.95) 0%, 
-    rgba(245,232,208,0.2) 60%, 
+    to top,
+    rgba(42,14,5,0.90) 0%,
+    rgba(196,80,42,0.2) 60%,
     transparent 100%
   );
 }
@@ -185,7 +194,7 @@
 }
 
 [data-theme="golden"] .text-hero {
-  color: #1a0e05;
+  color: #fff8f0;
 }
 
 .text-section-label {
@@ -198,7 +207,7 @@
 }
 
 [data-theme="golden"] .text-section-label {
-  color: rgba(26,14,5,0.3);
+  color: rgba(255,240,220,0.5);
 }
 
 /* Button Styles */
