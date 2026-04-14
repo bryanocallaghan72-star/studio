@@ -231,23 +231,6 @@ export const SEED_VENUES: Venue[] = [
     },
   },
   {
-    id: 'the-bucket-list',
-    slug: 'the-bucket-list',
-    name: 'The Bucket List',
-    location: {
-      latitude: -33.89,
-      longitude: 151.277,
-      address: "Bondi Pavilion, Queen Elizabeth Dr, Bondi Beach"
-    },
-    details: {
-      category: 'Nightlife',
-      description: "Casual beachside bar with a lively atmosphere.",
-      openingHours: "12pm - 12am",
-      vibeTags: ["Beachy", "Casual", "Lively"],
-      currentVibe: "Packed"
-    },
-  },
-  {
     id: 'porch-and-parlour',
     slug: 'porch-and-parlour',
     name: 'Porch and Parlour',
@@ -333,23 +316,6 @@ export const SEED_VENUES: Venue[] = [
     },
   },
   {
-    id: 'chiswick',
-    slug: 'chiswick',
-    name: 'Chiswick',
-    location: {
-      latitude: -33.896,
-      longitude: 151.266,
-      address: "65 Ocean St, Woollahra NSW 2025"
-    },
-    details: {
-      category: 'Restaurants',
-      description: "Elegant garden-to-plate dining experience.",
-      openingHours: "12pm - 10pm",
-      vibeTags: ["Seasonal", "Elegant", "Garden"],
-      currentVibe: "Buzzing"
-    },
-  },
-  {
     id: 'north-bondi-fish',
     slug: 'north-bondi-fish',
     name: 'North Bondi Fish',
@@ -363,23 +329,6 @@ export const SEED_VENUES: Venue[] = [
       description: "Fresh seafood in a relaxed setting.",
       openingHours: "12pm - 10pm",
       vibeTags: ["Seafood", "Beachfront", "Relaxed"],
-      currentVibe: "Buzzing"
-    },
-  },
-  {
-    id: 'lets-go-surfing',
-    slug: 'lets-go-surfing',
-    name: 'Lets Go Surfing',
-    location: {
-      latitude: -33.886,
-      longitude: 151.277,
-      address: "128 Ramsgate Ave, North Bondi NSW 2026"
-    },
-    details: {
-      category: 'Surf',
-      description: "Learn to surf with the best in Bondi.",
-      openingHours: "7am - 5pm",
-      vibeTags: ["Surfing", "Lessons", "Beginner Friendly"],
       currentVibe: "Buzzing"
     },
   },
@@ -565,6 +514,3 @@ export const SEED_VENUES: Venue[] = [
 export const SEED_VENUES_BY_SLUG = Object.fromEntries(
   SEED_VENUES.map(v => [v.slug, v])
 ) satisfies Record<string, Venue>;
-
-
-
