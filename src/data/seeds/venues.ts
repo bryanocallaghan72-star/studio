@@ -6,7 +6,33 @@
  * It uses the strict `Venue` type definition.
  */
 
-import type { Venue } from '@/types/venue';
+export type Venue = {
+  id: string;
+  slug: string;
+  name: string;
+
+  // legacy flat fields
+  latitude?: number;
+  longitude?: number;
+  address?: string;
+  category?: string;
+  vibeTags?: string[];
+
+  // new nested fields
+  location?: {
+    latitude: number;
+    longitude: number;
+    address?: string;
+  };
+
+  details?: {
+    category?: string;
+    description?: string;
+    openingHours?: string;
+    vibeTags?: string[];
+    currentVibe?: string;
+  };
+};
 
 export const SEED_VENUES: Venue[] = [
   {
@@ -313,23 +339,6 @@ export const SEED_VENUES: Venue[] = [
       openingHours: "Varies",
       vibeTags: ["Dance", "Fun", "High-Energy", "Twerk"],
       currentVibe: "Electric"
-    },
-  },
-  {
-    id: 'north-bondi-fish',
-    slug: 'north-bondi-fish',
-    name: 'North Bondi Fish',
-    location: {
-      latitude: -33.887,
-      longitude: 151.277,
-      address: "120 Ramsgate Ave, North Bondi NSW 2026"
-    },
-    details: {
-      category: 'Restaurants',
-      description: "Fresh seafood in a relaxed setting.",
-      openingHours: "12pm - 10pm",
-      vibeTags: ["Seafood", "Beachfront", "Relaxed"],
-      currentVibe: "Buzzing"
     },
   },
   {
