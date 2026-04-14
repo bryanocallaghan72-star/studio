@@ -620,36 +620,6 @@ export const appData: AppData = {
         description: "Grab some snags! The public BBQs are free. Time for a classic Aussie arvo.",
         imageId: "bondi-sunset",
         venue: "Tamarama Park"
-    },
-    {
-        title: "Spontaneous Gelato Tasting",
-        description: "Surprise! A local gelateria is offering free samples of their new, exotic flavor for the next hour.",
-        imageId: "morning-2",
-        venue: "Gelato Gusto"
-    },
-    {
-        title: "Craft Cocktail Discovery",
-        description: "You've found a hidden bar known for its unique, handcrafted cocktails. Cheers to the unexpected!",
-        imageId: "community-sushi",
-        venue: "The Alchemist's Nook"
-    },
-    {
-        title: "Tapas for Two",
-        description: "A cozy tapas bar has a table just for you. Enjoy a selection of small plates and big flavors.",
-        imageId: "sushi-1",
-        venue: "El Rincon Escondido"
-    },
-    {
-        title: "Surprise Wellness Session",
-        description: "A local studio is offering a drop-in spot for a meditation and sound bath session. Time to relax and recharge.",
-        imageId: "fitness-1",
-        venue: "Zenith Wellness"
-    },
-    {
-        title: "Omakase Sushi Special",
-        description: "A top sushi chef has an unlisted Omakase special available for the next hour. A true taste of Japan awaits.",
-        imageId: "sushi-1",
-        venue: "Sakura Sushi"
     }
   ],
   mapMyDayOptions: [
@@ -823,7 +793,6 @@ export const appData: AppData = {
       { id: 18, name: "The Bucket List", slug: "the-bucket-list", type: "Nightlife", description: "Casual beachside bar with a lively atmosphere.", x: "75%", y: "30%", latitude: -33.890, longitude: 151.277, openingHours: "12pm - 12am", vibeTags: ["Beachy", "Casual", "Lively"], currentVibe: "Packed" },
       { id: 19, name: "Porch and Parlour", slug: "porch-and-parlour", type: "Brunch", description: "Bohemian-style cafe with healthy options.", x: "50%", y: "55%", latitude: -33.888, longitude: 151.276, openingHours: "6:30am - 3pm", vibeTags: ["Bohemian", "Healthy", "Coffee"], currentVibe: "Buzzing" },
       { id: 26, name: "Fluidform Pilates", slug: "fluidform-pilates", type: "Health & Fitness", description: "Boutique pilates studio.", x: "25%", y: "55%", latitude: -33.892, longitude: 151.272, openingHours: "6am - 7pm", vibeTags: ["Pilates", "Wellness", "Modern"], currentVibe: "Chill" },
-      { id: 29, name: "Chiswick", slug: "chiswick", type: "Restaurants", description: "Elegant garden-to-plate dining experience.", x: "5%", y: "85%", latitude: -33.896, longitude: 151.266, openingHours: "12pm - 10pm", vibeTags: ["Seasonal", "Elegant", "Garden"], currentVibe: "Buzzing" },
       { id: 30, name: "North Bondi Fish", slug: "north-bondi-fish", type: "Restaurants", description: "Fresh seafood in a relaxed setting.", x: "55%", y: "40%", latitude: -33.887, longitude: 151.277, openingHours: "12pm - 10pm", vibeTags: ["Seafood", "Beachfront", "Relaxed"], currentVibe: "Buzzing" },
       { id: 31, name: "Lets Go Surfing", slug: "lets-go-surfing", type: "Surf", description: "Learn to surf with the best in Bondi.", x: "70%", y: "10%", latitude: -33.886, longitude: 151.277, openingHours: "7am - 5pm", vibeTags: ["Surfing", "Lessons", "Beginner Friendly"], currentVibe: "Buzzing" },
       { id: 33, name: "Tuchuzy", slug: "tuchuzy", type: "Retail", description: "Iconic Bondi boutique with curated designer collections.", x: "20%", y: "65%", latitude: -33.893, longitude: 151.271, openingHours: "10am - 6pm", vibeTags: ["Designer", "Boutique", "Fashion"], currentVibe: "Chill" },
