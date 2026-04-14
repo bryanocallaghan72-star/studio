@@ -3,7 +3,7 @@
 
 import { useMemo, useEffect, useState, CSSProperties } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { Loader2, Search, PlusCircle, Utensils, AlertTriangle, Beer, Dumbbell, Waves, Shirt, Sun, Coffee } from "lucide-react";
+import { Loader2, Search, PlusCircle, Utensils, AlertTriangle, Beer, Dumbbell, Waves, Shirt, Sun, Coffee, Sparkles, Zap, Star, UserPlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GoogleMap, useJsApiLoader, MarkerF, Autocomplete } from "@react-google-maps/api";
 import { resolveVenueHref } from "@/lib/venueUtils";
@@ -90,15 +90,8 @@ export function IykykVibeMap() {
       .filter(pin => {
         if (activeTab === 'All' || venueSlug) return true;
 
-        const categoryMap: { [key: string]: string[] } = {
-            Brunch: ["Brunch", "Cafe & Matcha", "Viral Matcha", "Aesthetic Brunch"],
-            Nightlife: ["Nightlife", "Social Dining", "Beachfront Bar", "Cocktail Bar", "Italo Disco Dining"],
-            Vibes: ["Vibes", "Beach Club Vibe", "Iconic View"],
-            Sushi: ["Sushi", "Sushi & Sake"],
-        };
-
-        const relevantCategories = categoryMap[activeTab] || [activeTab];
-        return relevantCategories.includes(pin.category);
+        if (!pin.vibeTags || pin.vibeTags.length === 0) return true;
+        return pin.vibeTags.includes(activeTab);
       });
   }, [venues, activeTab, venueSlug]);
 
@@ -274,7 +267,18 @@ export function IykykVibeMap() {
     "Cocktail Bar": { icon: Beer, color: '#8b5cf6', textColor: '#ffffff' },
   }
 
-  const mapFilterCategories = ["All", "Brunch", "Nightlife", "Sushi", "Vibes"];
+  const vibeIcons: Record<string, React.ReactNode> = {
+    "All": <Sparkles className="mr-2 h-4 w-4" />,
+    "Post-Surf": <Waves className="mr-2 h-4 w-4" />,
+    "Sunset Ritual": <Sun className="mr-2 h-4 w-4" />,
+    "High Voltage": <Zap className="mr-2 h-4 w-4" />,
+    "Hidden Gem": <Star className="mr-2 h-4 w-4" />,
+    "Morning Reset": <Coffee className="mr-2 h-4 w-4" />,
+    "Date Night": <Sparkles className="mr-2 h-4 w-4" />,
+    "Group Energy": <UserPlus className="mr-2 h-4 w-4" />,
+  };
+
+  const mapFilterCategories = ["All", "Post-Surf", "Sunset Ritual", "High Voltage", "Hidden Gem", "Morning Reset", "Date Night", "Group Energy"];
 
   const getButtonText = () => {
       if (isSaving || isUserLoading) return "Loading...";
@@ -315,10 +319,6 @@ export function IykykVibeMap() {
 
             <div className="flex overflow-x-auto pb-2 scrollbar-hide -mx-2">
                 {mapFilterCategories.map((categoryKey) => {
-                    const category = categoryData[categoryKey as keyof typeof categoryData];
-                    if (!category) return null;
-                    const {icon: Icon} = category;
-
                     return (
                         <button
                             key={categoryKey}
@@ -330,7 +330,7 @@ export function IykykVibeMap() {
                                     : "bg-[rgba(26,18,8,0.06)] text-[rgba(26,18,8,0.50)] hover:bg-[rgba(26,18,8,0.1)]"
                             )}
                         >
-                            <Icon className="mr-2 h-4 w-4" />
+                            {vibeIcons[categoryKey]}
                             {categoryKey}
                         </button>
                     )

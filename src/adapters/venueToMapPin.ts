@@ -14,6 +14,7 @@ export type MapPinData = {
   longitude: number;
   category: string;
   address: string;
+  vibeTags?: string[];
 };
   
 
@@ -31,6 +32,7 @@ export function venueToMapPin(venue: Venue): MapPinData | null {
   const longitude = venue.location?.longitude ?? venue.longitude;
   const category = venue.details?.category ?? venue.category ?? 'Vibes';
   const address = venue.location?.address ?? venue.address ?? '';
+  const vibeTags = venue.details?.vibeTags ?? venue.vibeTags ?? [];
 
   if (typeof latitude !== 'number' || typeof longitude !== 'number') {
     return null;
@@ -44,5 +46,6 @@ export function venueToMapPin(venue: Venue): MapPinData | null {
     longitude,
     category,
     address,
+    vibeTags,
   };
 }
