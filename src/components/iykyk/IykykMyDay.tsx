@@ -11,16 +11,17 @@ import { EventAndItinerarySelectionPage } from './my-day/EventAndItinerarySelect
 import { IykykMyDayItineraryPage } from './my-day/IykykMyDayItineraryPage';
 import { generateItinerary } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
+import { ItineraryOption } from '@/lib/data';
 
 export function IykykMyDay() {
     const [view, setView] = useState<'selection' | 'itinerary'>('selection');
     const [itinerary, setItinerary] = useState<Itinerary | null>(null);
-    const [currentVibe, setCurrentVibe] = useState<any | null>(null);
+    const [currentVibe, setCurrentVibe] = useState<ItineraryOption | null>(null);
     const [isConfirmationOpen, setConfirmationOpen] = useState(false);
     const [isShuffling, setIsShuffling] = useState(false);
     const { toast } = useToast();
 
-    const handleSelectVibe = (option: any) => {
+    const handleSelectVibe = (option: ItineraryOption) => {
         setCurrentVibe(option);
 
         const initialStops = option.mockItinerary.map((s: any, index: number) => ({
@@ -79,12 +80,12 @@ export function IykykMyDay() {
             }
 
             const request = {
-                ...currentVibe.request,
+                ...(currentVibe.request as Record<string, unknown>),
                 heldStops: heldStops.map(({ id, isHeld, ...rest }) => rest),
                 numberOfNewStops: unlockedStopsCount,
             };
 
-            const result = await generateItinerary(request);
+            const result = await generateItinerary(request as any);
 
             if (result.success) {
                 const newStopsWithIds = result.success.stops.map((stop, index) => ({
