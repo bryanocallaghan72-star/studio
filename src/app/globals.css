@@ -66,11 +66,44 @@
 }
 
 [data-theme="day"] {
-  --phase-accent: #c4762a;
-  --background: 45 33% 92%; /* #f2ece0 */
-  --foreground: 38 35% 10%; /* #1a1208 */
-  --phase-text: #1a1208;
-  --bg-gradient: linear-gradient(to bottom, #f2ece0, #ede5d5);
+  --phase-accent:        #c4762a;
+  --phase-text:          #1a1208;
+  --phase-muted:         #b09060;
+  --phase-glow:          #7eb8c9;
+
+  --background:          45 33% 92%;
+  --foreground:          25 60% 8%;
+  --card:                0 0% 100%;
+  --card-foreground:     25 60% 8%;
+  --popover:             0 0% 100%;
+  --popover-foreground:  25 60% 8%;
+  --primary:             28 56% 47%;
+  --primary-foreground:  0 0% 100%;
+  --secondary:           38 40% 88%;
+  --secondary-foreground: 25 60% 8%;
+  --muted:               38 30% 88%;
+  --muted-foreground:    25 30% 40%;
+  --accent:              38 40% 88%;
+  --accent-foreground:   25 60% 8%;
+  --border:              25 30% 8% / 0.08;
+  --input:               25 30% 8% / 0.06;
+  --ring:                28 56% 47% / 0.3;
+
+  --bg-gradient: linear-gradient(
+    to bottom,
+    #f2ece0,
+    #ede5d5
+  );
+
+  --glass-dark:          rgba(26, 18, 8, 0.6);
+  --glass-light:         rgba(242, 236, 224, 0.7);
+  --glass-border:        rgba(26, 18, 8, 0.08);
+  --glass-dark-soft:     rgba(26, 18, 8, 0.35);
+  --glass-light-soft:    rgba(242, 236, 224, 0.4);
+}
+
+[data-theme="day"] .app-theme-wrapper {
+  background-color: #f2ece0 !important;
 }
 
 [data-theme="golden"] {
