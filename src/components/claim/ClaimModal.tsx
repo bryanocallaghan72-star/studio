@@ -86,6 +86,27 @@ export function ClaimModal({ isOpen, onClose, venueName, offerText, creatorHandl
       console.error('Claim write failed:', err);
       // Silently fail - never block UI transition to SUCCESS step
     }
+
+    try {
+      if (user && firestore) {
+        const notificationsRef = collection(firestore, 'notifications');
+        addDocumentNonBlocking(notificationsRef, {
+          type: 'new_claim',
+          venueName,
+          venueNotified: true,
+          userId: user.uid,
+          userEmail: user.email ?? '',
+          code,
+          source,
+          creatorHandle: creatorHandle ?? 'anonymous',
+          message: `Someone is heading to ${venueName}`,
+          read: false,
+          createdAt: serverTimestamp(),
+        });
+      }
+    } catch (err) {
+      console.error('Notification write failed:', err);
+    }
   };
 
   return (
