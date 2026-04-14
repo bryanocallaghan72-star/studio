@@ -53,7 +53,7 @@ export function IykykMyDay() {
                 ? { ...stop, isHeld: !stop.isHeld } 
                 : stop
         );
-        setItinerary({ ...itinerary, stops: newStops });
+        setSetItinerary: setItinerary({ ...itinerary, stops: newStops });
     };
 
     const handleSwap = (originalStop: ItineraryStop, newVenue: any) => {
@@ -70,36 +70,45 @@ export function IykykMyDay() {
         if (!itinerary || !currentVibe) return;
 
         setIsShuffling(true);
-        const heldStops = itinerary.stops.filter(s => s.isHeld);
-        const unlockedStopsCount = itinerary.stops.length - heldStops.length;
+        try {
+            const heldStops = itinerary.stops.filter(s => s.isHeld);
+            const unlockedStopsCount = itinerary.stops.length - heldStops.length;
 
-        if (unlockedStopsCount === 0) {
-            setIsShuffling(false);
-            return;
-        }
+            if (unlockedStopsCount === 0) {
+                return;
+            }
 
-        const request = {
-            ...currentVibe.request,
-            heldStops: heldStops.map(({ id, isHeld, ...rest }) => rest),
-            numberOfNewStops: unlockedStopsCount,
-        };
+            const request = {
+                ...currentVibe.request,
+                heldStops: heldStops.map(({ id, isHeld, ...rest }) => rest),
+                numberOfNewStops: unlockedStopsCount,
+            };
 
-        const result = await generateItinerary(request);
+            const result = await generateItinerary(request);
 
-        if (result.success) {
-            const newStopsWithIds = result.success.stops.map((stop, index) => ({
-                ...stop,
-                id: `${stop.title}-${index}-${Date.now()}`
-            }));
-            setItinerary({ ...result.success, stops: newStopsWithIds });
-        } else if (result.error) {
+            if (result.success) {
+                const newStopsWithIds = result.success.stops.map((stop, index) => ({
+                    ...stop,
+                    id: `${stop.title}-${index}-${Date.now()}`
+                }));
+                setItinerary({ ...result.success, stops: newStopsWithIds });
+            } else if (result.error) {
+                toast({
+                    variant: "destructive",
+                    title: result.error.title,
+                    description: result.error.message,
+                });
+            }
+        } catch (error) {
+            console.error('Shuffle failed:', error);
             toast({
                 variant: "destructive",
-                title: result.error.title,
-                description: result.error.message,
+                title: "Shuffle Failed",
+                description: "Something went wrong. Please try again.",
             });
+        } finally {
+            setIsShuffling(false);
         }
-        setIsShuffling(false);
     };
 
 
@@ -111,28 +120,6 @@ export function IykykMyDay() {
     const getConfirmationMessage = () => {
         if (!currentVibe) return "";
         return currentVibe.curatedMessage;
-    }
-
-    const CurrentPage = () => {
-        if (view === 'selection') {
-            return <EventAndItinerarySelectionPage onSelectVibe={handleSelectVibe} />;
-        }
-        if (itinerary) {
-            return <IykykMyDayItineraryPage
-                itineraryData={{...itinerary, description: currentVibe?.description, title: itinerary.title || currentVibe?.title}}
-                onStartPlan={handleStartPlan}
-                onBack={handleBackToSelection}
-                onShuffle={handleShuffle}
-                onToggleHold={handleToggleHold}
-                onSwap={handleSwap}
-                isPending={isShuffling}
-            />;
-        }
-        return (
-             <div className="absolute inset-0 flex items-center justify-center bg-white/80 z-20">
-                <Loader2 className="h-10 w-10 animate-spin text-[#c4762a]" />
-             </div>
-        );
     }
 
     return (
@@ -152,7 +139,24 @@ export function IykykMyDay() {
             </AnimatePresence>
 
             <AnimatePresence mode="wait">
-                <CurrentPage />
+                {view === 'selection' ? (
+                    <EventAndItinerarySelectionPage key="selection" onSelectVibe={handleSelectVibe} />
+                ) : itinerary ? (
+                    <IykykMyDayItineraryPage
+                        key="itinerary"
+                        itineraryData={{...itinerary, description: currentVibe?.description, title: itinerary.title || currentVibe?.title}}
+                        onStartPlan={handleStartPlan}
+                        onBack={handleBackToSelection}
+                        onShuffle={handleShuffle}
+                        onToggleHold={handleToggleHold}
+                        onSwap={handleSwap}
+                        isPending={isShuffling}
+                    />
+                ) : (
+                    <div key="loading" className="absolute inset-0 flex items-center justify-center bg-white/80 z-20">
+                        <Loader2 className="h-10 w-10 animate-spin text-[#c4762a]" />
+                    </div>
+                )}
             </AnimatePresence>
 
             <Dialog open={isConfirmationOpen} onOpenChange={setConfirmationOpen}>
