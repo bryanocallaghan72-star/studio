@@ -27,8 +27,8 @@ export const DemoTimeProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <DemoTimeContext.Provider value={{ currentPhase, cycleTime }}>
-      <div 
-        data-theme={currentPhase} 
+      <div
+        data-theme={currentPhase}
         className="app-theme-wrapper"
         style={{ background: 'transparent', backgroundColor: 'transparent' }}
       >
