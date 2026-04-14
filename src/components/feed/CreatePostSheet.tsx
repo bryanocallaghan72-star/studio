@@ -38,7 +38,7 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
         caption,
         venueName,
         location,
-        imageUrl,
+        imageUrl: imageUrl.trim() || '',
         creatorId: user.uid,
         creatorEmail: user.email ?? '',
         createdAt: serverTimestamp(),
@@ -170,7 +170,7 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Image URL</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Image URL (optional)</label>
                     <div className="relative">
                       <Camera className="absolute left-4 top-1/2 -translate-y-1/2 text-[#1a1208]/20" size={18} />
                       <Input 
@@ -180,6 +180,9 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
                         onChange={(e) => setImageUrl(e.target.value)}
                       />
                     </div>
+                    <p className="text-xs text-[#1a1208]/40 mt-1">
+                      Paste a URL from Unsplash or leave blank
+                    </p>
                   </div>
                 </div>
 
