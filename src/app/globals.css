@@ -47,6 +47,20 @@
     font-family: system-ui, -apple-system, 'SF Pro Display', sans-serif;
     @apply antialiased;
   }
+  [data-theme="golden"] body,
+  [data-theme="golden"] {
+    background: linear-gradient(
+      160deg,
+      #e8502a 0%,
+      #c4762a 30%,
+      #d4608a 60%,
+      #c4507a 100%
+    ) !important;
+  }
+  [data-theme="day"] body,
+  [data-theme="day"] {
+    background: #f2ece0 !important;
+  }
 }
 
 /* ============================================== */
@@ -56,7 +70,7 @@
 .app-theme-wrapper {
   width: 100%;
   min-height: 100vh;
-  background-color: #080a0d !important;
+  background-color: transparent !important;
   transition: color 0.5s ease;
 }
 
@@ -102,11 +116,8 @@
   --glass-light-soft:    rgba(242, 236, 224, 0.4);
 }
 
-[data-theme="day"] .app-theme-wrapper {
-  background-color: #f2ece0 !important;
-}
-
 [data-theme="golden"] {
+  color-scheme: light;
   --phase-accent:        #c4762a;
   --phase-text:          #2a0e05;
   --phase-muted:         #c4762a;
@@ -143,17 +154,6 @@
   --glass-border:        rgba(42, 14, 5, 0.10);
   --glass-dark-soft:     rgba(42, 14, 5, 0.35);
   --glass-light-soft:    rgba(232, 180, 140, 0.25);
-}
-
-[data-theme="golden"] .app-theme-wrapper {
-  background: linear-gradient(
-    160deg,
-    #e8502a 0%,
-    #c4762a 30%,
-    #d4608a 60%,
-    #c4507a 100%
-  ) !important;
-  min-height: 100vh;
 }
 
 [data-theme="dusk"] {
