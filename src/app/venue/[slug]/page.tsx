@@ -39,14 +39,23 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { logVaultEvent } from '@/lib/vault/logVaultEvent';
 import { trackVenueView } from '@/lib/vault/trackVenueView';
 
-// Updated Venue type for this page
+// Updated Venue type for this page supporting both flat and nested schemas
 type Venue = WithId<{
   name: string;
-  address: string;
+  address?: string;
   category: string;
   description?: string;
-  latitude: number;
-  longitude: number;
+  latitude?: number;
+  longitude?: number;
+  location?: {
+    latitude?: number;
+    longitude?: number;
+    address?: string;
+  };
+  details?: {
+    category?: string;
+    description?: string;
+  };
   subCategory?: string;
   vibeTags?: string[];
   priceTier?: '$' | '$$' | '$$$' | '$$$$';
@@ -209,7 +218,9 @@ export default function VenuePage() {
 
   const handleGetDirections = () => {
     if (venue) {
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${venue.latitude},${venue.longitude}`;
+      const lat = venue.location?.latitude ?? venue.latitude;
+      const lng = venue.location?.longitude ?? venue.longitude;
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
       window.open(url, '_blank', 'noopener,noreferrer');
     }
   };
@@ -254,7 +265,9 @@ export default function VenuePage() {
     return <VenueNotFound />;
   }
 
-  const center = { lat: venue.latitude, lng: venue.longitude };
+  const lat = venue.location?.latitude ?? venue.latitude;
+  const lng = venue.location?.longitude ?? venue.longitude;
+  const center = { lat: lat ?? 0, lng: lng ?? 0 };
 
   return (
     <div className="space-y-6 bg-[#f2ece0] min-h-screen pb-32">
@@ -288,7 +301,7 @@ export default function VenuePage() {
         <div className="flex items-center gap-4 text-[rgba(26,18,8,0.50)]">
             <p className="flex items-center gap-2 text-sm font-medium">
                 <MapPin className="h-4 w-4" />
-                {venue.address}
+                {venue.location?.address ?? venue.address ?? ''}
             </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-sm">
