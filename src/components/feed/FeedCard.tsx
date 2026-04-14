@@ -53,13 +53,19 @@ export function FeedCard({ post, index }: FeedCardProps) {
     >
       {/* Visual Header Zone */}
       <div className="relative aspect-[4/5] w-full overflow-hidden">
-        <Image
-          src={post.image}
-          alt={post.caption}
-          fill
-          unoptimized
-          className="object-cover"
-        />
+        {post.image ? (
+          <Image
+            src={post.image}
+            alt={post.caption}
+            fill
+            unoptimized
+            className="object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-[#c4762a]/20 to-[#f2ece0] flex items-center justify-center">
+            <span className="text-4xl">🌊</span>
+          </div>
+        )}
         
         {/* Editorial Scrim Overlay */}
         <div 
