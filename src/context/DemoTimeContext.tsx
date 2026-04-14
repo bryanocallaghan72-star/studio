@@ -1,6 +1,5 @@
-
 'use client';
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 
 type TimePhase = 'dawn' | 'day' | 'golden' | 'dusk';
 const TIME_PHASES: TimePhase[] = ['dawn', 'day', 'golden', 'dusk'];
@@ -15,6 +14,12 @@ const DemoTimeContext = createContext<DemoTimeContextType | undefined>(undefined
 export const DemoTimeProvider = ({ children }: { children: ReactNode }) => {
   const [phaseIndex, setPhaseIndex] = useState(1); // Default to 'day'
   const currentPhase = TIME_PHASES[phaseIndex];
+
+  useEffect(() => {
+    // Apply data-theme to the root element so global CSS variables and 
+    // body backgrounds work correctly across the entire app.
+    document.documentElement.setAttribute('data-theme', currentPhase);
+  }, [currentPhase]);
 
   const cycleTime = () => {
     setPhaseIndex((prev) => (prev + 1) % TIME_PHASES.length);
