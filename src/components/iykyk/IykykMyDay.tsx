@@ -54,7 +54,7 @@ export function IykykMyDay() {
                 ? { ...stop, isHeld: !stop.isHeld } 
                 : stop
         );
-        setSetItinerary: setItinerary({ ...itinerary, stops: newStops });
+        setItinerary({ ...itinerary, stops: newStops });
     };
 
     const handleSwap = (originalStop: ItineraryStop, newVenue: any) => {
@@ -123,6 +123,20 @@ export function IykykMyDay() {
         return currentVibe.curatedMessage;
     }
 
+    const parseTime = (time: string): number => {
+        const cleaned = time.trim().toUpperCase();
+        const match = cleaned.match(
+            /^(\d{1,2}):?(\d{2})?\s*(AM|PM)?$/
+        );
+        if (!match) return 0;
+        let hours = parseInt(match[1], 10);
+        const minutes = parseInt(match[2] ?? '0', 10);
+        const meridiem = match[3];
+        if (meridiem === 'PM' && hours !== 12) hours += 12;
+        if (meridiem === 'AM' && hours === 12) hours = 0;
+        return hours * 60 + minutes;
+    };
+
     return (
         <div className="w-full flex flex-col min-h-[40rem] overflow-hidden bg-[#f2ece0] border-none relative">
             <AnimatePresence mode="wait">
@@ -173,11 +187,9 @@ export function IykykMyDay() {
                     </DialogHeader>
                     {itinerary && (
                          <div className="space-y-4 py-6 text-center border-y border-black/[0.05] my-2">
-                            {itinerary.stops.sort((a, b) => {
-                                const timeA = new Date(`1970/01/01 ${a.time.replace(/\s/g, '')}`);
-                                const timeB = new Date(`1970/01/01 ${b.time.replace(/\s/g, '')}`);
-                                return timeA.getTime() - timeB.getTime();
-                            }).map((stop, index) => (
+                            {itinerary.stops.sort((a, b) => 
+                                parseTime(a.time) - parseTime(b.time)
+                            ).map((stop, index) => (
                                 <div key={index} className="flex items-center justify-center gap-4">
                                     <div className="text-sm font-black text-[#c4762a] w-16 text-right uppercase tracking-tighter">{stop.time}</div>
                                     <div className="font-bold text-[#1a1208] flex-1 text-left">{stop.location}</div>
