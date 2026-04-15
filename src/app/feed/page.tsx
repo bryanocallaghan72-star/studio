@@ -143,7 +143,7 @@ export default function FeedPage() {
       {/* Floating Create Button */}
       <button 
         onClick={() => setIsCreateOpen(true)}
-        className="fixed bottom-24 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#c4762a] text-white shadow-lg shadow-[#c4762a]/30 transition-transform active:scale-90 hover:bg-[#b06824] focus:outline-none"
+        className="fixed bottom-36 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#c4762a] text-white shadow-lg shadow-[#c4762a]/30 transition-transform active:scale-90 hover:bg-[#b06824] focus:outline-none"
         aria-label="Create new post"
       >
         <Plus size={28} strokeWidth={3} />
