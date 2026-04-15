@@ -6,12 +6,13 @@ import { X, Camera, MapPin, Building2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
-import { collection, serverTimestamp } from 'firebase/firestore';
+import { useFirestore, useUser, addDocumentNonBlocking, useCollection, useMemoFirebase } from '@/firebase';
+import { collection, serverTimestamp, query, limit } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useStorage } from '@/firebase/storage';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import type { Venue } from '@/types/venue';
 
 interface CreatePostSheetProps {
   isOpen: boolean;
@@ -33,6 +34,24 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
   const [imagePreview, setImagePreview] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Autocomplete State
+  const [venueSearch, setVenueSearch] = useState('');
+  const [showVenueSuggestions, setShowVenueSuggestions] = useState(false);
+
+  const venuesQuery = useMemoFirebase(() => {
+    if (!firestore || venueSearch.length < 2) return null;
+    return query(
+      collection(firestore, 'venues'),
+      limit(5)
+    );
+  }, [firestore, venueSearch]);
+
+  const { data: venues } = useCollection<Venue>(venuesQuery);
+
+  const filteredVenues = venues?.filter(v =>
+    v.name.toLowerCase().includes(venueSearch.toLowerCase())
+  ) ?? [];
 
   const handleImagePick = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -91,6 +110,7 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
       // Reset form state
       setCaption('');
       setVenueName('');
+      setVenueSearch('');
       setLocation('Bondi Beach');
       setImageFile(null);
       setImagePreview('');
@@ -208,17 +228,43 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
 
                 {/* Metadata Fields */}
                 <div className="grid grid-cols-1 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Venue Name (optional)</label>
+                  {/* Venue Autocomplete */}
+                  <div className="space-y-2 relative">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">
+                      Venue Name (optional)
+                    </label>
                     <div className="relative">
                       <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-[#1a1208]/20" size={18} />
-                      <Input 
-                        placeholder="e.g. Icebergs, Raw Bar"
+                      <Input
+                        placeholder="Search venues..."
                         className="pl-12 h-14 rounded-2xl border-black/[0.08] bg-white text-[#1a1208] placeholder:text-[#1a1208]/20"
-                        value={venueName}
-                        onChange={(e) => setVenueName(e.target.value)}
+                        value={venueSearch}
+                        onChange={(e) => {
+                          setVenueSearch(e.target.value);
+                          setVenueName(e.target.value);
+                          setShowVenueSuggestions(true);
+                        }}
+                        onFocus={() => setShowVenueSuggestions(true)}
                       />
                     </div>
+                    {showVenueSuggestions && filteredVenues.length > 0 && (
+                      <div className="absolute z-10 w-full rounded-2xl bg-white border border-black/[0.08] shadow-lg overflow-hidden mt-1">
+                        {filteredVenues.map((venue) => (
+                          <button
+                            key={venue.id}
+                            type="button"
+                            className="w-full px-4 py-3 text-left text-sm font-medium text-[#1a1208] hover:bg-[#f2ece0] transition-colors border-b border-black/[0.04] last:border-none"
+                            onClick={() => {
+                              setVenueName(venue.name);
+                              setVenueSearch(venue.name);
+                              setShowVenueSuggestions(false);
+                            }}
+                          >
+                            {venue.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">
