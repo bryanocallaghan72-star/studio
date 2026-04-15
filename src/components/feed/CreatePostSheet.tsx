@@ -49,9 +49,11 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
 
   const { data: venues } = useCollection<Venue>(venuesQuery);
 
-  const filteredVenues = venues?.filter(v =>
-    v.name.toLowerCase().includes(venueSearch.toLowerCase())
-  ) ?? [];
+  const filteredVenues = venueSearch.length >= 2
+    ? (venues ?? []).filter(v =>
+        v.name?.toLowerCase().includes(venueSearch.toLowerCase())
+      )
+    : [];
 
   const handleImagePick = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -251,7 +253,7 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
                       <div className="absolute z-10 w-full rounded-2xl bg-white border border-black/[0.08] shadow-lg overflow-hidden mt-1">
                         {filteredVenues.map((venue) => (
                           <button
-                            key={venue.id}
+                            key={venue.slug ?? venue.name}
                             type="button"
                             className="w-full px-4 py-3 text-left text-sm font-medium text-[#1a1208] hover:bg-[#f2ece0] transition-colors border-b border-black/[0.04] last:border-none"
                             onClick={() => {
