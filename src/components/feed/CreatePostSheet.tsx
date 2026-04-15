@@ -11,11 +11,14 @@ import { collection, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useStorage } from '@/firebase/storage';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 interface CreatePostSheetProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+const LOCATIONS = ['Bondi Beach', 'Bondi', 'North Bondi'];
 
 export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
   const { user } = useUser();
@@ -25,7 +28,7 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
 
   const [caption, setCaption] = useState('');
   const [venueName, setVenueName] = useState('');
-  const [location, setLocation] = useState('');
+  const [location, setLocation] = useState('Bondi Beach');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
@@ -88,7 +91,7 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
       // Reset form state
       setCaption('');
       setVenueName('');
-      setLocation('');
+      setLocation('Bondi Beach');
       setImageFile(null);
       setImagePreview('');
       
@@ -206,7 +209,7 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
                 {/* Metadata Fields */}
                 <div className="grid grid-cols-1 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Venue Name</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Venue Name (optional)</label>
                     <div className="relative">
                       <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-[#1a1208]/20" size={18} />
                       <Input 
@@ -220,14 +223,19 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
 
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Location</label>
-                    <div className="relative">
-                      <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-[#1a1208]/20" size={18} />
-                      <Input 
-                        placeholder="e.g. Bondi Beach"
-                        className="pl-12 h-14 rounded-2xl border-black/[0.08] bg-white text-[#1a1208] placeholder:text-[#1a1208]/20"
-                        value={location}
-                        onChange={(e) => setLocation(e.target.value)}
-                      />
+                    <div className="flex gap-2">
+                      {LOCATIONS.map((loc) => (
+                        <button key={loc} type="button"
+                          onClick={() => setLocation(loc)}
+                          className={cn(
+                            "flex-1 h-12 rounded-2xl text-sm font-bold transition-all",
+                            location === loc
+                              ? "bg-[#c4762a] text-white"
+                              : "bg-white text-[#1a1208]/60 border border-black/[0.08]"
+                          )}>
+                          {loc}
+                        </button>
+                      ))}
                     </div>
                   </div>
                 </div>
