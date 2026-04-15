@@ -89,7 +89,9 @@ export default function FeedPage() {
 
   const livePosts: FeedPost[] = (livePostsRaw || []).map((doc) => ({
     id: doc.id,
-    creator: doc.creatorId ?? 'anonymous',
+    creator: doc.creatorEmail
+      ? doc.creatorEmail.split('@')[0]
+      : doc.creatorId?.slice(0, 8) ?? 'anonymous',
     verified: false,
     location: doc.location || 'Bondi',
     image: doc.imageUrl || '',
