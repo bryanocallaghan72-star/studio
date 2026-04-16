@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Camera, MapPin, Building2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useFirestore, useUser, addDocumentNonBlocking, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, serverTimestamp, query, limit } from 'firebase/firestore';
+import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
+import { collection, serverTimestamp, getDocs } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useStorage } from '@/firebase/storage';
 import { useToast } from '@/hooks/use-toast';
@@ -38,22 +38,30 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
   // Autocomplete State
   const [venueSearch, setVenueSearch] = useState('');
   const [showVenueSuggestions, setShowVenueSuggestions] = useState(false);
+  const [filteredVenues, setFilteredVenues] = useState<Venue[]>([]);
 
-  const venuesQuery = useMemoFirebase(() => {
-    if (!firestore || venueSearch.length < 2) return null;
-    return query(
-      collection(firestore, 'venues'),
-      limit(5)
-    );
+  useEffect(() => {
+    if (!firestore || venueSearch.length < 2) {
+      setFilteredVenues([]);
+      return;
+    }
+
+    const fetchVenues = async () => {
+      try {
+        const venuesRef = collection(firestore, 'venues');
+        const snapshot = await getDocs(venuesRef);
+        const matches = snapshot.docs
+          .map(doc => ({ ...doc.data(), slug: doc.id } as Venue))
+          .filter(v => v.name?.toLowerCase().includes(venueSearch.toLowerCase()))
+          .slice(0, 5);
+        setFilteredVenues(matches);
+      } catch (err) {
+        console.error('Error fetching venues:', err);
+      }
+    };
+
+    fetchVenues();
   }, [firestore, venueSearch]);
-
-  const { data: venues } = useCollection<Venue>(venuesQuery);
-
-  const filteredVenues = venueSearch.length >= 2
-    ? (venues ?? []).filter(v =>
-        v.name?.toLowerCase().includes(venueSearch.toLowerCase())
-      )
-    : [];
 
   const handleImagePick = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
