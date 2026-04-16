@@ -187,7 +187,7 @@ export function IykykMyDay() {
                     </DialogHeader>
                     {itinerary && (
                          <div className="space-y-4 py-6 text-center border-y border-black/[0.05] my-2">
-                            {itinerary.stops.sort((a, b) => 
+                            {[...itinerary.stops].sort((a, b) => 
                                 parseTime(a.time) - parseTime(b.time)
                             ).map((stop, index) => (
                                 <div key={index} className="flex items-center justify-center gap-4">
