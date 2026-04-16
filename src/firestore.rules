@@ -60,7 +60,7 @@ service cloud.firestore {
 
       // Subcollections for user-specific data. Only accessible by the owner.
       match /claimedDeals/{dealId} {
-        allow read, write: if isOwner(userId);
+        allow read, write: if request.auth != null && request.auth.uid == userId;
       }
        match /influencedActions/{actionId} {
         // Any signed-in user can create a record here, representing influence.
