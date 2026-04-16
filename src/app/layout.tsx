@@ -7,8 +7,6 @@ import { Inter } from 'next/font/google';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import { cn } from '@/lib/utils';
 import { DemoTimeProvider } from '@/context/DemoTimeContext';
-import { SoundProvider } from '@/context/SoundContext';
-import { AmbienceController } from '@/components/iykyk/AmbienceController';
 import GodModeButton from '@/components/iykyk/GodModeButton';
 import { BottomNav } from '@/components/layout/BottomNav';
 
@@ -34,16 +32,13 @@ export default function RootLayout({
       <body className={cn(inter.variable, "font-body antialiased")}>
         <FirebaseClientProvider>
           <DemoTimeProvider>
-            <SoundProvider>
-              <AmbienceController />
-              <div className="flex min-h-screen w-full flex-col bg-background">
-                <main className="flex-1 flex flex-col">
-                  {children}
-                </main>
-                <BottomNav />
-              </div>
-              <GodModeButton />
-            </SoundProvider>
+            <div className="flex min-h-screen w-full flex-col bg-background">
+              <main className="flex-1 flex flex-col">
+                {children}
+              </main>
+              <BottomNav />
+            </div>
+            <GodModeButton />
           </DemoTimeProvider>
         </FirebaseClientProvider>
         <Toaster />
