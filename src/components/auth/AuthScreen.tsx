@@ -114,7 +114,7 @@ export function AuthScreen() {
   };
 
   return (
-    <div className="fixed inset-0 z-[10001] bg-[#080a0d] flex flex-col items-center justify-start overflow-y-auto pb-12">
+    <div className="fixed inset-0 z-[10001] bg-[#05014a] flex flex-col items-center justify-start overflow-y-auto pb-12">
       {/* Top Branding */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
