@@ -114,15 +114,15 @@ export function AuthScreen() {
   };
 
   return (
-    <div className="fixed inset-0 z-[10001] bg-[#05014a] flex flex-col items-center justify-start overflow-y-auto pb-12">
+    <div className="fixed inset-0 z-[10001] bg-[#1a1208] flex flex-col items-center justify-start overflow-y-auto pb-12">
       {/* Top Branding */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col items-center mt-16 px-6"
       >
-        <h1 className="text-white font-black text-5xl tracking-tighter text-center">iykyk</h1>
-        <p className="text-white/50 text-sm tracking-[0.2em] uppercase text-center mt-3">
+        <h1 className="text-[#f2ece0] font-black text-5xl tracking-tighter text-center">iykyk</h1>
+        <p className="text-[#f2ece0]/50 text-sm tracking-[0.2em] uppercase text-center mt-3">
           Your Cultural Concierge · Bondi
         </p>
       </motion.div>
@@ -136,8 +136,8 @@ export function AuthScreen() {
       >
         <div className="bg-white/5 backdrop-blur-xl rounded-[32px] p-8 border border-white/10 shadow-2xl">
           <div className="text-center mb-8">
-            <h2 className="text-white font-bold text-2xl">Join the inner circle</h2>
-            <p className="text-white/50 text-sm mt-2">
+            <h2 className="text-[#f2ece0] font-bold text-2xl">Join the inner circle</h2>
+            <p className="text-[#f2ece0]/60 text-sm mt-2">
               Your insider guide to Bondi.
             </p>
           </div>
@@ -164,7 +164,7 @@ export function AuthScreen() {
               <div className="w-full border-t border-white/10"></div>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-[#080a0d]/50 px-2 text-white/30 tracking-widest">or</span>
+              <span className="bg-[#1a1208] px-2 text-[#f2ece0]/30 tracking-widest">or</span>
             </div>
           </div>
 
@@ -176,7 +176,7 @@ export function AuthScreen() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setShowEmail(true)}
-                className="w-full text-white/50 text-sm font-medium underline underline-offset-4 hover:text-white transition-colors"
+                className="w-full text-[#f2ece0]/60 text-sm font-medium underline underline-offset-4 hover:text-[#f2ece0] transition-colors"
               >
                 Continue with Email
               </motion.button>
@@ -194,7 +194,7 @@ export function AuthScreen() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-white/10 border border-white/15 rounded-2xl px-5 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30 transition-colors"
+                  className="w-full bg-white/10 border border-white/15 rounded-2xl px-5 py-4 text-[#f2ece0] placeholder:text-[#f2ece0]/30 focus:outline-none focus:border-white/30 transition-colors"
                 />
                 <input 
                   type="password" 
@@ -202,7 +202,7 @@ export function AuthScreen() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-white/10 border border-white/15 rounded-2xl px-5 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30 transition-colors"
+                  className="w-full bg-white/10 border border-white/15 rounded-2xl px-5 py-4 text-[#f2ece0] placeholder:text-[#f2ece0]/30 focus:outline-none focus:border-white/30 transition-colors"
                 />
                 {isSignUp && (
                   <input 
@@ -211,7 +211,7 @@ export function AuthScreen() {
                     required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full bg-white/10 border border-white/15 rounded-2xl px-5 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30 transition-colors"
+                    className="w-full bg-white/10 border border-white/15 rounded-2xl px-5 py-4 text-[#f2ece0] placeholder:text-[#f2ece0]/30 focus:outline-none focus:border-white/30 transition-colors"
                   />
                 )}
                 <button 
@@ -227,7 +227,7 @@ export function AuthScreen() {
                     setError(null);
                     setIsSignUp(!isSignUp);
                   }}
-                  className="w-full text-white/40 text-xs mt-2 hover:text-white/60 transition-colors"
+                  className="w-full text-[#f2ece0]/40 text-xs mt-2 hover:text-[#f2ece0]/60 transition-colors"
                 >
                   {isSignUp ? 'Already have an account? Sign in' : 'New here? Create an account'}
                 </button>
@@ -246,7 +246,7 @@ export function AuthScreen() {
           )}
         </div>
 
-        <p className="text-white/20 text-[10px] font-medium text-center mt-8 px-8 leading-relaxed uppercase tracking-wider">
+        <p className="text-[#f2ece0]/20 text-[10px] font-medium text-center mt-8 px-8 leading-relaxed uppercase tracking-wider">
           By continuing you agree to our <br/>
           <span className="underline">Terms of Service</span> & <span className="underline">Privacy Policy</span>
         </p>
