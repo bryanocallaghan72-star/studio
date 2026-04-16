@@ -26,6 +26,7 @@ export function AuthScreen() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -90,6 +91,12 @@ export function AuthScreen() {
     e.preventDefault();
     if (!auth) return;
     setError(null);
+
+    if (isSignUp && password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -197,6 +204,16 @@ export function AuthScreen() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full bg-white/10 border border-white/15 rounded-2xl px-5 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30 transition-colors"
                 />
+                {isSignUp && (
+                  <input 
+                    type="password" 
+                    placeholder="Confirm password"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full bg-white/10 border border-white/15 rounded-2xl px-5 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30 transition-colors"
+                  />
+                )}
                 <button 
                   type="submit"
                   disabled={isLoading}
@@ -206,7 +223,10 @@ export function AuthScreen() {
                 </button>
                 <button 
                   type="button"
-                  onClick={() => setIsSignUp(!isSignUp)}
+                  onClick={() => {
+                    setError(null);
+                    setIsSignUp(!isSignUp);
+                  }}
                   className="w-full text-white/40 text-xs mt-2 hover:text-white/60 transition-colors"
                 >
                   {isSignUp ? 'Already have an account? Sign in' : 'New here? Create an account'}
