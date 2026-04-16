@@ -150,26 +150,28 @@ export function FeedCard({ post, index }: FeedCardProps) {
               </div>
               
               {/* Mock comments */}
-              <div className="mt-4 space-y-3 pb-2">
-                <div className="flex gap-2 items-start">
-                  <div className="w-6 h-6 rounded-full bg-[rgba(26,18,8,0.10)] text-[#1a1208] text-[10px] font-bold flex items-center justify-center flex-shrink-0">
-                    J
+              {(post as any).source !== 'user_created' && (
+                <div className="mt-4 space-y-3 pb-2">
+                  <div className="flex gap-2 items-start">
+                    <div className="w-6 h-6 rounded-full bg-[rgba(26,18,8,0.10)] text-[#1a1208] text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                      J
+                    </div>
+                    <div className="flex-1">
+                      <span className="text-[#1a1208] font-semibold text-xs">@jay</span>
+                      <span className="text-[rgba(26,18,8,0.70)] text-xs ml-1">This place is unreal every time 🔥</span>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <span className="text-[#1a1208] font-semibold text-xs">@jay</span>
-                    <span className="text-[rgba(26,18,8,0.70)] text-xs ml-1">This place is unreal every time 🔥</span>
+                  <div className="flex gap-2 items-start">
+                    <div className="w-6 h-6 rounded-full bg-[rgba(26,18,8,0.10)] text-[#1a1208] text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                      M
+                    </div>
+                    <div className="flex-1">
+                      <span className="text-[#1a1208] font-semibold text-xs">@maya</span>
+                      <span className="text-[rgba(26,18,8,0.70)] text-xs ml-1">The omakase is next level, go</span>
+                    </div>
                   </div>
                 </div>
-                <div className="flex gap-2 items-start">
-                  <div className="w-6 h-6 rounded-full bg-[rgba(26,18,8,0.10)] text-[#1a1208] text-[10px] font-bold flex items-center justify-center flex-shrink-0">
-                    M
-                  </div>
-                  <div className="flex-1">
-                    <span className="text-[#1a1208] font-semibold text-xs">@maya</span>
-                    <span className="text-[rgba(26,18,8,0.70)] text-xs ml-1">The omakase is next level, go</span>
-                  </div>
-                </div>
-              </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
