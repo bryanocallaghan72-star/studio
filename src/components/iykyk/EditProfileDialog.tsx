@@ -107,12 +107,15 @@ export function EditProfileDialog({ isOpen, onOpenChange, userProfile }: EditPro
 
       // 3. Update Firestore
       const userDocRef = doc(firestore, 'users', userProfile.id);
-      const updatedData = {
-        username,
-        bio,
-        avatarUrl: finalAvatarUrl,
-        bannerUrl: finalBannerUrl,
-      };
+      
+      const updatedData = Object.fromEntries(
+        Object.entries({
+          username,
+          bio,
+          avatarUrl: finalAvatarUrl || userProfile.avatarUrl || null,
+          bannerUrl: finalBannerUrl || userProfile.bannerUrl || null,
+        }).filter(([_, v]) => v !== undefined)
+      );
       
       updateDocumentNonBlocking(userDocRef, updatedData);
 
