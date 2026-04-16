@@ -18,7 +18,7 @@ export function BottomNav() {
     { label: 'Feed', href: '/feed', icon: MessageSquare },
     { label: 'Fire', href: '/fire', icon: Flame },
     { label: 'Social', href: '/social', icon: Users },
-    { label: 'Me', href: user ? `/profile/${user.uid}` : '/login', icon: User, root: '/profile' },
+    { label: 'Me', href: user ? `/profile/${user.uid}` : '/auth', icon: User, root: '/profile' },
   ];
 
   return (
