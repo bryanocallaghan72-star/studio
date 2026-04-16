@@ -103,8 +103,9 @@ export function ProfilePageClient({ uid }: { uid: string }) {
     return null;
   }, [mockUserProfile, firestoreUserProfile, profileError, isFirestoreLoading, shouldFetchFirestore, uid, isOwner, currentUser]);
   
-  const userPins = useMemo(() => {
-    return [...appData.map.pins].sort(() => 0.5 - Math.random()).slice(0, 3);
+  const [userPins, setUserPins] = useState<typeof appData.map.pins>([]);
+  useEffect(() => {
+    setUserPins([...appData.map.pins].sort(() => 0.5 - Math.random()).slice(0, 3));
   }, [uid]);
 
   const isLoading = shouldFetchFirestore ? isFirestoreLoading : false;
