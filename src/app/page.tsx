@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 
@@ -85,18 +86,29 @@ export default function LandingPage() {
         </p>
       </div>
 
-      {/* Bottom CTA Button */}
-      <button
-        onClick={handleEnter}
-        className="absolute bottom-[clamp(40px,8vh,80px)] left-1/2 -translate-x-1/2 z-30 px-[40px] py-[14px] text-[13px] font-medium tracking-[0.15em] uppercase text-[#f4f0e8] border border-[#f4f0e8]/30 rounded-[32px] bg-transparent transition-all duration-500 hover:bg-[#f4f0e8]/10 hover:border-[#f4f0e8]/60 active:scale-95 backdrop-blur-sm whitespace-nowrap"
+      {/* Bottom CTA Actions */}
+      <div 
+        className="absolute bottom-[clamp(40px,8vh,80px)] left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-4 w-full px-6"
         style={{
           opacity: showContent ? 1 : 0,
           transition: 'opacity 1.5s ease',
           transitionDelay: '0.4s'
         }}
       >
-        Enter Bondi
-      </button>
+        <button
+          onClick={handleEnter}
+          className="px-[40px] py-[14px] text-[13px] font-medium tracking-[0.15em] uppercase text-[#f4f0e8] border border-[#f4f0e8]/30 rounded-[32px] bg-transparent transition-all duration-500 hover:bg-[#f4f0e8]/10 hover:border-[#f4f0e8]/60 active:scale-95 backdrop-blur-sm whitespace-nowrap"
+        >
+          Enter Bondi
+        </button>
+        
+        <Link 
+          href="/login" 
+          className="text-[11px] font-medium text-[#f4f0e8]/40 hover:text-[#f4f0e8]/70 transition-colors underline underline-offset-4"
+        >
+          New here? Create an account
+        </Link>
+      </div>
 
       {/* Subtle Attribution */}
       <div 
