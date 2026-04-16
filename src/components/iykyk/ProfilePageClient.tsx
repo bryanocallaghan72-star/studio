@@ -210,7 +210,7 @@ export function ProfilePageClient({ uid }: { uid: string }) {
              <div className="mt-4 space-y-3">
                  <div>
                     <h1 className="text-2xl font-black tracking-tight text-[#1a1208] leading-tight">{userProfile.username}</h1>
-                    <p className="text-[13px] font-bold text-[rgba(26,18,8,0.40)]">@{userProfile.isMock ? userProfile.id : userProfile.username}</p>
+                    <p className="text-[13px] font-bold text-[rgba(26,18,8,0.40)]">@{userProfile.username}</p>
                  </div>
                 <p className="text-[14px] leading-relaxed text-[rgba(26,18,8,0.65)]">{userProfile.bio || "No bio yet."}</p>
             </div>
