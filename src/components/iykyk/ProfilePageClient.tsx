@@ -92,14 +92,16 @@ export function ProfilePageClient({ uid }: { uid: string }) {
         return {
             isMock: true,
             id: uid,
-            username: uid,
+            username: isOwner 
+              ? (currentUser?.displayName ?? currentUser?.email?.split('@')[0] ?? 'Bondi Local') 
+              : 'Bondi Local',
             bio: 'Bondi local 🌊',
             avatarUrl: null,
             bannerUrl: undefined,
         };
     }
     return null;
-  }, [mockUserProfile, firestoreUserProfile, profileError, isFirestoreLoading, shouldFetchFirestore, uid]);
+  }, [mockUserProfile, firestoreUserProfile, profileError, isFirestoreLoading, shouldFetchFirestore, uid, isOwner, currentUser]);
   
   const userPins = useMemo(() => {
     return [...appData.map.pins].sort(() => 0.5 - Math.random()).slice(0, 3);
