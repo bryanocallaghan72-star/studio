@@ -7,5 +7,9 @@ import { AuthScreen } from '@/components/auth/AuthScreen';
  * Handles Google, Apple, and Email authentication flows.
  */
 export default function AuthPage() {
-  return <AuthScreen />;
+  return (
+    <div className="no-nav">
+      <AuthScreen />
+    </div>
+  );
 }

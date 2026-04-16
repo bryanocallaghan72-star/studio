@@ -114,7 +114,7 @@ export function AuthScreen() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#05014a] flex flex-col items-center justify-start overflow-y-auto pb-12">
+    <div className="fixed inset-0 z-[10001] bg-[#080a0d] flex flex-col items-center justify-start overflow-y-auto pb-12">
       {/* Top Branding */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -164,7 +164,7 @@ export function AuthScreen() {
               <div className="w-full border-t border-white/10"></div>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-[#05014a]/50 px-2 text-white/30 tracking-widest">or</span>
+              <span className="bg-[#080a0d]/50 px-2 text-white/30 tracking-widest">or</span>
             </div>
           </div>
 
