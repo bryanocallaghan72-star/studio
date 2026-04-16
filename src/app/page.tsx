@@ -103,7 +103,7 @@ export default function LandingPage() {
         </button>
         
         <Link 
-          href="/login" 
+          href="/auth" 
           className="text-[11px] font-medium text-[#f4f0e8]/40 hover:text-[#f4f0e8]/70 transition-colors underline underline-offset-4"
         >
           New here? Create an account
