@@ -8,11 +8,9 @@ import {
   signInWithRedirect, 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword,
-  OAuthProvider,
-  getRedirectResult,
-  Auth
+  getRedirectResult
 } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp, Firestore } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth, useFirestore } from '@/firebase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
@@ -114,15 +112,15 @@ export function AuthScreen() {
   };
 
   return (
-    <div className="fixed inset-0 z-[10001] bg-[#1a1208] flex flex-col items-center justify-start overflow-y-auto pb-12">
+    <div className="fixed inset-0 z-[10001] bg-[#f2ece0] flex flex-col items-center justify-start overflow-y-auto pb-12">
       {/* Top Branding */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col items-center mt-16 px-6"
       >
-        <h1 className="text-[#f2ece0] font-black text-5xl tracking-tighter text-center">iykyk</h1>
-        <p className="text-[#f2ece0]/50 text-sm tracking-[0.2em] uppercase text-center mt-3">
+        <h1 className="text-[#1a1208] font-black text-5xl tracking-tighter text-center">iykyk</h1>
+        <p className="text-[#1a1208]/50 text-sm tracking-[0.2em] uppercase text-center mt-3">
           Your Cultural Concierge · Bondi
         </p>
       </motion.div>
@@ -134,10 +132,10 @@ export function AuthScreen() {
         transition={{ delay: 0.1 }}
         className="w-full max-w-sm px-6 mt-12"
       >
-        <div className="bg-white/5 backdrop-blur-xl rounded-[32px] p-8 border border-white/10 shadow-2xl">
+        <div className="bg-white rounded-[32px] p-8 border border-black/[0.06] shadow-2xl">
           <div className="text-center mb-8">
-            <h2 className="text-[#f2ece0] font-bold text-2xl">Join the inner circle</h2>
-            <p className="text-[#f2ece0]/60 text-sm mt-2">
+            <h2 className="text-[#1a1208] font-bold text-2xl">Join the inner circle</h2>
+            <p className="text-[#1a1208]/50 text-sm mt-2">
               Your insider guide to Bondi.
             </p>
           </div>
@@ -147,7 +145,7 @@ export function AuthScreen() {
             <button 
               onClick={handleGoogleSignIn}
               disabled={isLoading}
-              className="w-full bg-white text-[#1a1208] font-bold rounded-2xl py-4 flex items-center justify-center gap-3 transition-transform active:scale-95 disabled:opacity-50"
+              className="w-full bg-white text-[#1a1208] font-bold rounded-2xl py-4 flex items-center justify-center gap-3 transition-transform active:scale-95 disabled:opacity-50 border border-black/[0.08]"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-3.3 3.28-8.19 3.28-13.09z" fill="#4285F4"/>
@@ -161,10 +159,10 @@ export function AuthScreen() {
 
           <div className="relative my-8">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/10"></div>
+              <div className="w-full border-t border-black/[0.06]"></div>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-[#1a1208] px-2 text-[#f2ece0]/30 tracking-widest">or</span>
+              <span className="bg-[#f2ece0] px-2 text-[#1a1208]/30 tracking-widest">or</span>
             </div>
           </div>
 
@@ -176,7 +174,7 @@ export function AuthScreen() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setShowEmail(true)}
-                className="w-full text-[#f2ece0]/60 text-sm font-medium underline underline-offset-4 hover:text-[#f2ece0] transition-colors"
+                className="w-full text-[#1a1208]/50 text-sm font-medium underline underline-offset-4 hover:text-[#1a1208] transition-colors"
               >
                 Continue with Email
               </motion.button>
@@ -194,7 +192,7 @@ export function AuthScreen() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-white/10 border border-white/15 rounded-2xl px-5 py-4 text-[#f2ece0] placeholder:text-[#f2ece0]/30 focus:outline-none focus:border-white/30 transition-colors"
+                  className="w-full bg-white border border-black/[0.08] rounded-2xl px-5 py-4 text-[#1a1208] placeholder:text-[#1a1208]/30 focus:outline-none focus:border-[#c4762a]/40 transition-colors"
                 />
                 <input 
                   type="password" 
@@ -202,7 +200,7 @@ export function AuthScreen() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-white/10 border border-white/15 rounded-2xl px-5 py-4 text-[#f2ece0] placeholder:text-[#f2ece0]/30 focus:outline-none focus:border-white/30 transition-colors"
+                  className="w-full bg-white border border-black/[0.08] rounded-2xl px-5 py-4 text-[#1a1208] placeholder:text-[#1a1208]/30 focus:outline-none focus:border-[#c4762a]/40 transition-colors"
                 />
                 {isSignUp && (
                   <input 
@@ -211,7 +209,7 @@ export function AuthScreen() {
                     required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full bg-white/10 border border-white/15 rounded-2xl px-5 py-4 text-[#f2ece0] placeholder:text-[#f2ece0]/30 focus:outline-none focus:border-white/30 transition-colors"
+                    className="w-full bg-white border border-black/[0.08] rounded-2xl px-5 py-4 text-[#1a1208] placeholder:text-[#1a1208]/30 focus:outline-none focus:border-[#c4762a]/40 transition-colors"
                   />
                 )}
                 <button 
@@ -227,7 +225,7 @@ export function AuthScreen() {
                     setError(null);
                     setIsSignUp(!isSignUp);
                   }}
-                  className="w-full text-[#f2ece0]/40 text-xs mt-2 hover:text-[#f2ece0]/60 transition-colors"
+                  className="w-full text-[#1a1208]/50 text-xs mt-2 hover:text-[#1a1208]/60 transition-colors"
                 >
                   {isSignUp ? 'Already have an account? Sign in' : 'New here? Create an account'}
                 </button>
@@ -239,14 +237,14 @@ export function AuthScreen() {
             <motion.p 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-red-400 text-xs text-center mt-6 bg-red-400/10 p-3 rounded-xl border border-red-400/20"
+              className="text-red-500 text-xs text-center mt-6 bg-red-50 p-3 rounded-xl border border-red-100"
             >
               {error}
             </motion.p>
           )}
         </div>
 
-        <p className="text-[#f2ece0]/20 text-[10px] font-medium text-center mt-8 px-8 leading-relaxed uppercase tracking-wider">
+        <p className="text-[#1a1208]/30 text-[10px] font-medium text-center mt-8 px-8 leading-relaxed uppercase tracking-wider">
           By continuing you agree to our <br/>
           <span className="underline">Terms of Service</span> & <span className="underline">Privacy Policy</span>
         </p>
