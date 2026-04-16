@@ -1,4 +1,3 @@
-
 // In src/components/iykyk/DesktopNavContent.tsx
 'use client';
 
@@ -27,7 +26,7 @@ export function DesktopNavContent() {
 
   // The Profile link is dynamic. It goes to the user's page if logged in,
   // or to the login page if not.
-  const profileHref = user ? `/profile/${user.uid}` : '/login';
+  const profileHref = user ? `/profile/${user.uid}` : '/auth';
 
   const navItems = [
     { href: '/discover', icon: Home, label: 'Discover' },
