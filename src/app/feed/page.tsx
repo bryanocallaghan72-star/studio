@@ -10,6 +10,7 @@ import { collection, orderBy, query, limit } from 'firebase/firestore';
 const MOCK_POSTS: FeedPost[] = [
   {
     id: '1',
+    creatorId: 'mock-alice',
     creator: 'alice',
     verified: true,
     location: 'Bondi Beach',
@@ -26,6 +27,7 @@ const MOCK_POSTS: FeedPost[] = [
   },
   {
     id: '2',
+    creatorId: 'mock-jay',
     creator: 'jay',
     verified: false,
     location: 'Bondi',
@@ -41,6 +43,7 @@ const MOCK_POSTS: FeedPost[] = [
   },
   {
     id: '3',
+    creatorId: 'mock-maya',
     creator: 'maya',
     verified: true,
     location: 'Bondi',
@@ -57,6 +60,7 @@ const MOCK_POSTS: FeedPost[] = [
   },
   {
     id: '4',
+    creatorId: 'mock-bondi-local',
     creator: 'bondi_local',
     verified: true,
     location: 'Bondi Beach',
@@ -89,9 +93,8 @@ export default function FeedPage() {
 
   const livePosts: FeedPost[] = (livePostsRaw || []).map((doc) => ({
     id: doc.id,
-    creator: doc.creatorEmail
-      ? doc.creatorEmail.split('@')[0]
-      : doc.creatorId?.slice(0, 8) ?? 'anonymous',
+    creatorId: doc.creatorId ?? 'anonymous',
+    creator: doc.creatorName || (doc.creatorEmail ? doc.creatorEmail.split('@')[0] : 'anonymous'),
     verified: false,
     location: doc.location || 'Bondi',
     image: doc.imageUrl || '',

@@ -4,11 +4,14 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Heart, MessageCircle, MoreHorizontal, Check, Ticket, Play } from 'lucide-react';
+import { MapPin, Heart, MessageCircle, MoreHorizontal, Check, Ticket, Play, Trash2 } from 'lucide-react';
 import { ClaimModal } from '@/components/claim/ClaimModal';
+import { useUser, useFirestore, deleteDocumentNonBlocking } from '@/firebase';
+import { doc } from 'firebase/firestore';
 
 export interface FeedPost {
   id: string;
+  creatorId: string;
   creator: string;
   verified: boolean;
   location: string;
@@ -34,6 +37,12 @@ export function FeedCard({ post, index }: FeedCardProps) {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(post.likes);
   const [showComments, setShowComments] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const { user } = useUser();
+  const firestore = useFirestore();
+
+  const isOwner = user && user.uid === post.creatorId;
 
   const handleLikeToggle = () => {
     if (liked) {
@@ -42,6 +51,13 @@ export function FeedCard({ post, index }: FeedCardProps) {
       setLikeCount(prev => prev + 1);
     }
     setLiked(!liked);
+  };
+
+  const handleDeletePost = () => {
+    if (!firestore || !post.id) return;
+    const postRef = doc(firestore, 'posts', post.id);
+    deleteDocumentNonBlocking(postRef);
+    setIsMenuOpen(false);
   };
 
   return (
@@ -102,7 +118,7 @@ export function FeedCard({ post, index }: FeedCardProps) {
       <div className="p-4">
         {/* Row 1: Creator Info (Tappable) */}
         <div className="flex items-center justify-between">
-          <Link href={`/profile/${post.creator}`} className="flex items-center gap-3 group transition-opacity active:opacity-70">
+          <Link href={`/profile/${post.creatorId}`} className="flex items-center gap-3 group transition-opacity active:opacity-70">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#c4762a] text-[12px] font-bold text-white uppercase group-hover:ring-2 group-hover:ring-[#c4762a]/20">
               {post.creator.charAt(0)}
             </div>
@@ -118,9 +134,42 @@ export function FeedCard({ post, index }: FeedCardProps) {
               <span className="text-[11px] text-[#1a1208]/45">{post.location}</span>
             </div>
           </Link>
-          <button className="text-[#1a1208]/40 hover:text-[#1a1208]">
-            <MoreHorizontal size={20} />
-          </button>
+          
+          {isOwner && (
+            <div className="relative">
+              <button 
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="text-[#1a1208]/40 hover:text-[#1a1208] p-2 -mr-2"
+              >
+                <MoreHorizontal size={20} />
+              </button>
+              
+              <AnimatePresence>
+                {isMenuOpen && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-20" 
+                      onClick={() => setIsMenuOpen(false)} 
+                    />
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                      className="absolute right-0 top-full mt-1 w-36 rounded-xl bg-white p-1 shadow-xl border border-black/[0.06] z-30 overflow-hidden"
+                    >
+                      <button 
+                        onClick={handleDeletePost}
+                        className="w-full flex items-center gap-2 px-3 py-2.5 text-[11px] font-bold text-red-500 hover:bg-red-50 transition-colors"
+                      >
+                        <Trash2 size={14} />
+                        Delete Post
+                      </button>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
         </div>
 
         {/* Row 2: Caption */}
