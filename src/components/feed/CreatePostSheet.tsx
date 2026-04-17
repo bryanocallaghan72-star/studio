@@ -103,6 +103,8 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
         imageUrl: finalImageUrl,
         creatorId: user.uid,
         creatorEmail: user.email ?? '',
+        creatorName: user.displayName ?? user.email?.split('@')[0] ?? 'Bondi Local',
+        creatorAvatar: user.photoURL ?? '',
         createdAt: serverTimestamp(),
         likes: 0,
         comments: 0,
