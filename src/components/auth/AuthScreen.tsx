@@ -28,19 +28,6 @@ export function AuthScreen() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Check for redirect result on mount (for mobile Google Sign-in)
-  useEffect(() => {
-    if (auth) {
-      getRedirectResult(auth).then((result) => {
-        if (result?.user) {
-          handleAuthSuccess(result.user.uid, result.user.email, result.user.displayName, result.user.photoURL);
-        }
-      }).catch((err) => {
-        setError(err.message);
-      });
-    }
-  }, [auth]);
-
   const handleAuthSuccess = async (uid: string, email: string | null, displayName: string | null, photoURL: string | null) => {
     if (!firestore) return;
     
@@ -63,6 +50,19 @@ export function AuthScreen() {
       setIsLoading(false);
     }
   };
+
+  // Check for redirect result on mount (for mobile Google Sign-in)
+  useEffect(() => {
+    if (auth) {
+      getRedirectResult(auth).then((result) => {
+        if (result?.user) {
+          handleAuthSuccess(result.user.uid, result.user.email, result.user.displayName, result.user.photoURL);
+        }
+      }).catch((err) => {
+        setError(err.message);
+      });
+    }
+  }, [auth]);
 
   const handleGoogleSignIn = async () => {
     if (!auth) return;
