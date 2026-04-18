@@ -40,6 +40,7 @@ export function FeedCard({ post, index }: FeedCardProps) {
   const [showComments, setShowComments] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [commentText, setCommentText] = useState('');
+  const [localComments, setLocalComments] = useState<{ text: string; authorName: string }[]>([]);
 
   const { user } = useUser();
   const firestore = useFirestore();
@@ -82,13 +83,14 @@ export function FeedCard({ post, index }: FeedCardProps) {
   const handleCommentSubmit = async () => {
     if (!user || !firestore || !commentText.trim() || !post.id) return;
 
+    const authorName = user.displayName ?? user.email?.split('@')[0] ?? 'Bondi Local';
     const postRef = doc(firestore, 'posts', post.id);
     const commentsRef = collection(firestore, 'posts', post.id, 'comments');
 
     const commentData = {
       text: commentText,
       authorId: user.uid,
-      authorName: user.displayName ?? user.email?.split('@')[0] ?? 'Bondi Local',
+      authorName: authorName,
       createdAt: new Date(),
     };
 
@@ -97,6 +99,7 @@ export function FeedCard({ post, index }: FeedCardProps) {
     updateDocumentNonBlocking(postRef, { comments: increment(1) });
     
     // UI state
+    setLocalComments(prev => [...prev, { text: commentText, authorName }]);
     setCommentText('');
   };
 
@@ -250,29 +253,44 @@ export function FeedCard({ post, index }: FeedCardProps) {
                 />
               </div>
               
-              {/* Mock comments */}
-              {(post as any).source !== 'user_created' && (
-                <div className="mt-4 space-y-3 pb-2">
-                  <div className="flex gap-2 items-start">
-                    <div className="w-6 h-6 rounded-full bg-[rgba(26,18,8,0.10)] text-[#1a1208] text-[10px] font-bold flex items-center justify-center flex-shrink-0">
-                      J
+              <div className="mt-4 space-y-3 pb-2">
+                {/* Local comments */}
+                {localComments.map((c, i) => (
+                  <div key={i} className="flex gap-2 items-start">
+                    <div className="w-6 h-6 rounded-full bg-[#c4762a]/10 text-[#c4762a] text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                      {c.authorName.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1">
-                      <span className="text-[#1a1208] font-semibold text-xs">@jay</span>
-                      <span className="text-[rgba(26,18,8,0.70)] text-xs ml-1">This place is unreal every time 🔥</span>
+                      <span className="text-[#1a1208] font-semibold text-xs">@{c.authorName}</span>
+                      <span className="text-[rgba(26,18,8,0.70)] text-xs ml-1">{c.text}</span>
                     </div>
                   </div>
-                  <div className="flex gap-2 items-start">
-                    <div className="w-6 h-6 rounded-full bg-[rgba(26,18,8,0.10)] text-[#1a1208] text-[10px] font-bold flex items-center justify-center flex-shrink-0">
-                      M
+                ))}
+                
+                {/* Mock comments */}
+                {(post as any).source === 'editorial' && (
+                  <>
+                    <div className="flex gap-2 items-start">
+                      <div className="w-6 h-6 rounded-full bg-[rgba(26,18,8,0.10)] text-[#1a1208] text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                        J
+                      </div>
+                      <div className="flex-1">
+                        <span className="text-[#1a1208] font-semibold text-xs">@jay</span>
+                        <span className="text-[rgba(26,18,8,0.70)] text-xs ml-1">This place is unreal every time 🔥</span>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <span className="text-[#1a1208] font-semibold text-xs">@maya</span>
-                      <span className="text-[rgba(26,18,8,0.70)] text-xs ml-1">The omakase is next level, go</span>
+                    <div className="flex gap-2 items-start">
+                      <div className="w-6 h-6 rounded-full bg-[rgba(26,18,8,0.10)] text-[#1a1208] text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                        M
+                      </div>
+                      <div className="flex-1">
+                        <span className="text-[#1a1208] font-semibold text-xs">@maya</span>
+                        <span className="text-[rgba(26,18,8,0.70)] text-xs ml-1">The omakase is next level, go</span>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              )}
+                  </>
+                )}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
