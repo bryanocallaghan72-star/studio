@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Heart, MessageCircle, MoreHorizontal, Check, Ticket, Play, Trash2 } from 'lucide-react';
 import { ClaimModal } from '@/components/claim/ClaimModal';
 import { useUser, useFirestore, deleteDocumentNonBlocking, setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
-import { doc, getDoc, increment, addDoc, collection } from 'firebase/firestore';
+import { doc, getDoc, increment, addDoc, collection, query, orderBy, getDocs } from 'firebase/firestore';
 
 export interface FeedPost {
   id: string;
@@ -58,6 +58,24 @@ export function FeedCard({ post, index }: FeedCardProps) {
       }
     }).catch(err => console.error("Error checking like status:", err));
   }, [user, firestore, post.id]);
+
+  // Fetch comments when the section is opened
+  useEffect(() => {
+    if (showComments && firestore && post.id && localComments.length === 0) {
+      const q = query(
+        collection(firestore, 'posts', post.id, 'comments'), 
+        orderBy('createdAt', 'asc')
+      );
+      
+      getDocs(q).then((snapshot) => {
+        const fetched = snapshot.docs.map(doc => ({
+          text: doc.data().text,
+          authorName: doc.data().authorName
+        }));
+        setLocalComments(fetched);
+      }).catch(err => console.error("Error fetching comments:", err));
+    }
+  }, [showComments, firestore, post.id, localComments.length]);
 
   const handleLikeToggle = () => {
     if (!user || !firestore || !post.id) return;
@@ -267,7 +285,7 @@ export function FeedCard({ post, index }: FeedCardProps) {
                   </div>
                 ))}
                 
-                {/* Mock comments */}
+                {/* Mock comments - only for editorial posts */}
                 {(post as any).source === 'editorial' && (
                   <>
                     <div className="flex gap-2 items-start">
