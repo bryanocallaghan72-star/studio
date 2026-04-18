@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Heart, MessageCircle, MoreHorizontal, Check, Ticket, Play, Trash2 } from 'lucide-react';
 import { ClaimModal } from '@/components/claim/ClaimModal';
 import { useUser, useFirestore, deleteDocumentNonBlocking, setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
-import { doc, getDoc, increment } from 'firebase/firestore';
+import { doc, getDoc, increment, addDoc, collection } from 'firebase/firestore';
 
 export interface FeedPost {
   id: string;
@@ -39,6 +39,7 @@ export function FeedCard({ post, index }: FeedCardProps) {
   const [likeCount, setLikeCount] = useState(post.likes);
   const [showComments, setShowComments] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [commentText, setCommentText] = useState('');
 
   const { user } = useUser();
   const firestore = useFirestore();
@@ -78,12 +79,35 @@ export function FeedCard({ post, index }: FeedCardProps) {
     }
   };
 
+  const handleCommentSubmit = async () => {
+    if (!user || !firestore || !commentText.trim() || !post.id) return;
+
+    const postRef = doc(firestore, 'posts', post.id);
+    const commentsRef = collection(firestore, 'posts', post.id, 'comments');
+
+    const commentData = {
+      text: commentText,
+      authorId: user.uid,
+      authorName: user.displayName ?? user.email?.split('@')[0] ?? 'Bondi Local',
+      createdAt: new Date(),
+    };
+
+    // Write to Firestore and update count
+    addDoc(commentsRef, commentData).catch((err) => console.error("Error posting comment:", err));
+    updateDocumentNonBlocking(postRef, { comments: increment(1) });
+    
+    // UI state
+    setCommentText('');
+  };
+
   const handleDeletePost = () => {
     if (!firestore || !post.id) return;
     const postRef = doc(firestore, 'posts', post.id);
     deleteDocumentNonBlocking(postRef);
     setIsMenuOpen(false);
   };
+
+  const userInitial = (user?.displayName || user?.email || 'U').charAt(0).toUpperCase();
 
   return (
     <motion.div
@@ -214,12 +238,15 @@ export function FeedCard({ post, index }: FeedCardProps) {
               {/* Comment input row */}
               <div className="flex items-center gap-3 mt-4">
                 <div className="w-7 h-7 rounded-full bg-[#c4762a] text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
-                  U
+                  {userInitial}
                 </div>
                 <input 
                   type="text" 
                   placeholder="Add a comment..."
                   className="bg-[rgba(26,18,8,0.04)] border border-black/[0.08] rounded-full px-4 py-2 text-sm flex-1 outline-none focus:outline-none"
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleCommentSubmit()}
                 />
               </div>
               
