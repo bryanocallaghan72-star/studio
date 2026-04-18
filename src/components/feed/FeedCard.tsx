@@ -255,6 +255,7 @@ export function FeedCard({ post, index }: FeedCardProps) {
           <div className="flex items-center gap-4">
             <button 
               onClick={handleLikeToggle}
+              onTouchEnd={(e) => { e.preventDefault(); handleLikeToggle(); }}
               className={`flex items-center gap-1.5 text-[13px] font-medium transition-colors ${liked ? 'text-[#c4762a]' : 'text-[#1a1208]/50 hover:text-[#1a1208]'}`}
             >
               <Heart 
