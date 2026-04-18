@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Heart, MessageCircle, MoreHorizontal, Check, Ticket, Play, Trash2 } from 'lucide-react';
 import { ClaimModal } from '@/components/claim/ClaimModal';
-import { useUser, useFirestore, deleteDocumentNonBlocking } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { useUser, useFirestore, deleteDocumentNonBlocking, setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
+import { doc, getDoc, increment } from 'firebase/firestore';
 
 export interface FeedPost {
   id: string;
@@ -25,6 +25,7 @@ export interface FeedPost {
   hasDrop: boolean;
   dropLabel?: string;
   isReel?: boolean;
+  source?: string;
 }
 
 interface FeedCardProps {
@@ -44,13 +45,37 @@ export function FeedCard({ post, index }: FeedCardProps) {
 
   const isOwner = user && user.uid === post.creatorId;
 
+  // Check for existing like on mount
+  useEffect(() => {
+    if (!user || !firestore || !post.id) return;
+
+    const likeRef = doc(firestore, 'posts', post.id, 'likes', user.uid);
+    getDoc(likeRef).then((docSnap) => {
+      if (docSnap.exists()) {
+        setLiked(true);
+      }
+    }).catch(err => console.error("Error checking like status:", err));
+  }, [user, firestore, post.id]);
+
   const handleLikeToggle = () => {
-    if (liked) {
-      setLikeCount(prev => prev - 1);
+    if (!user || !firestore || !post.id) return;
+
+    const newLiked = !liked;
+    const likeRef = doc(firestore, 'posts', post.id, 'likes', user.uid);
+    const postRef = doc(firestore, 'posts', post.id);
+
+    // Optimistic UI Update
+    setLiked(newLiked);
+    setLikeCount(prev => newLiked ? prev + 1 : prev - 1);
+
+    // Firestore Persistance
+    if (newLiked) {
+      setDocumentNonBlocking(likeRef, { likedAt: new Date() }, { merge: true });
+      updateDocumentNonBlocking(postRef, { likes: increment(1) });
     } else {
-      setLikeCount(prev => prev + 1);
+      deleteDocumentNonBlocking(likeRef);
+      updateDocumentNonBlocking(postRef, { likes: increment(-1) });
     }
-    setLiked(!liked);
   };
 
   const handleDeletePost = () => {
