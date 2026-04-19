@@ -6,8 +6,8 @@ import { X, Camera, MapPin, Building2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
-import { collection, serverTimestamp, getDocs } from 'firebase/firestore';
+import { useFirestore, useUser, addDocumentNonBlocking, useDoc, useMemoFirebase } from '@/firebase';
+import { collection, serverTimestamp, getDocs, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useStorage } from '@/firebase/storage';
 import { useToast } from '@/hooks/use-toast';
@@ -26,6 +26,14 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
   const firestore = useFirestore();
   const storage = useStorage();
   const { toast } = useToast();
+
+  // Fetch the latest user profile from Firestore to ensure we get the custom avatar/username
+  const userProfileRef = useMemoFirebase(() => {
+    if (!firestore || !user?.uid) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user?.uid]);
+  
+  const { data: userProfile } = useDoc(userProfileRef);
 
   const [caption, setCaption] = useState('');
   const [venueName, setVenueName] = useState('');
@@ -96,6 +104,11 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
 
       // 2. Prepare post data
       const postsRef = collection(firestore, 'posts');
+      
+      // Determine best available identity data
+      const finalCreatorName = userProfile?.username || user.displayName || user.email?.split('@')[0] || 'Bondi Local';
+      const finalCreatorAvatar = userProfile?.avatarUrl || user.photoURL || '';
+
       const postData = {
         caption,
         venueName,
@@ -103,8 +116,8 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
         imageUrl: finalImageUrl,
         creatorId: user.uid,
         creatorEmail: user.email ?? '',
-        creatorName: user.displayName ?? user.email?.split('@')[0] ?? 'Bondi Local',
-        creatorAvatar: user.photoURL ?? '',
+        creatorName: finalCreatorName,
+        creatorAvatar: finalCreatorAvatar,
         createdAt: serverTimestamp(),
         likes: 0,
         comments: 0,

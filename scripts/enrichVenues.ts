@@ -1,3 +1,4 @@
+
 /**
  * @fileOverview AI Venue Enrichment Script
  * Uses Gemini 2.5 Flash to generate contextual vibe tags for all venues in Firestore.
@@ -79,16 +80,26 @@ async function getVibeTagsFromGemini(venue: VenueDoc): Promise<string[]> {
   const data = await response.json();
   const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
   
+  if (!textResponse) {
+    throw new Error('Gemini returned an empty response.');
+  }
+
   // Clean up potential markdown formatting if AI ignored instructions
   const cleanedText = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
   
-  const tags = JSON.parse(cleanedText);
-  
-  if (!Array.isArray(tags) || tags.length !== 3) {
-    throw new Error(`Invalid response format: Expected array of 3, got ${typeof tags}`);
+  if (!cleanedText) {
+    throw new Error('Cleaned AI response is empty.');
   }
 
-  return tags;
+  try {
+    const tags = JSON.parse(cleanedText);
+    if (!Array.isArray(tags) || tags.length !== 3) {
+      throw new Error(`Invalid response format: Expected array of 3, got ${typeof tags}`);
+    }
+    return tags;
+  } catch (e) {
+    throw new Error(`Failed to parse AI response as JSON: ${cleanedText}`);
+  }
 }
 
 async function main() {
