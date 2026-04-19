@@ -138,7 +138,7 @@ export function IykykMyDay() {
     };
 
     return (
-        <div className="w-full flex flex-col min-h-[40rem] overflow-hidden bg-[#f2ece0] border-none relative">
+        <div className="w-full flex flex-col min-h-[40rem] overflow-hidden bg-[#f2ece0] border-none relative pb-32">
             <AnimatePresence mode="wait">
                 {isShuffling && view === 'itinerary' && (
                     <motion.div
