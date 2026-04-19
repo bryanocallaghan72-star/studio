@@ -79,19 +79,19 @@ const MOCK_POSTS: FeedPost[] = [
 const FeedSkeleton = () => (
   <div className="flex flex-col">
     {[1, 2, 3].map((i) => (
-      <div key={i} className="w-full border-b border-black/[0.08] bg-[#f2ece0] pb-8 space-y-4">
-        <div className="aspect-[4/5] w-full bg-[#e8e0d0] animate-pulse" />
+      <div key={i} className="w-full border-b border-black/[0.08] bg-transparent pb-8 space-y-4">
+        <div className="aspect-[4/5] w-full bg-muted/40 animate-pulse" />
         <div className="p-4 space-y-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-[#e8e0d0] animate-pulse" />
+            <div className="h-10 w-10 rounded-full bg-muted/40 animate-pulse" />
             <div className="space-y-2">
-              <div className="h-4 w-32 rounded bg-[#e8e0d0] animate-pulse" />
-              <div className="h-3 w-20 rounded bg-[#e8e0d0] animate-pulse" />
+              <div className="h-4 w-32 rounded bg-muted/40 animate-pulse" />
+              <div className="h-3 w-20 rounded bg-muted/40 animate-pulse" />
             </div>
           </div>
           <div className="space-y-2">
-            <div className="h-3 w-full rounded bg-[#e8e0d0] animate-pulse" />
-            <div className="h-3 w-4/5 rounded bg-[#e8e0d0] animate-pulse" />
+            <div className="h-3 w-full rounded bg-muted/40 animate-pulse" />
+            <div className="h-3 w-4/5 rounded bg-muted/40 animate-pulse" />
           </div>
         </div>
       </div>
@@ -173,14 +173,14 @@ export default function FeedPage() {
   }, [transformedLivePosts, likedPostIds]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#f2ece0]">
+    <div className="flex min-h-screen flex-col bg-transparent">
       {/* Sticky Premium Header */}
-      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-black/[0.06] bg-[#f2ece0]/95 px-4 backdrop-blur-md">
-        <h1 className="text-xl font-extrabold tracking-tighter text-[#1a1208]">
+      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-black/[0.06] bg-background/95 px-4 backdrop-blur-md">
+        <h1 className="text-xl font-extrabold tracking-tighter text-foreground">
           IYKYK
         </h1>
         <div className="flex items-center gap-4">
-          <button className="text-[#1a1208]/60 transition-colors hover:text-[#1a1208]">
+          <button className="text-foreground/60 transition-colors hover:text-foreground">
             <Bell size={22} strokeWidth={1.8} />
           </button>
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#c4762a] text-[12px] font-bold text-white shadow-sm">
