@@ -3,11 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Heart, MessageCircle, MoreHorizontal, Check, Ticket, Play, Trash2 } from 'lucide-react';
 import { ClaimModal } from '@/components/claim/ClaimModal';
 import { useUser, useFirestore, deleteDocumentNonBlocking, setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { doc, getDoc, increment, addDoc, collection, query, orderBy, getDocs } from 'firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
+import { ToastAction } from '@/components/ui/toast';
 
 export interface FeedPost {
   id: string;
@@ -35,6 +38,8 @@ interface FeedCardProps {
 }
 
 export function FeedCard({ post, index }: FeedCardProps) {
+  const router = useRouter();
+  const { toast } = useToast();
   const [isClaimModalOpen, setClaimModalOpen] = useState(false);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(post.likes);
@@ -80,7 +85,20 @@ export function FeedCard({ post, index }: FeedCardProps) {
   }, [showComments, firestore, post.id, localComments.length]);
 
   const handleLikeToggle = () => {
-    if (!user || !firestore || !post.id) return;
+    if (!user) {
+      toast({
+        title: "Sign in to like",
+        description: "Join the inner circle to engage with the Bondi community.",
+        action: (
+          <ToastAction altText="Sign In" onClick={() => router.push('/auth')}>
+            Sign In
+          </ToastAction>
+        ),
+      });
+      return;
+    }
+
+    if (!firestore || !post.id) return;
 
     const newLiked = !liked;
     const likeRef = doc(firestore, 'posts', post.id, 'likes', user.uid);
@@ -101,7 +119,20 @@ export function FeedCard({ post, index }: FeedCardProps) {
   };
 
   const handleCommentSubmit = async () => {
-    if (!user || !firestore || !commentText.trim() || !post.id) return;
+    if (!user) {
+      toast({
+        title: "Sign in to comment",
+        description: "Your voice matters! Sign in to join the conversation.",
+        action: (
+          <ToastAction altText="Sign In" onClick={() => router.push('/auth')}>
+            Sign In
+          </ToastAction>
+        ),
+      });
+      return;
+    }
+
+    if (!firestore || !commentText.trim() || !post.id) return;
 
     const authorName = user.displayName ?? user.email?.split('@')[0] ?? 'Bondi Local';
     const postRef = doc(firestore, 'posts', post.id);
