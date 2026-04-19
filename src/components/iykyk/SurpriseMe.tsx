@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Sparkles, MapPin, RefreshCw } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-import { getSurpriseForNow } from '@/lib/get-surprise';
-import type { SurpriseOption, Vibe } from '@/lib/surprise-options';
+import { surpriseOptions, type SurpriseOption, type Vibe } from '@/lib/surprise-options';
+import { getCurrentTimeBucket } from '@/lib/time-buckets';
+import { useDemoTime } from '@/context/DemoTimeContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 
@@ -48,19 +49,32 @@ const SurpriseMePlaceholder = () => (
 
 
 export function SurpriseMe() {
+  const { mockDate } = useDemoTime();
   const [vibe, setVibe] = useState<Vibe>('chill');
   const [current, setCurrent] = useState<SurpriseOption | null>(null);
   const [isClient, setIsClient] = useState(false);
 
+  // Filter logic synchronized with God Mode time
+  const getSurprise = useCallback((v: Vibe) => {
+    const timeBucket = getCurrentTimeBucket(mockDate);
+    const candidates = surpriseOptions.filter(
+      (s) => s.vibe === v && s.timeBuckets.includes(timeBucket)
+    );
+
+    if (!candidates.length) return null;
+
+    const index = Math.floor(Math.random() * candidates.length);
+    return candidates[index] ?? null;
+  }, [mockDate]);
+
   useEffect(() => {
-    // This effect runs only on the client, after the component has mounted.
+    // Refresh the surprise when phase or vibe changes
     setIsClient(true);
-    setCurrent(getSurpriseForNow('chill'));
-  }, []);
+    setCurrent(getSurprise(vibe));
+  }, [vibe, getSurprise]);
 
   const handleSurprise = () => {
-    const next = getSurpriseForNow(vibe);
-    setCurrent(next);
+    setCurrent(getSurprise(vibe));
   };
 
   const vibeLabel = useMemo(
@@ -116,11 +130,7 @@ export function SurpriseMe() {
             return (
               <button
                 key={v.id}
-                onClick={() => {
-                  setVibe(v.id);
-                  const next = getSurpriseForNow(v.id);
-                  setCurrent(next);
-                }}
+                onClick={() => setVibe(v.id)}
                 className={cn(
                   "px-4 py-1.5 rounded-full text-[12px] font-bold transition-all duration-200",
                   isActive 
