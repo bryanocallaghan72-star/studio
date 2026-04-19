@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Heart, MessageCircle, MoreHorizontal, Check, Ticket, Play, Trash2 } from 'lucide-react';
 import { ClaimModal } from '@/components/claim/ClaimModal';
 import { useUser, useFirestore } from '@/firebase';
-import { doc, getDoc, increment, addDoc, collection, query, orderBy, getDocs, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { doc, increment, addDoc, collection, query, orderBy, getDocs, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { ToastAction } from '@/components/ui/toast';
 
@@ -30,6 +30,7 @@ export interface FeedPost {
   dropLabel?: string;
   isReel?: boolean;
   source?: string;
+  isLiked?: boolean; // Propagated from batched page-level check
 }
 
 interface FeedCardProps {
@@ -41,7 +42,9 @@ export function FeedCard({ post, index }: FeedCardProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [isClaimModalOpen, setClaimModalOpen] = useState(false);
-  const [liked, setLiked] = useState(false);
+  
+  // Initialize liked state from the batched prop
+  const [liked, setLiked] = useState(post.isLiked ?? false);
   const [likeCount, setLikeCount] = useState(post.likes);
   const [showComments, setShowComments] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -53,16 +56,15 @@ export function FeedCard({ post, index }: FeedCardProps) {
 
   const isOwner = Boolean(user && !isUserLoading && post.creatorId && user.uid === post.creatorId);
 
+  // Sync state if the batched data arrives after initial render
   useEffect(() => {
-    if (!user || !firestore || !post.id) return;
+    if (post.isLiked !== undefined) {
+      setLiked(post.isLiked);
+    }
+  }, [post.isLiked]);
 
-    const likeRef = doc(firestore, 'posts', post.id, 'likes', user.uid);
-    getDoc(likeRef).then((docSnap) => {
-      if (docSnap.exists()) {
-        setLiked(true);
-      }
-    }).catch(err => console.error("Error checking like status:", err));
-  }, [user, firestore, post.id]);
+  // Individual fetch is REMOVED to prevent network congestion. 
+  // Liked state is now provided by the parent Feed page via collectionGroup query.
 
   useEffect(() => {
     if (showComments && firestore && post.id && localComments.length === 0) {
@@ -109,7 +111,8 @@ export function FeedCard({ post, index }: FeedCardProps) {
 
     try {
       if (newLiked) {
-        await setDoc(likeRef, { likedAt: new Date() }, { merge: true });
+        // We write the UID into the doc for collectionGroup query optimization
+        await setDoc(likeRef, { likedAt: new Date(), uid: user.uid }, { merge: true });
         await updateDoc(postRef, { likes: increment(1) });
       } else {
         await deleteDoc(likeRef);

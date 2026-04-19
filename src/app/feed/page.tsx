@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Bell, Plus, Loader2 } from 'lucide-react';
 import { FeedCard, type FeedPost } from '@/components/feed/FeedCard';
 import { CreatePostSheet } from '@/components/feed/CreatePostSheet';
-import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, orderBy, query, limit } from 'firebase/firestore';
+import { useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebase';
+import { collection, orderBy, query, limit, collectionGroup, where, getDocs, documentId } from 'firebase/firestore';
 
 const MOCK_POSTS: FeedPost[] = [
   {
@@ -78,7 +78,9 @@ const MOCK_POSTS: FeedPost[] = [
 
 export default function FeedPage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [likedPostIds, setLikedPostIds] = useState<Set<string>>(new Set());
   const firestore = useFirestore();
+  const { user } = useUser();
 
   const postsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -91,26 +93,60 @@ export default function FeedPage() {
 
   const { data: livePostsRaw, isLoading } = useCollection<any>(postsQuery);
 
-  const livePosts: FeedPost[] = (livePostsRaw || []).map((doc) => ({
-    id: doc.id,
-    creatorId: doc.creatorId ?? 'anonymous',
-    creator: doc.creatorName || (doc.creatorEmail ? doc.creatorEmail.split('@')[0] : 'anonymous'),
-    creatorAvatar: doc.creatorAvatar || '',
-    verified: false,
-    location: doc.location || 'Bondi',
-    image: doc.imageUrl || '',
-    caption: doc.caption || '',
-    venue: doc.venueName || '',
-    venuePath: '',
-    likes: doc.likes ?? 0,
-    comments: doc.comments ?? 0,
-    phase: 'DAY',
-    hasDrop: false,
-    isReel: false,
-  }));
+  /**
+   * BATCHED LIKE CHECK: Perform one query for all user likes instead of N queries.
+   * This uses a collectionGroup query to find any 'likes' sub-document that belongs to the user.
+   */
+  useEffect(() => {
+    if (!firestore || !user || !livePostsRaw || livePostsRaw.length === 0) return;
 
-  const showMockPosts = livePosts.length < 5;
-  const allPosts = showMockPosts ? [...livePosts, ...MOCK_POSTS] : livePosts;
+    const fetchUserLikes = async () => {
+      try {
+        // Query across all 'likes' subcollections for the user's specific document
+        // Note: For this to work at scale, 'uid' should be a field inside the document.
+        // We use documentId() here to match the specific UID document path.
+        const q = query(collectionGroup(firestore, 'likes'), where(documentId(), '==', user.uid));
+        const snapshot = await getDocs(q);
+        const ids = new Set<string>();
+        
+        snapshot.forEach((doc) => {
+          // doc.ref.parent is the 'likes' collection, .parent is the post document
+          const postId = doc.ref.parent.parent?.id;
+          if (postId) ids.add(postId);
+        });
+        
+        setLikedPostIds(ids);
+      } catch (err) {
+        console.warn("Batch like check failed. Reverting to default states.", err);
+      }
+    };
+
+    fetchUserLikes();
+  }, [firestore, user, livePostsRaw]);
+
+  const allPosts = useMemo(() => {
+    const livePosts: FeedPost[] = (livePostsRaw || []).map((doc) => ({
+      id: doc.id,
+      creatorId: doc.creatorId ?? 'anonymous',
+      creator: doc.creatorName || (doc.creatorEmail ? doc.creatorEmail.split('@')[0] : 'anonymous'),
+      creatorAvatar: doc.creatorAvatar || '',
+      verified: false,
+      location: doc.location || 'Bondi',
+      image: doc.imageUrl || '',
+      caption: doc.caption || '',
+      venue: doc.venueName || '',
+      venuePath: '',
+      likes: doc.likes ?? 0,
+      comments: doc.comments ?? 0,
+      phase: 'DAY',
+      hasDrop: false,
+      isReel: false,
+      isLiked: likedPostIds.has(doc.id), // Apply batched state
+    }));
+
+    const showMockPosts = livePosts.length < 5;
+    return showMockPosts ? [...livePosts, ...MOCK_POSTS] : livePosts;
+  }, [livePostsRaw, likedPostIds]);
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f2ece0]">
@@ -124,7 +160,7 @@ export default function FeedPage() {
             <Bell size={22} strokeWidth={1.8} />
           </button>
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#c4762a] text-[12px] font-bold text-white shadow-sm">
-            B
+            {user?.email?.charAt(0).toUpperCase() || 'B'}
           </div>
         </div>
       </header>
