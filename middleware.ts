@@ -10,10 +10,6 @@ import type { NextRequest } from 'next/server';
  */
 
 export function middleware(request: NextRequest) {
-  // TODO: Enable auth guard after testing
-  // Remove the line below to activate
-  return NextResponse.next();
-
   const session = request.cookies.get('__session')?.value;
   const { pathname } = request.nextUrl;
 
