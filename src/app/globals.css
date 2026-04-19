@@ -54,28 +54,18 @@
   }
 
   html[data-theme="golden"] body {
-    background: linear-gradient(
-      160deg,
-      #e8502a 0%,
-      #c4762a 30%,
-      #d4608a 60%,
-      #c4507a 100%
-    ) fixed !important;
+    background: var(--bg-gradient) fixed !important;
     min-height: 100vh;
     color: #2a0e05 !important;
   }
 
   html[data-theme="dawn"] body {
-    background: linear-gradient(
-      to bottom, #0a0e17, #080a0d
-    ) fixed !important;
+    background: var(--bg-gradient) fixed !important;
     min-height: 100vh;
   }
 
   html[data-theme="dusk"] body {
-    background: linear-gradient(
-      to bottom, #050505, #080a0d
-    ) fixed !important;
+    background: var(--bg-gradient) fixed !important;
     min-height: 100vh;
   }
 }
@@ -92,8 +82,21 @@
 }
 
 [data-theme="dawn"] {
-  --phase-accent: #7eb8f7;
-  --bg-gradient: linear-gradient(to bottom, #0a0e17, #080a0d);
+  --phase-accent:  #7ba7bc;
+  --phase-text:    #e8eef5;
+  --phase-muted:   #4a7a8a;
+  --phase-glow:    #b8cdd6;
+  --bg-gradient: linear-gradient(
+    to bottom,
+    #0d1520,
+    #0a1018,
+    #080a0d
+  );
+  --glass-dark:       rgba(8, 10, 13, 0.6);
+  --glass-light:      rgba(184, 205, 214, 0.10);
+  --glass-border:     rgba(184, 205, 214, 0.08);
+  --glass-dark-soft:  rgba(8, 10, 13, 0.35);
+  --glass-light-soft: rgba(123, 167, 188, 0.06);
 }
 
 [data-theme="day"] {
@@ -135,10 +138,17 @@
 
 [data-theme="golden"] {
   color-scheme: light;
-  --phase-accent:        #c4762a;
-  --phase-text:          #2a0e05;
+  --bg-gradient: linear-gradient(
+    160deg,
+    #f5c89a 0%,
+    #e8956a 25%,
+    #d4708a 60%,
+    #c4607a 100%
+  );
+  --phase-accent:        #d4845a;
+  --phase-text:          #2a1208;
   --phase-muted:         #c4762a;
-  --phase-glow:          #e8502a;
+  --phase-glow:          #e8b48a;
 
   --background:          18 55% 82%;
   --foreground:          15 80% 8%;
@@ -158,24 +168,29 @@
   --input:               15 50% 8% / 0.07;
   --ring:                18 70% 48% / 0.3;
 
-  --bg-gradient: linear-gradient(
-    160deg,
-    #e8502a 0%,
-    #c4762a 30%,
-    #d4608a 60%,
-    #c4507a 100%
-  );
-
   --glass-dark:          rgba(42, 14, 5, 0.65);
-  --glass-light:         rgba(232, 80, 42, 0.15);
+  --glass-light:         rgba(245, 200, 154, 0.15);
   --glass-border:        rgba(42, 14, 5, 0.10);
   --glass-dark-soft:     rgba(42, 14, 5, 0.35);
   --glass-light-soft:    rgba(232, 180, 140, 0.25);
 }
 
 [data-theme="dusk"] {
-  --phase-accent: #a78bfa;
-  --bg-gradient: linear-gradient(to bottom, #050505, #080a0d);
+  --phase-accent:  #c4762a;
+  --phase-text:    #e8dcc8;
+  --phase-muted:   #4a6080;
+  --phase-glow:    #2a4a6b;
+  --bg-gradient: linear-gradient(
+    to bottom,
+    #0d1b2e,
+    #091422,
+    #060c18
+  );
+  --glass-dark:       rgba(6, 12, 24, 0.65);
+  --glass-light:      rgba(196, 118, 42, 0.08);
+  --glass-border:     rgba(232, 220, 200, 0.06);
+  --glass-dark-soft:  rgba(6, 12, 24, 0.35);
+  --glass-light-soft: rgba(42, 74, 107, 0.15);
 }
 
 /* Scrim Overlay Utility */
