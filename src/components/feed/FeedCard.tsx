@@ -43,10 +43,11 @@ export function FeedCard({ post, index }: FeedCardProps) {
   const [commentText, setCommentText] = useState('');
   const [localComments, setLocalComments] = useState<{ text: string; authorName: string }[]>([]);
 
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
 
-  const isOwner = user && user.uid === post.creatorId;
+  // Guard: explicitly wait for auth loading to finish before determining ownership
+  const isOwner = Boolean(user && !isUserLoading && post.creatorId && user.uid === post.creatorId);
 
   // Check for existing like on mount
   useEffect(() => {
