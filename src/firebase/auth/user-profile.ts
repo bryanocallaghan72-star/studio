@@ -1,13 +1,13 @@
+
 'use client';
 
 import {
   doc,
+  getDoc,
   setDoc,
   serverTimestamp,
   type Firestore,
 } from 'firebase/firestore';
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
 import type { User } from 'firebase/auth';
 
 /**
@@ -23,52 +23,46 @@ const createRefCode = (username: string) => {
 }
 
 /**
- * Creates or updates a user's profile document in Firestore.
- * This is a non-blocking operation.
+ * Ensures a user's profile document exists in Firestore.
+ * This is an atomic, blocking operation.
+ * 
  * @param firestore - The Firestore instance.
  * @param user - The Firebase Auth user object.
+ * @returns A promise that resolves when the profile is guaranteed to exist.
  */
-export function updateUserProfile(firestore: Firestore, user: User) {
+export async function updateUserProfile(firestore: Firestore, user: User) {
   const userDocRef = doc(firestore, 'users', user.uid);
   
-  let profileData: {
-      email?: string;
-      username: string;
-      refCode: string;
-      createdAt: any;
-  };
+  try {
+    const userSnap = await getDoc(userDocRef);
+    
+    // Determine identity data
+    const username = user.displayName || user.email?.split('@')[0] || `user_${user.uid.substring(0, 5)}`;
+    
+    if (!userSnap.exists()) {
+      // Creation Case: Initialize all required fields for a new user
+      const profileData = {
+        id: user.uid,
+        email: user.email || null,
+        username: username,
+        refCode: createRefCode(username),
+        avatarUrl: user.photoURL || null,
+        followerCount: 0,
+        followingCount: 0,
+        isCreator: false,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      };
 
-  if (user.email) {
-    // User has an email
-    const username = user.email.split('@')[0];
-    profileData = {
-      email: user.email,
-      username: username,
-      refCode: createRefCode(username),
-      createdAt: serverTimestamp(),
-    };
-  } else {
-    // Anonymous user, do not include email field
-    const username = `user${user.uid.substring(0, 6)}`;
-    profileData = {
-      username: username,
-      refCode: createRefCode(username),
-      createdAt: serverTimestamp(),
-    };
+      await setDoc(userDocRef, profileData);
+    } else {
+      // Sync Case: Ensure non-immutable fields like avatar are current
+      await setDoc(userDocRef, {
+        updatedAt: serverTimestamp(),
+      }, { merge: true });
+    }
+  } catch (error) {
+    console.error("Critical error ensuring user profile:", error);
+    throw error; // Re-throw to allow the UI to handle blocking/error states
   }
-
-  // Use setDoc with { merge: true } to create or update without overwriting
-  setDoc(userDocRef, profileData, { merge: true })
-    .catch((error) => {
-      console.error("Error creating/updating user profile:", error);
-      // Optional: Emit a more specific error if needed
-      errorEmitter.emit(
-        'permission-error',
-        new FirestorePermissionError({
-          path: userDocRef.path,
-          operation: 'write',
-          requestResourceData: profileData,
-        })
-      );
-    });
 }

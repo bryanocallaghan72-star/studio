@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -10,8 +11,8 @@ import {
   createUserWithEmailAndPassword,
   getRedirectResult
 } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth, useFirestore } from '@/firebase';
+import { updateUserProfile } from '@/firebase/auth/user-profile';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -32,25 +33,21 @@ export function AuthScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [isAgeConfirmed, setIsAgeConfirmed] = useState(false);
 
-  const handleAuthSuccess = async (uid: string, email: string | null, displayName: string | null, photoURL: string | null) => {
+  /**
+   * Orchestrates atomic profile synchronization before allowing navigation.
+   * Ensures no Auth account exists without a matching Firestore User doc.
+   */
+  const handleAuthSuccess = async (user: any) => {
     if (!firestore) return;
     
+    setIsLoading(true);
     try {
-      const userRef = doc(firestore, 'users', uid);
-      await setDoc(userRef, {
-        email,
-        username: displayName || email?.split('@')[0] || `user_${uid.substring(0, 5)}`,
-        avatarUrl: photoURL || null,
-        updatedAt: serverTimestamp(),
-        createdAt: serverTimestamp(), // merge: true handles this
-        isCreator: false,
-      }, { merge: true });
-
+      // Blocking sync: This must complete before router.push
+      await updateUserProfile(firestore, user);
       router.push('/discover');
     } catch (err: any) {
       console.error("Profile sync error:", err);
-      setError("Successfully signed in, but couldn't sync profile. Please try again.");
-    } finally {
+      setError("Successfully signed in, but we couldn't sync your Bondi profile. Please check your connection and try again.");
       setIsLoading(false);
     }
   };
@@ -60,7 +57,7 @@ export function AuthScreen() {
     if (auth) {
       getRedirectResult(auth).then((result) => {
         if (result?.user) {
-          handleAuthSuccess(result.user.uid, result.user.email, result.user.displayName, result.user.photoURL);
+          handleAuthSuccess(result.user);
         }
       }).catch((err) => {
         setError(err.message);
@@ -78,10 +75,11 @@ export function AuthScreen() {
 
     try {
       if (isMobile) {
+        // Redirect will be caught by the useEffect above on return
         await signInWithRedirect(auth, provider);
       } else {
         const result = await signInWithPopup(auth, provider);
-        await handleAuthSuccess(result.user.uid, result.user.email, result.user.displayName, result.user.photoURL);
+        await handleAuthSuccess(result.user);
       }
     } catch (err: any) {
       setError(err.message);
@@ -108,7 +106,7 @@ export function AuthScreen() {
       } else {
         result = await signInWithEmailAndPassword(auth, email, password);
       }
-      await handleAuthSuccess(result.user.uid, result.user.email, result.user.displayName, null);
+      await handleAuthSuccess(result.user);
     } catch (err: any) {
       setError(err.message);
       setIsLoading(false);

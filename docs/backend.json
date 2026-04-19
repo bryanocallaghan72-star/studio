@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "User": {
@@ -48,6 +49,10 @@
         "followerCount": {
           "type": "number",
           "description": "Total number of users following this profile."
+        },
+        "followingCount": {
+          "type": "number",
+          "description": "Total number of users this profile is following."
         },
         "createdAt": {
             "type": "string",
@@ -556,6 +561,10 @@
     "/socials/{socialId}/participants/{userId}": {
       "schema": { "$ref": "#/entities/SocialParticipant" },
       "description": "Manages participants for a specific social activity. The document ID is the user's ID for easy lookup."
+    },
+    "/socials/{socialId}/participants/{userId}/status": {
+      "schema": { "type": "string", "enum": ["joined", "requested"] },
+      "description": "The current status of a user's participation in a social activity."
     },
     "/stays/{stayId}": {
       "schema": { "$ref": "#/entities/Stay" },
