@@ -13,6 +13,7 @@ export interface FeedPost {
   id: string;
   creatorId: string;
   creator: string;
+  creatorAvatar?: string;
   verified: boolean;
   location: string;
   image: string;
@@ -189,8 +190,17 @@ export function FeedCard({ post, index }: FeedCardProps) {
         {/* Row 1: Creator Info (Tappable) */}
         <div className="flex items-center justify-between">
           <Link href={`/profile/${post.creatorId}`} className="flex items-center gap-3 group transition-opacity active:opacity-70">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#c4762a] text-[12px] font-bold text-white uppercase group-hover:ring-2 group-hover:ring-[#c4762a]/20">
-              {post.creator.charAt(0)}
+            <div className="relative flex h-8 w-8 items-center justify-center rounded-full bg-[#c4762a] text-[12px] font-bold text-white uppercase group-hover:ring-2 group-hover:ring-[#c4762a]/20 overflow-hidden">
+              {post.creatorAvatar ? (
+                <Image 
+                  src={post.creatorAvatar} 
+                  alt={post.creator} 
+                  fill 
+                  className="object-cover"
+                />
+              ) : (
+                post.creator.charAt(0)
+              )}
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">

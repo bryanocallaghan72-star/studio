@@ -95,6 +95,7 @@ export default function FeedPage() {
     id: doc.id,
     creatorId: doc.creatorId ?? 'anonymous',
     creator: doc.creatorName || (doc.creatorEmail ? doc.creatorEmail.split('@')[0] : 'anonymous'),
+    creatorAvatar: doc.creatorAvatar || '',
     verified: false,
     location: doc.location || 'Bondi',
     image: doc.imageUrl || '',
