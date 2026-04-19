@@ -14,6 +14,9 @@ import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth, useFirestore } from '@/firebase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 
 export function AuthScreen() {
   const router = useRouter();
@@ -27,6 +30,7 @@ export function AuthScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAgeConfirmed, setIsAgeConfirmed] = useState(false);
 
   const handleAuthSuccess = async (uid: string, email: string | null, displayName: string | null, photoURL: string | null) => {
     if (!firestore) return;
@@ -65,7 +69,7 @@ export function AuthScreen() {
   }, [auth]);
 
   const handleGoogleSignIn = async () => {
-    if (!auth) return;
+    if (!auth || !isAgeConfirmed) return;
     setError(null);
     setIsLoading(true);
     
@@ -87,7 +91,7 @@ export function AuthScreen() {
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!auth) return;
+    if (!auth || !isAgeConfirmed) return;
     setError(null);
 
     if (isSignUp && password !== confirmPassword) {
@@ -140,12 +144,31 @@ export function AuthScreen() {
             </p>
           </div>
 
+          {/* Age Verification Gate */}
+          <div className="flex items-center space-x-3 mb-8 p-4 rounded-2xl bg-[#f2ece0]/40 border border-black/[0.03] transition-colors">
+            <Checkbox 
+              id="age-gate" 
+              checked={isAgeConfirmed} 
+              onCheckedChange={(checked) => setIsAgeConfirmed(!!checked)}
+              className="h-5 w-5 border-[#c4762a]/30 data-[state=checked]:bg-[#c4762a] data-[state=checked]:border-[#c4762a]"
+            />
+            <Label 
+              htmlFor="age-gate" 
+              className="text-[13px] font-semibold text-[#1a1208]/60 cursor-pointer leading-tight select-none"
+            >
+              I confirm I am 18 or older
+            </Label>
+          </div>
+
           <div className="space-y-3">
             {/* Google Button */}
             <button 
               onClick={handleGoogleSignIn}
-              disabled={isLoading}
-              className="w-full bg-white text-[#1a1208] font-bold rounded-2xl py-4 flex items-center justify-center gap-3 transition-transform active:scale-95 disabled:opacity-50 border border-black/[0.08]"
+              disabled={isLoading || !isAgeConfirmed}
+              className={cn(
+                "w-full bg-white text-[#1a1208] font-bold rounded-2xl py-4 flex items-center justify-center gap-3 transition-all active:scale-95 border border-black/[0.08]",
+                (!isAgeConfirmed || isLoading) && "opacity-40 cursor-not-allowed"
+              )}
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-3.3 3.28-8.19 3.28-13.09z" fill="#4285F4"/>
@@ -162,7 +185,7 @@ export function AuthScreen() {
               <div className="w-full border-t border-black/[0.06]"></div>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-[#f2ece0] px-2 text-[#1a1208]/30 tracking-widest">or</span>
+              <span className="bg-white px-2 text-[#1a1208]/30 tracking-widest">or</span>
             </div>
           </div>
 
@@ -173,8 +196,12 @@ export function AuthScreen() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                onClick={() => setShowEmail(true)}
-                className="w-full text-[#1a1208]/50 text-sm font-medium underline underline-offset-4 hover:text-[#1a1208] transition-colors"
+                onClick={() => isAgeConfirmed && setShowEmail(true)}
+                disabled={!isAgeConfirmed}
+                className={cn(
+                  "w-full text-[#1a1208]/50 text-sm font-medium underline underline-offset-4 hover:text-[#1a1208] transition-all",
+                  !isAgeConfirmed && "opacity-30 cursor-not-allowed no-underline"
+                )}
               >
                 Continue with Email
               </motion.button>
@@ -214,8 +241,11 @@ export function AuthScreen() {
                 )}
                 <button 
                   type="submit"
-                  disabled={isLoading}
-                  className="w-full bg-[#c4762a] text-white font-black text-lg rounded-2xl py-4 shadow-xl shadow-[#c4762a]/20 transition-transform active:scale-95 flex items-center justify-center"
+                  disabled={isLoading || !isAgeConfirmed}
+                  className={cn(
+                    "w-full bg-[#c4762a] text-white font-black text-lg rounded-2xl py-4 shadow-xl shadow-[#c4762a]/20 transition-transform active:scale-95 flex items-center justify-center",
+                    (!isAgeConfirmed || isLoading) && "opacity-40 cursor-not-allowed"
+                  )}
                 >
                   {isLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : (isSignUp ? 'Create Account' : 'Sign In')}
                 </button>
