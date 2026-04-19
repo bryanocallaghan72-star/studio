@@ -115,7 +115,7 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
                 </AnimatePresence>
             </div>
 
-            <div className="mt-8 flex space-x-3 sticky bottom-0 bg-[#f2ece0] py-4">
+            <div className="mt-8 flex space-x-3 sticky bottom-[83px] bg-[#f2ece0] py-4 pb-[env(safe-area-inset-bottom)]">
                 <Button 
                     className="flex-grow h-14 bg-[#c4762a] text-white hover:bg-[#b06824] rounded-2xl font-black shadow-lg shadow-[#c4762a]/20" 
                     onClick={() => onStartPlan(itineraryData)}
