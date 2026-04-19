@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, memo, useMemo } from 'react';
@@ -15,6 +14,7 @@ import { Skeleton } from '../ui/skeleton';
 import { useVenues } from '@/hooks/useVenues';
 import type { Venue } from '@/types/venue';
 import { useSoundContext } from '@/context/SoundContext';
+import { useDemoTime } from "@/context/DemoTimeContext";
 
 
 const VenueCard = memo(({ venue }: { venue: Venue }) => {
@@ -175,13 +175,15 @@ export function FlowTabs() {
   const [activeTab, setActiveTab] = useState<'morning' | 'day' | 'golden' | 'dusk'>('morning');
   const [activeSubCategory, setActiveSubCategory] = useState<SubCategory>('All');
   const { venues, isLoading, error } = useVenues();
+  const { mockDate } = useDemoTime();
   
   useEffect(() => {
-    const currentHour = new Date().getHours();
+    // Determine the active tab based on the canonical God Mode time
+    const currentHour = mockDate.getHours();
     const newActiveTab = getCurrentTimeCategory(currentHour);
     setActiveTab(newActiveTab);
     setActiveSubCategory('All'); 
-  }, []);
+  }, [mockDate]);
 
   const tabData = useMemo(() => {
     if (!venues) return [];
