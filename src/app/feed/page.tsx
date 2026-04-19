@@ -124,8 +124,11 @@ export default function FeedPage() {
     fetchUserLikes();
   }, [firestore, user, livePostsRaw]);
 
-  const allPosts = useMemo(() => {
-    const livePosts: FeedPost[] = (livePostsRaw || []).map((doc) => ({
+  // 1. Transform raw Firestore docs into base post objects.
+  // This is memoized to depend only on the raw data, preventing expensive
+  // re-mapping when only local engagement state (like likedPostIds) changes.
+  const transformedLivePosts = useMemo(() => {
+    return (livePostsRaw || []).map((doc) => ({
       id: doc.id,
       creatorId: doc.creatorId ?? 'anonymous',
       creator: doc.creatorName || (doc.creatorEmail ? doc.creatorEmail.split('@')[0] : 'anonymous'),
@@ -141,12 +144,20 @@ export default function FeedPage() {
       phase: 'DAY',
       hasDrop: false,
       isReel: false,
-      isLiked: likedPostIds.has(doc.id), // Apply batched state
+    }));
+  }, [livePostsRaw]);
+
+  // 2. Final assembly: Add liked state and merge with mock data.
+  // This adds the batch-checked liked state and ensures a minimum feed length.
+  const allPosts = useMemo(() => {
+    const liveWithLikes: FeedPost[] = transformedLivePosts.map((post) => ({
+      ...post,
+      isLiked: likedPostIds.has(post.id),
     }));
 
-    const showMockPosts = livePosts.length < 5;
-    return showMockPosts ? [...livePosts, ...MOCK_POSTS] : livePosts;
-  }, [livePostsRaw, likedPostIds]);
+    const showMockPosts = liveWithLikes.length < 5;
+    return showMockPosts ? [...liveWithLikes, ...MOCK_POSTS] : liveWithLikes;
+  }, [transformedLivePosts, likedPostIds]);
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f2ece0]">
