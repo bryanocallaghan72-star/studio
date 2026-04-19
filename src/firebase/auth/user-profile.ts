@@ -24,11 +24,11 @@ const createRefCode = (username: string) => {
 
 /**
  * Ensures a user's profile document exists in Firestore.
- * This is an atomic, blocking operation.
+ * Now optimized to skip writes if the profile already exists.
  * 
  * @param firestore - The Firestore instance.
  * @param user - The Firebase Auth user object.
- * @returns A promise that resolves when the profile is guaranteed to exist.
+ * @returns A promise that resolves when the profile check/creation task is complete.
  */
 export async function updateUserProfile(firestore: Firestore, user: User) {
   const userDocRef = doc(firestore, 'users', user.uid);
@@ -36,33 +36,32 @@ export async function updateUserProfile(firestore: Firestore, user: User) {
   try {
     const userSnap = await getDoc(userDocRef);
     
-    // Determine identity data
+    // If the profile already exists, we skip the write entirely to save time/cost
+    if (userSnap.exists()) {
+      return;
+    }
+
+    // creation logic only for new users
     const username = user.displayName || user.email?.split('@')[0] || `user_${user.uid.substring(0, 5)}`;
     
-    if (!userSnap.exists()) {
-      // Creation Case: Initialize all required fields for a new user
-      const profileData = {
-        id: user.uid,
-        email: user.email || null,
-        username: username,
-        refCode: createRefCode(username),
-        avatarUrl: user.photoURL || null,
-        followerCount: 0,
-        followingCount: 0,
-        isCreator: false,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      };
+    const profileData = {
+      id: user.uid,
+      email: user.email || null,
+      username: username,
+      refCode: createRefCode(username),
+      avatarUrl: user.photoURL || null,
+      followerCount: 0,
+      followingCount: 0,
+      isCreator: false,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
 
-      await setDoc(userDocRef, profileData);
-    } else {
-      // Sync Case: Ensure non-immutable fields like avatar are current
-      await setDoc(userDocRef, {
-        updatedAt: serverTimestamp(),
-      }, { merge: true });
-    }
+    // Note: We use await here because this function itself is usually called 
+    // as a background task, but we want the internal task to be reliable.
+    await setDoc(userDocRef, profileData);
   } catch (error) {
-    console.error("Critical error ensuring user profile:", error);
-    throw error; // Re-throw to allow the UI to handle blocking/error states
+    // Log silently as requested, so as not to interrupt the user session
+    console.warn("Background profile sync task failed:", error);
   }
 }

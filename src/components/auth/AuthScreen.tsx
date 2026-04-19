@@ -34,22 +34,21 @@ export function AuthScreen() {
   const [isAgeConfirmed, setIsAgeConfirmed] = useState(false);
 
   /**
-   * Orchestrates atomic profile synchronization before allowing navigation.
-   * Ensures no Auth account exists without a matching Firestore User doc.
+   * Non-blocking profile synchronization.
+   * Navigates immediately and handles the Firestore write in the background.
    */
-  const handleAuthSuccess = async (user: any) => {
+  const handleAuthSuccess = (user: any) => {
     if (!firestore) return;
     
     setIsLoading(true);
-    try {
-      // Blocking sync: This must complete before router.push
-      await updateUserProfile(firestore, user);
-      router.push('/discover');
-    } catch (err: any) {
-      console.error("Profile sync error:", err);
-      setError("Successfully signed in, but we couldn't sync your Bondi profile. Please check your connection and try again.");
-      setIsLoading(false);
-    }
+    
+    // Fire and forget: Sync profile in the background
+    updateUserProfile(firestore, user).catch(err => {
+        console.error("Critical background sync error:", err);
+    });
+
+    // Immediate redirect to the experience
+    router.push('/discover');
   };
 
   // Check for redirect result on mount (for mobile Google Sign-in)
@@ -79,7 +78,7 @@ export function AuthScreen() {
         await signInWithRedirect(auth, provider);
       } else {
         const result = await signInWithPopup(auth, provider);
-        await handleAuthSuccess(result.user);
+        handleAuthSuccess(result.user);
       }
     } catch (err: any) {
       setError(err.message);
@@ -106,7 +105,7 @@ export function AuthScreen() {
       } else {
         result = await signInWithEmailAndPassword(auth, email, password);
       }
-      await handleAuthSuccess(result.user);
+      handleAuthSuccess(result.user);
     } catch (err: any) {
       setError(err.message);
       setIsLoading(false);
