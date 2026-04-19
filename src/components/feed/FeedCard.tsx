@@ -211,6 +211,7 @@ export function FeedCard({ post, index }: FeedCardProps) {
             alt={post.caption}
             fill
             className="object-cover"
+            priority={index < 2}
           />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-[#c4762a]/20 to-[#f2ece0] flex items-center justify-center">
