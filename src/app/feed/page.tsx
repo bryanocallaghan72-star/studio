@@ -76,11 +76,34 @@ const MOCK_POSTS: FeedPost[] = [
   },
 ];
 
+const FeedSkeleton = () => (
+  <div className="flex flex-col">
+    {[1, 2, 3].map((i) => (
+      <div key={i} className="w-full border-b border-black/[0.08] bg-[#f2ece0] pb-8 space-y-4">
+        <div className="aspect-[4/5] w-full bg-[#e8e0d0] animate-pulse" />
+        <div className="p-4 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-[#e8e0d0] animate-pulse" />
+            <div className="space-y-2">
+              <div className="h-4 w-32 rounded bg-[#e8e0d0] animate-pulse" />
+              <div className="h-3 w-20 rounded bg-[#e8e0d0] animate-pulse" />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <div className="h-3 w-full rounded bg-[#e8e0d0] animate-pulse" />
+            <div className="h-3 w-4/5 rounded bg-[#e8e0d0] animate-pulse" />
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
 export default function FeedPage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [likedPostIds, setLikedPostIds] = useState<Set<string>>(new Set());
   const firestore = useFirestore();
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
 
   const postsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -95,22 +118,17 @@ export default function FeedPage() {
 
   /**
    * BATCHED LIKE CHECK: Perform one query for all user likes instead of N queries.
-   * This uses a collectionGroup query to find any 'likes' sub-document that belongs to the user.
    */
   useEffect(() => {
     if (!firestore || !user || !livePostsRaw || livePostsRaw.length === 0) return;
 
     const fetchUserLikes = async () => {
       try {
-        // Query across all 'likes' subcollections for the user's specific document
-        // Note: For this to work at scale, 'uid' should be a field inside the document.
-        // We use documentId() here to match the specific UID document path.
         const q = query(collectionGroup(firestore, 'likes'), where(documentId(), '==', user.uid));
         const snapshot = await getDocs(q);
         const ids = new Set<string>();
         
         snapshot.forEach((doc) => {
-          // doc.ref.parent is the 'likes' collection, .parent is the post document
           const postId = doc.ref.parent.parent?.id;
           if (postId) ids.add(postId);
         });
@@ -124,9 +142,6 @@ export default function FeedPage() {
     fetchUserLikes();
   }, [firestore, user, livePostsRaw]);
 
-  // 1. Transform raw Firestore docs into base post objects.
-  // This is memoized to depend only on the raw data, preventing expensive
-  // re-mapping when only local engagement state (like likedPostIds) changes.
   const transformedLivePosts = useMemo(() => {
     return (livePostsRaw || []).map((doc) => ({
       id: doc.id,
@@ -147,8 +162,6 @@ export default function FeedPage() {
     }));
   }, [livePostsRaw]);
 
-  // 2. Final assembly: Add liked state and merge with mock data.
-  // This adds the batch-checked liked state and ensures a minimum feed length.
   const allPosts = useMemo(() => {
     const liveWithLikes: FeedPost[] = transformedLivePosts.map((post) => ({
       ...post,
@@ -178,10 +191,8 @@ export default function FeedPage() {
 
       {/* Main Feed Scroll Zone */}
       <main className="flex-1 pb-[100px]">
-        {isLoading ? (
-          <div className="flex items-center justify-center py-24">
-            <Loader2 className="h-10 w-10 animate-spin text-[#c4762a]" />
-          </div>
+        {isUserLoading || isLoading ? (
+          <FeedSkeleton />
         ) : (
           <div className="flex flex-col">
             {allPosts.map((post, index) => (
