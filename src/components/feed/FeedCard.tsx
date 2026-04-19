@@ -7,8 +7,8 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Heart, MessageCircle, MoreHorizontal, Check, Ticket, Play, Trash2 } from 'lucide-react';
 import { ClaimModal } from '@/components/claim/ClaimModal';
-import { useUser, useFirestore, deleteDocumentNonBlocking, setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
-import { doc, getDoc, increment, addDoc, collection, query, orderBy, getDocs } from 'firebase/firestore';
+import { useUser, useFirestore } from '@/firebase';
+import { doc, getDoc, increment, addDoc, collection, query, orderBy, getDocs, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { ToastAction } from '@/components/ui/toast';
 
@@ -51,10 +51,8 @@ export function FeedCard({ post, index }: FeedCardProps) {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
 
-  // Guard: explicitly wait for auth loading to finish before determining ownership
   const isOwner = Boolean(user && !isUserLoading && post.creatorId && user.uid === post.creatorId);
 
-  // Check for existing like on mount
   useEffect(() => {
     if (!user || !firestore || !post.id) return;
 
@@ -66,7 +64,6 @@ export function FeedCard({ post, index }: FeedCardProps) {
     }).catch(err => console.error("Error checking like status:", err));
   }, [user, firestore, post.id]);
 
-  // Fetch comments when the section is opened
   useEffect(() => {
     if (showComments && firestore && post.id && localComments.length === 0) {
       const q = query(
@@ -84,7 +81,7 @@ export function FeedCard({ post, index }: FeedCardProps) {
     }
   }, [showComments, firestore, post.id, localComments.length]);
 
-  const handleLikeToggle = () => {
+  const handleLikeToggle = async () => {
     if (!user) {
       toast({
         title: "Sign in to like",
@@ -104,17 +101,28 @@ export function FeedCard({ post, index }: FeedCardProps) {
     const likeRef = doc(firestore, 'posts', post.id, 'likes', user.uid);
     const postRef = doc(firestore, 'posts', post.id);
 
-    // Optimistic UI Update
+    const originalLiked = liked;
+    const originalCount = likeCount;
+
     setLiked(newLiked);
     setLikeCount(prev => newLiked ? prev + 1 : prev - 1);
 
-    // Firestore Persistance
-    if (newLiked) {
-      setDocumentNonBlocking(likeRef, { likedAt: new Date() }, { merge: true });
-      updateDocumentNonBlocking(postRef, { likes: increment(1) });
-    } else {
-      deleteDocumentNonBlocking(likeRef);
-      updateDocumentNonBlocking(postRef, { likes: increment(-1) });
+    try {
+      if (newLiked) {
+        await setDoc(likeRef, { likedAt: new Date() }, { merge: true });
+        await updateDoc(postRef, { likes: increment(1) });
+      } else {
+        await deleteDoc(likeRef);
+        await updateDoc(postRef, { likes: increment(-1) });
+      }
+    } catch (err) {
+      console.error("Like operation failed:", err);
+      setLiked(originalLiked);
+      setLikeCount(originalCount);
+      toast({
+        variant: "destructive",
+        title: "Couldn't like that post. Try again.",
+      });
     }
   };
 
@@ -145,20 +153,43 @@ export function FeedCard({ post, index }: FeedCardProps) {
       createdAt: new Date(),
     };
 
-    // Write to Firestore and update count
-    addDoc(commentsRef, commentData).catch((err) => console.error("Error posting comment:", err));
-    updateDocumentNonBlocking(postRef, { comments: increment(1) });
-    
-    // UI state
+    const prevComments = [...localComments];
+    const prevText = commentText;
+
     setLocalComments(prev => [...prev, { text: commentText, authorName }]);
     setCommentText('');
+
+    try {
+      await addDoc(commentsRef, commentData);
+      await updateDoc(postRef, { comments: increment(1) });
+    } catch (err) {
+      console.error("Error posting comment:", err);
+      setLocalComments(prevComments);
+      setCommentText(prevText);
+      toast({
+        variant: "destructive",
+        title: "Couldn't post comment. Try again.",
+      });
+    }
   };
 
-  const handleDeletePost = () => {
+  const handleDeletePost = async () => {
     if (!firestore || !post.id) return;
     const postRef = doc(firestore, 'posts', post.id);
-    deleteDocumentNonBlocking(postRef);
-    setIsMenuOpen(false);
+    
+    try {
+      setIsMenuOpen(false);
+      await deleteDoc(postRef);
+      toast({
+        title: "Post deleted",
+      });
+    } catch (err) {
+      console.error("Delete failed:", err);
+      toast({
+        variant: "destructive",
+        title: "Couldn't delete post. Try again.",
+      });
+    }
   };
 
   const userInitial = (user?.displayName || user?.email || 'U').charAt(0).toUpperCase();
@@ -170,14 +201,12 @@ export function FeedCard({ post, index }: FeedCardProps) {
       transition={{ duration: 0.4, delay: index * 0.08, ease: 'easeOut' }}
       className="w-full border-b border-black/[0.08] bg-[#f2ece0]"
     >
-      {/* Visual Header Zone */}
       <div className="relative aspect-[4/5] w-full overflow-hidden">
         {post.image ? (
           <Image
             src={post.image}
             alt={post.caption}
             fill
-            unoptimized
             className="object-cover"
           />
         ) : (
@@ -186,7 +215,6 @@ export function FeedCard({ post, index }: FeedCardProps) {
           </div>
         )}
         
-        {/* Editorial Scrim Overlay */}
         <div 
           className="absolute inset-0 z-10" 
           style={{ 
@@ -194,7 +222,6 @@ export function FeedCard({ post, index }: FeedCardProps) {
           }} 
         />
 
-        {/* Content Badges on Image */}
         <div className="absolute bottom-4 left-4 z-20 flex flex-col items-start gap-2">
           <div className="flex items-center gap-2">
             <span className="rounded-full bg-[#c4762a] px-2 py-0.5 text-[10px] font-bold tracking-widest text-white uppercase shadow-lg">
@@ -217,9 +244,7 @@ export function FeedCard({ post, index }: FeedCardProps) {
         </div>
       </div>
 
-      {/* Card Body */}
       <div className="p-4">
-        {/* Row 1: Creator Info (Tappable) */}
         <div className="flex items-center justify-between">
           <Link href={`/profile/${post.creatorId}`} className="flex items-center gap-3 group transition-opacity active:opacity-70">
             <div className="relative flex h-8 w-8 items-center justify-center rounded-full bg-[#c4762a] text-[12px] font-bold text-white uppercase group-hover:ring-2 group-hover:ring-[#c4762a]/20 overflow-hidden">
@@ -284,12 +309,10 @@ export function FeedCard({ post, index }: FeedCardProps) {
           )}
         </div>
 
-        {/* Row 2: Caption */}
         <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-[#1a1208]">
           {post.caption}
         </p>
 
-        {/* Comment Section (Toggleable) */}
         <AnimatePresence>
           {showComments && (
             <motion.div
@@ -298,7 +321,6 @@ export function FeedCard({ post, index }: FeedCardProps) {
               exit={{ height: 0, opacity: 0 }}
               className="overflow-hidden"
             >
-              {/* Comment input row */}
               <div className="flex items-center gap-3 mt-4">
                 <div className="w-7 h-7 rounded-full bg-[#c4762a] text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
                   {userInitial}
@@ -314,7 +336,6 @@ export function FeedCard({ post, index }: FeedCardProps) {
               </div>
               
               <div className="mt-4 space-y-3 pb-2">
-                {/* Local comments */}
                 {localComments.map((c, i) => (
                   <div key={i} className="flex gap-2 items-start">
                     <div className="w-6 h-6 rounded-full bg-[#c4762a]/10 text-[#c4762a] text-[10px] font-bold flex items-center justify-center flex-shrink-0">
@@ -327,7 +348,6 @@ export function FeedCard({ post, index }: FeedCardProps) {
                   </div>
                 ))}
                 
-                {/* Mock comments - only for editorial posts */}
                 {(post as any).source === 'editorial' && (
                   <>
                     <div className="flex gap-2 items-start">
@@ -355,12 +375,10 @@ export function FeedCard({ post, index }: FeedCardProps) {
           )}
         </AnimatePresence>
 
-        {/* Row 3: Actions */}
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button 
               onClick={handleLikeToggle}
-              onTouchEnd={(e) => { e.preventDefault(); handleLikeToggle(); }}
               className={`flex items-center gap-1.5 text-[13px] font-medium transition-colors ${liked ? 'text-[#c4762a]' : 'text-[#1a1208]/50 hover:text-[#1a1208]'}`}
             >
               <Heart 
@@ -373,7 +391,7 @@ export function FeedCard({ post, index }: FeedCardProps) {
             </button>
             <button 
               onClick={() => setShowComments(!showComments)}
-              className="flex items-center gap-1.5 text-[13px] font-medium text-[#1a1208]/50 hover:text-[#1a1208] outline-none focus:outline-none focus:ring-0 focus:shadow-none"
+              className="flex items-center gap-1.5 text-[13px] font-medium text-[#1a1208]/50 hover:text-[#1a1208] outline-none focus:outline-none"
               style={{ outline: 'none', boxShadow: 'none' }}
             >
               <MessageCircle size={18} strokeWidth={2} />
@@ -393,7 +411,6 @@ export function FeedCard({ post, index }: FeedCardProps) {
         </div>
       </div>
 
-      {/* Claim Modal Instance */}
       <ClaimModal
         isOpen={isClaimModalOpen}
         onClose={() => setClaimModalOpen(false)}

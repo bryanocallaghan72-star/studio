@@ -6,8 +6,8 @@ import { X, Camera, MapPin, Building2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useFirestore, useUser, addDocumentNonBlocking, useDoc, useMemoFirebase } from '@/firebase';
-import { collection, serverTimestamp, getDocs, doc } from 'firebase/firestore';
+import { useFirestore, useUser, useDoc, useMemoFirebase } from '@/firebase';
+import { collection, serverTimestamp, getDocs, doc, addDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useStorage } from '@/firebase/storage';
 import { useToast } from '@/hooks/use-toast';
@@ -27,7 +27,6 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
   const storage = useStorage();
   const { toast } = useToast();
 
-  // Fetch the latest user profile from Firestore to ensure we get the custom avatar/username
   const userProfileRef = useMemoFirebase(() => {
     if (!firestore || !user?.uid) return null;
     return doc(firestore, 'users', user.uid);
@@ -43,7 +42,6 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Autocomplete State
   const [venueSearch, setVenueSearch] = useState('');
   const [showVenueSuggestions, setShowVenueSuggestions] = useState(false);
   const [filteredVenues, setFilteredVenues] = useState<Venue[]>([]);
@@ -91,7 +89,6 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
     let finalImageUrl = '';
 
     try {
-      // 1. Handle image upload if a file was picked
       if (imageFile) {
         setIsUploading(true);
         const storagePath = `posts/${user.uid}/${Date.now()}_${imageFile.name}`;
@@ -102,10 +99,8 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
         setIsUploading(false);
       }
 
-      // 2. Prepare post data
       const postsRef = collection(firestore, 'posts');
       
-      // Determine best available identity data
       const finalCreatorName = userProfile?.username || user.displayName || user.email?.split('@')[0] || 'Bondi Local';
       const finalCreatorAvatar = userProfile?.avatarUrl || user.photoURL || '';
 
@@ -124,15 +119,13 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
         source: 'user_created',
       };
 
-      // 3. Initiate non-blocking write to Firestore
-      addDocumentNonBlocking(postsRef, postData);
+      await addDoc(postsRef, postData);
       
       toast({
         title: "Posted to IYKYK 🤙",
         description: "Your vibe is now live on the feed.",
       });
       
-      // Reset form state
       setCaption('');
       setVenueName('');
       setVenueSearch('');
@@ -140,14 +133,13 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
       setImageFile(null);
       setImagePreview('');
       
-      // Close the sheet
       onClose();
     } catch (err) {
       console.error('Post creation failed:', err);
       setIsUploading(false);
       toast({
         variant: "destructive",
-        title: "Failed to post. Try again.",
+        title: "Couldn't create post. Try again.",
       });
     } finally {
       setIsSubmitting(false);
@@ -158,7 +150,6 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Global Backdrop Overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -167,7 +158,6 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
             className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm"
           />
           
-          {/* Animated Bottom Sheet */}
           <motion.div
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
@@ -175,7 +165,6 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="fixed bottom-0 left-0 right-0 z-[101] max-h-[90vh] overflow-y-auto rounded-t-[32px] bg-[#f2ece0] p-6 shadow-2xl"
           >
-            {/* Grab Handle */}
             <div className="mx-auto mb-6 h-1.5 w-12 rounded-full bg-black/10" />
             
             <div className="flex items-center justify-between mb-8">
@@ -203,7 +192,6 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6 pb-8">
-                {/* Caption Field */}
                 <div className="space-y-2">
                   <div className="flex justify-between items-end">
                     <label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Caption</label>
@@ -221,7 +209,6 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
                   />
                 </div>
 
-                {/* Photo Picker */}
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-[0.1em] text-[#c4762a]">
                     Photo (optional)
@@ -251,9 +238,7 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
                   </label>
                 </div>
 
-                {/* Metadata Fields */}
                 <div className="grid grid-cols-1 gap-4">
-                  {/* Venue Autocomplete */}
                   <div className="space-y-2 relative">
                     <label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">
                       Venue Name (optional)
@@ -311,7 +296,6 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
                   </div>
                 </div>
 
-                {/* Submit Action */}
                 <div className="pt-4">
                   <Button 
                     type="submit"
