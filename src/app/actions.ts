@@ -18,9 +18,28 @@ export async function generateItinerary(request: ItineraryRequest): Promise<{ su
   try {
     const result = await generateItineraryFlow(validatedRequest.data);
     return { success: result };
-  } catch (error) {
-    console.error('Itinerary generation failed:', error);
-    const errorMessage = error instanceof Error ? error.message : "Sorry, I couldn't generate an itinerary right now. Please try again later.";
-    return { error: { title: 'Generation Failed', message: errorMessage } };
+  } catch (error: any) {
+    // 1. Log the specific error reason to console.error with full detail
+    console.error('CRITICAL: Itinerary generation failed:', error);
+    
+    let userMessage = "Something went wrong. Try shuffling again.";
+    const rawError = String(error?.message || error || "");
+
+    // 2. Map common failure modes to human-readable strings
+    if (rawError.includes("API_KEY") || rawError.includes("apiKey") || rawError.includes("auth")) {
+      userMessage = "AI service not configured. Try again later.";
+    } else if (rawError.includes("timeout") || rawError.includes("deadline") || rawError.includes("ETIMEDOUT")) {
+      userMessage = "Request took too long. Try shuffling again.";
+    } else if (rawError.includes("validation") || rawError.includes("schema") || rawError.includes("ZodError")) {
+      userMessage = "Couldn't build your itinerary. Try again.";
+    }
+    
+    // 3. Ensure the error string is always returned to the client
+    return { 
+      error: { 
+        title: 'Generation Failed', 
+        message: userMessage 
+      } 
+    };
   }
 }
