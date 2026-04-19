@@ -1,17 +1,25 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useTransition } from 'react';
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 import { Rss, Star, MapPin, Loader2, Edit, Ticket, Users } from "lucide-react";
-import { doc } from 'firebase/firestore';
+import { doc, getDoc, increment, serverTimestamp } from 'firebase/firestore';
 
 import { Header } from "@/components/iykyk/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
+import { 
+  useDoc, 
+  useFirestore, 
+  useMemoFirebase, 
+  setDocumentNonBlocking, 
+  deleteDocumentNonBlocking, 
+  updateDocumentNonBlocking 
+} from '@/firebase';
 import { useUser } from '@/firebase/auth/use-user';
 import { appData } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -23,19 +31,25 @@ import { useCreators } from '@/hooks/useCreators';
 import { CreatorInsights } from '@/components/iykyk/CreatorInsights';
 import { cn } from '@/lib/utils';
 
-// Update user profile type to include new optional fields
+// Update user profile type to include following stats
 type UserProfile = WithId<{
   username: string;
   bio?: string;
   avatarUrl?: string;
   bannerUrl?: string;
+  followerCount?: number;
 }>;
 
 export function ProfilePageClient({ uid }: { uid: string }) {
+  const router = useRouter();
   const { user: currentUser } = useUser();
   const firestore = useFirestore();
   const [activeTab, setActiveTab] = useState<'Profile' | 'Insights'>('Profile');
   const [profileError, setProfileError] = useState(false);
+  
+  // Follow logic state
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowLoading, setIsFollowLoading] = useState(false);
 
   const { creatorsById } = useCreators();
 
@@ -49,7 +63,6 @@ export function ProfilePageClient({ uid }: { uid: string }) {
   const shouldFetchFirestore = !isMockUser;
 
   const userDocRef = useMemoFirebase(() => {
-    // Defensively skip Firestore if it's a mock user or we have no DB instance
     if (!shouldFetchFirestore || !firestore || !uid) return null;
     return doc(firestore, 'users', uid);
   }, [firestore, uid, shouldFetchFirestore]);
@@ -57,22 +70,34 @@ export function ProfilePageClient({ uid }: { uid: string }) {
   const { data: firestoreUserProfile, isLoading: isFirestoreLoading, error: firestoreError } = useDoc<UserProfile>(userDocRef);
   
   // Rules restrict claimedDeals to owners only. 
-  // We gate the hook to avoid permission error crashes for visitors.
   const shouldFetchClaims = !isMockUser && isOwner;
   const { count: claimsCount, isLoading: isClaimsLoading, error: claimsError } = useClaimedDeals(shouldFetchClaims ? uid : undefined);
   
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
 
-  // Sync hook errors to local state to trigger fallbacks
+  // Sync hook errors to local state
   useEffect(() => {
     if (firestoreError || claimsError) {
       console.warn("Handled profile read error:", firestoreError || claimsError);
       setProfileError(true);
     }
   }, [firestoreError, claimsError]);
+
+  // Check following status on mount
+  useEffect(() => {
+    if (!currentUser || !uid || isOwner || isMockUser || !firestore) return;
+    
+    const followDocId = `${currentUser.uid}_${uid}`;
+    const followRef = doc(firestore, 'follows', followDocId);
+    
+    getDoc(followRef).then(docSnap => {
+      setIsFollowing(docSnap.exists());
+    }).catch(err => {
+      console.warn("Error checking follow status:", err);
+    });
+  }, [currentUser, uid, isOwner, isMockUser, firestore]);
   
   const userProfile = useMemo(() => {
-    // 1. Prioritize local mock data (e.g. /profile/alice)
     if (mockUserProfile) {
       return {
         isMock: true,
@@ -81,13 +106,12 @@ export function ProfilePageClient({ uid }: { uid: string }) {
         bio: mockUserProfile.bio,
         avatarUrl: mockUserProfile.avatar,
         bannerUrl: undefined,
+        followerCount: Math.floor(Math.random() * 5000 + 1000),
       };
     }
-    // 2. Use real Firestore data if available
     if (firestoreUserProfile) {
       return { isMock: false, ...firestoreUserProfile };
     }
-    // 3. Graceful fallback for non-existent real users or errors
     if (profileError || (!isFirestoreLoading && !firestoreUserProfile && shouldFetchFirestore)) {
         return {
             isMock: true,
@@ -98,10 +122,58 @@ export function ProfilePageClient({ uid }: { uid: string }) {
             bio: 'Bondi local 🌊',
             avatarUrl: null,
             bannerUrl: undefined,
+            followerCount: 0,
         };
     }
     return null;
   }, [mockUserProfile, firestoreUserProfile, profileError, isFirestoreLoading, shouldFetchFirestore, uid, isOwner, currentUser]);
+
+  const handleFollowToggle = async () => {
+    if (!currentUser) {
+      router.push('/auth');
+      return;
+    }
+    if (!firestore || isOwner || isMockUser) return;
+
+    setIsFollowLoading(true);
+    const followDocId = `${currentUser.uid}_${uid}`;
+    const followRef = doc(firestore, 'follows', followDocId);
+    const profileRef = doc(firestore, 'users', uid);
+    
+    const wasFollowing = isFollowing;
+    // Optimistic UI Update
+    setIsFollowing(!wasFollowing);
+
+    try {
+      if (!wasFollowing) {
+        // Follow operation
+        setDocumentNonBlocking(followRef, {
+          followerId: currentUser.uid,
+          followedId: uid,
+          createdAt: serverTimestamp(),
+        }, { merge: true });
+        
+        updateDocumentNonBlocking(profileRef, {
+          followerCount: increment(1),
+          updatedAt: serverTimestamp(),
+        });
+      } else {
+        // Unfollow operation
+        deleteDocumentNonBlocking(followRef);
+        
+        updateDocumentNonBlocking(profileRef, {
+          followerCount: increment(-1),
+          updatedAt: serverTimestamp(),
+        });
+      }
+    } catch (error) {
+      console.error("Follow toggle failed:", error);
+      // Revert optimistic update
+      setIsFollowing(wasFollowing);
+    } finally {
+      setIsFollowLoading(false);
+    }
+  };
   
   const [userPins, setUserPins] = useState<typeof appData.map.pins>([]);
   useEffect(() => {
@@ -109,7 +181,6 @@ export function ProfilePageClient({ uid }: { uid: string }) {
   }, [uid]);
 
   const isLoading = shouldFetchFirestore ? isFirestoreLoading : false;
-  const followerCount = mockUserProfile ? Math.floor(Math.random() * 5000 + 1000) : 0;
 
   if (isLoading) {
     return (
@@ -142,6 +213,8 @@ export function ProfilePageClient({ uid }: { uid: string }) {
       );
     }
 
+    const displayFollowerCount = userProfile.followerCount || 0;
+
     return (
       <div className="grid grid-cols-2 gap-4">
           <div className="flex items-center gap-3 rounded-2xl border border-black/[0.06] bg-white p-4">
@@ -158,7 +231,7 @@ export function ProfilePageClient({ uid }: { uid: string }) {
                   <Users className="h-5 w-5 text-[#c4762a]" />
               </div>
               <div>
-                  <p className="text-xl font-black text-[#c4762a] leading-none">{followerCount.toLocaleString()}</p>
+                  <p className="text-xl font-black text-[#c4762a] leading-none">{displayFollowerCount.toLocaleString()}</p>
                   <p className="text-[10px] font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-tight mt-1">Followers</p>
               </div>
           </div>
@@ -202,9 +275,23 @@ export function ProfilePageClient({ uid }: { uid: string }) {
                     Edit
                   </Button>
                 ) : !isOwner && (
-                  <Button size="sm" className="h-9 rounded-xl bg-[#c4762a] hover:bg-[#b06824] font-bold text-[13px] px-6">
-                      <Rss className="mr-2 h-3.5 w-3.5" />
-                      Follow
+                  <Button 
+                    onClick={handleFollowToggle}
+                    disabled={isFollowLoading}
+                    size="sm" 
+                    className={cn(
+                      "h-9 rounded-xl font-bold text-[13px] px-6 transition-all",
+                      isFollowing 
+                        ? "bg-[rgba(26,18,8,0.06)] text-[#1a1208] hover:bg-[rgba(26,18,8,0.1)]" 
+                        : "bg-[#c4762a] hover:bg-[#b06824] text-white shadow-lg shadow-[#c4762a]/15"
+                    )}
+                  >
+                      {isFollowLoading ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Rss className="mr-2 h-3.5 w-3.5" />
+                      )}
+                      {isFollowing ? 'Following' : 'Follow'}
                   </Button>
                 )}
             </div>

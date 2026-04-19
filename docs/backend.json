@@ -45,6 +45,10 @@
           "format": "uri",
           "description": "URL for the user's custom profile banner."
         },
+        "followerCount": {
+          "type": "number",
+          "description": "Total number of users following this profile."
+        },
         "createdAt": {
             "type": "string",
             "format": "date-time",
@@ -57,6 +61,17 @@
         "refCode",
         "createdAt"
       ]
+    },
+    "Follow": {
+      "title": "Follow",
+      "type": "object",
+      "description": "Represents a follow relationship between two users.",
+      "properties": {
+        "followerId": { "type": "string" },
+        "followedId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["followerId", "followedId", "createdAt"]
     },
     "Venue": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -493,6 +508,10 @@
     "/users/{userId}": {
       "schema": { "$ref": "#/entities/User" },
       "description": "Stores user profiles. Path-based ownership for user-specific data."
+    },
+    "/follows/{followId}": {
+      "schema": { "$ref": "#/entities/Follow" },
+      "description": "Stores global follow relationships between users. Document ID is {followerId}_{followedId}."
     },
     "/users/{userId}/claimedDeals/{dealId}": {
         "schema": { "$ref": "#/entities/ClaimedDeal" },

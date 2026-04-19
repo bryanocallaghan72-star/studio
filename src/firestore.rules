@@ -50,24 +50,24 @@ service cloud.firestore {
       allow list: if false;
 
       // Allow a user to create their own profile document.
-      // For email users, verify the email matches. For anonymous users, allow creation without an email.
-      allow create: if isOwner(userId) && (
-        (request.auth.token.email != null && request.resource.data.email == request.auth.token.email) ||
-        (request.auth.token.email == null)
+      allow create: if isOwner(userId);
+      
+      // Allow owner to update everything, allow others to ONLY increment followerCount.
+      allow update: if isExistingOwner(userId) || (
+        isSignedIn() && 
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['followerCount', 'updatedAt'])
       );
-      // Allow a user to update or delete their own profile.
-      allow update, delete: if isExistingOwner(userId);
+      
+      allow delete: if isExistingOwner(userId);
 
       // Subcollections for user-specific data. Only accessible by the owner.
       match /claimedDeals/{dealId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }
        match /influencedActions/{actionId} {
-        // Any signed-in user can create a record here, representing influence.
-        // Reading is restricted to the creator (owner of this subcollection).
         allow get, list, delete: if isOwner(userId);
         allow create: if isSignedIn();
-        allow update: if false; // Immutable logs
+        allow update: if false;
       }
       match /joinedSocials/{socialId} {
         allow get, list, create, delete: if isOwner(userId);
@@ -83,22 +83,24 @@ service cloud.firestore {
       }
     }
 
+    // /follows/{followId}
+    // Global follow relationships.
+    match /follows/{followId} {
+      allow get: if isSignedIn();
+      allow list: if false;
+      // Allow creation if the followerId matches the authenticated user.
+      allow create: if isSignedIn() && request.resource.data.followerId == request.auth.uid;
+      // Allow deletion if the user was the follower.
+      allow delete: if isSignedIn() && resource.data.followerId == request.auth.uid;
+    }
+
     // /venues/{venueId}
-    // Public venue information. Read by anyone, writable by signed-in users with validation.
     match /venues/{venueId} {
       allow get, list: if true;
       allow delete: if false;
-
-      // Allow create if user is signed in and provides essential data.
-      allow create: if isSignedIn()
-                      && request.resource.data.slug == venueId;
-
-      // Allow update if user is signed in.
-      // This is a broader rule for now to allow enrichment.
+      allow create: if isSignedIn() && request.resource.data.slug == venueId;
       allow update: if isSignedIn();
 
-
-      // Experiences are tied to venues, read-only for clients.
       match /experiences/{experienceId} {
         allow get, list: if true;
         allow create, update, delete: if false;
@@ -106,67 +108,66 @@ service cloud.firestore {
     }
 
     // /deals/{dealId}
-    // Public deals. Read by anyone, writable by the creator who owns the deal.
     match /deals/{dealId} {
       allow get, list: if true;
-
-      // A user can create a deal if they are signed in and the creatorId matches their UID.
       allow create: if isSignedIn() && request.resource.data.creatorId == request.auth.uid;
-      // Only the original creator can update or delete their own deal.
       allow update, delete: if isExistingOwner(resource.data.creatorId);
     }
     
     // /stays/{stayId}
-    // Public stay recommendations. Read by anyone, writable by the creator.
     match /stays/{stayId} {
       allow get, list: if true;
-
-      // A user can create a stay recommendation if they are signed in and the creatorId matches their UID.
       allow create: if isSignedIn() && request.resource.data.creatorId == request.auth.uid;
-      // Only the original creator can update or delete their own stay recommendation.
       allow update, delete: if isExistingOwner(resource.data.creatorId);
     }
 
     // /communities/{communityId}
-    // Read-only from the client for now.
     match /communities/{communityId} {
       allow get, list: if true;
       allow create, update, delete: if false;
     }
 
     // /socials/{socialId}
-    // User-generated social events. Read by anyone, created by any signed-in user, managed by the host.
     match /socials/{socialId} {
       allow get, list: if true;
-
-      // Any signed-in user can create a social, as long as they set themselves as the host.
       allow create: if isSignedIn() && request.resource.data.hostId == request.auth.uid;
-      // Only the original host can update or delete their event.
       allow update, delete: if isExistingOwner(resource.data.hostId);
 
-      // /socials/{socialId}/participants/{userId}
-      // Manages who is in a social event.
       match /participants/{userId} {
         allow get, list: if true;
-
-        // A user can only create their own participant document (i.e., "ask to join").
         allow create: if isOwner(userId);
-        // A user can update their own status (e.g., leave), OR the host can update their status (e.g., accept/reject).
         allow update: if isOwner(userId) || isHost(socialId);
-        // A user can delete their own participation, OR the host can remove them.
         allow delete: if isOwner(userId) || isHost(socialId);
       }
     }
 
     // /sliceOfLifePosts/{postId}
-    // Public stories. Read by anyone, writable by the creator.
     match /sliceOfLifePosts/{postId} {
         allow get, list: if true;
-        
-        // A signed-in user can create a story if the creatorId matches their UID.
         allow create: if isSignedIn() && request.resource.data.creatorId == request.auth.uid;
-        // Only the original creator can update or delete their story.
         allow update, delete: if isExistingOwner(resource.data.creatorId);
+    }
+
+    // /posts/{postId}
+    match /posts/{postId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.creatorId == request.auth.uid;
+      allow update, delete: if isExistingOwner(resource.data.creatorId);
+    }
+
+    // /claims/{claimId}
+    match /claims/{claimId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if false;
+    }
+
+    // /notifications/{notificationId}
+    match /notifications/{notificationId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn();
+      allow delete: if false;
     }
   }
 }
