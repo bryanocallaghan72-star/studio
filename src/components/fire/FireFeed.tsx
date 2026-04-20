@@ -1,54 +1,36 @@
+
 'use client';
 
-import React from 'react';
-import { FireCard, type FireDrop } from './FireCard';
+import React, { useMemo } from 'react';
+import { FireCard } from './FireCard';
 import { motion } from 'framer-motion';
-
-const MOCK_FIRE_DROPS: FireDrop[] = [
-  {
-    id: '1',
-    venue: 'Icebergs Dining Room',
-    offer: 'First round of drinks on us with any main',
-    claimed: 34,
-    total: 50,
-    endsInMinutes: 45,
-    image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80',
-  },
-  {
-    id: '2',
-    venue: 'Toko Bondi',
-    offer: '15% off the full omakase menu tonight',
-    claimed: 18,
-    total: 40,
-    endsInMinutes: 90,
-    image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&q=80',
-  },
-  {
-    id: '3',
-    venue: 'Fluidform Pilates',
-    offer: 'Last spot: 25% off the 5pm Reformer class',
-    claimed: 11,
-    total: 12,
-    endsInMinutes: 28,
-    image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800&q=80',
-    isAlmostGone: true,
-  },
-  {
-    id: '4',
-    venue: 'North Bondi Fish',
-    offer: 'Free glass of rosé with any seafood platter',
-    claimed: 27,
-    total: 60,
-    endsInMinutes: 120,
-    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80',
-  },
-];
+import { useHotItems } from '@/hooks/useHotItems';
+import { useDemoTime } from '@/context/DemoTimeContext';
+import { Loader2 } from 'lucide-react';
 
 interface FireFeedProps {
   onClaim?: (venue: string, offer: string) => void;
 }
 
 export function FireFeed({ onClaim }: FireFeedProps) {
+  const { hotItems, isLoading } = useHotItems();
+  const { mockDate } = useDemoTime();
+
+  const activeDrops = useMemo(() => {
+    if (!hotItems) return [];
+    return hotItems
+      .filter(item => new Date(item.expiresAt).getTime() > mockDate.getTime())
+      .sort((a, b) => new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime());
+  }, [hotItems, mockDate]);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-[50vh] w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-[#c4762a]" />
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto w-full max-w-lg space-y-8">
       <div className="flex flex-col gap-1 px-1">
@@ -59,17 +41,36 @@ export function FireFeed({ onClaim }: FireFeedProps) {
       </div>
       
       <div className="grid grid-cols-1 gap-8">
-        {MOCK_FIRE_DROPS.map((drop, index) => (
+        {activeDrops.map((drop, index) => (
           <motion.div
             key={drop.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: index * 0.1 }}
           >
-            <FireCard drop={drop} onClaim={() => onClaim?.(drop.venue, drop.offer)} />
+            <FireCard 
+              drop={{
+                id: drop.id,
+                venue: drop.venue,
+                offer: drop.title,
+                claimed: drop.claims,
+                total: drop.claims + 5, // Simulated total
+                expiresAt: drop.expiresAt,
+                imageId: drop.imageId,
+                isAlmostGone: drop.claims > 20
+              }} 
+              onClaim={() => onClaim?.(drop.venue, drop.title)} 
+            />
           </motion.div>
         ))}
       </div>
+
+      {activeDrops.length === 0 && (
+        <div className="text-center py-24 px-6 border-2 border-dashed border-black/[0.05] rounded-3xl">
+          <p className="text-sm font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest">Quiet in this phase</p>
+          <p className="text-xs text-[rgba(26,18,8,0.30)] mt-2">Switch vibes or check back later for more Fire drops.</p>
+        </div>
+      )}
     </div>
   );
 }

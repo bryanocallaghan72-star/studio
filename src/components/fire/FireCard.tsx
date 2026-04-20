@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -6,6 +7,8 @@ import { Flame, Ticket, Users } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useDemoTime } from '@/context/DemoTimeContext';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export interface FireDrop {
   id: string;
@@ -13,24 +16,33 @@ export interface FireDrop {
   offer: string;
   claimed: number;
   total: number;
-  endsInMinutes: number;
-  image: string;
+  expiresAt: string;
+  imageId: string;
   isAlmostGone?: boolean;
 }
 
-const Countdown = ({ minutes }: { minutes: number }) => {
-  const [timeLeft, setTimeLeft] = useState(minutes * 60);
+const Countdown = ({ expiresAt }: { expiresAt: string }) => {
+  const { mockDate } = useDemoTime();
+  const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
+    const startRealTime = Date.now();
 
-  const h = Math.floor(timeLeft / 3600);
-  const m = Math.floor((timeLeft % 3600) / 60);
-  const s = timeLeft % 60;
+    const update = () => {
+      const elapsed = Date.now() - startRealTime;
+      const currentMockTime = mockDate.getTime() + elapsed;
+      const remaining = new Date(expiresAt).getTime() - currentMockTime;
+      setTimeLeft(remaining > 0 ? remaining : 0);
+    };
+
+    update();
+    const timer = setInterval(update, 1000);
+    return () => clearInterval(timer);
+  }, [expiresAt, mockDate]);
+
+  const h = Math.floor(timeLeft / 3600000);
+  const m = Math.floor((timeLeft % 3600000) / 60000);
+  const s = Math.floor((timeLeft % 60000) / 1000);
 
   return (
     <span className="font-mono text-xl font-bold tracking-tighter">
@@ -40,16 +52,20 @@ const Countdown = ({ minutes }: { minutes: number }) => {
 };
 
 export function FireCard({ drop, onClaim }: { drop: FireDrop; onClaim: () => void }) {
+  const image = PlaceHolderImages.find(img => img.id === drop.imageId);
+
   return (
     <Card className="group relative overflow-hidden rounded-[24px] border-none bg-white shadow-xl shadow-black/5 transition-all active:scale-[0.98]">
       <div className="relative aspect-[16/10] w-full overflow-hidden">
-        <Image
-          src={drop.image}
-          alt={drop.venue}
-          fill
-          unoptimized
-          className="object-cover transition-transform duration-700 group-hover:scale-110"
-        />
+        {image && (
+          <Image
+            src={image.imageUrl}
+            alt={drop.venue}
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-110"
+            data-ai-hint={image.imageHint}
+          />
+        )}
         <div 
           className="absolute inset-0 z-10" 
           style={{ 
@@ -90,7 +106,7 @@ export function FireCard({ drop, onClaim }: { drop: FireDrop; onClaim: () => voi
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col justify-center rounded-2xl bg-[#c4762a] p-4 text-white shadow-lg shadow-[#c4762a]/20">
               <span className="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">Ends in</span>
-              <Countdown minutes={drop.endsInMinutes} />
+              <Countdown expiresAt={drop.expiresAt} />
             </div>
             <Button 
               className="h-auto rounded-2xl bg-[#c4762a] hover:bg-[#a66324] text-white font-black text-lg py-0 flex flex-col items-center justify-center gap-0 shadow-lg active:scale-95 transition-all"
