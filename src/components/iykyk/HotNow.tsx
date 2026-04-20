@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
@@ -16,31 +17,29 @@ import type { HotItem } from '@/data/seeds/drops';
 import { useVenues } from '@/hooks/useVenues';
 import { Skeleton } from '../ui/skeleton';
 import { useCreators } from '@/hooks/useCreators';
+import { useDemoTime } from '@/context/DemoTimeContext';
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
+    const { mockDate } = useDemoTime();
     const [timeLeft, setTimeLeft] = useState(0);
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
         setIsClient(true);
-        setTimeLeft(new Date(expiresAt).getTime() - Date.now());
-    }, [expiresAt]);
+        // Track the real time when this instance started to simulate mock ticking
+        const startRealTime = Date.now();
 
-    useEffect(() => {
-        if (!isClient) return;
+        const update = () => {
+            const elapsed = Date.now() - startRealTime;
+            const currentMockTime = mockDate.getTime() + elapsed;
+            const remaining = new Date(expiresAt).getTime() - currentMockTime;
+            setTimeLeft(remaining > 0 ? remaining : 0);
+        };
 
-        const intervalId = setInterval(() => {
-            const newTimeLeft = new Date(expiresAt).getTime() - Date.now();
-            if (newTimeLeft <= 0) {
-                setTimeLeft(0);
-                clearInterval(intervalId);
-            } else {
-                setTimeLeft(newTimeLeft);
-            }
-        }, 1000);
-
+        update();
+        const intervalId = setInterval(update, 1000);
         return () => clearInterval(intervalId);
-    }, [isClient, expiresAt]);
+    }, [expiresAt, mockDate]);
 
     if (!isClient) {
         return <span className="font-mono text-lg font-semibold text-background">Loading...</span>;
@@ -75,6 +74,7 @@ export function HotNow() {
     const [isClient, setIsClient] = useState(false);
     const firestore = useFirestore();
     const { user } = useUser();
+    const { mockDate } = useDemoTime();
 
     const { hotItems, isLoading: areItemsLoading } = useHotItems();
     const { venues, isLoading: areVenuesLoading } = useVenues();
@@ -131,8 +131,9 @@ export function HotNow() {
 
     const activeItems = useMemo(() => {
         if (!hotItems || !isClient) return [];
-        return hotItems.filter(item => new Date(item.expiresAt).getTime() > Date.now());
-    }, [hotItems, isClient]);
+        // Filter based on God Mode mockDate instead of system clock
+        return hotItems.filter(item => new Date(item.expiresAt).getTime() > mockDate.getTime());
+    }, [hotItems, isClient, mockDate]);
 
 
     return (

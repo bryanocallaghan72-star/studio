@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -16,35 +17,32 @@ import { useTableDrops, type TableDrop } from '@/hooks/useTableDrops';
 import { useVenues } from '@/hooks/useVenues';
 import { useCreators } from '@/hooks/useCreators';
 import { cn } from '@/lib/utils';
+import { useDemoTime } from '@/context/DemoTimeContext';
 
 type TableDropWithClaim = TableDrop & {
     hasUserClaimed: boolean;
 };
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
+    const { mockDate } = useDemoTime();
     const [timeLeft, setTimeLeft] = useState(0);
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
         setIsClient(true);
-        setTimeLeft(new Date(expiresAt).getTime() - Date.now());
-    }, [expiresAt]);
+        const startRealTime = Date.now();
 
-    useEffect(() => {
-        if (!isClient) return;
+        const update = () => {
+            const elapsed = Date.now() - startRealTime;
+            const currentMockTime = mockDate.getTime() + elapsed;
+            const remaining = new Date(expiresAt).getTime() - currentMockTime;
+            setTimeLeft(remaining > 0 ? remaining : 0);
+        };
 
-        const intervalId = setInterval(() => {
-            const newTimeLeft = new Date(expiresAt).getTime() - Date.now();
-            if (newTimeLeft <= 0) {
-                setTimeLeft(0);
-                clearInterval(intervalId);
-            } else {
-                setTimeLeft(newTimeLeft);
-            }
-        }, 1000);
-
+        update();
+        const intervalId = setInterval(update, 1000);
         return () => clearInterval(intervalId);
-    }, [isClient, expiresAt]);
+    }, [expiresAt, mockDate]);
 
     if (!isClient) {
         return <span className="font-mono text-lg font-semibold text-white">00:00:00</span>;
@@ -156,6 +154,7 @@ export function Tables() {
     const [isClient, setIsClient] = useState(false);
     const firestore = useFirestore();
     const { user } = useUser();
+    const { mockDate } = useDemoTime();
 
     const { tableDrops, isLoading: areDropsLoading } = useTableDrops();
     const { venues, isLoading: areVenuesLoading } = useVenues();
@@ -249,11 +248,12 @@ export function Tables() {
     
     const liveDrops = useMemo(() => {
         if (!isClient || !tableDrops) return [];
+        // Filter based on God Mode mockDate
         return tableDrops
-            .filter(drop => new Date(drop.expiresAt).getTime() > Date.now())
+            .filter(drop => new Date(drop.expiresAt).getTime() > mockDate.getTime())
             .map(drop => ({ ...drop, hasUserClaimed: claimedDrops.includes(drop.id) }))
             .sort((a, b) => new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime());
-    }, [tableDrops, isClient, claimedDrops]);
+    }, [tableDrops, isClient, claimedDrops, mockDate]);
 
     const favoriteDrops = useMemo(() => liveDrops.filter(drop => drop.isFavoriteVenue), [liveDrops]);
 

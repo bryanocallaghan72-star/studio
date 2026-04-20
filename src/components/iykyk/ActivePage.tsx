@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -16,31 +17,28 @@ import { useClassDrops } from '@/hooks/useClassDrops';
 import type { ClassDrop } from '@/data/seeds/drops';
 import { useCreators } from '@/hooks/useCreators';
 import { cn } from '@/lib/utils';
+import { useDemoTime } from '@/context/DemoTimeContext';
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
+    const { mockDate } = useDemoTime();
     const [timeLeft, setTimeLeft] = useState(0);
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
         setIsClient(true);
-        setTimeLeft(new Date(expiresAt).getTime() - Date.now());
-    }, [expiresAt]);
+        const startRealTime = Date.now();
 
-    useEffect(() => {
-        if (!isClient) return;
+        const update = () => {
+            const elapsed = Date.now() - startRealTime;
+            const currentMockTime = mockDate.getTime() + elapsed;
+            const remaining = new Date(expiresAt).getTime() - currentMockTime;
+            setTimeLeft(remaining > 0 ? remaining : 0);
+        };
 
-        const intervalId = setInterval(() => {
-            const newTimeLeft = new Date(expiresAt).getTime() - Date.now();
-            if (newTimeLeft <= 0) {
-                setTimeLeft(0);
-                clearInterval(intervalId);
-            } else {
-                setTimeLeft(newTimeLeft);
-            }
-        }, 1000);
-
+        update();
+        const intervalId = setInterval(update, 1000);
         return () => clearInterval(intervalId);
-    }, [isClient, expiresAt]);
+    }, [expiresAt, mockDate]);
 
     if (!isClient) {
         return <span className="font-mono text-base font-bold">00:00:00</span>;
@@ -148,6 +146,7 @@ export function ActivePage() {
     const [copied, setCopied] = useState(false);
     const firestore = useFirestore();
     const { user } = useUser();
+    const { mockDate } = useDemoTime();
     
     const { classDrops, isLoading: areDropsLoading } = useClassDrops();
     const { venues, isLoading: areVenuesLoading } = useVenues();
@@ -237,11 +236,12 @@ export function ActivePage() {
     
     const liveDrops = useMemo(() => {
         if (!isClient || !classDrops) return [];
+        // Filter based on God Mode mockDate
         return classDrops
-            .filter(drop => new Date(drop.expiresAt).getTime() > Date.now())
+            .filter(drop => new Date(drop.expiresAt).getTime() > mockDate.getTime())
             .map(drop => ({ ...drop, hasUserClaimed: claimedDrops.includes(drop.id) }))
             .sort((a, b) => new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime());
-    }, [classDrops, isClient, claimedDrops]);
+    }, [classDrops, isClient, claimedDrops, mockDate]);
     
     const favoriteDrops = useMemo(() => liveDrops.filter(drop => drop.isFavoriteVenue), [liveDrops]);
     
