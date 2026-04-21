@@ -92,11 +92,10 @@ const VenueCard = memo(({ venue, mockDate }: { venue: any, mockDate: Date }) => 
                 isClosed && "opacity-50"
             )}>
                  <div className="absolute inset-0">
-                    <Image
+                    <img
                         src={imageUrl}
                         alt={venue.name}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div 
                         className="absolute inset-0" 
