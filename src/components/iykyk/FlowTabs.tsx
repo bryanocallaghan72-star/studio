@@ -17,31 +17,70 @@ import { useSoundContext } from '@/context/SoundContext';
 import { useDemoTime } from "@/context/DemoTimeContext";
 
 
-const VenueCard = memo(({ venue }: { venue: Venue }) => {
-    const router = useRouter();
+const VenueCard = memo(({ venue }: { venue: any }) => {
     const { playClick } = useSoundContext();
 
-    const handleMapClick = (e: React.MouseEvent) => {
-        e.stopPropagation(); 
-        e.preventDefault(); 
-        playClick();
+    const openingStatus = useMemo(() => {
+        if (!venue?.openingHours?.periods || venue.openingHours.periods.length === 0) return null;
 
-        const categoryMap: { [key: string]: string } = {
-            "Cafe & Matcha": "Brunch",
-            "Viral Matcha": "Brunch",
-            "Aesthetic Brunch": "Brunch",
-            "Social Dining": "Nightlife",
-            "Beach Club Vibe": "Vibes",
-            "Iconic View": "Vibes",
-            "Beachfront Bar": "Nightlife",
-            "Sushi & Sake": "Sushi",
-            "Italo Disco Dining": "Nightlife",
-            "Cocktail Bar": "Nightlife",
+        const now = new Date();
+        const currentDay = now.getDay();
+        const currentTime = now.getHours() * 100 + now.getMinutes();
+        const periods = venue.openingHours.periods;
+
+        // Check for 24/7
+        const isAlwaysOpen = periods.length === 1 && 
+            periods[0].open.day === 0 && 
+            periods[0].open.time === "0000" && 
+            (!periods[0].close || (periods[0].close.day === 0 && periods[0].close.time === "0000"));
+
+        if (isAlwaysOpen) return { isOpen: true };
+
+        // Check if currently open
+        const activePeriod = periods.find((p: any) => {
+            const openDay = p.open.day;
+            const openTime = parseInt(p.open.time);
+            const closeDay = p.close?.day ?? openDay;
+            const closeTime = p.close ? parseInt(p.close.time) : 2359;
+
+            if (openDay === closeDay) {
+                return currentDay === openDay && currentTime >= openTime && currentTime < closeTime;
+            } else {
+                if (currentDay === openDay) return currentTime >= openTime;
+                if (currentDay === (openDay + 1) % 7) return currentTime < closeTime;
+            }
+            return false;
+        });
+
+        if (activePeriod) return { isOpen: true };
+
+        // Find next opening for label
+        const nextOpening = [...periods]
+            .map((p: any) => ({
+                ...p,
+                absOpen: p.open.day * 1440 + parseInt(p.open.time.substring(0, 2)) * 60 + parseInt(p.open.time.substring(2))
+            }))
+            .sort((a: any, b: any) => a.absOpen - b.absOpen);
+
+        const absNow = currentDay * 1440 + now.getHours() * 60 + now.getMinutes();
+        let next = nextOpening.find((p: any) => p.absOpen > absNow);
+        if (!next) next = nextOpening[0];
+
+        const formatTimeStr = (t: string) => {
+            const h = parseInt(t.substring(0, 2));
+            const m = t.substring(2);
+            const suffix = h >= 12 ? 'PM' : 'AM';
+            const hour12 = h % 12 || 12;
+            return `${hour12}:${m} ${suffix}`;
         };
-        const mapCategory = venue.details?.category ? (categoryMap[venue.details.category] || 'All') : 'All';
 
-        router.push(`/map?category=${mapCategory}`);
-    };
+        return { 
+            isOpen: false, 
+            nextTime: formatTimeStr(next.open.day === currentDay ? next.open.time : next.open.time) 
+        };
+    }, [venue]);
+
+    const isClosed = openingStatus && !openingStatus.isOpen;
     
     const imageUrl = venue.details?.category === 'Brunch' 
       ? "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1000&auto=format&fit=crop"
@@ -49,7 +88,10 @@ const VenueCard = memo(({ venue }: { venue: Venue }) => {
 
     return (
         <Link href={`/venue/${venue.slug}`} onClick={playClick}>
-            <Card className="group relative h-64 overflow-hidden rounded-2xl border border-black/[0.08] shadow-sm transition-all hover:shadow-xl hover:-translate-y-1">
+            <Card className={cn(
+                "group relative h-64 overflow-hidden rounded-2xl border border-black/[0.08] shadow-sm transition-all hover:shadow-xl hover:-translate-y-1",
+                isClosed && "opacity-50"
+            )}>
                  <div className="absolute inset-0">
                     <Image
                         src={imageUrl}
@@ -57,7 +99,6 @@ const VenueCard = memo(({ venue }: { venue: Venue }) => {
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    {/* Editorial Scrim Overlay */}
                     <div 
                         className="absolute inset-0" 
                         style={{ background: 'linear-gradient(to top, rgba(8,10,13,0.85) 0%, rgba(8,10,13,0.4) 35%, transparent 60%)' }} 
@@ -73,7 +114,13 @@ const VenueCard = memo(({ venue }: { venue: Venue }) => {
                                 {venue.location?.address}
                             </p>
                         </div>
-                        {venue.details?.category && (
+                        {isClosed ? (
+                            <Badge 
+                                className="bg-red-500 text-white text-[10px] font-black border-none uppercase tracking-wider rounded-full px-2 py-0.5"
+                            >
+                                Opens at {openingStatus.nextTime}
+                            </Badge>
+                        ) : venue.details?.category && (
                             <Badge 
                                 className="bg-white/20 text-white text-[10px] font-bold backdrop-blur-md border-none uppercase tracking-wider rounded-full px-2 py-0.5"
                             >
