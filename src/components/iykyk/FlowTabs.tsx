@@ -82,7 +82,13 @@ const VenueCard = memo(({ venue, mockDate }: { venue: any, mockDate: Date }) => 
 
     const isClosed = openingStatus && !openingStatus.isOpen;
     
-    const imageUrl = venue.photos?.[0] || 
+    const getPhotoUrl = (photoRef: string) => {
+        if (!photoRef) return null;
+        if (photoRef.startsWith('http')) return photoRef;
+        return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${photoRef}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
+    };
+
+    const imageUrl = getPhotoUrl(venue.photos?.[0]) || 
       "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop";
 
     return (
