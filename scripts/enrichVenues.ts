@@ -12,7 +12,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
-const PROJECT_ID = process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+const PROJECT_ID = process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'studio-8946896495-11b4f';
 
 if (!GOOGLE_MAPS_API_KEY) {
   console.error('❌ GOOGLE_MAPS_API_KEY is not set in .env');
@@ -56,7 +56,7 @@ async function fetchPlaceData(venueName: string, showDebug: boolean = false) {
   const placeId = searchData.results[0].place_id;
 
   // Step 2: Place Details for rich metadata
-  const fields = 'place_id,photos,opening_hours,price_level,rating,user_ratings_total,formatted_phone_number,website';
+  const fields = 'place_id,photos,opening_hours,price_level,rating,user_ratings_total,formatted_phone_number,website,business_status,formatted_address';
   const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=${fields}&key=${GOOGLE_MAPS_API_KEY}`;
   
   const detailsRes = await fetch(detailsUrl);
@@ -105,12 +105,13 @@ async function main() {
         totalRatings: place.user_ratings_total ?? null,
         phone: place.formatted_phone_number ?? null,
         website: place.website ?? null,
+        businessStatus: place.business_status ?? null,
         placeId: place.place_id,
         enrichedAt: admin.firestore.FieldValue.serverTimestamp()
       };
 
       await doc.ref.update(updateData);
-      console.log(`✅ Enriched: ${venue.name} (${photos.length} photos)`);
+      console.log(`✅ Enriched: ${venue.name} | ⭐ ${place.rating ?? 'N/A'} | 📸 ${photos.length} photos | ${place.business_status ?? 'OPERATIONAL'}`);
       successCount++;
 
       // Small delay to be polite to the API
