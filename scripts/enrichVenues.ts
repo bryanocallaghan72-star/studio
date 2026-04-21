@@ -65,14 +65,6 @@ async function fetchPlaceData(venueName: string, showDebug: boolean = false) {
   return detailsData.result;
 }
 
-function resolvePhotoUrls(photos: any[]) {
-  if (!photos || !Array.isArray(photos)) return [];
-  
-  return photos.slice(0, 3).map(p => {
-    return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${p.photo_reference}&key=${GOOGLE_MAPS_API_KEY}`;
-  });
-}
-
 async function main() {
   console.log('🚀 Starting Google Places enrichment...');
   console.log(`Project: ${PROJECT_ID} | API Key: ${GOOGLE_MAPS_API_KEY!.substring(0, 8)}...`);
@@ -99,8 +91,11 @@ async function main() {
         continue;
       }
 
+      // Extract raw photo references (max 3)
+      const photos = place.photos?.slice(0, 3).map((p: any) => p.photo_reference) || [];
+
       const updateData = {
-        photos: resolvePhotoUrls(place.photos),
+        photos: photos,
         openingHours: {
           periods: place.opening_hours?.periods || [],
           weekdayText: place.opening_hours?.weekday_text || []
@@ -115,7 +110,7 @@ async function main() {
       };
 
       await doc.ref.update(updateData);
-      console.log(`✅ Enriched: ${venue.name}`);
+      console.log(`✅ Enriched: ${venue.name} (${photos.length} photos)`);
       successCount++;
 
       // Small delay to be polite to the API
