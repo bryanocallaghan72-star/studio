@@ -1,8 +1,10 @@
 
 /**
  * @fileOverview Google Places Venue Enrichment Script
- * Fetches real photos, opening hours, price levels, and ratings from Google Places API
- * and updates the Firestore 'venues' collection.
+ * Fetches real photos, opening hours, price levels, and contact info from Google Places API
+ * and updates the Firestore 'venues' collection. 
+ *
+ * NOTE: Google ratings are excluded in favor of our internal iykykScore system.
  */
 
 import * as admin from 'firebase-admin';
@@ -55,8 +57,8 @@ async function fetchPlaceData(venueName: string, showDebug: boolean = false) {
 
   const placeId = searchData.results[0].place_id;
 
-  // Step 2: Place Details for rich metadata
-  const fields = 'place_id,photos,opening_hours,price_level,rating,user_ratings_total,formatted_phone_number,website,business_status,formatted_address';
+  // Step 2: Place Details for rich metadata (Excluding ratings)
+  const fields = 'place_id,photos,opening_hours,price_level,formatted_phone_number,website,business_status,formatted_address';
   const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=${fields}&key=${GOOGLE_MAPS_API_KEY}`;
   
   const detailsRes = await fetch(detailsUrl);
@@ -66,7 +68,7 @@ async function fetchPlaceData(venueName: string, showDebug: boolean = false) {
 }
 
 async function main() {
-  console.log('🚀 Starting Google Places enrichment...');
+  console.log('🚀 Starting Google Places enrichment (Vibe Edition)...');
   console.log(`Project: ${PROJECT_ID} | API Key: ${GOOGLE_MAPS_API_KEY!.substring(0, 8)}...`);
 
   const venuesRef = db.collection('venues');
@@ -101,17 +103,17 @@ async function main() {
           weekdayText: place.opening_hours?.weekday_text || []
         },
         priceLevel: place.price_level ?? null,
-        rating: place.rating ?? null,
-        totalRatings: place.user_ratings_total ?? null,
         phone: place.formatted_phone_number ?? null,
         website: place.website ?? null,
         businessStatus: place.business_status ?? null,
         placeId: place.place_id,
+        // Initialize/Reset internal iykykScore
+        iykykScore: 0,
         enrichedAt: admin.firestore.FieldValue.serverTimestamp()
       };
 
       await doc.ref.update(updateData);
-      console.log(`✅ Enriched: ${venue.name} | ⭐ ${place.rating ?? 'N/A'} | 📸 ${photos.length} photos | ${place.business_status ?? 'OPERATIONAL'}`);
+      console.log(`✅ Enriched: ${venue.name} | 📸 ${photos.length} photos | ${place.business_status ?? 'OPERATIONAL'}`);
       successCount++;
 
       // Small delay to be polite to the API
