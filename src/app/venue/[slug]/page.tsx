@@ -61,6 +61,7 @@ type Venue = WithId<{
   vibeTags?: string[];
   priceTier?: '$' | '$$' | '$$$' | '$$$$';
   photoReference?: string;
+  photos?: string[];
   openingHours?: {
     periods: {
       open: { day: number; time: string };
@@ -185,11 +186,16 @@ export default function VenuePage() {
   }, []);
 
   useEffect(() => {
-    if (venue?.photoReference && isKeyValid) {
-      const url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${venue.photoReference}&key=${googleMapsApiKey}`;
+    const photoRef = venue?.photos?.[0] || venue?.photoReference;
+    if (photoRef) {
+      const url = photoRef.startsWith('http') 
+        ? photoRef 
+        : `/api/place-photo?ref=${encodeURIComponent(photoRef)}`;
       setPhotoUrl(url);
+    } else {
+      setPhotoUrl(null);
     }
-  }, [venue, isKeyValid, googleMapsApiKey]);
+  }, [venue]);
 
 
   useEffect(() => {
@@ -362,14 +368,12 @@ export default function VenuePage() {
             className="relative h-64 w-full"
             style={{ background: 'linear-gradient(135deg, #1a1208 0%, #3d2a10 50%, #c4762a 100%)' }}
           >
-              {(photoUrl) ? (
-                  <Image
+              {photoUrl ? (
+                  <img
                       src={photoUrl}
                       alt={venue.name}
-                      fill
-                      className="object-cover"
-                      priority
-              />
+                      className="absolute inset-0 h-full w-full object-cover"
+                  />
               ) : (
                   <div className="flex items-center justify-center h-full bg-transparent">
                       <Building className="h-16 w-16 text-white/20" />
