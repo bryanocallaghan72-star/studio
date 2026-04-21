@@ -43,6 +43,7 @@ import { cn } from '@/lib/utils';
 // Updated Venue type for this page supporting both flat and nested schemas
 type Venue = WithId<{
   name: string;
+  ownerId?: string;
   address?: string;
   category: string;
   description?: string;
@@ -178,6 +179,9 @@ export default function VenuePage() {
 
   const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const isKeyValid = isValidGoogleMapsKey(googleMapsApiKey);
+
+  const isOwner = user?.uid && venue?.ownerId === user.uid;
+  const isUnclaimed = !venue?.ownerId;
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -362,7 +366,7 @@ export default function VenuePage() {
   const center = { lat: lat ?? 0, lng: lng ?? 0 };
 
   return (
-    <div className="space-y-6 bg-[#f2ece0] min-h-screen pb-32">
+    <div className="space-y-6 bg-transparent min-h-screen pb-32">
       <Card className="overflow-hidden -mx-4 -mt-6 md:-mx-6 md:-mt-6 rounded-none md:rounded-b-3xl shadow-lg border-none">
           <div 
             className="relative h-64 w-full"
@@ -453,58 +457,68 @@ export default function VenuePage() {
           </Button>
         </div>
 
-        <Card className="overflow-hidden bg-white border-black/[0.08] rounded-[24px] shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-[#1a1208] font-bold">Edit Venue Details</CardTitle>
-            <CardDescription className="text-[rgba(26,18,8,0.50)]">Add more specific details to help others discover this venue.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                      <Label htmlFor="subCategory" className="text-[#1a1208] font-medium text-sm">Sub-category</Label>
-                      <Input 
-                        id="subCategory" 
-                        value={subCategory} 
-                        onChange={e => setSubCategory(e.target.value)} 
-                        placeholder="e.g., Cocktail Bar, Pilates Studio" 
-                        className="bg-[#f2ece0] border-black/[0.08] text-[#1a1208] placeholder:text-[rgba(26,18,8,0.30)] rounded-xl"
-                      />
-                  </div>
-                  <div className="space-y-2">
-                      <Label htmlFor="priceTier" className="text-[#1a1208] font-medium text-sm">Price Tier</Label>
-                      <Select value={priceTier} onValueChange={setPriceTier}>
-                          <SelectTrigger id="priceTier" className="bg-[#f2ece0] border-black/[0.08] text-[#1a1208] rounded-xl">
-                              <SelectValue placeholder="Select price tier" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white border-black/[0.08]">
-                              <SelectItem value="$">$ (Inexpensive)</SelectItem>
-                              <SelectItem value="$$">$$ (Moderate)</SelectItem>
-                              <SelectItem value="$$$">$$$ (Pricey)</SelectItem>
-                              <SelectItem value="$$$$">$$$$ (Very Expensive)</SelectItem>
-                          </SelectContent>
-                      </Select>
-                  </div>
-              </div>
-              <div className="space-y-2">
-                  <Label htmlFor="vibeTags" className="text-[#1a1208] font-medium text-sm">Vibe Tags (comma-separated)</Label>
-                  <Input 
-                    id="vibeTags" 
-                    value={vibeTags} 
-                    onChange={e => setVibeTags(e.target.value)} 
-                    placeholder="e.g., Casual, Rooftop, Live Music" 
-                    className="bg-[#f2ece0] border-black/[0.08] text-[#1a1208] placeholder:text-[rgba(26,18,8,0.30)] rounded-xl"
-                  />
-              </div>
-              <Button 
-                onClick={handleEnrichmentSave} 
-                disabled={isSaving || !user}
-                className="w-full h-12 bg-[#c4762a] hover:bg-[#b06824] text-white font-bold rounded-xl mt-2"
-              >
-                  {isSaving ? <Loader2 className="mr-2 animate-spin" /> : <Save className="mr-2" />}
-                  {isSaving ? "Saving..." : user ? "Save Details" : "Sign in to Save"}
-              </Button>
-          </CardContent>
-        </Card>
+        {isUnclaimed && (
+          <div className="text-center">
+            <button className="text-[13px] font-bold text-[#c4762a] hover:underline transition-all">
+              Own this venue? Claim it →
+            </button>
+          </div>
+        )}
+
+        {isOwner && (
+          <Card className="overflow-hidden bg-white border-black/[0.08] rounded-[24px] shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-[#1a1208] font-bold">Edit Venue Details</CardTitle>
+              <CardDescription className="text-[rgba(26,18,8,0.50)]">Add more specific details to help others discover this venue.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="subCategory" className="text-[#1a1208] font-medium text-sm">Sub-category</Label>
+                        <Input 
+                          id="subCategory" 
+                          value={subCategory} 
+                          onChange={e => setSubCategory(e.target.value)} 
+                          placeholder="e.g., Cocktail Bar, Pilates Studio" 
+                          className="bg-[#f2ece0] border-black/[0.08] text-[#1a1208] placeholder:text-[rgba(26,18,8,0.30)] rounded-xl"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="priceTier" className="text-[#1a1208] font-medium text-sm">Price Tier</Label>
+                        <Select value={priceTier} onValueChange={setPriceTier}>
+                            <SelectTrigger id="priceTier" className="bg-[#f2ece0] border-black/[0.08] text-[#1a1208] rounded-xl">
+                                <SelectValue placeholder="Select price tier" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white border-black/[0.08]">
+                                <SelectItem value="$">$ (Inexpensive)</SelectItem>
+                                <SelectItem value="$$">$$ (Moderate)</SelectItem>
+                                <SelectItem value="$$$">$$$ (Pricey)</SelectItem>
+                                <SelectItem value="$$$$">$$$$ (Very Expensive)</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="vibeTags" className="text-[#1a1208] font-medium text-sm">Vibe Tags (comma-separated)</Label>
+                    <Input 
+                      id="vibeTags" 
+                      value={vibeTags} 
+                      onChange={e => setVibeTags(e.target.value)} 
+                      placeholder="e.g., Casual, Rooftop, Live Music" 
+                      className="bg-[#f2ece0] border-black/[0.08] text-[#1a1208] placeholder:text-[rgba(26,18,8,0.30)] rounded-xl"
+                    />
+                </div>
+                <Button 
+                  onClick={handleEnrichmentSave} 
+                  disabled={isSaving || !user}
+                  className="w-full h-12 bg-[#c4762a] hover:bg-[#b06824] text-white font-bold rounded-xl mt-2"
+                >
+                    {isSaving ? <Loader2 className="mr-2 animate-spin" /> : <Save className="mr-2" />}
+                    {isSaving ? "Saving..." : user ? "Save Details" : "Sign in to Save"}
+                </Button>
+            </CardContent>
+          </Card>
+        )}
 
 
         <Card className="h-64 overflow-hidden rounded-[24px] border-black/[0.08] shadow-sm bg-white">
