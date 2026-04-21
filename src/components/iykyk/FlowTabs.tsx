@@ -85,7 +85,8 @@ const VenueCard = memo(({ venue, mockDate }: { venue: any, mockDate: Date }) => 
     const getPhotoUrl = (photoRef: string) => {
         if (!photoRef) return null;
         if (photoRef.startsWith('http')) return photoRef;
-        return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${photoRef}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
+        // Point to the server-side proxy to bypass CORS/referer restrictions
+        return `/api/place-photo?ref=${encodeURIComponent(photoRef)}`;
     };
 
     const imageUrl = getPhotoUrl(venue.photos?.[0]) || 
