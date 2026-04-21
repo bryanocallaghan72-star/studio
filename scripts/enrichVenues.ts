@@ -1,18 +1,21 @@
 
 /**
- * @fileOverview AI Venue Enrichment Script
- * Uses Gemini 2.5 Flash to generate contextual vibe tags for all venues in Firestore.
+ * @fileOverview Google Places Venue Enrichment Script
+ * Fetches real photos, opening hours, price levels, and ratings from Google Places API
+ * and updates the Firestore 'venues' collection.
  */
 
 import * as admin from 'firebase-admin';
+import * as dotenv from 'dotenv';
 
-// Configuration
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const PROJECT_ID = process.env.FIREBASE_PROJECT_ID;
-const FORCE_ENRICH = process.argv.includes('--force');
+// Load environment variables from .env
+dotenv.config();
 
-if (!GEMINI_API_KEY) {
-  console.error('✗ Error: GEMINI_API_KEY environment variable is required.');
+const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+const PROJECT_ID = process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+
+if (!GOOGLE_MAPS_API_KEY) {
+  console.error('✗ Error: GOOGLE_MAPS_API_KEY environment variable is required in .env');
   process.exit(1);
 }
 
@@ -26,124 +29,99 @@ if (admin.apps.length === 0) {
 const db = admin.firestore();
 
 interface VenueDoc {
+  id: string;
   name: string;
-  category?: string;
-  address?: string;
-  location?: { address?: string };
-  details?: { 
-    category?: string;
-    description?: string;
-  };
-  description?: string;
-  vibeTags?: string[];
+  slug: string;
+  [key: string]: any;
 }
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function getVibeTagsFromGemini(venue: VenueDoc): Promise<string[]> {
-  const name = venue.name;
-  const category = venue.details?.category || venue.category || 'Unknown';
-  const address = venue.location?.address || venue.address || 'Unknown';
-  const description = venue.details?.description || venue.description || 'No description provided.';
+async function fetchPlaceData(venueName: string) {
+  // Step 1: Text Search to get place_id
+  const searchQuery = encodeURIComponent(`${venueName} Bondi Beach`);
+  const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=${GOOGLE_MAPS_API_KEY}`;
+  
+  const searchRes = await fetch(searchUrl);
+  const searchData = await searchRes.json();
 
-  const prompt = {
-    contents: [{
-      parts: [{
-        text: `Based on this venue's details, return ONLY a valid JSON array of exactly 3 vibe tags chosen from this list: [Sunset Ritual, Post-Surf, High Voltage, Hidden Gem, Morning Reset, Date Night, Group Energy]
-        
-        Venue name: ${name}
-        Category: ${category}
-        Address: ${address}
-        Description: ${description}
-        
-        Return ONLY the JSON array. No explanation. No markdown.`
-      }]
-    }],
-    systemInstruction: {
-      parts: [{
-        text: "You are a Bondi Beach local and hospitality expert. You know every venue, its crowd, its energy, and its place in the Bondi social fabric."
-      }]
-    }
-  };
+  if (!searchData.results || searchData.results.length === 0) {
+    return null;
+  }
 
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(prompt),
+  const placeId = searchData.results[0].place_id;
+
+  // Step 2: Place Details for rich metadata
+  const fields = 'place_id,photos,opening_hours,price_level,rating,user_ratings_total,formatted_phone_number,website';
+  const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=${fields}&key=${GOOGLE_MAPS_API_KEY}`;
+  
+  const detailsRes = await fetch(detailsUrl);
+  const detailsData = await detailsRes.json();
+
+  return detailsData.result;
+}
+
+function resolvePhotoUrls(photos: any[]) {
+  if (!photos || !Array.isArray(photos)) return [];
+  
+  return photos.slice(0, 3).map(p => {
+    return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${p.photo_reference}&key=${GOOGLE_MAPS_API_KEY}`;
   });
-
-  if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(`Gemini API error: ${response.status} - ${errText}`);
-  }
-
-  const data = await response.json();
-  const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-  
-  if (!textResponse) {
-    throw new Error('Gemini returned an empty response.');
-  }
-
-  // Clean up potential markdown formatting if AI ignored instructions
-  const cleanedText = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
-  
-  if (!cleanedText) {
-    throw new Error('Cleaned AI response is empty.');
-  }
-
-  try {
-    const tags = JSON.parse(cleanedText);
-    if (!Array.isArray(tags) || tags.length !== 3) {
-      throw new Error(`Invalid response format: Expected array of 3, got ${typeof tags}`);
-    }
-    return tags;
-  } catch (e) {
-    throw new Error(`Failed to parse AI response as JSON: ${cleanedText}`);
-  }
 }
 
 async function main() {
-  console.log('🚀 Starting venue enrichment...');
-  console.log(`Project: ${PROJECT_ID || 'default'} | Force Mode: ${FORCE_ENRICH}`);
+  console.log('🚀 Starting Google Places enrichment...');
+  console.log(`Project: ${PROJECT_ID} | API Key: ${GOOGLE_MAPS_API_KEY.substring(0, 8)}...`);
 
   const venuesRef = db.collection('venues');
   const snapshot = await venuesRef.get();
 
+  console.log(`Found ${snapshot.size} venues to process.`);
+
   let successCount = 0;
   let failCount = 0;
-  let skipCount = 0;
 
   for (const doc of snapshot.docs) {
     const venue = doc.data() as VenueDoc;
-
-    // Skip logic
-    if (!FORCE_ENRICH && venue.vibeTags && venue.vibeTags.length >= 3) {
-      console.log(`⚠ Skipping: ${venue.name} (Already has 3 tags)`);
-      skipCount++;
-      continue;
-    }
-
+    
     try {
-      const tags = await getVibeTagsFromGemini(venue);
-      
-      await doc.ref.update({
-        vibeTags: tags,
-        vibeTagsGeneratedAt: admin.firestore.FieldValue.serverTimestamp(),
-      });
+      const place = await fetchPlaceData(venue.name);
 
-      console.log(`✓ Enriched: ${venue.name} → ${tags.join(', ')}`);
+      if (!place) {
+        console.log(`⚠️ Not found: ${venue.name}`);
+        failCount++;
+        continue;
+      }
+
+      const updateData = {
+        photos: resolvePhotoUrls(place.photos),
+        openingHours: {
+          periods: place.opening_hours?.periods || [],
+          weekdayText: place.opening_hours?.weekday_text || []
+        },
+        priceLevel: place.price_level ?? null,
+        rating: place.rating ?? null,
+        totalRatings: place.user_ratings_total ?? null,
+        phone: place.formatted_phone_number ?? null,
+        website: place.website ?? null,
+        placeId: place.place_id,
+        enrichedAt: admin.firestore.FieldValue.serverTimestamp()
+      };
+
+      await doc.ref.update(updateData);
+      console.log(`✅ Enriched: ${venue.name}`);
       successCount++;
-      
-      // Delay to avoid rate limiting
-      await sleep(500);
+
+      // Small delay to be polite to the API
+      await sleep(200);
     } catch (error: any) {
-      console.log(`✗ Failed: ${venue.name} → [${error.message}]`);
+      console.error(`✗ Failed: ${venue.name} -> ${error.message}`);
       failCount++;
     }
   }
 
   console.log('\n' + '='.repeat(30));
-  console.log(`Enrichment complete: ${successCount} succeeded, ${failCount} failed, ${skipCount} skipped`);
+  console.log(`Enrichment complete: ${successCount} succeeded, ${failCount} failed.`);
   console.log('='.repeat(30));
 }
 
