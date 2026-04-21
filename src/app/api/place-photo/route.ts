@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 /**
  * @fileOverview Server-side proxy for Google Places photos.
  * Bypasses browser-based CORS and referer restrictions by fetching 
- * images on the server using the private GOOGLE_MAPS_API_KEY.
+ * images on the server using a secure server-side API key.
  * 
  * Supports both legacy and new (v1) photo reference formats.
  */
@@ -12,8 +12,10 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const ref = searchParams.get('ref');
   
-  // Use the secure server-side API key defined in apphosting.yaml
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  // Prefer the unrestricted server-side key, fallback to standard keys
+  const apiKey = process.env.GOOGLE_PLACES_API_KEY || 
+    process.env.GOOGLE_MAPS_API_KEY || 
+    process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   if (!ref) {
     return new NextResponse('Missing photo reference', { status: 400 });
