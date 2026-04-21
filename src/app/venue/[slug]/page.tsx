@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -38,6 +37,8 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { logVaultEvent } from '@/lib/vault/logVaultEvent';
 import { trackVenueView } from '@/lib/vault/trackVenueView';
+import { useDemoTime } from '@/context/DemoTimeContext';
+import { cn } from '@/lib/utils';
 
 // Updated Venue type for this page supporting both flat and nested schemas
 type Venue = WithId<{
@@ -60,6 +61,13 @@ type Venue = WithId<{
   vibeTags?: string[];
   priceTier?: '$' | '$$' | '$$$' | '$$$$';
   photoReference?: string;
+  openingHours?: {
+    periods: {
+      open: { day: number; time: string };
+      close?: { day: number; time: string };
+    }[];
+    weekdayText: string[];
+  };
 }>;
 
 // Map container style
@@ -148,6 +156,7 @@ export default function VenuePage() {
   const params = useParams();
   const slug = params?.slug as string | undefined;
   const { toast } = useToast();
+  const { mockDate } = useDemoTime();
 
   const firestore = useFirestore();
   const { user } = useUser();
@@ -205,6 +214,83 @@ export default function VenuePage() {
     region: GOOGLE_MAPS_REGION,
     language: GOOGLE_MAPS_LANGUAGE,
   });
+
+  const openingStatus = useMemo(() => {
+    if (!venue?.openingHours?.periods || venue.openingHours.periods.length === 0) return null;
+
+    const now = mockDate;
+    const currentDay = now.getDay();
+    const currentTime = now.getHours() * 100 + now.getMinutes();
+
+    const periods = venue.openingHours.periods;
+
+    const isAlwaysOpen = periods.length === 1 && 
+      periods[0].open.day === 0 && 
+      periods[0].open.time === "0000" && 
+      (!periods[0].close || (periods[0].close.day === 0 && periods[0].close.time === "0000"));
+
+    if (isAlwaysOpen) {
+      return {
+        isOpen: true,
+        label: "Open now · 24 hours",
+        todayHours: venue.openingHours.weekdayText?.[(currentDay + 6) % 7]
+      };
+    }
+
+    const formatTimeStr = (t: string) => {
+      const h = parseInt(t.substring(0, 2));
+      const m = t.substring(2);
+      const suffix = h >= 12 ? 'PM' : 'AM';
+      const hour12 = h % 12 || 12;
+      return `${hour12}:${m} ${suffix}`;
+    };
+
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    const activePeriod = periods.find(p => {
+      const openDay = p.open.day;
+      const openTime = parseInt(p.open.time);
+      const closeDay = p.close?.day ?? openDay;
+      const closeTime = p.close ? parseInt(p.close.time) : 2359;
+
+      if (openDay === closeDay) {
+        return currentDay === openDay && currentTime >= openTime && currentTime < closeTime;
+      } else {
+        if (currentDay === openDay) return currentTime >= openTime;
+        if (currentDay === (openDay + 1) % 7) return currentTime < closeTime;
+      }
+      return false;
+    });
+
+    if (activePeriod) {
+      const closeTimeStr = activePeriod.close ? formatTimeStr(activePeriod.close.time) : 'late';
+      return {
+        isOpen: true,
+        label: `Open now · Closes at ${closeTimeStr}`,
+        todayHours: venue.openingHours.weekdayText?.[(currentDay + 6) % 7]
+      };
+    }
+
+    const nextOpening = [...periods]
+      .map(p => ({
+        ...p,
+        absOpen: p.open.day * 1440 + parseInt(p.open.time.substring(0, 2)) * 60 + parseInt(p.open.time.substring(2))
+      }))
+      .sort((a, b) => a.absOpen - b.absOpen);
+
+    const absNow = currentDay * 1440 + now.getHours() * 60 + now.getMinutes();
+    let next = nextOpening.find(p => p.absOpen > absNow);
+    if (!next) next = nextOpening[0];
+
+    const openDay = next.open.day === currentDay ? 'today' : (next.open.day === (currentDay + 1) % 7 ? 'tomorrow' : days[next.open.day]);
+    const openTimeStr = formatTimeStr(next.open.time);
+
+    return {
+      isOpen: false,
+      label: `Closed · Opens ${openDay} at ${openTimeStr}`,
+      todayHours: venue.openingHours.weekdayText?.[(currentDay + 6) % 7]
+    };
+  }, [venue, mockDate]);
 
   const handleShare = () => {
     const venueUrl = window.location.href;
@@ -283,7 +369,7 @@ export default function VenuePage() {
                       fill
                       className="object-cover"
                       priority
-                  />
+              />
               ) : (
                   <div className="flex items-center justify-center h-full bg-transparent">
                       <Building className="h-16 w-16 text-white/20" />
@@ -317,6 +403,22 @@ export default function VenuePage() {
         </div>
 
         {venue.description && <p className="text-[#1a1208]/80 text-lg leading-relaxed">{venue.description}</p>}
+
+        {openingStatus && (
+          <div className="space-y-1 animate-in fade-in duration-500">
+            <div className="flex items-center gap-2 text-sm font-bold">
+              <div className={cn("h-2 w-2 rounded-full", openingStatus.isOpen ? "bg-green-500" : "bg-red-400")} />
+              <span className={openingStatus.isOpen ? "text-green-600" : "text-red-400"}>
+                {openingStatus.label}
+              </span>
+            </div>
+            {openingStatus.todayHours && (
+              <p className="text-[12px] text-[rgba(26,18,8,0.40)] font-medium">
+                Today: {openingStatus.todayHours.split(': ')[1] || openingStatus.todayHours}
+              </p>
+            )}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <Button 
