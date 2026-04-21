@@ -82,9 +82,8 @@ const VenueCard = memo(({ venue }: { venue: any }) => {
 
     const isClosed = openingStatus && !openingStatus.isOpen;
     
-    const imageUrl = venue.details?.category === 'Brunch' 
-      ? "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1000&auto=format&fit=crop"
-      : "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop";
+    const imageUrl = venue.photos?.[0] || 
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop";
 
     return (
         <Link href={`/venue/${venue.slug}`} onClick={playClick}>
@@ -196,7 +195,7 @@ const SUBCATEGORY_ICONS: Record<SubCategory, React.ElementType> = {
 
 export function FlowTabsSkeleton() {
     return (
-        <div className="flex flex-col bg-[#f2ece0] p-4 md:p-6 min-h-screen">
+        <div className="flex flex-col bg-transparent p-4 md:p-6 min-h-screen">
             <h2 className="text-3xl font-black tracking-tighter text-[#1a1208] italic uppercase mb-2">FLOW</h2>
             <p className="text-[13px] font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest mb-6">Bondi's rhythm · right now</p>
             <div className="grid grid-cols-4 gap-2 rounded-full bg-[rgba(26,18,8,0.06)] p-1 h-12">
@@ -273,7 +272,7 @@ export function FlowTabs() {
   }
 
   return (
-    <div className="flex flex-col bg-[#f2ece0] p-4 md:p-6 min-h-screen pb-32">
+    <div className="flex flex-col bg-transparent p-4 md:p-6 min-h-screen pb-32">
       <header className="mb-6">
         <h2 className="text-3xl font-black tracking-tighter text-[#1a1208] italic uppercase mb-1">FLOW</h2>
         <p className="text-[13px] font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest leading-none">Bondi's rhythm · right now</p>
