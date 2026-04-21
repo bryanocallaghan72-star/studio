@@ -55,7 +55,7 @@ async function fetchPlaceData(venueName: string) {
   const fields = 'place_id,photos,opening_hours,price_level,rating,user_ratings_total,formatted_phone_number,website';
   const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=${fields}&key=${GOOGLE_MAPS_API_KEY}`;
   
-  const detailsRes = await fetch(detailsUrl);
+  detailsRes = await fetch(detailsUrl);
   const detailsData = await detailsRes.json();
 
   return detailsData.result;
