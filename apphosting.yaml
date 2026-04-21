@@ -21,3 +21,7 @@ env:
     availability:
       - BUILD
       - RUNTIME
+  - variable: GOOGLE_PLACES_API_KEY
+    secret: google_places_api_key
+    availability:
+      - RUNTIME
