@@ -82,23 +82,14 @@ const VenueCard = memo(({ venue, mockDate }: { venue: any, mockDate: Date }) => 
 
     const isClosed = openingStatus && !openingStatus.isOpen;
     
-    const getCategoryPhoto = (venue: any): string => {
-      const cat = venue.details?.category || venue.category || '';
-      if (cat.includes('Brunch') || cat.includes('Cafe')) 
-        return 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop';
-      if (cat.includes('Sushi') || cat.includes('Japanese'))
-        return 'https://images.unsplash.com/photo-1553621042-f6e147245754?w=800&auto=format&fit=crop';
-      if (cat.includes('Nightlife') || cat.includes('Cocktail') || cat.includes('Bar'))
-        return 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800&auto=format&fit=crop';
-      if (cat.includes('Pilates') || cat.includes('Yoga') || cat.includes('Active'))
-        return 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800&auto=format&fit=crop';
-      if (cat.includes('Beach') || cat.includes('Walk') || cat.includes('Coastal'))
-        return 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop';
-      // Default Bondi vibes
-      return 'https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=800&auto=format&fit=crop';
+    const getPhotoUrl = (photoRef: string) => {
+        if (!photoRef) return null;
+        if (photoRef.startsWith('http')) return photoRef;
+        return `/api/place-photo?ref=${encodeURIComponent(photoRef)}`;
     };
 
-    const imageUrl = getCategoryPhoto(venue);
+    const imageUrl = getPhotoUrl(venue.photos?.[0]) || 
+        "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=800&auto=format&fit=crop";
 
     return (
         <Link href={`/venue/${venue.slug}`} onClick={playClick}>
