@@ -180,7 +180,8 @@ export default function VenuePage() {
   const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const isKeyValid = isValidGoogleMapsKey(googleMapsApiKey);
 
-  const isOwner = user?.uid && venue?.ownerId === user.uid;
+  // ownership logic
+  const isOwner = Boolean(user?.uid && venue?.ownerId === user.uid);
   const isUnclaimed = !venue?.ownerId;
 
   useEffect(() => {
@@ -459,7 +460,7 @@ export default function VenuePage() {
 
         {isUnclaimed && (
           <div className="text-center">
-            <button className="text-[13px] font-bold text-[#c4762a] hover:underline transition-all">
+            <button className="text-sm font-medium text-[#c4762a] hover:underline transition-all">
               Own this venue? Claim it →
             </button>
           </div>
