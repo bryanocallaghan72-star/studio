@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from 'next/server';
  * @fileOverview Server-side proxy for Google Places photos.
  * Bypasses browser-based CORS and referer restrictions by fetching 
  * images on the server using the private GOOGLE_MAPS_API_KEY.
+ * 
+ * Supports both legacy and new (v1) photo reference formats.
  */
 
 export async function GET(request: NextRequest) {
@@ -21,14 +23,20 @@ export async function GET(request: NextRequest) {
     return new NextResponse('Google Maps API key is not configured on the server', { status: 500 });
   }
 
-  // Construct the canonical Google Places photo URL
-  const url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${ref}&key=${apiKey}`;
+  // Construct the correct Google Places photo URL based on the reference format.
+  // New format references start with "AU_ZVE" (Places API v1).
+  let url: string;
+  if (ref.startsWith('AU_ZVE')) {
+    url = `https://places.googleapis.com/v1/${ref}/media?maxWidthPx=800&key=${apiKey}`;
+  } else {
+    url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${ref}&key=${apiKey}`;
+  }
 
   try {
     const res = await fetch(url);
 
     if (!res.ok) {
-      console.error(`Google Places Photo API returned ${res.status}: ${res.statusText}`);
+      console.error(`Google Places Photo API returned ${res.status}: ${res.statusText} for URL: ${url}`);
       return new NextResponse('Failed to fetch image from Google', { status: res.status });
     }
 
