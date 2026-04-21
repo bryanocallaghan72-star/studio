@@ -140,24 +140,26 @@ const VenueCard = memo(({ venue, mockDate }: { venue: any, mockDate: Date }) => 
 VenueCard.displayName = 'VenueCard';
 
 
-const getVenuesForTime = (time: 'morning' | 'day' | 'golden' | 'dusk', allVenues: Venue[]) => {
-    const morningCats = ['Brunch', 'Cafe & Matcha', 'Viral Matcha', 'Aesthetic Brunch'];
-    const dayCats = ['Brunch', 'Sushi', 'Vibes', 'Beach Club Vibe', 'Iconic View'];
-    const goldenCats = ['Sushi', 'Nightlife', 'Vibes', 'Cocktail Bar', 'Social Dining', 'Beachfront Bar'];
-    const duskCats = ['Sushi', 'Nightlife', 'Cocktail Bar', 'Italo Disco Dining', 'Sushi & Sake'];
+const isOpenDuringPhase = (venue: any, phaseStart: number, phaseEnd: number) => {
+  if (!venue?.openingHours?.periods?.length) return true;
+  
+  const periods = venue.openingHours.periods;
+  return periods.some((p: any) => {
+    const openHour = parseInt(p.open.time.substring(0, 2));
+    const closeHour = p.close ? parseInt(p.close.time.substring(0, 2)) : 23;
+    // venue overlaps with phase window
+    return openHour < phaseEnd && closeHour > phaseStart;
+  });
+};
 
-    let relevantCategories: string[] = [];
+const getVenuesForTime = (time: 'morning' | 'day' | 'golden' | 'dusk', allVenues: Venue[]) => {
     switch(time) {
-        case 'morning': relevantCategories = morningCats; break;
-        case 'day': relevantCategories = dayCats; break;
-        case 'golden': relevantCategories = goldenCats; break;
-        case 'dusk': relevantCategories = duskCats; break;
+        case 'morning': return allVenues.filter(v => isOpenDuringPhase(v, 5, 12));
+        case 'day':     return allVenues.filter(v => isOpenDuringPhase(v, 12, 17));
+        case 'golden':  return allVenues.filter(v => isOpenDuringPhase(v, 17, 20));
+        case 'dusk':    return allVenues.filter(v => isOpenDuringPhase(v, 20, 24));
+        default:        return allVenues;
     }
-    
-    return allVenues.filter(p => {
-        const category = p.details?.category;
-        return category && relevantCategories.includes(category);
-    });
 };
 
 const getCurrentTimeCategory = (hour: number): 'morning' | 'day' | 'golden' | 'dusk' => {
