@@ -13,6 +13,8 @@ import {
   ArrowLeft,
   Navigation,
   Save,
+  Phone,
+  ExternalLink,
 } from 'lucide-react';
 import { GoogleMap, useJsApiLoader, MarkerF } from '@react-google-maps/api';
 
@@ -61,6 +63,10 @@ type Venue = WithId<{
   subCategory?: string;
   vibeTags?: string[];
   priceTier?: '$' | '$$' | '$$$' | '$$$$';
+  priceLevel?: number;
+  phone?: string;
+  website?: string;
+  businessStatus?: string;
   photoReference?: string;
   photos?: string[];
   openingHours?: {
@@ -353,6 +359,22 @@ export default function VenuePage() {
     }, 500);
   };
 
+  const getPriceSymbols = (level?: number) => {
+    if (level === undefined || level === null) return null;
+    if (level === 0) return 'Free';
+    return '$'.repeat(level);
+  };
+
+  const getDomain = (url?: string) => {
+    if (!url) return null;
+    try {
+      const domain = new URL(url).hostname;
+      return domain.replace('www.', '');
+    } catch {
+      return url;
+    }
+  };
+
   // Prevent crash during pre-render
   if (isVenueLoading || !slug) {
     return <VenuePageSkeleton />;
@@ -413,21 +435,61 @@ export default function VenuePage() {
 
         {venue.description && <p className="text-[#1a1208]/80 text-lg leading-relaxed">{venue.description}</p>}
 
-        {openingStatus && (
-          <div className="space-y-1 animate-in fade-in duration-500">
-            <div className="flex items-center gap-2 text-sm font-bold">
-              <div className={cn("h-2 w-2 rounded-full", openingStatus.isOpen ? "bg-green-500" : "bg-red-400")} />
-              <span className={openingStatus.isOpen ? "text-green-600" : "text-red-400"}>
-                {openingStatus.label}
-              </span>
+        <div className="space-y-4">
+          {openingStatus && (
+            <div className="space-y-1 animate-in fade-in duration-500">
+              <div className="flex items-center gap-2 text-sm font-bold">
+                <div className={cn("h-2 w-2 rounded-full", openingStatus.isOpen ? "bg-green-500" : "bg-red-400")} />
+                <span className={openingStatus.isOpen ? "text-green-600" : "text-red-400"}>
+                  {openingStatus.label}
+                </span>
+              </div>
+              {openingStatus.todayHours && (
+                <p className="text-[12px] text-[rgba(26,18,8,0.40)] font-medium">
+                  Today: {openingStatus.todayHours.split(': ')[1] || openingStatus.todayHours}
+                </p>
+              )}
             </div>
-            {openingStatus.todayHours && (
-              <p className="text-[12px] text-[rgba(26,18,8,0.40)] font-medium">
-                Today: {openingStatus.todayHours.split(': ')[1] || openingStatus.todayHours}
-              </p>
-            )}
+          )}
+
+          <div className="space-y-3 pt-2 border-t border-black/[0.04]">
+            <div className="flex flex-wrap items-center gap-3">
+              {venue.priceLevel !== undefined && (
+                <Badge variant="secondary" className="bg-black/5 text-[#1a1208] font-bold h-7 px-3 rounded-full">
+                  {getPriceSymbols(venue.priceLevel)}
+                </Badge>
+              )}
+              {venue.businessStatus && venue.businessStatus !== 'OPERATIONAL' && (
+                <Badge variant="destructive" className="bg-red-500 text-white font-bold h-7 px-3 rounded-full">
+                  Permanently closed
+                </Badge>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-3">
+              {venue.phone && (
+                <a 
+                  href={`tel:${venue.phone}`}
+                  className="flex items-center gap-2.5 text-[13px] font-medium text-[rgba(26,18,8,0.50)] hover:text-[#1a1208] transition-colors w-fit"
+                >
+                  <Phone size={14} strokeWidth={2.5} />
+                  {venue.phone}
+                </a>
+              )}
+              {venue.website && (
+                <a 
+                  href={venue.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 text-[13px] font-bold text-[#c4762a] hover:opacity-80 transition-opacity w-fit"
+                >
+                  <ExternalLink size={14} strokeWidth={2.5} />
+                  {getDomain(venue.website)}
+                </a>
+              )}
+            </div>
           </div>
-        )}
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <Button 
