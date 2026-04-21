@@ -20,7 +20,7 @@ interface DemoTimeContextType {
 const DemoTimeContext = createContext<DemoTimeContextType | undefined>(undefined);
 
 export const DemoTimeProvider = ({ children }: { children: ReactNode }) => {
-  const [phaseIndex, setPhaseIndex] = useState(1); // Default to 'day'
+  const [phaseIndex, setPhaseIndex] = useState(1); // Default to 'day' for initial SSR
   const [mounted, setMounted] = useState(false);
   
   const currentPhase = TIME_PHASES[phaseIndex];
@@ -33,11 +33,31 @@ export const DemoTimeProvider = ({ children }: { children: ReactNode }) => {
   }, [currentPhase]);
 
   useEffect(() => {
+    // On mount, determine the correct phase based on the real clock
+    const hour = new Date().getHours();
+    let initialIndex = 1; // Default: DAY (5am - 5pm)
+    
+    if (hour < 5) {
+      initialIndex = 0; // DAWN (Before 5am)
+    } else if (hour >= 5 && hour < 17) {
+      initialIndex = 1; // DAY (5am - 5pm)
+    } else if (hour >= 17 && hour < 20) {
+      initialIndex = 2; // GOLDEN (5pm - 8pm)
+    } else {
+      initialIndex = 3; // DUSK (8pm onwards)
+    }
+
+    setPhaseIndex(initialIndex);
     setMounted(true);
-    // Apply data-theme to the root element so global CSS variables and 
-    // body backgrounds work correctly across the entire app.
-    document.documentElement.setAttribute('data-theme', currentPhase);
-  }, [currentPhase]);
+  }, []);
+
+  useEffect(() => {
+    if (mounted) {
+      // Apply data-theme to the root element so global CSS variables and 
+      // body backgrounds work correctly across the entire app.
+      document.documentElement.setAttribute('data-theme', currentPhase);
+    }
+  }, [currentPhase, mounted]);
 
   const cycleTime = () => {
     setPhaseIndex((prev) => (prev + 1) % TIME_PHASES.length);
