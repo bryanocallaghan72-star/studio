@@ -17,13 +17,13 @@ import { useSoundContext } from '@/context/SoundContext';
 import { useDemoTime } from "@/context/DemoTimeContext";
 
 
-const VenueCard = memo(({ venue }: { venue: any }) => {
+const VenueCard = memo(({ venue, mockDate }: { venue: any, mockDate: Date }) => {
     const { playClick } = useSoundContext();
 
     const openingStatus = useMemo(() => {
         if (!venue?.openingHours?.periods || venue.openingHours.periods.length === 0) return null;
 
-        const now = new Date();
+        const now = mockDate;
         const currentDay = now.getDay();
         const currentTime = now.getHours() * 100 + now.getMinutes();
         const periods = venue.openingHours.periods;
@@ -78,7 +78,7 @@ const VenueCard = memo(({ venue }: { venue: any }) => {
             isOpen: false, 
             nextTime: formatTimeStr(next.open.day === currentDay ? next.open.time : next.open.time) 
         };
-    }, [venue]);
+    }, [venue, mockDate]);
 
     const isClosed = openingStatus && !openingStatus.isOpen;
     
@@ -204,7 +204,7 @@ export function FlowTabsSkeleton() {
                 <Skeleton className="h-full w-full rounded-full" />
                 <Skeleton className="h-full w-full rounded-full" />
             </div>
-             <div className="mt-6 mb-8 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+             <div className="mt-6 mb-8 flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4">
                 <Skeleton className="h-9 w-24 rounded-full" />
                 <Skeleton className="h-9 w-24 rounded-full" />
              </div>
@@ -316,7 +316,7 @@ export function FlowTabs() {
 
         <TabsContent value={activeTab} forceMount className="mt-0">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredVenues.map(venue => <VenueCard key={venue.id} venue={venue} />)}
+                {filteredVenues.map(venue => <VenueCard key={venue.id} venue={venue} mockDate={mockDate} />)}
             </div>
              {filteredVenues.length === 0 && (
                 <div className="text-center py-24 px-6 border-2 border-dashed border-black/[0.05] rounded-3xl">
