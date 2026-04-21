@@ -15,7 +15,7 @@ const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 const PROJECT_ID = process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
 
 if (!GOOGLE_MAPS_API_KEY) {
-  console.error('✗ Error: GOOGLE_MAPS_API_KEY environment variable is required in .env');
+  console.error('❌ GOOGLE_MAPS_API_KEY is not set in .env');
   process.exit(1);
 }
 
@@ -37,10 +37,14 @@ interface VenueDoc {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function fetchPlaceData(venueName: string) {
-  // Step 1: Text Search to get place_id
-  const searchQuery = encodeURIComponent(`${venueName} Bondi Beach`);
-  const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=${GOOGLE_MAPS_API_KEY}`;
+async function fetchPlaceData(venueName: string, showDebug: boolean = false) {
+  // Step 1: Text Search to get place_id with location bias (Bondi Beach)
+  const encodedName = encodeURIComponent(venueName);
+  const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodedName}&location=-33.8908,151.2743&radius=3000&key=${GOOGLE_MAPS_API_KEY}`;
+  
+  if (showDebug) {
+    console.log(`[DEBUG] First Search URL: ${searchUrl}`);
+  }
   
   const searchRes = await fetch(searchUrl);
   const searchData = await searchRes.json();
@@ -80,12 +84,14 @@ async function main() {
 
   let successCount = 0;
   let failCount = 0;
+  let processed = 0;
 
   for (const doc of snapshot.docs) {
     const venue = doc.data() as VenueDoc;
     
     try {
-      const place = await fetchPlaceData(venue.name);
+      const place = await fetchPlaceData(venue.name, processed === 0);
+      processed++;
 
       if (!place) {
         console.log(`⚠️ Not found: ${venue.name}`);
