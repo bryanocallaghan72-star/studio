@@ -169,35 +169,44 @@ const getCurrentTimeCategory = (hour: number): 'morning' | 'day' | 'golden' | 'd
     return 'dusk'; 
 };
 
-type SubCategory = 'All' | 'Brunch' | 'Sushi' | 'Nightlife' | 'Vibes' | 'Cocktails';
+type SubCategory = 'All' | 'Brunch' | 'Food' | 'Drinks' | 'Nightlife' | 'Vibes' | 'Active';
 
 const SUBCATEGORY_MAP: { [key: string]: SubCategory[] } = {
-    morning: ['All', 'Brunch'],
-    day: ['All', 'Brunch', 'Sushi', 'Vibes'],
-    golden: ['All', 'Sushi', 'Nightlife', 'Vibes', 'Cocktails'],
-    dusk: ['All', 'Sushi', 'Nightlife', 'Cocktails'],
+    morning: ['All', 'Brunch', 'Active'],
+    day:     ['All', 'Food', 'Vibes', 'Active'],
+    golden:  ['All', 'Food', 'Drinks', 'Vibes'],
+    dusk:    ['All', 'Drinks', 'Nightlife'],
 };
 
 const CATEGORY_ALIASES: { [key: string]: SubCategory } = {
+    "Brunch": "Brunch",
+    "Aesthetic Brunch": "Brunch",
     "Cafe & Matcha": "Brunch",
     "Viral Matcha": "Brunch",
-    "Aesthetic Brunch": "Brunch",
-    "Social Dining": "Nightlife",
+    "Restaurants": "Food",
+    "Sushi": "Food",
+    "Sushi & Sake": "Food",
+    "Social Dining": "Food",
+    "Cocktails": "Drinks",
+    "Cocktail Bar": "Drinks",
+    "Beachfront Bar": "Drinks",
+    "Nightlife": "Nightlife",
+    "Italo Disco Dining": "Nightlife",
+    "Vibes": "Vibes",
     "Beach Club Vibe": "Vibes",
     "Iconic View": "Vibes",
-    "Beachfront Bar": "Nightlife",
-    "Sushi & Sake": "Sushi",
-    "Italo Disco Dining": "Nightlife",
-    "Cocktail Bar": "Cocktails",
+    "Health & Fitness": "Active",
+    "Surf": "Active",
 };
 
 const SUBCATEGORY_ICONS: Record<SubCategory, React.ElementType> = {
     All: Sparkles,
     Brunch: Coffee,
-    Sushi: Utensils,
-    Nightlife: Beer,
+    Food: Utensils,
+    Drinks: Beer,
+    Nightlife: Moon,
     Vibes: Sun,
-    Cocktails: Waves,
+    Active: Waves,
 };
 
 export function FlowTabsSkeleton() {
