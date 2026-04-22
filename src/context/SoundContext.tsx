@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useCallback, ReactNode, use
 import useSound from 'use-sound';
 import { useLocalStorage } from 'react-use';
 
-export type Theme = 'dawn' | 'day' | 'golden' | 'dusk';
+export type Theme = 'dawn' | 'day' | 'golden' | 'night';
 
 interface SoundContextType {
   isMuted: boolean;
@@ -33,7 +33,7 @@ const SOUNDS = {
     dawn: '/sounds/ambience-dawn.mp3',
     day: '/sounds/ambience-day.mp3',
     golden: '/sounds/ambience-golden.mp3',
-    dusk: '/sounds/ambience-dusk.mp3',
+    night: '/sounds/ambience-dusk.mp3',
   },
 };
 
@@ -58,7 +58,7 @@ function SoundManager({
   const [playDawn, { stop: stopDawn }] = useSound(SOUNDS.ambience.dawn, { volume: 0.4, loop: true, soundEnabled: !isMuted && isClient });
   const [playDay, { stop: stopDay }] = useSound(SOUNDS.ambience.day, { volume: 0.4, loop: true, soundEnabled: !isMuted && isClient });
   const [playGolden, { stop: stopGolden }] = useSound(SOUNDS.ambience.golden, { volume: 0.4, loop: true, soundEnabled: !isMuted && isClient });
-  const [playDusk, { stop: stopDusk }] = useSound(SOUNDS.ambience.dusk, { volume: 0.4, loop: true, soundEnabled: !isMuted && isClient });
+  const [playNight, { stop: stopNight }] = useSound(SOUNDS.ambience.night, { volume: 0.4, loop: true, soundEnabled: !isMuted && isClient });
 
   useEffect(() => {
     if (isClient) {
@@ -69,11 +69,11 @@ function SoundManager({
           dawn: { play: playDawn, stop: stopDawn },
           day: { play: playDay, stop: stopDay },
           golden: { play: playGolden, stop: stopGolden },
-          dusk: { play: playDusk, stop: stopDusk },
+          night: { play: playNight, stop: stopNight },
         }
       });
     }
-  }, [isClient, isMuted, playClickSfx, playSuccessSfx, playDawn, stopDawn, playDay, stopDay, playGolden, stopGolden, playDusk, stopDusk, setPlayers]);
+  }, [isClient, isMuted, playClickSfx, playSuccessSfx, playDawn, stopDawn, playDay, stopDay, playGolden, stopGolden, playNight, stopNight, setPlayers]);
 
   return <>{children}</>;
 }

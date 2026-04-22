@@ -152,21 +152,21 @@ const isOpenDuringPhase = (venue: any, phaseStart: number, phaseEnd: number) => 
   });
 };
 
-const getVenuesForTime = (time: 'morning' | 'day' | 'golden' | 'dusk', allVenues: Venue[]) => {
+const getVenuesForTime = (time: 'morning' | 'day' | 'golden' | 'night', allVenues: Venue[]) => {
     switch(time) {
         case 'morning': return allVenues.filter(v => isOpenDuringPhase(v, 5, 12));
         case 'day':     return allVenues.filter(v => isOpenDuringPhase(v, 12, 17));
         case 'golden':  return allVenues.filter(v => isOpenDuringPhase(v, 17, 20));
-        case 'dusk':    return allVenues.filter(v => isOpenDuringPhase(v, 20, 24));
+        case 'night':   return allVenues.filter(v => isOpenDuringPhase(v, 20, 24));
         default:        return allVenues;
     }
 };
 
-const getCurrentTimeCategory = (hour: number): 'morning' | 'day' | 'golden' | 'dusk' => {
+const getCurrentTimeCategory = (hour: number): 'morning' | 'day' | 'golden' | 'night' => {
     if (hour >= 5 && hour < 12) return 'morning'; 
     if (hour >= 12 && hour < 17) return 'day';
     if (hour >= 17 && hour < 20) return 'golden';
-    return 'dusk'; 
+    return 'night'; 
 };
 
 type SubCategory = 'All' | 'Brunch' | 'Food' | 'Drinks' | 'Nightlife' | 'Vibes' | 'Active';
@@ -175,7 +175,7 @@ const SUBCATEGORY_MAP: { [key: string]: SubCategory[] } = {
     morning: ['All', 'Brunch', 'Active'],
     day:     ['All', 'Food', 'Vibes', 'Active'],
     golden:  ['All', 'Food', 'Drinks', 'Vibes'],
-    dusk:    ['All', 'Drinks', 'Nightlife'],
+    night:    ['All', 'Drinks', 'Nightlife'],
 };
 
 const CATEGORY_ALIASES: { [key: string]: SubCategory } = {
@@ -234,7 +234,7 @@ export function FlowTabsSkeleton() {
 }
 
 export function FlowTabs() {
-  const [activeTab, setActiveTab] = useState<'morning' | 'day' | 'golden' | 'dusk'>('morning');
+  const [activeTab, setActiveTab] = useState<'morning' | 'day' | 'golden' | 'night'>('morning');
   const [activeSubCategory, setActiveSubCategory] = useState<SubCategory>('All');
   const { venues, isLoading, error } = useVenues();
   const { mockDate } = useDemoTime();
@@ -253,12 +253,12 @@ export function FlowTabs() {
         { value: 'morning' as const, label: 'Morning', icon: Sun, venues: getVenuesForTime('morning', venues) },
         { value: 'day' as const, label: 'Day', icon: Sparkles, venues: getVenuesForTime('day', venues) },
         { value: 'golden' as const, label: 'Golden', icon: Sparkles, venues: getVenuesForTime('golden', venues) },
-        { value: 'dusk' as const, label: 'Night', icon: Moon, venues: getVenuesForTime('dusk', venues) },
+        { value: 'night' as const, label: 'Night', icon: Moon, venues: getVenuesForTime('night', venues) },
       ]
   }, [venues]);
 
   const handleTabChange = (value: string) => {
-      const newTab = value as 'morning' | 'day' | 'golden' | 'dusk';
+      const newTab = value as 'morning' | 'day' | 'golden' | 'night';
       setActiveTab(newTab);
       setActiveSubCategory('All');
   };

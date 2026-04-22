@@ -18,12 +18,12 @@ export function getCurrentTimeBucket(date?: Date): TimeBucket {
  * Returns the relevant time category for UI tabs (e.g. Flow page).
  * Supports an optional Date override for God Mode.
  */
-export function getCurrentTimeCategory(date?: Date): 'morning' | 'day' | 'golden' | 'dusk' {
+export function getCurrentTimeCategory(date?: Date): 'morning' | 'day' | 'golden' | 'night' {
   const targetDate = date ?? new Date();
   const hour = targetDate.getHours();
 
   if (hour >= 5 && hour < 12) return 'morning';
   if (hour >= 12 && hour < 17) return 'day';
   if (hour >= 17 && hour < 20) return 'golden';
-  return 'dusk';
+  return 'night';
 }

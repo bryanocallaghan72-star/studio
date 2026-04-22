@@ -1,14 +1,14 @@
 'use client';
 import React, { createContext, useState, useContext, ReactNode, useEffect, useMemo } from 'react';
 
-type TimePhase = 'dawn' | 'day' | 'golden' | 'dusk';
-const TIME_PHASES: TimePhase[] = ['dawn', 'day', 'golden', 'dusk'];
+type TimePhase = 'dawn' | 'day' | 'golden' | 'night';
+const TIME_PHASES: TimePhase[] = ['dawn', 'day', 'golden', 'night'];
 
 const PHASE_HOURS: Record<TimePhase, number> = {
-  dawn: 6,
-  day: 12,
+  dawn: 7,
+  day: 13,
   golden: 18,
-  dusk: 21
+  night: 22
 };
 
 interface DemoTimeContextType {
@@ -35,16 +35,14 @@ export const DemoTimeProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // On mount, determine the correct phase based on the real clock
     const hour = new Date().getHours();
-    let initialIndex = 1; // Default: DAY (5am - 5pm)
+    let initialIndex = 3; // Default: NIGHT (9pm - 5am)
     
-    if (hour < 5) {
-      initialIndex = 0; // DAWN (Before 5am)
-    } else if (hour >= 5 && hour < 17) {
-      initialIndex = 1; // DAY (5am - 5pm)
-    } else if (hour >= 17 && hour < 20) {
-      initialIndex = 2; // GOLDEN (5pm - 8pm)
-    } else {
-      initialIndex = 3; // DUSK (8pm onwards)
+    if (hour >= 5 && hour < 10) {
+      initialIndex = 0; // DAWN (5am - 10am)
+    } else if (hour >= 10 && hour < 17) {
+      initialIndex = 1; // DAY (10am - 5pm)
+    } else if (hour >= 17 && hour < 21) {
+      initialIndex = 2; // GOLDEN (5pm - 9pm)
     }
 
     setPhaseIndex(initialIndex);

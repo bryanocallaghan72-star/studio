@@ -36,7 +36,7 @@ export const MAP_THEMES = {
     parks: '#1a1205',
     transit: '#2d1a08',
   },
-  dusk: {
+  night: {
     geometry: '#0d1a2a',
     labels: '#c4762a',
     roads: '#1a2a3a',

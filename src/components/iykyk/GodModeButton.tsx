@@ -1,4 +1,3 @@
-
 'use client';
 import React from 'react';
 import { useDemoTime } from '@/context/DemoTimeContext';
@@ -10,7 +9,7 @@ const GodModeButton = () => {
     dawn:   '🌅 DAWN',
     day:    '☀️ DAY',
     golden: '🥂 GOLDEN',
-    dusk:   '🌙 DUSK'
+    night:  '🌙 NIGHT'
   };
 
   return (
