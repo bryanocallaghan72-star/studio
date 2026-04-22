@@ -13,13 +13,10 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '../ui/skeleton';
 import { useVenues } from '@/hooks/useVenues';
 import type { Venue } from '@/types/venue';
-import { useSoundContext } from '@/context/SoundContext';
 import { useDemoTime } from "@/context/DemoTimeContext";
 
 
 const VenueCard = memo(({ venue, mockDate }: { venue: any, mockDate: Date }) => {
-    const { playClick } = useSoundContext();
-
     const openingStatus = useMemo(() => {
         if (!venue?.openingHours?.periods || venue.openingHours.periods.length === 0) return null;
 
@@ -92,7 +89,7 @@ const VenueCard = memo(({ venue, mockDate }: { venue: any, mockDate: Date }) => 
         "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=800&auto=format&fit=crop";
 
     return (
-        <Link href={`/venue/${venue.slug}`} onClick={playClick}>
+        <Link href={`/venue/${venue.slug}`}>
             <Card className={cn(
                 "group relative h-64 overflow-hidden rounded-2xl border border-black/[0.08] shadow-sm transition-all hover:shadow-xl hover:-translate-y-1",
                 isClosed && "opacity-50"
@@ -156,16 +153,16 @@ const getVenuesForTime = (time: 'morning' | 'day' | 'golden' | 'night', allVenue
     switch(time) {
         case 'morning': return allVenues.filter(v => isOpenDuringPhase(v, 5, 12));
         case 'day':     return allVenues.filter(v => isOpenDuringPhase(v, 12, 17));
-        case 'golden':  return allVenues.filter(v => isOpenDuringPhase(v, 17, 20));
-        case 'night':   return allVenues.filter(v => isOpenDuringPhase(v, 20, 24));
+        case 'golden':  return allVenues.filter(v => isOpenDuringPhase(v, 17, 21));
+        case 'night':   return allVenues.filter(v => isOpenDuringPhase(v, 21, 24));
         default:        return allVenues;
     }
 };
 
 const getCurrentTimeCategory = (hour: number): 'morning' | 'day' | 'golden' | 'night' => {
-    if (hour >= 5 && hour < 12) return 'morning'; 
-    if (hour >= 12 && hour < 17) return 'day';
-    if (hour >= 17 && hour < 20) return 'golden';
+    if (hour >= 5 && hour < 10) return 'morning'; 
+    if (hour >= 10 && hour < 17) return 'day';
+    if (hour >= 17 && hour < 21) return 'golden';
     return 'night'; 
 };
 

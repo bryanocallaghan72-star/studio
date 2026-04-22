@@ -18,12 +18,10 @@ import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Skeleton } from "../ui/skeleton";
 import { useFeed } from "@/hooks/useFeed";
-import { useSoundContext } from "@/context/SoundContext";
 
 const PhotoPost = memo(({ item, priority }: { item: any, priority?: boolean }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
-  const { playClick } = useSoundContext();
   
   const [localComments, setLocalComments] = useState<Comment[]>(item.commentData || []);
   const [commentCount, setCommentCount] = useState<number>(item.comments ?? 0);
@@ -44,7 +42,7 @@ const PhotoPost = memo(({ item, priority }: { item: any, priority?: boolean }) =
       <Card className="w-full max-w-lg mx-auto rounded-none border-x-0 border-t-0 sm:rounded-lg sm:border bg-card">
         <CardContent className="p-0">
           <div className="flex items-center justify-between p-3">
-            <Link href={`/profile/${creator.id}`} className="flex items-center gap-3 group" onClick={playClick}>
+            <Link href={`/profile/${creator.id}`} className="flex items-center gap-3 group">
               <Avatar>
                 <AvatarImage src={creator.avatar} alt={creator.name} />
                 <AvatarFallback>{creator.name.charAt(0).toUpperCase()}</AvatarFallback>
@@ -54,7 +52,7 @@ const PhotoPost = memo(({ item, priority }: { item: any, priority?: boolean }) =
                 <p className="text-xs text-muted-foreground">{item.venue || 'Bondi'}</p>
               </div>
             </Link>
-            <button onClick={playClick}><MoreVertical className="h-5 w-5" /></button>
+            <button><MoreVertical className="h-5 w-5" /></button>
           </div>
           
           {image && (
@@ -71,13 +69,13 @@ const PhotoPost = memo(({ item, priority }: { item: any, priority?: boolean }) =
 
           <div className="p-3 space-y-2">
             <div className="flex items-center justify-start gap-4">
-                <button className="flex items-center gap-2 hover:text-primary" onClick={() => { playClick(); setIsLiked(!isLiked); }}>
+                <button className="flex items-center gap-2 hover:text-primary" onClick={() => setIsLiked(!isLiked)}>
                   <Heart className={`h-6 w-6 transition-all ${isLiked ? "text-red-500 fill-current" : ""}`} />
                 </button>
-                <button className="flex items-center gap-2 hover:text-primary" onClick={() => { playClick(); setIsCommentSheetOpen(true); }}>
+                <button className="flex items-center gap-2 hover:text-primary" onClick={() => setIsCommentSheetOpen(true)}>
                   <MessageCircle className="h-6 w-6" />
                 </button>
-                <button className="hover:text-primary" onClick={playClick}><Send className="h-6 w-6" /></button>
+                <button className="hover:text-primary"><Send className="h-6 w-6" /></button>
             </div>
             <p className="text-sm font-semibold">{likeCount.toLocaleString()} likes</p>
              <p className="text-sm">
@@ -85,7 +83,7 @@ const PhotoPost = memo(({ item, priority }: { item: any, priority?: boolean }) =
               <span className="ml-1">{item.description}</span>
             </p>
             {commentCount > 0 && (
-                <button className="text-sm text-muted-foreground" onClick={() => { playClick(); setIsCommentSheetOpen(true); }}>
+                <button className="text-sm text-muted-foreground" onClick={() => setIsCommentSheetOpen(true)}>
                     View all {commentCount} comments
                 </button>
             )}
@@ -107,7 +105,6 @@ PhotoPost.displayName = 'PhotoPost';
 
 const StoryPost = memo(({ item, priority }: { item: any, priority?: boolean }) => {
     const [isLiked, setIsLiked] = useState(false);
-    const { playClick } = useSoundContext();
     const likeCount = isLiked ? (item.likes || 0) + 1 : (item.likes || 0);
     const creator = item.creator;
 
@@ -115,7 +112,7 @@ const StoryPost = memo(({ item, priority }: { item: any, priority?: boolean }) =
 
     return (
        <Card className="w-full max-w-lg mx-auto rounded-none border-x-0 border-t-0 sm:rounded-lg sm:border overflow-hidden bg-black group">
-          <Link href={`/slice-of-life/${item.id}`} onClick={playClick}>
+          <Link href={`/slice-of-life/${item.id}`}>
             <div className="relative aspect-[9/16] w-full cursor-pointer">
                 {item.thumbnailUrl ? (
                   <Image 
@@ -152,7 +149,7 @@ const StoryPost = memo(({ item, priority }: { item: any, priority?: boolean }) =
                 </div>
 
                  <div className="absolute bottom-6 right-6 flex flex-col items-center gap-6 text-white z-10">
-                    <div className="flex flex-col items-center gap-1" onClick={(e) => { e.preventDefault(); e.stopPropagation(); playClick(); setIsLiked(!isLiked); }}>
+                    <div className="flex flex-col items-center gap-1" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsLiked(!isLiked); }}>
                         <Heart className={`h-8 w-8 transition-all ${isLiked ? 'text-red-500 fill-current' : ''}`} />
                         <span className="text-xs font-semibold">{likeCount}</span>
                     </div>
@@ -160,7 +157,7 @@ const StoryPost = memo(({ item, priority }: { item: any, priority?: boolean }) =
                         <MessageCircle className="h-8 w-8" />
                         <span className="text-xs font-semibold">{item.commentsCount || 0}</span>
                     </div>
-                    <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); playClick(); }}><Send className="h-8 w-8" /></div>
+                    <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}><Send className="h-8 w-8" /></div>
                 </div>
             </div>
           </Link>
