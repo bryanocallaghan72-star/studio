@@ -95,18 +95,18 @@ export const DEMO_VENUES = [
     price: "$$$"
   },
 
-  // --- DUSK / NIGHT (The "Scene") ---
+  // --- NIGHT (The "Scene") ---
   {
     id: 'venue_8',
     name: "Raw Bar",
     category: "Sushi & Sake",
     address: "1/136 Wairoa Ave, Bondi Beach",
-    image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=1000&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=800&auto=format&fit=crop",
     lat: -33.8893,
     lng: 151.2733,
     rating: 4.9,
     isSponsor: false,
-    vibe: "dusk",
+    vibe: "night",
     price: "$$$"
   },
   {
@@ -119,7 +119,7 @@ export const DEMO_VENUES = [
     lng: 151.2705,
     rating: 4.8,
     isSponsor: false,
-    vibe: "dusk",
+    vibe: "night",
     price: "$$$"
   },
   {
@@ -132,7 +132,7 @@ export const DEMO_VENUES = [
     lng: 151.2680,
     rating: 4.8,
     isSponsor: false,
-    vibe: "dusk",
+    vibe: "night",
     price: "$$"
   }
 ];
