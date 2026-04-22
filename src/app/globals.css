@@ -60,7 +60,8 @@
   }
 
   html[data-theme="dawn"] body {
-    background: var(--bg-gradient) fixed !important;
+    background: #e8f2f8 !important;
+    color: #0d1f2d !important;
     min-height: 100vh;
   }
 
@@ -82,21 +83,21 @@
 }
 
 [data-theme="dawn"] {
-  --phase-accent:  #7ba7bc;
-  --phase-text:    #e8eef5;
-  --phase-muted:   #4a7a8a;
-  --phase-glow:    #b8cdd6;
+  --phase-accent:  #4a90b8;
+  --phase-text:    #0d1f2d;
+  --phase-muted:   #6a9ab5;
+  --phase-glow:    #b8d8e8;
   --bg-gradient: linear-gradient(
     to bottom,
-    #0d1520,
-    #0a1018,
-    #080a0d
+    #e8f2f8,
+    #ddeaf2,
+    #f0f7fa
   );
-  --glass-dark:       rgba(8, 10, 13, 0.6);
-  --glass-light:      rgba(184, 205, 214, 0.10);
-  --glass-border:     rgba(184, 205, 214, 0.08);
-  --glass-dark-soft:  rgba(8, 10, 13, 0.35);
-  --glass-light-soft: rgba(123, 167, 188, 0.06);
+  --glass-dark:       rgba(13, 31, 45, 0.6);
+  --glass-light:      rgba(232, 242, 248, 0.7);
+  --glass-border:     rgba(13, 31, 45, 0.08);
+  --glass-dark-soft:  rgba(13, 31, 45, 0.35);
+  --glass-light-soft: rgba(184, 216, 232, 0.4);
 }
 
 [data-theme="day"] {
@@ -139,16 +140,16 @@
 [data-theme="golden"] {
   color-scheme: light;
   --bg-gradient: linear-gradient(
-    160deg,
-    #f5c89a 0%,
-    #e8956a 25%,
-    #d4708a 60%,
-    #c4607a 100%
+    160deg, 
+    #fff3e8 0%, 
+    #fddbb4 30%, 
+    #f9c4c8 65%, 
+    #f9b4c0 100%
   );
-  --phase-accent:        #d4845a;
+  --phase-accent:        #e8956d;
   --phase-text:          #2a1208;
-  --phase-muted:         #c4762a;
-  --phase-glow:          #e8b48a;
+  --phase-muted:         #d4845a;
+  --phase-glow:          #fddbb4;
 
   --background:          18 55% 82%;
   --foreground:          15 80% 8%;
@@ -176,7 +177,7 @@
 }
 
 [data-theme="dusk"] {
-  --phase-accent:  #c4762a;
+  --phase-accent:  #8b9fd4;
   --phase-text:    #e8dcc8;
   --phase-muted:   #4a6080;
   --phase-glow:    #2a4a6b;
@@ -187,10 +188,10 @@
     #060c18
   );
   --glass-dark:       rgba(6, 12, 24, 0.65);
-  --glass-light:      rgba(196, 118, 42, 0.08);
+  --glass-light:      rgba(139, 159, 212, 0.08);
   --glass-border:     rgba(232, 220, 200, 0.06);
   --glass-dark-soft:  rgba(6, 12, 24, 0.35);
-  --glass-light-soft: rgba(42, 74, 107, 0.15);
+  --glass-light-soft: rgba(139, 159, 212, 0.15);
 }
 
 /* Scrim Overlay Utility */
