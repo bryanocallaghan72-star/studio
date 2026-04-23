@@ -79,9 +79,12 @@ export function IykykMyDay() {
                 return;
             }
 
+            // Clean stops: ItineraryRequestSchema omits 'id' and 'isHeld' from heldStops
+            const cleanedHeldStops = heldStops.map(({ id, isHeld, ...rest }) => rest);
+
             const request = {
                 ...(currentVibe.request as Record<string, unknown>),
-                heldStops: heldStops.map(({ id, isHeld, ...rest }) => rest),
+                heldStops: cleanedHeldStops,
                 numberOfNewStops: unlockedStopsCount,
             };
 
