@@ -82,7 +82,7 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
                 <div className="w-10"></div>
             </div>
 
-            <div className="flex-grow space-y-4">
+            <div className="flex-grow space-y-4 pb-40">
                 <AnimatePresence>
                     {itineraryData.stops.map((stop: ItineraryStop) => {
                         const HoldIcon = stop.isHeld ? Lock : LockOpen;
