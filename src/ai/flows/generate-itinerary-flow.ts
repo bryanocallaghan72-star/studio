@@ -21,7 +21,7 @@ export async function generateItinerary(
 
 const prompt = ai.definePrompt({
   name: 'generateItineraryPrompt',
-  model: 'gemini-2.5-flash',
+  model: 'googleai/gemini-2.0-flash',
   input: { schema: ItineraryRequestSchema },
   output: { schema: ItinerarySchema },
   prompt: `You are a hyper-local concierge for Bondi, Australia, specializing in crafting perfect day plans for the iykyk app.
