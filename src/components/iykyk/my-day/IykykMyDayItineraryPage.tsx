@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { Card } from "@/components/ui/card";
@@ -12,7 +12,7 @@ import { ItineraryStop } from '@/ai/schemas';
 import { appData } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { cn } from '@/lib/utils';
-
+import { useVenues } from '@/hooks/useVenues';
 
 type ItineraryPageProps = {
     itineraryData: any;
@@ -27,6 +27,7 @@ type ItineraryPageProps = {
 export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, onShuffle, onToggleHold, onSwap, isPending }: ItineraryPageProps) => {
     const [editingItem, setEditingItem] = useState<ItineraryStop | null>(null);
     const [swapQuery, setSwapQuery] = useState('');
+    const { venues, isLoading: isVenuesLoading } = useVenues();
 
     if (!itineraryData) {
         return null;
@@ -40,29 +41,85 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
 
     const getItemType = (item: ItineraryStop) => {
         if (!item?.location) return 'Restaurants';
-        const venue = appData.map.pins.find(p => p.name === item.location);
-        return venue?.type || 'Restaurants';
+        
+        // Check real Firestore venues first
+        const realVenue = venues?.find(v => v.name === item.location || v.slug === item.location);
+        if (realVenue) return realVenue.category || realVenue.details?.category || 'Restaurants';
+        
+        // Fallback to legacy appData pins mapping
+        const pin = appData.map.pins.find(p => p.name === item.location);
+        return pin?.type || 'Restaurants';
     }
     
     const getImageForStop = (stop: ItineraryStop) => {
-        const venue = appData.map.pins.find(v => v.name === stop.location);
-        if (!venue) return PlaceHolderImages[0];
+        const venue = venues?.find(v => v.name === stop.location || v.slug === stop.location);
         
+        // If venue has a photo, use it (handles proxy/direct)
+        const photoRef = venue?.photos?.[0] || venue?.photoReference;
+        if (photoRef) {
+            return {
+                imageUrl: photoRef.startsWith('http') 
+                    ? photoRef 
+                    : `/api/place-photo?ref=${encodeURIComponent(photoRef)}`,
+                imageHint: 'venue'
+            };
+        }
+
+        // Category-based fallback image
+        const category = venue?.category || venue?.details?.category || getItemType(stop);
         const typeToImage: { [key: string]: string } = {
             'Brunch': 'coffee-1',
             'Sushi': 'sushi-1',
             'Cocktails': 'cocktail-101',
             'Restaurants': 'my-day-3',
+            'Food': 'my-day-3',
             'Nightlife': 'nightlife-1',
             'Health & Fitness': 'fitness-1',
             'Vibes': 'sunset-yoga',
         };
-        const imageId = typeToImage[venue.type] || 'night-1';
+        const imageId = typeToImage[category] || 'night-1';
         return PlaceHolderImages.find(img => img.id === imageId) || PlaceHolderImages[0];
     }
 
+    const getVenueImageUrl = (venue: any) => {
+        const photoRef = venue.photos?.[0] || venue.photoReference;
+        if (photoRef) {
+          return photoRef.startsWith('http') 
+            ? photoRef 
+            : `/api/place-photo?ref=${encodeURIComponent(photoRef)}`;
+        }
+        return PlaceHolderImages.find(p => p.id === 'sushi-1')!.imageUrl;
+    };
 
-    const filteredSwapOptions = editingItem ? appData.map.pins.filter(pin => pin.type === getItemType(editingItem) && pin.name.toLowerCase().includes(swapQuery.toLowerCase())) : [];
+    const filteredSwapOptions = useMemo(() => {
+        if (!editingItem || !venues) return [];
+        
+        const currentCategory = getItemType(editingItem);
+        const search = swapQuery.toLowerCase();
+        
+        // Primary search: matches category AND search term
+        let filtered = venues.filter(v => {
+            const vCategory = v.category || v.details?.category;
+            const matchesCategory = vCategory === currentCategory;
+            const matchesSearch = v.name.toLowerCase().includes(search);
+            const isNotCurrent = v.name !== editingItem.location && v.slug !== editingItem.location;
+            return matchesCategory && matchesSearch && isNotCurrent;
+        });
+
+        // Fallback: search across all categories if query is specific and no category matches
+        if (filtered.length === 0 && search) {
+             filtered = venues.filter(v => 
+                v.name.toLowerCase().includes(search) && 
+                v.name !== editingItem.location && 
+                v.slug !== editingItem.location
+             );
+        } else if (filtered.length === 0 && !search) {
+             // If no category matches and no search, just show a handful of venues
+             filtered = venues.filter(v => v.name !== editingItem.location).slice(0, 10);
+        }
+
+        return filtered.slice(0, 15);
+    }, [editingItem, venues, swapQuery]);
 
     return (
         <motion.div
@@ -100,8 +157,8 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
                                     <Button onClick={() => onToggleHold(stop)} variant="ghost" size="icon" className="flex-shrink-0 mr-4 group">
                                         <HoldIcon size={20} className={stop.isHeld ? 'text-[#c4762a]' : 'text-[rgba(26,18,8,0.30)] group-hover:text-[#c4762a] transition-colors'} />
                                     </Button>
-                                    <div className="w-14 h-14 bg-black/[0.03] rounded-xl overflow-hidden flex-shrink-0 border border-black/[0.05]">
-                                        <Image src={image.imageUrl} alt={stop.location} width={56} height={56} className="w-full h-full object-cover" data-ai-hint={image.imageHint} />
+                                    <div className="w-14 h-14 bg-black/[0.03] rounded-xl overflow-hidden flex-shrink-0 border border-black/[0.05] relative">
+                                        <Image src={image.imageUrl} alt={stop.location} fill className="object-cover" data-ai-hint={image.imageHint} />
                                     </div>
                                     <div className="ml-4 flex-grow">
                                         <p className="text-[10px] font-black tracking-wider uppercase text-[#c4762a]">{stop.time}</p>
@@ -151,17 +208,38 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
                             />
                         </div>
                         <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
-                            {filteredSwapOptions.map((item, index) => (
-                                <button key={index} onClick={() => handleSwapClick(editingItem, item)} className="w-full flex items-center bg-white border border-black/[0.06] rounded-2xl p-3 transition-all hover:bg-black/[0.02] hover:border-black/[0.12] active:scale-[0.98]">
-                                    <div className="w-12 h-12 bg-black/[0.03] rounded-xl overflow-hidden flex-shrink-0">
-                                        <Image src={PlaceHolderImages.find(p => p.id === 'sushi-1')!.imageUrl} alt={item.name} width={48} height={48} className="w-full h-full object-cover" />
-                                    </div>
-                                    <div className="ml-4 text-left">
-                                        <p className="text-[#1a1208] font-bold text-sm">{item.name}</p>
-                                        <p className="text-[11px] text-[rgba(26,18,8,0.50)] line-clamp-1">{item.description}</p>
-                                    </div>
-                                </button>
-                            ))}
+                            {isVenuesLoading ? (
+                                <div className="flex justify-center py-8">
+                                    <Loader2 className="animate-spin h-6 w-6 text-[#c4762a]" />
+                                </div>
+                            ) : filteredSwapOptions.length > 0 ? (
+                                filteredSwapOptions.map((item) => (
+                                    <button 
+                                        key={item.id} 
+                                        onClick={() => handleSwapClick(editingItem, item)} 
+                                        className="w-full flex items-center bg-white border border-black/[0.06] rounded-2xl p-3 transition-all hover:bg-black/[0.02] hover:border-black/[0.12] active:scale-[0.98]"
+                                    >
+                                        <div className="w-12 h-12 bg-black/[0.03] rounded-xl overflow-hidden flex-shrink-0 relative">
+                                            <Image 
+                                                src={getVenueImageUrl(item)} 
+                                                alt={item.name} 
+                                                fill 
+                                                className="object-cover" 
+                                            />
+                                        </div>
+                                        <div className="ml-4 text-left">
+                                            <p className="text-[#1a1208] font-bold text-sm">{item.name}</p>
+                                            <p className="text-[11px] text-[rgba(26,18,8,0.50)] line-clamp-1">
+                                                {item.description || item.details?.description || item.category || item.details?.category || 'Bondi Venue'}
+                                            </p>
+                                        </div>
+                                    </button>
+                                ))
+                            ) : (
+                                <div className="text-center py-8 text-sm text-muted-foreground">
+                                    No alternatives found. Try searching...
+                                </div>
+                            )}
                         </div>
                     </DialogContent>
                 </Dialog>
