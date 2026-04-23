@@ -224,6 +224,10 @@ export function FlowTabs() {
     // Strict real-time "Open Now" filter
     const openVenues = venuesForTime.filter(v => isStrictlyOpen(v, mockDate));
 
+    console.log('mockDate hour:', mockDate.getHours(), 'minutes:', mockDate.getMinutes());
+    console.log('venues for time count:', venuesForTime.length);
+    console.log('open venues count:', openVenues.length);
+
     if (activeSubCategory === 'All') {
         return openVenues;
     }
@@ -254,7 +258,7 @@ export function FlowTabs() {
       </header>
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 bg-[rgba(26,18,8,0.06)] rounded-full p-1 h-12 border-none">
+        <TabsList className="grid grid-cols-4 w-full bg-[rgba(26,18,8,0.06)] rounded-full p-1 h-12 border-none">
           {tabData.map(tab => (
             <TabsTrigger 
                 key={tab.value} 
