@@ -56,6 +56,8 @@ const VenueCard = memo(({ venue }: { venue: any }) => {
     const imageUrl = getPhotoUrl(venue.photos?.[0]) || 
         "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=800&auto=format&fit=crop";
 
+    const displayCategory = venue.details?.category || venue.category;
+
     return (
         <Link href={`/venue/${venue.slug}`}>
             <Card className="group relative h-64 overflow-hidden rounded-2xl border border-black/[0.08] shadow-sm transition-all hover:shadow-xl hover:-translate-y-1">
@@ -80,11 +82,11 @@ const VenueCard = memo(({ venue }: { venue: any }) => {
                                 {venue.location?.address}
                             </p>
                         </div>
-                        {venue.details?.category && (
+                        {displayCategory && (
                             <Badge 
                                 className="bg-white/20 text-white text-[10px] font-bold backdrop-blur-md border-none uppercase tracking-wider rounded-full px-2 py-0.5"
                             >
-                                {venue.details.category}
+                                {displayCategory}
                             </Badge>
                         )}
                     </div>
@@ -224,17 +226,11 @@ export function FlowTabs() {
     // Strict real-time "Open Now" filter
     const openVenues = venuesForTime.filter(v => isStrictlyOpen(v, mockDate));
 
-    console.log('mockDate hour:', mockDate.getHours(), 'minutes:', mockDate.getMinutes());
-    console.log('venues for time count:', venuesForTime.length);
-    console.log('open venues count:', openVenues.length);
-    console.log('venues with category:', openVenues.filter(v => v.details?.category).length);
-    console.log('sample categories:', openVenues.slice(0, 5).map(v => v.details?.category));
-
     if (activeSubCategory === 'All') {
         return openVenues;
     }
     return openVenues.filter(venue => {
-        const category = venue.details?.category;
+        const category = venue.details?.category || venue.category;
         if (!category) return false;
         
         const mappedCategory = CATEGORY_ALIASES[category] || category;
