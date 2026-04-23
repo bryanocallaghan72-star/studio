@@ -17,6 +17,20 @@ export type Venue = {
   address?: string;
   category?: string;
   vibeTags?: string[];
+  description?: string;
+
+  // enrichment fields
+  photos?: string[];
+  photoReference?: string;
+  openingHours?: {
+    periods?: any[];
+    weekdayText?: string[];
+  };
+  phone?: string;
+  website?: string;
+  priceLevel?: number | null;
+  businessStatus?: string;
+  placeId?: string;
 
   // new nested fields
   location?: {
