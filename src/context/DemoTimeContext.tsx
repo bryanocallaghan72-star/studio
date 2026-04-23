@@ -1,5 +1,6 @@
 'use client';
 import React, { createContext, useState, useContext, ReactNode, useEffect, useMemo } from 'react';
+import { useUser } from '@/firebase';
 
 type TimePhase = 'dawn' | 'day' | 'golden' | 'night';
 const TIME_PHASES: TimePhase[] = ['dawn', 'day', 'golden', 'night'];
@@ -19,50 +20,73 @@ interface DemoTimeContextType {
 
 const DemoTimeContext = createContext<DemoTimeContextType | undefined>(undefined);
 
+/**
+ * Maps the current hour to a Bondi phase index.
+ */
+const getPhaseIndexForHour = (hour: number) => {
+  if (hour >= 5 && hour < 10) return 0; // DAWN: 5am - 10am
+  if (hour >= 10 && hour < 17) return 1; // DAY: 10am - 5pm
+  if (hour >= 17 && hour < 21) return 2; // GOLDEN: 5pm - 9pm
+  return 3; // NIGHT: 9pm - 5am
+};
+
 export const DemoTimeProvider = ({ children }: { children: ReactNode }) => {
-  const [phaseIndex, setPhaseIndex] = useState(1); // Default to 'day' for initial SSR
+  const { user } = useUser();
+  const [now, setNow] = useState(new Date());
+  const [manualIndex, setManualIndex] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
   
-  const currentPhase = TIME_PHASES[phaseIndex];
-
-  // Derive the mockDate from the currentPhase to serve as the app's clock
-  const mockDate = useMemo(() => {
-    const d = new Date();
-    d.setHours(PHASE_HOURS[currentPhase], 0, 0, 0);
-    return d;
-  }, [currentPhase]);
-
   useEffect(() => {
-    // On mount, determine the correct phase based on the real clock
-    const hour = new Date().getHours();
-    let initialIndex = 3; // Default: NIGHT (9pm - 5am)
-    
-    if (hour >= 5 && hour < 10) {
-      initialIndex = 0; // DAWN (5am - 10am)
-    } else if (hour >= 10 && hour < 17) {
-      initialIndex = 1; // DAY (10am - 5pm)
-    } else if (hour >= 17 && hour < 21) {
-      initialIndex = 2; // GOLDEN (5pm - 9pm)
-    }
-
-    setPhaseIndex(initialIndex);
     setMounted(true);
+    // Real-time interval to update the app state every 60 seconds
+    const interval = setInterval(() => {
+      setNow(new Date());
+    }, 60000);
+    return () => clearInterval(interval);
   }, []);
+
+  // Admin check for God Mode access
+  const isAdmin = useMemo(() => {
+    if (!mounted) return false;
+    const isStaff = user?.email?.endsWith('@iykyk.com');
+    const isOverride = localStorage.getItem('iykyk_godmode') === 'true';
+    return !!(isStaff || isOverride);
+  }, [user, mounted]);
+
+  const computedIndex = getPhaseIndexForHour(now.getHours());
+  const effectiveIndex = manualIndex !== null ? manualIndex : computedIndex;
+  const currentPhase = TIME_PHASES[effectiveIndex];
+
+  /**
+   * Derive the mockDate used by discovery features.
+   * In manual mode, we use a snapshot hour.
+   * In real-time mode, we use the actual current date/time.
+   */
+  const mockDate = useMemo(() => {
+    if (manualIndex !== null) {
+      const d = new Date(now);
+      d.setHours(PHASE_HOURS[currentPhase], 0, 0, 0);
+      return d;
+    }
+    return now;
+  }, [manualIndex, currentPhase, now]);
 
   useEffect(() => {
     if (mounted) {
-      // Apply data-theme to the root element so global CSS variables and 
-      // body backgrounds work correctly across the entire app.
+      // Apply theme to HTML root for global CSS variable shifts
       document.documentElement.setAttribute('data-theme', currentPhase);
     }
   }, [currentPhase, mounted]);
 
   const cycleTime = () => {
-    setPhaseIndex((prev) => (prev + 1) % TIME_PHASES.length);
+    if (!isAdmin) return;
+    setManualIndex((prev) => {
+      const currentIdx = prev !== null ? prev : computedIndex;
+      return (currentIdx + 1) % 4;
+    });
   };
 
-  // Hydration fix: don't render children until we're on the client
-  // and the theme attribute has been applied.
+  // Prevent hydration mismatches
   if (!mounted) return null;
 
   return (
