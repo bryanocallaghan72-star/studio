@@ -415,7 +415,7 @@ export default function VenuePage() {
       </Card>
       
       <div className='p-4 md:p-0 space-y-6 max-w-lg mx-auto'>
-        <div className="flex items-center gap-4 text-[rgba(26,18,8,0.50)]">
+        <div className="flex items-center gap-4" style={{ color: 'var(--phase-text)', opacity: 0.50 }}>
             <p className="flex items-center gap-2 text-sm font-medium">
                 <MapPin className="h-4 w-4" />
                 {venue.location?.address ?? venue.address ?? ''}
@@ -423,17 +423,17 @@ export default function VenuePage() {
         </div>
         <div className="flex flex-wrap items-center gap-2 text-sm">
             {venue.priceTier && (
-              <Badge variant="outline" className="text-sm font-bold border-black/10 text-[#1a1208]">{venue.priceTier}</Badge>
+              <Badge variant="outline" className="text-sm font-bold border-black/10" style={{ color: 'var(--phase-text)' }}>{venue.priceTier}</Badge>
             )}
             {venue.subCategory && (
-              <Badge variant="outline" className="text-xs font-semibold border-black/10 text-[#1a1208]">{venue.subCategory}</Badge>
+              <Badge variant="outline" className="text-xs font-semibold border-black/10" style={{ color: 'var(--phase-text)' }}>{venue.subCategory}</Badge>
             )}
             {venue.vibeTags && venue.vibeTags.map(tag => (
-              <Badge key={tag} variant="secondary" className="bg-black/5 text-[rgba(26,18,8,0.60)] border-none">{tag}</Badge>
+              <Badge key={tag} variant="secondary" className="bg-black/5 border-none" style={{ color: 'var(--phase-text)', opacity: 0.60 }}>{tag}</Badge>
             ))}
         </div>
 
-        {venue.description && <p className="text-[#1a1208]/80 text-lg leading-relaxed">{venue.description}</p>}
+        {venue.description && <p className="text-lg leading-relaxed" style={{ color: 'var(--phase-text)', opacity: 0.8 }}>{venue.description}</p>}
 
         <div className="space-y-4">
           {openingStatus && (
@@ -445,7 +445,7 @@ export default function VenuePage() {
                 </span>
               </div>
               {openingStatus.todayHours && (
-                <p className="text-[12px] text-[rgba(26,18,8,0.40)] font-medium">
+                <p className="text-[12px] font-medium" style={{ color: 'var(--phase-text)', opacity: 0.40 }}>
                   Today: {openingStatus.todayHours.split(': ')[1] || openingStatus.todayHours}
                 </p>
               )}
@@ -455,7 +455,7 @@ export default function VenuePage() {
           <div className="space-y-3 pt-2 border-t border-black/[0.04]">
             <div className="flex flex-wrap items-center gap-3">
               {venue.priceLevel !== undefined && (
-                <Badge variant="secondary" className="bg-black/5 text-[#1a1208] font-bold h-7 px-3 rounded-full">
+                <Badge variant="secondary" className="bg-black/5 font-bold h-7 px-3 rounded-full" style={{ color: 'var(--phase-text)' }}>
                   {getPriceSymbols(venue.priceLevel)}
                 </Badge>
               )}
@@ -470,7 +470,8 @@ export default function VenuePage() {
               {venue.phone && (
                 <a 
                   href={`tel:${venue.phone}`}
-                  className="flex items-center gap-2.5 text-[13px] font-medium text-[rgba(26,18,8,0.50)] hover:text-[#1a1208] transition-colors w-fit"
+                  className="flex items-center gap-2.5 text-[13px] font-medium hover:text-phase-text transition-colors w-fit"
+                  style={{ color: 'var(--phase-text)', opacity: 0.50 }}
                 >
                   <Phone size={14} strokeWidth={2.5} />
                   {venue.phone}
@@ -504,7 +505,8 @@ export default function VenuePage() {
             onClick={handleShare} 
             variant="outline" 
             size="lg"
-            className="bg-white border-black/[0.08] text-[#1a1208] font-bold rounded-2xl h-14 shadow-sm"
+            className="bg-white border-black/[0.08] font-bold rounded-2xl h-14 shadow-sm"
+            style={{ color: 'var(--phase-text)' }}
           >
             <Share2 className="mr-2" />
             Share
@@ -513,7 +515,8 @@ export default function VenuePage() {
             onClick={handleStubSave} 
             variant="outline" 
             size="lg"
-            className="bg-white border-black/[0.08] text-[#1a1208] font-bold rounded-2xl h-14 shadow-sm"
+            className="bg-white border-black/[0.08] font-bold rounded-2xl h-14 shadow-sm"
+            style={{ color: 'var(--phase-text)' }}
           >
             <Bookmark className="mr-2" />
             Save
@@ -531,25 +534,26 @@ export default function VenuePage() {
         {isOwner && (
           <Card className="overflow-hidden bg-white border-black/[0.08] rounded-[24px] shadow-sm">
             <CardHeader>
-              <CardTitle className="text-[#1a1208] font-bold">Edit Venue Details</CardTitle>
-              <CardDescription className="text-[rgba(26,18,8,0.50)]">Add more specific details to help others discover this venue.</CardDescription>
+              <CardTitle className="font-bold" style={{ color: 'var(--phase-text)' }}>Edit Venue Details</CardTitle>
+              <CardDescription className="" style={{ color: 'var(--phase-text)', opacity: 0.50 }}>Add more specific details to help others discover this venue.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <Label htmlFor="subCategory" className="text-[#1a1208] font-medium text-sm">Sub-category</Label>
+                        <Label htmlFor="subCategory" className="font-medium text-sm" style={{ color: 'var(--phase-text)' }}>Sub-category</Label>
                         <Input 
                           id="subCategory" 
                           value={subCategory} 
                           onChange={e => setSubCategory(e.target.value)} 
                           placeholder="e.g., Cocktail Bar, Pilates Studio" 
-                          className="bg-[#f2ece0] border-black/[0.08] text-[#1a1208] placeholder:text-[rgba(26,18,8,0.30)] rounded-xl"
+                          className="bg-transparent border-black/[0.08] placeholder:text-phase-text placeholder:opacity-30 rounded-xl"
+                          style={{ color: 'var(--phase-text)' }}
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="priceTier" className="text-[#1a1208] font-medium text-sm">Price Tier</Label>
+                        <Label htmlFor="priceTier" className="font-medium text-sm" style={{ color: 'var(--phase-text)' }}>Price Tier</Label>
                         <Select value={priceTier} onValueChange={setPriceTier}>
-                            <SelectTrigger id="priceTier" className="bg-[#f2ece0] border-black/[0.08] text-[#1a1208] rounded-xl">
+                            <SelectTrigger id="priceTier" className="bg-transparent border-black/[0.08] rounded-xl" style={{ color: 'var(--phase-text)' }}>
                                 <SelectValue placeholder="Select price tier" />
                             </SelectTrigger>
                             <SelectContent className="bg-white border-black/[0.08]">
@@ -562,13 +566,14 @@ export default function VenuePage() {
                     </div>
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="vibeTags" className="text-[#1a1208] font-medium text-sm">Vibe Tags (comma-separated)</Label>
+                    <Label htmlFor="vibeTags" className="font-medium text-sm" style={{ color: 'var(--phase-text)' }}>Vibe Tags (comma-separated)</Label>
                     <Input 
                       id="vibeTags" 
                       value={vibeTags} 
                       onChange={e => setVibeTags(e.target.value)} 
                       placeholder="e.g., Casual, Rooftop, Live Music" 
-                      className="bg-[#f2ece0] border-black/[0.08] text-[#1a1208] placeholder:text-[rgba(26,18,8,0.30)] rounded-xl"
+                      className="bg-transparent border-black/[0.08] placeholder:text-phase-text placeholder:opacity-30 rounded-xl"
+                      style={{ color: 'var(--phase-text)' }}
                     />
                 </div>
                 <Button 
@@ -597,7 +602,7 @@ export default function VenuePage() {
           )}
           {!isKeyValid && !loadError ? (
             <div className="flex items-center justify-center h-full bg-black/5 p-4 text-center">
-              <p className="text-sm text-[rgba(26,18,8,0.40)] font-medium">Google Maps key missing. Please set <code>NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code>.</p>
+              <p className="text-sm font-medium" style={{ color: 'var(--phase-text)', opacity: 0.40 }}>Google Maps key missing. Please set <code>NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code>.</p>
             </div>
           ) : isLoaded && !loadError ? (
             <GoogleMap
@@ -610,7 +615,7 @@ export default function VenuePage() {
             </GoogleMap>
           ) : !loadError && (
             <div className="flex items-center justify-center h-full bg-black/5">
-                  <Loader2 className="h-8 w-8 animate-spin text-[rgba(26,18,8,0.20)]" />
+                  <Loader2 className="h-8 w-8 animate-spin" style={{ color: 'var(--phase-text)', opacity: 0.20 }} />
             </div>
           )}
         </Card>
