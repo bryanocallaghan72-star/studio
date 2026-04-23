@@ -168,9 +168,9 @@ const SUBCATEGORY_ICONS: Record<SubCategory, React.ElementType> = {
 export function FlowTabsSkeleton() {
     return (
         <div className="flex flex-col bg-transparent p-4 md:p-6 min-h-screen">
-            <h2 className="text-3xl font-black tracking-tighter text-[#1a1208] italic uppercase mb-2">FLOW</h2>
-            <p className="text-[13px] font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest mb-6">Bondi's rhythm · right now</p>
-            <div className="grid grid-cols-4 gap-2 rounded-full bg-[rgba(26,18,8,0.06)] p-1 h-12">
+            <h2 className="text-3xl font-black tracking-tighter italic uppercase mb-2" style={{ color: 'var(--phase-text)' }}>FLOW</h2>
+            <p className="text-[13px] font-bold uppercase tracking-widest mb-6" style={{ color: 'var(--phase-text)', opacity: 0.4 }}>Bondi's rhythm · right now</p>
+            <div className="grid grid-cols-4 gap-2 rounded-full bg-[rgba(128,128,128,0.15)] p-1 h-12">
                 <Skeleton className="h-full w-full rounded-full" />
                 <Skeleton className="h-full w-full rounded-full" />
                 <Skeleton className="h-full w-full rounded-full" />
@@ -249,22 +249,26 @@ export function FlowTabs() {
   return (
     <div className="flex flex-col bg-transparent p-4 md:p-6 min-h-screen pb-32">
       <header className="mb-6">
-        <h2 className="text-3xl font-black tracking-tighter text-[#1a1208] italic uppercase mb-1">FLOW</h2>
-        <p className="text-[13px] font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest leading-none">Bondi's rhythm · right now</p>
+        <h2 className="text-3xl font-black tracking-tighter italic uppercase mb-1" style={{ color: 'var(--phase-text)' }}>FLOW</h2>
+        <p className="text-[13px] font-bold uppercase tracking-widest leading-none" style={{ color: 'var(--phase-text)', opacity: 0.4 }}>Bondi's rhythm · right now</p>
       </header>
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid grid-cols-4 w-full bg-[rgba(26,18,8,0.06)] rounded-full p-1 h-12 border-none">
-          {tabData.map(tab => (
-            <TabsTrigger 
-                key={tab.value} 
-                value={tab.value}
-                className="rounded-full text-[12px] font-bold transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#1a1208] data-[state=active]:shadow-sm data-[state=active]:border-[0.5px] data-[state=active]:border-black/5 text-[rgba(26,18,8,0.40)] outline-none focus:outline-none focus:ring-0 focus-visible:ring-0"
-            >
-                <tab.icon className="mr-1.5 h-3.5 w-3.5"/>
-                {tab.label}
-            </TabsTrigger>
-          ))}
+        <TabsList className="grid grid-cols-4 w-full bg-[rgba(128,128,128,0.15)] rounded-full p-1 h-12 border-none">
+          {tabData.map(tab => {
+            const isActive = activeTab === tab.value;
+            return (
+              <TabsTrigger 
+                  key={tab.value} 
+                  value={tab.value}
+                  className="rounded-full text-[12px] font-bold transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#1a1208] data-[state=active]:shadow-sm data-[state=active]:border-[0.5px] data-[state=active]:border-black/5 outline-none focus:outline-none focus:ring-0 focus-visible:ring-0"
+                  style={isActive ? {} : { color: 'var(--phase-text)', opacity: 0.4 }}
+              >
+                  <tab.icon className="mr-1.5 h-3.5 w-3.5"/>
+                  {tab.label}
+              </TabsTrigger>
+            )
+          })}
         </TabsList>
 
         <div className="mt-6 mb-8 flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4">
@@ -278,9 +282,12 @@ export function FlowTabs() {
                         className={cn(
                             "flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold transition-all duration-200 outline-none focus:outline-none focus:ring-0",
                             isActive 
-                                ? "bg-[#c4762a] text-white shadow-md shadow-[#c4762a]/10" 
-                                : "bg-[rgba(26,18,8,0.06)] text-[rgba(26,18,8,0.50)] hover:bg-[rgba(26,18,8,0.1)]"
+                                ? "text-white shadow-md shadow-[#c4762a]/10" 
+                                : "bg-[rgba(128,128,128,0.15)] hover:bg-[rgba(128,128,128,0.25)]"
                         )}
+                        style={isActive 
+                            ? { backgroundColor: 'var(--phase-accent)' } 
+                            : { color: 'var(--phase-text)', opacity: 0.7 }}
                     >
                         <Icon className="h-3.5 w-3.5" />
                         {subCategory}
@@ -295,8 +302,8 @@ export function FlowTabs() {
             </div>
              {filteredVenues.length === 0 && (
                 <div className="text-center py-24 px-6 border-2 border-dashed border-black/[0.05] rounded-3xl">
-                    <p className="text-sm font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest">Nothing open right now. Check back soon.</p>
-                    <p className="text-xs text-[rgba(26,18,8,0.30)] mt-2">Try another time of day or clear your filters.</p>
+                    <p className="text-sm font-bold uppercase tracking-widest" style={{ color: 'var(--phase-text)', opacity: 0.4 }}>Nothing open right now. Check back soon.</p>
+                    <p className="text-xs mt-2" style={{ color: 'var(--phase-text)', opacity: 0.3 }}>Try another time of day or clear your filters.</p>
                 </div>
             )}
         </TabsContent>
