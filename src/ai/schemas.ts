@@ -5,7 +5,7 @@ const ItineraryStopSchema = z.object({
     time: z.string().describe('The suggested time for the activity (e.g., "9:00 AM", "1:00 PM").'),
     title: z.string().describe('A short, catchy title for the itinerary stop.'),
     location: z.string().describe('The specific venue or location for the stop (e.g., "The Grassy Knoll Cafe", "Bondi Beach").'),
-    description: z.string().describe('A brief, engaging description of the activity at this stop.'),
+    description: z.string().default('').describe('A brief, engaging description of the activity at this stop.'),
     isHeld: z.boolean().default(false).describe('Indicates if the user has locked this stop during a shuffle.'),
     id: z.string().default(() => Math.random().toString(36).substring(7)).describe('A unique client-side ID for the stop.'),
 });
