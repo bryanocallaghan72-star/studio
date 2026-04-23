@@ -34,7 +34,7 @@ export function MobileNav() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-[rgba(0,0,0,0.06)] bg-[#f2ece0] h-[64px] md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-[rgba(0,0,0,0.06)] bg-transparent h-[64px] md:hidden">
       <div className="grid h-full max-w-lg grid-cols-6 mx-auto">
         {allItems.map((item) => {
           const isActive = 'isProfile' in item 
@@ -52,12 +52,13 @@ export function MobileNav() {
               <div className="flex flex-col items-center justify-center">
                 <Icon 
                   className="h-6 w-6 transition-colors duration-200" 
-                  style={{ color: isActive ? '#c4762a' : 'rgba(26,18,8,0.25)' }}
+                  style={{ color: isActive ? 'var(--phase-accent)' : 'var(--phase-text)' }}
                 />
                 <div className="h-1 mt-1">
                   {isActive && (
                     <div 
-                      className="w-1 h-1 rounded-full bg-[#c4762a] animate-in fade-in zoom-in duration-300"
+                      className="w-1 h-1 rounded-full animate-in fade-in zoom-in duration-300"
+                      style={{ backgroundColor: 'var(--phase-accent)' }}
                     />
                   )}
                 </div>

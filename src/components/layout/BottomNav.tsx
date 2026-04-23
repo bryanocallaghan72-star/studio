@@ -24,7 +24,7 @@ export function BottomNav() {
   return (
     <nav 
       className="fixed bottom-0 left-0 right-0 z-50 h-[83px] pb-[20px] border-t border-black/[0.08] flex items-center justify-around px-4"
-      style={{ backgroundColor: '#f2ece0' }}
+      style={{ backgroundColor: 'transparent' }}
     >
       {tabs.map((tab) => {
         const isActive = tab.root ? pathname.startsWith(tab.root) : pathname === tab.href;
@@ -40,22 +40,30 @@ export function BottomNav() {
               <Icon
                 size={22}
                 strokeWidth={1.8}
-                className={cn(
-                  "transition-colors duration-200",
-                  isActive ? "text-[#c4762a]" : "text-[#1a1208]/35"
-                )}
+                className="transition-colors duration-200"
+                style={{ 
+                  color: isActive ? 'var(--phase-accent)' : 'var(--phase-text)',
+                  opacity: isActive ? 1 : 0.35 
+                }}
               />
               <div className="h-1 mt-1">
                 {isActive && (
-                  <div className="w-1 h-1 rounded-full bg-[#c4762a] animate-in fade-in zoom-in duration-300" />
+                  <div 
+                    className="w-1 h-1 rounded-full animate-in fade-in zoom-in duration-300" 
+                    style={{ backgroundColor: 'var(--phase-accent)' }}
+                  />
                 )}
               </div>
             </div>
             <span
               className={cn(
                 "text-[10px] tracking-tight transition-colors duration-200",
-                isActive ? "text-[#c4762a] font-semibold" : "text-[#1a1208]/40"
+                isActive && "font-semibold"
               )}
+              style={{ 
+                color: isActive ? 'var(--phase-accent)' : 'var(--phase-text)',
+                opacity: isActive ? 1 : 0.4
+              }}
             >
               {tab.label}
             </span>
