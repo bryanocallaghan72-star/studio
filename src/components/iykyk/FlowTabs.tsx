@@ -227,6 +227,8 @@ export function FlowTabs() {
     console.log('mockDate hour:', mockDate.getHours(), 'minutes:', mockDate.getMinutes());
     console.log('venues for time count:', venuesForTime.length);
     console.log('open venues count:', openVenues.length);
+    console.log('venues with category:', openVenues.filter(v => v.details?.category).length);
+    console.log('sample categories:', openVenues.slice(0, 5).map(v => v.details?.category));
 
     if (activeSubCategory === 'All') {
         return openVenues;
