@@ -7,78 +7,46 @@ import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import { Skeleton } from '../ui/skeleton';
 import { useVenues } from '@/hooks/useVenues';
 import type { Venue } from '@/types/venue';
 import { useDemoTime } from "@/context/DemoTimeContext";
 
+const isStrictlyOpen = (venue: any, mockDate: Date): boolean => {
+    if (!venue?.openingHours?.periods || venue.openingHours.periods.length === 0) return true;
 
-const VenueCard = memo(({ venue, mockDate }: { venue: any, mockDate: Date }) => {
-    const openingStatus = useMemo(() => {
-        if (!venue?.openingHours?.periods || venue.openingHours.periods.length === 0) return null;
+    const now = mockDate;
+    const currentDay = now.getDay();
+    const currentTime = now.getHours() * 100 + now.getMinutes();
+    const periods = venue.openingHours.periods;
 
-        const now = mockDate;
-        const currentDay = now.getDay();
-        const currentTime = now.getHours() * 100 + now.getMinutes();
-        const periods = venue.openingHours.periods;
+    const isAlwaysOpen = periods.length === 1 && 
+        periods[0].open.day === 0 && 
+        periods[0].open.time === "0000" && 
+        (!periods[0].close || (periods[0].close.day === 0 && periods[0].close.time === "0000"));
 
-        // Check for 24/7
-        const isAlwaysOpen = periods.length === 1 && 
-            periods[0].open.day === 0 && 
-            periods[0].open.time === "0000" && 
-            (!periods[0].close || (periods[0].close.day === 0 && periods[0].close.time === "0000"));
+    if (isAlwaysOpen) return true;
 
-        if (isAlwaysOpen) return { isOpen: true };
+    const activePeriod = periods.find((p: any) => {
+        const openDay = p.open.day;
+        const openTime = parseInt(p.open.time);
+        const closeDay = p.close?.day ?? openDay;
+        const closeTime = p.close ? parseInt(p.close.time) : 2359;
 
-        // Check if currently open
-        const activePeriod = periods.find((p: any) => {
-            const openDay = p.open.day;
-            const openTime = parseInt(p.open.time);
-            const closeDay = p.close?.day ?? openDay;
-            const closeTime = p.close ? parseInt(p.close.time) : 2359;
+        if (openDay === closeDay) {
+            return currentDay === openDay && currentTime >= openTime && currentTime < closeTime;
+        } else {
+            if (currentDay === openDay) return currentTime >= openTime;
+            if (currentDay === (openDay + 1) % 7) return currentTime < closeTime;
+        }
+        return false;
+    });
 
-            if (openDay === closeDay) {
-                return currentDay === openDay && currentTime >= openTime && currentTime < closeTime;
-            } else {
-                if (currentDay === openDay) return currentTime >= openTime;
-                if (currentDay === (openDay + 1) % 7) return currentTime < closeTime;
-            }
-            return false;
-        });
+    return !!activePeriod;
+};
 
-        if (activePeriod) return { isOpen: true };
-
-        // Find next opening for label
-        const nextOpening = [...periods]
-            .map((p: any) => ({
-                ...p,
-                absOpen: p.open.day * 1440 + parseInt(p.open.time.substring(0, 2)) * 60 + parseInt(p.open.time.substring(2))
-            }))
-            .sort((a: any, b: any) => a.absOpen - b.absOpen);
-
-        const absNow = currentDay * 1440 + now.getHours() * 60 + now.getMinutes();
-        let next = nextOpening.find((p: any) => p.absOpen > absNow);
-        if (!next) next = nextOpening[0];
-
-        const formatTimeStr = (t: string) => {
-            const h = parseInt(t.substring(0, 2));
-            const m = t.substring(2);
-            const suffix = h >= 12 ? 'PM' : 'AM';
-            const hour12 = h % 12 || 12;
-            return `${hour12}:${m} ${suffix}`;
-        };
-
-        return { 
-            isOpen: false, 
-            nextTime: formatTimeStr(next.open.day === currentDay ? next.open.time : next.open.time) 
-        };
-    }, [venue, mockDate]);
-
-    const isClosed = openingStatus && !openingStatus.isOpen;
-    
+const VenueCard = memo(({ venue }: { venue: any }) => {
     const getPhotoUrl = (photoRef: string) => {
         if (!photoRef) return null;
         if (photoRef.startsWith('http')) return photoRef;
@@ -90,10 +58,7 @@ const VenueCard = memo(({ venue, mockDate }: { venue: any, mockDate: Date }) => 
 
     return (
         <Link href={`/venue/${venue.slug}`}>
-            <Card className={cn(
-                "group relative h-64 overflow-hidden rounded-2xl border border-black/[0.08] shadow-sm transition-all hover:shadow-xl hover:-translate-y-1",
-                isClosed && "opacity-50"
-            )}>
+            <Card className="group relative h-64 overflow-hidden rounded-2xl border border-black/[0.08] shadow-sm transition-all hover:shadow-xl hover:-translate-y-1">
                  <div className="absolute inset-0">
                     <img
                         src={imageUrl}
@@ -115,13 +80,7 @@ const VenueCard = memo(({ venue, mockDate }: { venue: any, mockDate: Date }) => 
                                 {venue.location?.address}
                             </p>
                         </div>
-                        {isClosed ? (
-                            <Badge 
-                                className="bg-red-500 text-white text-[10px] font-black border-none uppercase tracking-wider rounded-full px-2 py-0.5"
-                            >
-                                Opens at {openingStatus.nextTime}
-                            </Badge>
-                        ) : venue.details?.category && (
+                        {venue.details?.category && (
                             <Badge 
                                 className="bg-white/20 text-white text-[10px] font-bold backdrop-blur-md border-none uppercase tracking-wider rounded-full px-2 py-0.5"
                             >
@@ -237,7 +196,6 @@ export function FlowTabs() {
   const { mockDate } = useDemoTime();
   
   useEffect(() => {
-    // Determine the active tab based on the canonical God Mode time
     const currentHour = mockDate.getHours();
     const newActiveTab = getCurrentTimeCategory(currentHour);
     setActiveTab(newActiveTab);
@@ -262,17 +220,21 @@ export function FlowTabs() {
   
   const filteredVenues = useMemo(() => {
     const venuesForTime = tabData.find(t => t.value === activeTab)?.venues || [];
+    
+    // Strict real-time "Open Now" filter
+    const openVenues = venuesForTime.filter(v => isStrictlyOpen(v, mockDate));
+
     if (activeSubCategory === 'All') {
-        return venuesForTime;
+        return openVenues;
     }
-    return venuesForTime.filter(venue => {
+    return openVenues.filter(venue => {
         const category = venue.details?.category;
         if (!category) return false;
         
         const mappedCategory = CATEGORY_ALIASES[category] || category;
         return mappedCategory === activeSubCategory;
     });
-  }, [activeTab, activeSubCategory, tabData]);
+  }, [activeTab, activeSubCategory, tabData, mockDate]);
 
   const availableSubcategories = SUBCATEGORY_MAP[activeTab];
 
@@ -329,11 +291,11 @@ export function FlowTabs() {
 
         <TabsContent value={activeTab} forceMount className="mt-0">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredVenues.map(venue => <VenueCard key={venue.id} venue={venue} mockDate={mockDate} />)}
+                {filteredVenues.map(venue => <VenueCard key={venue.id} venue={venue} />)}
             </div>
              {filteredVenues.length === 0 && (
                 <div className="text-center py-24 px-6 border-2 border-dashed border-black/[0.05] rounded-3xl">
-                    <p className="text-sm font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest">Quiet in this phase</p>
+                    <p className="text-sm font-bold text-[rgba(26,18,8,0.40)] uppercase tracking-widest">Nothing open right now. Check back soon.</p>
                     <p className="text-xs text-[rgba(26,18,8,0.30)] mt-2">Try another time of day or clear your filters.</p>
                 </div>
             )}
