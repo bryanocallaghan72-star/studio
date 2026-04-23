@@ -129,7 +129,7 @@ type SubCategory = 'All' | 'Brunch' | 'Food' | 'Drinks' | 'Nightlife' | 'Vibes' 
 
 const SUBCATEGORY_MAP: { [key: string]: SubCategory[] } = {
     morning: ['All', 'Brunch', 'Active'],
-    day:     ['All', 'Food', 'Vibes', 'Active'],
+    day:     ['All', 'Brunch', 'Food', 'Vibes', 'Active'],
     golden:  ['All', 'Food', 'Drinks', 'Vibes'],
     night:    ['All', 'Drinks', 'Nightlife'],
 };
