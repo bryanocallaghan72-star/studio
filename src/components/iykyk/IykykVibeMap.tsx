@@ -220,7 +220,7 @@ export function IykykVibeMap() {
           <AlertTriangle className="h-10 w-10" />
         </div>
         <h3 className="text-xl font-bold text-foreground">Map Load Error</h3>
-        <p className="text-muted-foreground max-w-md text-sm">
+        <p className="text-muted-foreground max-md text-sm">
           The Google Maps API failed to load. This is often due to <strong>Referrer Restrictions</strong> on your API key in the Cloud Console.
         </p>
         <div className="bg-card p-3 rounded-lg border border-border text-xs font-mono break-all select-all text-card-foreground">
@@ -319,16 +319,20 @@ export function IykykVibeMap() {
 
             <div className="flex overflow-x-auto pb-2 scrollbar-hide -mx-2">
                 {mapFilterCategories.map((categoryKey) => {
+                    const isActive = activeTab === categoryKey;
                     return (
                         <button
                             key={categoryKey}
                             onClick={() => handleTabChange(categoryKey)}
                             className={cn(
                                 "flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full mx-1 transition-all duration-300 inline-flex items-center shadow-sm outline-none focus:outline-none focus:ring-0",
-                                activeTab === categoryKey 
-                                    ? "bg-[#c4762a] text-white" 
-                                    : "bg-[rgba(26,18,8,0.06)] text-[rgba(26,18,8,0.50)] hover:bg-[rgba(26,18,8,0.1)]"
+                                isActive 
+                                    ? "text-white" 
+                                    : "bg-[rgba(128,128,128,0.15)] hover:bg-[rgba(128,128,128,0.25)]"
                             )}
+                            style={isActive 
+                              ? { backgroundColor: 'var(--phase-accent)' } 
+                              : { color: 'var(--phase-text)', opacity: 0.7 }}
                         >
                             {vibeIcons[categoryKey]}
                             {categoryKey}
