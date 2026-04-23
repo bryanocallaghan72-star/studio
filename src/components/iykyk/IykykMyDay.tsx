@@ -79,7 +79,11 @@ export function IykykMyDay() {
                 return;
             }
 
-            // Clean stops: ItineraryRequestSchema omits 'id' and 'isHeld' from heldStops
+            /**
+             * CRITICAL FIX: The ItineraryRequestSchema in schemas.ts explicitly omits 'id' and 'isHeld'
+             * for the heldStops array using .omit(). If we pass the full objects, Zod validation
+             * on the server will fail with an 'unrecognized_keys' error.
+             */
             const cleanedHeldStops = heldStops.map(({ id, isHeld, ...rest }) => rest);
 
             const request = {
