@@ -56,8 +56,6 @@ const VenueCard = memo(({ venue }: { venue: any }) => {
     const imageUrl = getPhotoUrl(venue.photos?.[0]) || 
         "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=800&auto=format&fit=crop";
 
-    const displayCategory = venue.details?.category || venue.category;
-
     return (
         <Link href={`/venue/${venue.slug}`}>
             <Card className="group relative h-64 overflow-hidden rounded-2xl border border-black/[0.08] shadow-sm transition-all hover:shadow-xl hover:-translate-y-1">
@@ -82,11 +80,11 @@ const VenueCard = memo(({ venue }: { venue: any }) => {
                                 {venue.location?.address}
                             </p>
                         </div>
-                        {displayCategory && (
+                        {(venue.category || venue.details?.category) && (
                             <Badge 
                                 className="bg-white/20 text-white text-[10px] font-bold backdrop-blur-md border-none uppercase tracking-wider rounded-full px-2 py-0.5"
                             >
-                                {displayCategory}
+                                {venue.category || venue.details?.category}
                             </Badge>
                         )}
                     </div>
@@ -230,7 +228,7 @@ export function FlowTabs() {
         return openVenues;
     }
     return openVenues.filter(venue => {
-        const category = venue.details?.category || venue.category;
+        const category = venue.category || venue.details?.category;
         if (!category) return false;
         
         const mappedCategory = CATEGORY_ALIASES[category] || category;
