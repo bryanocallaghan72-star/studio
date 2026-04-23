@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -21,24 +22,43 @@ export function IykykMyDay() {
     const [isShuffling, setIsShuffling] = useState(false);
     const { toast } = useToast();
 
-    const handleSelectVibe = (option: ItineraryOption) => {
+    const handleSelectVibe = async (option: ItineraryOption) => {
         setCurrentVibe(option);
-
-        const initialStops = option.mockItinerary.map((s: any, index: number) => ({
-            time: s.time,
-            title: s.name,
-            location: s.name,
-            description: s.notes,
-            isHeld: false,
-            id: `${s.name}-${index}-${Date.now()}`,
-        }));
-        
-        setItinerary({
-            title: option.title,
-            stops: initialStops,
-        });
-
         setView('itinerary');
+        setItinerary(null);
+        setIsShuffling(true);
+
+        try {
+            const result = await generateItinerary(option.request);
+
+            if (result.success) {
+                const newStopsWithIds = result.success.stops.map((stop, index) => ({
+                    ...stop,
+                    id: `${stop.title}-${index}-${Date.now()}`
+                }));
+                setItinerary({ ...result.success, stops: newStopsWithIds });
+            } else if (result.error) {
+                toast({
+                    variant: "destructive",
+                    title: result.error.title,
+                    description: result.error.message,
+                });
+                // Return to selection if generation fails
+                setView('selection');
+                setCurrentVibe(null);
+            }
+        } catch (error) {
+            console.error('Initial generation failed:', error);
+            toast({
+                variant: "destructive",
+                title: "Generation Failed",
+                description: "Something went wrong. Please try again.",
+            });
+            setView('selection');
+            setCurrentVibe(null);
+        } finally {
+            setIsShuffling(false);
+        }
     };
 
     const handleBackToSelection = () => {
