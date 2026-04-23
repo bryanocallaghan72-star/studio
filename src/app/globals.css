@@ -87,6 +87,23 @@
   --phase-text:    #0d1f2d;
   --phase-muted:   #6a9ab5;
   --phase-glow:    #b8d8e8;
+
+  --background: 204 60% 95%;
+  --foreground: 210 60% 12%;
+  --card: 0 0% 100%;
+  --card-foreground: 210 60% 12%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 210 60% 12%;
+  --primary: 204 55% 40%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 204 40% 88%;
+  --secondary-foreground: 210 60% 12%;
+  --muted: 204 30% 88%;
+  --muted-foreground: 210 30% 40%;
+  --border: 210 30% 12% / 0.08;
+  --input: 210 30% 12% / 0.06;
+  --ring: 204 55% 40% / 0.3;
+
   --bg-gradient: linear-gradient(
     to bottom,
     #e8f2f8,
@@ -94,7 +111,7 @@
     #f0f7fa
   );
   --glass-dark:       rgba(13, 31, 45, 0.6);
-  --glass-light:      rgba(232, 242, 248, 0.7);
+  --glass-light:      rgba(232, 242, 248, 0.75);
   --glass-border:     rgba(13, 31, 45, 0.08);
   --glass-dark-soft:  rgba(13, 31, 45, 0.35);
   --glass-light-soft: rgba(184, 216, 232, 0.4);
