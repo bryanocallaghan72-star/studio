@@ -11,6 +11,7 @@ import { useUser, useFirestore } from '@/firebase';
 import { doc, increment, addDoc, collection, query, orderBy, getDocs, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { ToastAction } from '@/components/ui/toast';
+import { cn } from '@/lib/utils';
 
 export interface FeedPost {
   id: string;
@@ -202,7 +203,7 @@ export function FeedCard({ post, index }: FeedCardProps) {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.08, ease: 'easeOut' }}
-      className="w-full border-b border-black/[0.08] bg-[#f2ece0]"
+      className="w-full border-b border-black/[0.08] bg-transparent"
     >
       <div className="relative aspect-[4/5] w-full overflow-hidden">
         {post.image ? (
@@ -214,7 +215,7 @@ export function FeedCard({ post, index }: FeedCardProps) {
             priority={index < 2}
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-[#c4762a]/20 to-[#f2ece0] flex items-center justify-center">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#c4762a]/20 to-transparent flex items-center justify-center">
             <span className="text-4xl">🌊</span>
           </div>
         )}
@@ -228,7 +229,10 @@ export function FeedCard({ post, index }: FeedCardProps) {
 
         <div className="absolute bottom-4 left-4 z-20 flex flex-col items-start gap-2">
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-[#c4762a] px-2 py-0.5 text-[10px] font-bold tracking-widest text-white uppercase shadow-lg">
+            <span 
+              className="rounded-full bg-[#c4762a] px-2 py-0.5 text-[10px] font-bold tracking-widest text-white uppercase shadow-lg"
+              style={{ backgroundColor: 'var(--phase-accent)' }}
+            >
               {post.phase}
             </span>
             {post.isReel && (
@@ -251,7 +255,10 @@ export function FeedCard({ post, index }: FeedCardProps) {
       <div className="p-4">
         <div className="flex items-center justify-between">
           <Link href={`/profile/${post.creatorId}`} className="flex items-center gap-3 group transition-opacity active:opacity-70">
-            <div className="relative flex h-8 w-8 items-center justify-center rounded-full bg-[#c4762a] text-[12px] font-bold text-white uppercase group-hover:ring-2 group-hover:ring-[#c4762a]/20 overflow-hidden">
+            <div 
+              className="relative flex h-8 w-8 items-center justify-center rounded-full bg-[#c4762a] text-[12px] font-bold text-white uppercase group-hover:ring-2 group-hover:ring-[#c4762a]/20 overflow-hidden"
+              style={{ backgroundColor: 'var(--phase-accent)' }}
+            >
               {post.creatorAvatar ? (
                 <Image 
                   src={post.creatorAvatar} 
@@ -265,14 +272,14 @@ export function FeedCard({ post, index }: FeedCardProps) {
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
-                <span className="text-sm font-semibold text-[#1a1208] group-hover:underline">{post.creator}</span>
+                <span className="text-sm font-semibold group-hover:underline" style={{ color: 'var(--phase-text)' }}>{post.creator}</span>
                 {post.verified && (
-                  <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#c4762a]">
+                  <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#c4762a]" style={{ backgroundColor: 'var(--phase-accent)' }}>
                     <Check size={8} strokeWidth={4} className="text-white" />
                   </div>
                 )}
               </div>
-              <span className="text-[11px] text-[#1a1208]/45">{post.location}</span>
+              <span className="text-[11px]" style={{ color: 'var(--phase-text)', opacity: 0.45 }}>{post.location}</span>
             </div>
           </Link>
           
@@ -280,7 +287,8 @@ export function FeedCard({ post, index }: FeedCardProps) {
             <div className="relative">
               <button 
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-[#1a1208]/40 hover:text-[#1a1208] p-2 -mr-2"
+                className="p-2 -mr-2"
+                style={{ color: 'var(--phase-text)', opacity: 0.40 }}
               >
                 <MoreHorizontal size={20} />
               </button>
@@ -313,7 +321,7 @@ export function FeedCard({ post, index }: FeedCardProps) {
           )}
         </div>
 
-        <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-[#1a1208]">
+        <p className="mt-3 line-clamp-2 text-sm leading-relaxed" style={{ color: 'var(--phase-text)' }}>
           {post.caption}
         </p>
 
@@ -326,7 +334,10 @@ export function FeedCard({ post, index }: FeedCardProps) {
               className="overflow-hidden"
             >
               <div className="flex items-center gap-3 mt-4">
-                <div className="w-7 h-7 rounded-full bg-[#c4762a] text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                <div 
+                  className="w-7 h-7 rounded-full bg-[#c4762a] text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: 'var(--phase-accent)' }}
+                >
                   {userInitial}
                 </div>
                 <input 
@@ -342,12 +353,15 @@ export function FeedCard({ post, index }: FeedCardProps) {
               <div className="mt-4 space-y-3 pb-2">
                 {localComments.map((c, i) => (
                   <div key={i} className="flex gap-2 items-start">
-                    <div className="w-6 h-6 rounded-full bg-[#c4762a]/10 text-[#c4762a] text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                    <div 
+                      className="w-6 h-6 rounded-full bg-[#c4762a]/10 text-[#c4762a] text-[10px] font-bold flex items-center justify-center flex-shrink-0"
+                      style={{ color: 'var(--phase-accent)' }}
+                    >
                       {c.authorName.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1">
-                      <span className="text-[#1a1208] font-semibold text-xs">@{c.authorName}</span>
-                      <span className="text-[rgba(26,18,8,0.70)] text-xs ml-1">{c.text}</span>
+                      <span className="font-semibold text-xs" style={{ color: 'var(--phase-text)' }}>@{c.authorName}</span>
+                      <span className="text-xs ml-1" style={{ color: 'var(--phase-text)', opacity: 0.70 }}>{c.text}</span>
                     </div>
                   </div>
                 ))}
@@ -355,21 +369,21 @@ export function FeedCard({ post, index }: FeedCardProps) {
                 {(post as any).source === 'editorial' && (
                   <>
                     <div className="flex gap-2 items-start">
-                      <div className="w-6 h-6 rounded-full bg-[rgba(26,18,8,0.10)] text-[#1a1208] text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                      <div className="w-6 h-6 rounded-full bg-[rgba(26,18,8,0.10)] text-[10px] font-bold flex items-center justify-center flex-shrink-0" style={{ color: 'var(--phase-text)' }}>
                         J
                       </div>
                       <div className="flex-1">
-                        <span className="text-[#1a1208] font-semibold text-xs">@jay</span>
-                        <span className="text-[rgba(26,18,8,0.70)] text-xs ml-1">This place is unreal every time 🔥</span>
+                        <span className="font-semibold text-xs" style={{ color: 'var(--phase-text)' }}>@jay</span>
+                        <span className="text-xs ml-1" style={{ color: 'var(--phase-text)', opacity: 0.70 }}>This place is unreal every time 🔥</span>
                       </div>
                     </div>
                     <div className="flex gap-2 items-start">
-                      <div className="w-6 h-6 rounded-full bg-[rgba(26,18,8,0.10)] text-[#1a1208] text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                      <div className="w-6 h-6 rounded-full bg-[rgba(26,18,8,0.10)] text-[10px] font-bold flex items-center justify-center flex-shrink-0" style={{ color: 'var(--phase-text)' }}>
                         M
                       </div>
                       <div className="flex-1">
-                        <span className="text-[#1a1208] font-semibold text-xs">@maya</span>
-                        <span className="text-[rgba(26,18,8,0.70)] text-xs ml-1">The omakase is next level, go</span>
+                        <span className="font-semibold text-xs" style={{ color: 'var(--phase-text)' }}>@maya</span>
+                        <span className="text-xs ml-1" style={{ color: 'var(--phase-text)', opacity: 0.70 }}>The omakase is next level, go</span>
                       </div>
                     </div>
                   </>
@@ -383,20 +397,21 @@ export function FeedCard({ post, index }: FeedCardProps) {
           <div className="flex items-center gap-4">
             <button 
               onClick={handleLikeToggle}
-              className={`flex items-center gap-1.5 text-[13px] font-medium transition-colors ${liked ? 'text-[#c4762a]' : 'text-[#1a1208]/50 hover:text-[#1a1208]'}`}
+              className={cn("flex items-center gap-1.5 text-[13px] font-medium transition-colors", liked ? 'text-[#c4762a]' : '')}
+              style={!liked ? { color: 'var(--phase-text)', opacity: 0.50 } : { color: 'var(--phase-accent)' }}
             >
               <Heart 
                 size={18} 
                 strokeWidth={2} 
-                fill={liked ? "#c4762a" : "none"} 
-                stroke={liked ? "#c4762a" : "currentColor"} 
+                fill={liked ? "currentColor" : "none"} 
+                stroke="currentColor" 
               />
               {likeCount}
             </button>
             <button 
               onClick={() => setShowComments(!showComments)}
-              className="flex items-center gap-1.5 text-[13px] font-medium text-[#1a1208]/50 hover:text-[#1a1208] outline-none focus:outline-none"
-              style={{ outline: 'none', boxShadow: 'none' }}
+              className="flex items-center gap-1.5 text-[13px] font-medium outline-none focus:outline-none"
+              style={{ outline: 'none', boxShadow: 'none', color: 'var(--phase-text)', opacity: 0.50 }}
             >
               <MessageCircle size={18} strokeWidth={2} />
               {post.comments}
@@ -406,7 +421,8 @@ export function FeedCard({ post, index }: FeedCardProps) {
           {post.hasDrop && (
             <button 
               onClick={() => setClaimModalOpen(true)}
-              className="flex items-center gap-1.5 rounded-full bg-[#c4762a] px-4 py-2 text-[12px] font-bold text-white shadow-md transition-all hover:bg-[#b06824] active:scale-95"
+              className="flex items-center gap-1.5 rounded-full px-4 py-2 text-[12px] font-bold text-white shadow-md transition-all hover:bg-[#b06824] active:scale-95"
+              style={{ backgroundColor: 'var(--phase-accent)' }}
             >
               <Ticket size={14} strokeWidth={2.5} />
               {post.dropLabel}
