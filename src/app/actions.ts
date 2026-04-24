@@ -4,6 +4,9 @@ import { generateItinerary as generateItineraryFlow } from "@/ai/flows/generate-
 import { Itinerary, ItineraryRequest, ItineraryRequestSchema } from "@/ai/schemas";
 
 export async function generateItinerary(request: ItineraryRequest): Promise<{ success?: Itinerary, error?: { title: string, message: string } }> {
+  // Temporary debug log to verify API key presence in production
+  console.log('API KEY CHECK:', process.env.GOOGLE_GENAI_API_KEY ? `Found, ends with: ${process.env.GOOGLE_GENAI_API_KEY.slice(-6)}` : 'UNDEFINED');
+
   const validatedRequest = ItineraryRequestSchema.safeParse(request);
   
   if (!validatedRequest.success) {
