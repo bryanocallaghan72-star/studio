@@ -175,7 +175,7 @@ export function IykykMyDay() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                     >
-                       <Loader2 className="h-10 w-10 animate-spin text-[#c4762a]" />
+                       <Loader2 className="h-10 w-10 animate-spin" style={{ color: 'var(--phase-accent)' }} />
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -196,7 +196,10 @@ export function IykykMyDay() {
                     />
                 ) : (
                     <div key="loading" className="absolute inset-0 flex items-center justify-center bg-white/80 z-20">
-                        <Loader2 className="h-10 w-10 animate-spin text-[#c4762a]" />
+                        <div className="flex flex-col items-center gap-4">
+                            <Loader2 className="h-10 w-10 animate-spin" style={{ color: 'var(--phase-accent)' }} />
+                            <p className="text-sm font-bold uppercase tracking-widest" style={{ color: 'var(--phase-text)', opacity: 0.5 }}>Finding your Bondi rhythm...</p>
+                        </div>
                     </div>
                 )}
             </AnimatePresence>
