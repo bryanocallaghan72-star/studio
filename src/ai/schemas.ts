@@ -19,6 +19,7 @@ export type Itinerary = z.infer<typeof ItinerarySchema>;
 
 export const ItineraryRequestSchema = z.object({
     vibe: z.string(),
+    categoryHint: z.string().optional().describe('Guidance on what types of venues to prioritize.'),
     pace: z.number().optional(),
     budget: z.number().optional(),
     travelMode: z.string().optional(),

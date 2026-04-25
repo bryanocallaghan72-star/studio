@@ -47,6 +47,11 @@ IMPORTANT RULES:
 - The location field must contain ONLY the venue name — never include street addresses, suburb names, or postcodes.
 - Do not invent or hallucinate venue names.
 
+{{#if categoryHint}}
+CATEGORY GUIDANCE:
+{{{categoryHint}}}
+{{/if}}
+
 {{#if heldStops}}
 The user wants to shuffle their itinerary but has locked in the following stops. Your response MUST include these exact stops in the final plan.
 Do NOT modify the held stops.
