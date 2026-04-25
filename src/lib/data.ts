@@ -296,7 +296,7 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator' | 'postType'>[] = [
       title: "Golden Hour at Promenade",
       description: "There's nothing like watching the sky turn orange over Bondi from the Promenade. The perfect end to any day. It's my little moment of therapy.",
       videoUrl: "https://cdn.pixelbin.io/v2/throbbing-poetry-5e04c5/original/pexels-taryn-elliott-7876874__2160p_.mp4",
-      thumbnailUrl: "https://images.unsplash.com/photo-1571762283944-580798150a58?q=80&w=1000&auto=format&fit=crop",
+      thumbnailUrl: "https://images.pexels.com/videos/7876874/pexels-photo-7876874.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
       duration: 28,
       likes: 2800,
       commentsCount: 150,
@@ -573,13 +573,13 @@ export const appData: AppData = {
     "Brunch": { icon: Coffee, color: '#f59e0b', textColor: '#ffffff' },
     "Lunch": { icon: Utensils, color: '#14b8a6', textColor: '#ffffff' },
     "Restaurants": { icon: Utensils, color: '#3b82f6', textColor: '#ffffff' },
-    "Nightlife": { icon: Beer, color: '#8b5cf6', textColor: '#ffffff' },
-    "Health & Fitness": { icon: Dumbbell, color: '#ec4899', textColor: '#ffffff' },
+    "Nightlife": { icon: Beer, color: 'hsl(var(--color-cat-nightlife))', textColor: '#ffffff' },
+    "Health & Fitness": { icon: Dumbbell, color: 'hsl(var(--color-cat-active))', textColor: '#ffffff' },
     "Surf": { icon: Waves, color: '#38bdf8', textColor: '#ffffff' },
     "Vibes": { icon: Sun, color: '#fbbf24', textColor: '#0f172a' },
-    "Sushi": { icon: Utensils, color: '#2dd4bf', textColor: '#0f172a' },
+    "Sushi": { icon: Utensils, color: 'hsl(var(--color-cat-sushi))', textColor: '#0f172a' },
     "Cocktails": { icon: Beer, color: '#d946ef', textColor: '#ffffff' },
-    "Retail": { icon: Shirt, color: '#f43f5e', textColor: '#ffffff' },
+    "Retail": { icon: Shirt, color: 'hsl(var(--color-cat-style))', textColor: '#ffffff' },
     "Events": { icon: Calendar, color: '#fb7185', textColor: '#ffffff' },
     "Flash": { icon: Zap, color: '#6366f1', textColor: '#ffffff' },
   },
@@ -639,7 +639,7 @@ export const appData: AppData = {
         { time: '18:00', name: 'Hotel Ravesis', venueId: 'hotel-ravesis', notes: 'Enjoy a 2-for-1 Patrón Margarita deal.' },
         { time: '19:30', name: 'La Piadina', venueId: 'la-piadina', notes: 'Casual and delicious Italian street food.' }
       ],
-      curatedMessage: 'Your Patrón Margarita Sunset is ready! Take a golden hour stroll along the coast, then head to Hotel Ravesis for your 2-for-1 Patrón Margarita. Finish with some amazing Italian food at La Piadina. Enjoy the sunset!'
+      curatedMessage: 'Golden hour deserves a golden plan. Patrón approves. 🌅'
     },
     {
       id: 'mmd1',
@@ -657,7 +657,7 @@ export const appData: AppData = {
         { time: '19:30', name: 'Totti\'s', venueId: 'tottis', notes: 'Reservation for dinner and some delicious Italian food.' },
         { time: '21:00', name: 'Bondi Icebergs', venueId: 'bondi-icebergs', notes: 'Finish the night with some wicked cocktails.' }
       ],
-      curatedMessage: 'All good, you\'re booked in for a cheeky cocktail at The Corner House, then jump over to Totti\'s for some delicious Italian food. Finish the night at Icebergs with some wicked cocktails. You\'ve Got This!'
+      curatedMessage: 'Smooth moves. This itinerary basically does the talking for you. 😏'
     },
     {
       id: 'mmd2',
@@ -675,7 +675,7 @@ export const appData: AppData = {
         { time: '20:00', name: 'Hotel Ravesis', venueId: 'hotel-ravesis', notes: 'Rooftop cocktails - mingle hour.' },
         { time: '22:00', name: 'The Bucket List', venueId: 'the-bucket-list', notes: 'Dancing & good energy!' }
       ],
-      curatedMessage: 'Get ready to mingle! You\'re all set for trivia and tapas at Lulu, then hit the rooftop at Ravesis for cocktails. Finish the night dancing at The Bucket List. Have fun!'
+      curatedMessage: 'Confidence is the vibe. Bondi\'s ready for you. 🌊'
     },
     {
       id: 'mmd3',
@@ -693,7 +693,7 @@ export const appData: AppData = {
         { time: '09:30', name: 'Harry\'s Bondi', venueId: 'harrys-bondi', notes: 'Acai bowl & green juice.' },
         { time: '11:00', name: 'Bondi Icebergs', venueId: 'bondi-icebergs', notes: 'Cold plunge & reset.' }
       ],
-      curatedMessage: 'Your wellness day is all planned! Start with sunrise yoga at Fluidform Pilates, grab a healthy bite at Harry\'s, then finish with a refreshing cold plunge at Icebergs. A perfect reset!'
+      curatedMessage: 'Body. Mind. Bondi. You\'ve got this. 🧘'
     },
     {
       id: 'mmd4',
@@ -711,7 +711,7 @@ export const appData: AppData = {
         { time: '19:30', name: 'Hotel Ravesis', venueId: 'hotel-ravesis', notes: 'Rooftop drinks with an ocean view.' },
         { time: '21:00', name: 'Bondi Icebergs', venueId: 'bondi-icebergs', notes: 'Sunset walk and cocktails at the pool.' }
       ],
-      curatedMessage: 'All good, you\'re booked in for a cheeky cocktail at The Corner House, then jump over to Totti\'s for some delicious Italian food. Finish the night at Icebergs with some wicked cocktails. You\'ve Got This!'
+      curatedMessage: 'This is genuinely impressive. Whoever you\'re taking is lucky. ✨'
     },
     {
       id: 'mmd5',
@@ -729,7 +729,7 @@ export const appData: AppData = {
         { time: '20:00', name: 'Hotel Ravesis', venueId: 'hotel-ravesis', notes: 'Skyline cocktails on the rooftop.' },
         { time: '22:00', name: 'The Bucket List', venueId: 'the-bucket-list', notes: 'Dancing & good energy.' }
       ],
-      curatedMessage: 'Your girls\' night out is all set! Start with margaritas at Lulu, then hit the rooftop at Ravesis for cocktails. Finish the night dancing at The Bucket List. Have a blast!'
+      curatedMessage: 'Bondi, better watch out. You lot are going to own it tonight. 🥂'
     },
     {
       id: 'mmd6',
@@ -747,7 +747,7 @@ export const appData: AppData = {
         { time: '13:30', name: 'Tuchuzy', venueId: 'tuchuzy', notes: 'Window shopping & try-ons.' },
         { time: '15:00', name: 'Sean\'s', venueId: 'seans', notes: 'Champagne & oysters.' }
       ],
-      curatedMessage: 'Lunch plans are sorted! You\'re all set for ricotta hotcakes and spritz at Bills, then head over to Tuchuzy for a window shop. Finish your afternoon with champagne and oysters at Sean\'s. Enjoy!'
+      curatedMessage: 'Effortlessly chic. This is exactly what Saturdays are for. ☀️'
     },
     {
       id: 'mmd7',
@@ -764,7 +764,7 @@ export const appData: AppData = {
         { time: '13:30', name: 'Raw Bar', venueId: 'raw-bar', notes: 'Healthy and fresh lunch.' },
         { time: '14:30', name: 'La Piadina', venueId: 'la-piadina', notes: 'A quick Italian sandwich.' }
       ],
-      curatedMessage: 'Your quick lunch is sorted! Head to Raw Bar for a fresh meal, or grab a quick sandwich at La Piadina. Enjoy!'
+      curatedMessage: 'In, out, delicious. Back to it. ⚡'
     },
     {
       id: 'mmd8',
@@ -782,7 +782,7 @@ export const appData: AppData = {
         { time: '09:00', name: 'Porch and Parlour', venueId: 'porch-and-parlour', notes: 'Protein-packed breakfast bowl.' },
         { time: '14:00', name: 'Lets Go Surfing', venueId: 'lets-go-surfing', notes: 'Afternoon surf lesson.' }
       ],
-      curatedMessage: 'Your fitness day is locked in! Smash a PT session at the outdoor gym, refuel with a protein bowl from Porch and Parlour, and then catch some waves with a surf lesson. Go get \'em!'
+      curatedMessage: 'Train hard, eat well, repeat. Bondi\'s your gym. 💪'
     },
   ],
   map: {
