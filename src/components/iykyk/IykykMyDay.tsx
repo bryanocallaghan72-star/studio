@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -145,11 +144,6 @@ export function IykykMyDay() {
         setConfirmationOpen(true);
     }
     
-    const getConfirmationMessage = () => {
-        if (!currentVibe) return "";
-        return currentVibe.curatedMessage;
-    }
-
     const parseTime = (time: string): number => {
         const cleaned = time.trim().toUpperCase();
         const match = cleaned.match(
@@ -163,6 +157,13 @@ export function IykykMyDay() {
         if (meridiem === 'AM' && hours === 12) hours = 0;
         return hours * 60 + minutes;
     };
+
+    const getConfirmationMessage = () => {
+        if (!itinerary?.stops?.length) return "";
+        const stops = [...itinerary.stops].sort((a, b) => parseTime(a.time) - parseTime(b.time));
+        const venueList = stops.map(s => s.location).join(', then ');
+        return `You're all set! Head to ${venueList}. Have an amazing time in Bondi!`;
+    }
 
     return (
         <div className="w-full flex flex-col min-h-[40rem] overflow-hidden bg-[#f2ece0] border-none relative pb-32">
