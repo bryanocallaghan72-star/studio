@@ -1,11 +1,11 @@
-import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift, UserPlus, Star } from 'lucide-react';
+import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 export type Community = {
   id: string;
   name: string;
   description: string;
-  category: keyof typeof appData.categories;
+  category: string;
   members: number;
   channels: string[];
 };
@@ -68,18 +68,7 @@ export interface AppData {
   rewards: unknown[];
   socialActivities: SocialActivity[];
   styleItems: unknown[];
-  creators: {
-    id: string;
-    name: string;
-    bio: string;
-    avatar: string;
-    x: string;
-    y: string;
-    activity: { name: string; uv: number }[];
-  }[];
   categories: Record<string, CategoryMeta>;
-  communities: Community[];
-  mockMessages: MockMessage[];
   surprises: unknown[];
   mapMyDayOptions: ItineraryOption[];
   map: {
@@ -105,12 +94,7 @@ export type CategoryMeta = {
   color: string;
   textColor: string;
 };
-export type MockMessage = {
-  id: number;
-  author: string;
-  avatar: string;
-  text: string;
-};
+
 export type PhotoFeedItem = {
   id: string;
   type: 'photo';
@@ -367,95 +351,20 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator' | 'postType'>[] = [
     }
 ];
 
-const creators = [
-    {
-      id: 'shannon',
-      name: 'Shannon',
-      bio: 'Just an Irish girl who\'s new to Bondi. Show me the best spots for a pint and a good chat!',
-      avatar: 'https://github.com/shannon.png',
-      x: '30%',
-      y: '40%',
-      activity: [{ name: 'Mon', uv: 200 }, { name: 'Tue', uv: 350 }, { name: 'Wed', uv: 300 }, { name: 'Thu', uv: 480 }, { name: 'Fri', uv: 500 }, { name: 'Sat', uv: 400 }, { name: 'Sun', uv: 600 }]
-    },
-    {
-      id: 'alice',
-      name: 'Alice',
-      bio: 'French DJ spinning tunes across Bondi. Find me where the beat drops and the cocktails flow.',
-      avatar: 'https://github.com/alice.png',
-      x: '70%',
-      y: '60%',
-      activity: [{ name: 'Mon', uv: 500 }, { name: 'Tue', uv: 450 }, { name: 'Wed', uv: 600 }, { name: 'Thu', uv: 550 }, { name: 'Fri', uv: 700 }, { name: 'Sat', uv: 800 }, { name: 'Sun', uv: 750 }]
-    },
-    {
-      id: 'lucas',
-      name: 'Lucas',
-      bio: 'Upcoming DJ and barman from a hospo family. I know the best-kept secrets of Bondi\'s nightlife.',
-      avatar: 'https://github.com/lucas.png',
-      x: '80%',
-      y: '20%',
-      activity: [{ name: 'Mon', uv: 400 }, { name: 'Tue', uv: 420 }, { name: 'Wed', uv: 500 }, { name: 'Thu', uv: 450 }, { name: 'Fri', uv: 600 }, { name: 'Sat', uv: 700 }, { name: 'Sun', uv: 650 }]
-    },
-    {
-      id: 'jay',
-      name: 'Jay',
-      bio: 'Korean foodie on a mission to find the most authentic and delicious eats in town.',
-      avatar: 'https://github.com/jay.png',
-      x: '45%',
-      y: '75%',
-      activity: [{ name: 'Mon', uv: 300 }, { name: 'Tue', uv: 320 }, { name: 'Wed', uv: 350 }, { name: 'Thu', uv: 400 }, { name: 'Fri', uv: 450 }, { name: 'Sat', uv: 500 }, { name: 'Sun', uv: 480 }]
-    },
-    {
-      id: 'kevin',
-      name: 'Kevin',
-      bio: 'I just really, really love bananas. And anything made with them. Send me your best banana bread recipes.',
-      avatar: 'https://github.com/kevin.png',
-      x: '15%',
-      y: '60%',
-      activity: [{ name: 'Mon', uv: 100 }, { name: 'Tue', uv: 120 }, { name: 'Wed', uv: 110 }, { name: 'Thu', uv: 150 }, { name: 'Fri', uv: 180 }, { name: 'Sat', uv: 200 }, { name: 'Sun', uv: 190 }]
-    },
-    {
-      id: 'emma',
-      name: 'Emma',
-      bio: 'Wellness advocate and smoothie enthusiast. Finding the beauty in balance here in Bondi.',
-      avatar: 'https://github.com/emma.png',
-      x: '55%',
-      y: '65%',
-      activity: [{ name: 'Mon', uv: 310 }, { name: 'Tue', uv: 340 }, { name: 'Wed', uv: 380 }, { name: 'Thu', uv: 410 }, { name: 'Fri', uv: 450 }, { name: 'Sat', uv: 500 }, { name: 'Sun', uv: 470 }]
-    },
-    {
-      id: 'bondicreator',
-      name: 'bondicreator',
-      bio: 'I make content about Bondi.',
-      avatar: 'https://github.com/shadcn.png',
-       x: '50%',
-      y: '50%',
-      activity: [{ name: 'Mon', uv: 250 }, { name: 'Tue', uv: 280 }, { name: 'Wed', uv: 300 }, { name: 'Thu', uv: 320 }, { name: 'Fri', 'uv': 350 }, { name: 'Sat', uv: 400 }, { name: 'Sun', uv: 380 }]
-    },
-    {
-      id: 'foodiegal',
-      name: 'foodiegal',
-      bio: 'I love food!',
-      avatar: 'https://github.com/foodie.png',
-      x: '25%',
-      y: '25%',
-      activity: [{ name: 'Mon', uv: 280 }, { name: 'Tue', uv: 300 }, { name: 'Wed', uv: 320 }, { name: 'Thu', uv: 350 }, { name: 'Fri', uv: 380 }, { name: 'Sat', uv: 420 }, { name: 'Sun', uv: 400 }]
-    }
-  ];
-
 const enrichedSliceOfLifePosts = rawSliceOfLifePosts
-  .map((post): SliceOfLifePost | null => {
-    const creator = creators.find(c => c.id === post.creatorId);
-    if (!creator) {
-      console.warn(`Creator with id '${post.creatorId}' not found for Slice of Life post '${post.id}'. Skipping post.`);
-      return null;
-    }
+  .map((post): SliceOfLifePost => {
+    // Fallback creator info since the mock lookup table is being removed
+    const creator = {
+        id: post.creatorId,
+        name: post.creatorId.charAt(0).toUpperCase() + post.creatorId.slice(1),
+        avatar: `https://api.dicebear.com/8.x/lorelei/svg?seed=${post.creatorId}`,
+    };
 
     // Add postType based on the presence of a related deal ID
     const postType = post.relatedDealId ? 'monetisable' : 'discovery';
     
     return { ...post, creator, postType };
-  })
-  .filter((post): post is SliceOfLifePost => post !== null); // Type guard to filter out nulls and satisfy TypeScript
+  });
 
 const unifiedFeedItems: FeedItem[] = [
   ...rawPhotoPosts.map(p => ({ ...p, type: 'photo' as const })),
@@ -508,7 +417,6 @@ export const appData: AppData = {
         description: 'Heading to The Depot for a coffee break. Anyone wanna join and chat about nothing in particular?',
         time: '2:30 PM',
         location: 'The Depot',
-        venueId: 'the-depot',
         creator: { id: 'shannon', name: 'Shannon', avatar: 'https://github.com/shannon.png' },
         participants: 2,
         maxParticipants: 4,
@@ -521,7 +429,6 @@ export const appData: AppData = {
         description: 'Craving some fresh sushi from Raw Bar for dinner tonight but don\'t wanna go alone. Join me!',
         time: '7:30 PM',
         location: 'Raw Bar',
-        venueId: 'raw-bar',
         creator: { id: 'alice', name: 'Alice', avatar: 'https://github.com/alice.png' },
         participants: 1,
         maxParticipants: 2,
@@ -566,7 +473,6 @@ export const appData: AppData = {
       slug: 'bondi-markets',
     }
   ],
-  creators: creators,
   categories: {
     "All": { icon: Sparkles, color: '#f8fafc', textColor: '#0f172a' },
     "Drops": { icon: Gift, color: '#a78bfa', textColor: '#ffffff' },
@@ -583,25 +489,6 @@ export const appData: AppData = {
     "Events": { icon: Calendar, color: '#fb7185', textColor: '#ffffff' },
     "Flash": { icon: Zap, color: '#6366f1', textColor: '#ffffff' },
   },
-  communities: [
-    { id: 'brunch-club', name: 'Bondi Brunch Club', description: 'For the mimosa lovers and avo toast aficionados.', category: 'Brunch', members: 128, channels: ['general', 'tips', 'meetups'] },
-    { id: 'lunch-crew', name: 'Bondi Lunch Crew', description: 'Find the best midday bites and deals.', category: 'Lunch', members: 84, channels: ['general', 'deals', 'recommendations'] },
-    { id: 'restaurant-connoisseurs', name: 'Bondi Restaurant Connoisseurs', description: 'A space for dinner plans and date night discussions.', category: 'Restaurants', members: 231, channels: ['general', 'date-night', 'new-openings'] },
-    { id: 'nightlife-lovers', name: 'Bondi Nightlife', description: 'Discovering the hottest bars, clubs, and late-night spots.', category: 'Nightlife', members: 450, channels: ['general', 'djs-and-music', 'events', 'meetups'] },
-    { id: 'health-fitness-crew', name: 'Bondi Health & Fitness Crew', description: 'Running clubs, yoga classes, and gym tips.', category: 'Health & Fitness', members: 192, channels: ['general', 'running-club', 'yoga', 'gym-buddies'] },
-    { id: 'vibes-sunsets', name: 'Bondi Vibes & Sunsets', description: 'Chasing good music, chill atmospheres, and the perfect photo.', category: 'Vibes', members: 312, channels: ['general', 'photo-sharing', 'best-spots'] },
-    { id: 'sushi-society', name: 'Bondi Sushi Society', description: 'For the love of fresh fish and perfectly rolled maki.', category: 'Sushi', members: 156, channels: ['general', 'recommendations', 'omakase-deals'] },
-    { id: 'cocktail-club', name: 'Bondi Cocktail Club', description: 'From classic martinis to new tiki drinks.', category: 'Cocktails', members: 289, channels: ['general', 'recipes', 'hidden-bars'] },
-    { id: 'retail-style', name: 'Bondi Retail & Style', description: 'For the shopaholics and local boutique supporters.', category: 'Retail', members: 76, channels: ['general', 'new-arrivals', 'sales-and-deals'] },
-    { id: 'events-culture', name: 'Bondi Events & Culture', description: 'Stay in the know about all local happenings.', category: 'Events', members: 500, channels: ['general', 'markets', 'festivals', 'live-music'] },
-  ] as Community[],
-  mockMessages: [
-    { id: 1, author: 'Jay', avatar: 'https://github.com/jay.png', text: 'Just tried the new omakase at Raw Bar. Unbelievable! #tips' },
-    { id: 2, author: 'Alice', avatar: 'https://github.com/alice.png', text: 'Anyone heading to Ravesis tonight? I\'m DJing from 10pm! #events' },
-    { id: 3, author: 'You', avatar: 'https://github.com/you.png', text: 'Sounds awesome! What\'s the vibe like there on a Thursday?' },
-    { id: 4, author: 'Shannon', avatar: 'https://github.com/shannon.png', text: 'Ravesis is always a good time! A bit boujee but the music is great.' },
-    { id: 5, author: 'Lucas', avatar: 'https://github.com/lucas.png', text: 'I\'m working at The Corner House tonight, come say hi if you\'re around! Quieter vibe but great cocktails. #meetups' },
-  ],
   surprises: [
     {
         title: "Bondi to Bronte Cliff Walk",
