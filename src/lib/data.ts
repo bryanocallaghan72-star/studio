@@ -629,6 +629,7 @@ export const appData: AppData = {
       description: 'Sponsored by Patrón',
       request: {
         vibe: 'A Patrón Margarita Sunset Vibe: Start with a scenic walk, then find the perfect spot to enjoy a refreshing Patrón Margarita as the sun goes down. End with a casual dinner.',
+        categoryHint: 'Prioritise Vibes and Cocktails venues for drinks stops, Restaurants for dinner.',
         pace: 2,
         budget: 3,
         travelMode: 'walking',
@@ -646,6 +647,7 @@ export const appData: AppData = {
       description: 'Casual cocktails to break the ice',
       request: {
         vibe: 'A casual but impressive Tinder date in Bondi. Start with unique cocktails, followed by a trendy dinner spot that\'s not too formal, and end with a place with great views for a nightcap.',
+        categoryHint: 'Prioritise Cocktails venues first, then Restaurants for dinner, then Vibes for nightcap.',
         pace: 3,
         budget: 4,
         travelMode: 'walking',
@@ -663,6 +665,7 @@ export const appData: AppData = {
       description: 'Easy icebreakers over small plates',
       request: {
         vibe: 'A fun, high-energy night for a single person in Bondi looking to meet people. Think busy, social venues with opportunities to chat with new people. Start with a lively trivia or tapas bar, move to a rooftop for cocktails, and end at a place with dancing.',
+        categoryHint: 'Prioritise Nightlife and Vibes venues. Social, high energy spaces.',
         pace: 4,
         budget: 3,
         travelMode: 'walking',
@@ -680,6 +683,7 @@ export const appData: AppData = {
       description: 'Stretch with an ocean view',
       request: {
         vibe: 'The ultimate wellness and self-care day in Bondi. Start with a morning exercise class with ocean views, followed by a healthy and delicious breakfast (think acai bowls and green juice), and finish with a refreshing and resetting activity like a cold plunge.',
+        categoryHint: 'Prioritise Health & Fitness venues for activity slots. Brunch venues for fuel. No nightlife.',
         pace: 2,
         budget: 3,
         travelMode: 'walking',
@@ -697,6 +701,7 @@ export const appData: AppData = {
       description: 'Cliffop glow & photo spots',
       request: {
         vibe: 'A classic, romantic date night in Bondi. I want a fantastic meal at a popular spot, followed by rooftop drinks with an amazing ocean view for sunset, and a final stop for a scenic walk and cocktails.',
+        categoryHint: 'Prioritise Restaurants for dinner, Cocktails for drinks, Vibes for atmosphere.',
         pace: 3,
         budget: 4,
         travelMode: 'walking',
@@ -714,6 +719,7 @@ export const appData: AppData = {
       description: 'Margaritas & shared tapas',
        request: {
         vibe: 'A fun and energetic girls\' night out. We want to start with margaritas and shared tapas, move to a stylish rooftop bar for cocktails, and end the night dancing at a place with great energy and music.',
+        categoryHint: 'Prioritise Cocktails and Nightlife venues. High energy. No fitness or brunch.',
         pace: 4,
         budget: 3,
         travelMode: 'uber',
@@ -731,6 +737,7 @@ export const appData: AppData = {
       description: 'Window shop & try-ons',
       request: {
         vibe: 'A chic and leisurely ladies\' lunch in Bondi. Start with a delicious brunch with spritzes, followed by some window shopping, and finish with champagne and oysters at a sophisticated spot.',
+        categoryHint: 'Prioritise Brunch and Restaurants. Relaxed, chic, daytime energy.',
         pace: 2,
         budget: 4,
         travelMode: 'walking',
@@ -748,6 +755,7 @@ export const appData: AppData = {
       description: 'Grab a healthy and delicious bite on your break.',
       request: {
         vibe: 'A quick, healthy, and delicious lunch in Bondi for someone on a work break. Two options: one very healthy and fresh, one a bit more of a treat but still fast.',
+        categoryHint: 'Prioritise Brunch and Food venues only. Fast, healthy, casual.',
         pace: 5,
         budget: 2,
         travelMode: 'walking',
@@ -764,6 +772,7 @@ export const appData: AppData = {
       description: 'Train hard, eat well, and hit the waves.',
       request: {
         vibe: 'An intense and rewarding fitness day in Bondi. Start with a personal training session at the iconic outdoor gym, refuel with a healthy and protein-packed lunch, and then hit the waves for an afternoon surf session.',
+        categoryHint: 'Prioritise Health & Fitness venues for activity slots. Brunch venues for post-workout fuel only. No restaurants or nightlife.',
         pace: 4,
         budget: 3,
         travelMode: 'walking',
