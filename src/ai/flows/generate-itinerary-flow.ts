@@ -32,11 +32,20 @@ Given a user's desired mood, generate a creative, multi-stop itinerary. The itin
 - Stops should be logical in sequence and timing.
 - Keep descriptions short, punchy, and enticing.
 
+{{#if venuePool}}
+CRITICAL CONSTRAINT:
+You MUST ONLY suggest venues from the following list of real, open establishments:
+{{#each venuePool}}
+- {{this}}
+{{/each}}
+
+Do NOT suggest any venue that is not in the list above.
+{{/if}}
+
 IMPORTANT RULES:
-- Only suggest real, well-known venues that actually exist in Bondi Beach, Australia
-- The location field must contain ONLY the venue name — never include street addresses, suburb names, or postcodes
-- Do not invent or hallucinate venue names
-- Prefer popular, well-known Bondi venues like Totti's, Icebergs, Harrys Bondi, The Depot, Porch and Parlour, Raw Bar, North Bondi RSL, Cali Press, Amalfi Bondi Beach, Beach Road Hotel, Bondi Hardware, and similar established venues
+- Only suggest real venues that actually exist in Bondi Beach, Australia.
+- The location field must contain ONLY the venue name — never include street addresses, suburb names, or postcodes.
+- Do not invent or hallucinate venue names.
 
 {{#if heldStops}}
 The user wants to shuffle their itinerary but has locked in the following stops. Your response MUST include these exact stops in the final plan.
