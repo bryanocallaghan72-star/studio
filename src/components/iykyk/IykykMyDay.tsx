@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -159,10 +160,8 @@ export function IykykMyDay() {
     };
 
     const getConfirmationMessage = () => {
-        if (!itinerary?.stops?.length) return "";
-        const stops = [...itinerary.stops].sort((a, b) => parseTime(a.time) - parseTime(b.time));
-        const venueList = stops.map(s => s.location).join(', then ');
-        return `You're all set! Head to ${venueList}. Have an amazing time in Bondi!`;
+        if (!currentVibe) return "";
+        return currentVibe.curatedMessage;
     }
 
     return (
