@@ -20,6 +20,15 @@ export type SocialActivity = {
     participantAvatars: string[];
 };
 
+export type Community = {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  members: number;
+  channels: string[];
+};
+
 export interface SliceOfLifePost {
   id: string; // This is the postId
   creatorId: string;

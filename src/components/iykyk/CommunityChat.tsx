@@ -9,7 +9,7 @@ import { ArrowLeft, Hash, Send } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import type { Community } from "@/app/social/[id]/page";
+import type { Community } from "@/lib/data";
 
 const MOCK_MESSAGES = [
     { id: 1, author: 'Alex', avatar: 'https://github.com/shadcn.png', text: 'Hey everyone! Is this still happening today?' },
@@ -20,7 +20,8 @@ const MOCK_MESSAGES = [
 export function CommunityChat({ community }: { community: Community }) {
     const [activeChannel, setActiveChannel] = useState('general');
 
-    const CategoryIcon = appData.categories[community.category]?.icon;
+    const categoryMeta = appData.categories[community.category];
+    const CategoryIcon = categoryMeta?.icon;
 
     return (
         <div className="flex h-full flex-col">

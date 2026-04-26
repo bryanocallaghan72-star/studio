@@ -9,6 +9,7 @@ import { Loader2, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import type { Community } from '@/lib/data';
 
 // This type should align with the data stored in the 'socials' Firestore collection.
 type SocialActivity = {
@@ -21,15 +22,6 @@ type SocialActivity = {
     currentParticipants: number;
     maxParticipants: number;
     category: 'Health & Fitness' | 'Vibes' | 'Brunch' | 'Sushi';
-};
-
-export type Community = {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  members: number;
-  channels: string[];
 };
 
 export default function SocialChatPage() {

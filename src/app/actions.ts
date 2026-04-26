@@ -1,3 +1,4 @@
+
 "use server";
 
 import { generateItinerary as generateItineraryFlow } from "@/ai/flows/generate-itinerary-flow";
@@ -8,36 +9,45 @@ import { firebaseConfig } from "@/firebase/config";
 
 /**
  * Checks if a venue is open based on its periods data.
+ * Hardened to prevent crashes from malformed or incomplete data.
  */
 function isVenueOpen(venue: any): boolean {
-  const periods = venue.openingHours?.periods;
-  if (!periods || periods.length === 0) return true; // Default to true if no data
+  try {
+    const periods = venue.openingHours?.periods;
+    if (!periods || !Array.isArray(periods) || periods.length === 0) return true; // Default to true if no data
 
-  const now = new Date();
-  const day = now.getDay();
-  const currentTime = now.getHours() * 100 + now.getMinutes();
+    const now = new Date();
+    const day = now.getDay();
+    const currentTime = now.getHours() * 100 + now.getMinutes();
 
-  const isAlwaysOpen = periods.length === 1 && 
-    periods[0].open.day === 0 && 
-    periods[0].open.time === "0000" && 
-    (!periods[0].close || (periods[0].close.day === 0 && periods[0].close.time === "0000"));
+    const isAlwaysOpen = periods.length === 1 && 
+      periods[0]?.open &&
+      periods[0].open.day === 0 && 
+      periods[0].open.time === "0000" && 
+      (!periods[0].close || (periods[0].close.day === 0 && periods[0].close.time === "0000"));
 
-  if (isAlwaysOpen) return true;
+    if (isAlwaysOpen) return true;
 
-  return periods.some((p: any) => {
-    const openDay = p.open.day;
-    const openTime = parseInt(p.open.time);
-    const closeDay = p.close?.day ?? openDay;
-    const closeTime = p.close ? parseInt(p.close.time) : 2359;
+    return periods.some((p: any) => {
+      if (!p?.open) return false;
+      
+      const openDay = p.open.day;
+      const openTime = parseInt(p.open.time);
+      const closeDay = p.close?.day ?? openDay;
+      const closeTime = p.close ? parseInt(p.close.time) : 2359;
 
-    if (openDay === closeDay) {
-      return day === openDay && currentTime >= openTime && currentTime < closeTime;
-    } else {
-      if (day === openDay) return currentTime >= openTime;
-      if (day === (openDay + 1) % 7) return currentTime < closeTime;
-    }
-    return false;
-  });
+      if (openDay === closeDay) {
+        return day === openDay && currentTime >= openTime && currentTime < closeTime;
+      } else {
+        if (day === openDay) return currentTime >= openTime;
+        if (day === (openDay + 1) % 7) return currentTime < closeTime;
+      }
+      return false;
+    });
+  } catch (err) {
+    console.warn("Venue open check failed for venue:", venue?.name, err);
+    return true; // Fallback to open on error
+  }
 }
 
 export async function generateItinerary(request: ItineraryRequest): Promise<{ success?: Itinerary, error?: { title: string, message: string } }> {
@@ -48,49 +58,51 @@ export async function generateItinerary(request: ItineraryRequest): Promise<{ su
     const db = getFirestore(app);
     
     const querySnapshot = await getDocs(collection(db, "venues"));
-    const allVenues = querySnapshot.docs.map(doc => doc.data());
-    
-    // Filter to open venues
-    const openVenues = allVenues.filter(isVenueOpen);
+    if (!querySnapshot.empty) {
+        const allVenues = querySnapshot.docs.map(doc => doc.data());
+        
+        // Filter to open venues
+        const openVenues = allVenues.filter(isVenueOpen);
 
-    // Occasion-based category filtering
-    const vibe = (request.vibe || "").toLowerCase();
-    let targetCategories: string[] = [];
-    
-    if (vibe.includes('date') || vibe.includes('tinder')) {
-      targetCategories = ['Restaurants', 'Cocktails', 'Vibes'];
-    } else if (vibe.includes('girls')) {
-      targetCategories = ['Cocktails', 'Nightlife', 'Vibes'];
-    } else if (vibe.includes('wellness') || vibe.includes('yoga') || vibe.includes('pilates')) {
-      targetCategories = ['Health & Fitness', 'Brunch'];
-    } else if (vibe.includes('lunch') || vibe.includes('quick')) {
-      targetCategories = ['Brunch', 'Restaurants', 'Sushi', 'Food'];
+        // Occasion-based category filtering
+        const vibe = (request.vibe || "").toLowerCase();
+        let targetCategories: string[] = [];
+        
+        if (vibe.includes('date') || vibe.includes('tinder')) {
+          targetCategories = ['Restaurants', 'Cocktails', 'Vibes'];
+        } else if (vibe.includes('girls')) {
+          targetCategories = ['Cocktails', 'Nightlife', 'Vibes'];
+        } else if (vibe.includes('wellness') || vibe.includes('yoga') || vibe.includes('pilates')) {
+          targetCategories = ['Health & Fitness', 'Brunch'];
+        } else if (vibe.includes('lunch') || vibe.includes('quick')) {
+          targetCategories = ['Brunch', 'Restaurants', 'Sushi', 'Food'];
+        }
+
+        let filteredVenues = openVenues;
+        if (targetCategories.length > 0) {
+          filteredVenues = openVenues.filter((v: any) => {
+            const cat = v.category || v.details?.category;
+            return targetCategories.includes(cat);
+          });
+        }
+
+        // Ensure we have a decent pool, fallback if filtering was too restrictive
+        if (filteredVenues.length < 5) filteredVenues = openVenues;
+
+        // Pick top 15 candidates
+        venuePool = filteredVenues
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 15)
+          .map((v: any) => v.name)
+          .filter(name => !!name);
     }
-
-    let filteredVenues = openVenues;
-    if (targetCategories.length > 0) {
-      filteredVenues = openVenues.filter((v: any) => {
-        const cat = v.category || v.details?.category;
-        return targetCategories.includes(cat);
-      });
-    }
-
-    // Ensure we have a decent pool, fallback if filtering was too restrictive
-    if (filteredVenues.length < 5) filteredVenues = openVenues;
-
-    // Pick top 15 candidates
-    venuePool = filteredVenues
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 15)
-      .map((v: any) => v.name);
-
   } catch (err) {
     console.error('SERVER ACTION: Failsafe pool construction:', err);
   }
 
   const validatedRequest = ItineraryRequestSchema.safeParse({
     ...request,
-    venuePool
+    venuePool: venuePool.length > 0 ? venuePool : undefined
   });
   
   if (!validatedRequest.success) {
