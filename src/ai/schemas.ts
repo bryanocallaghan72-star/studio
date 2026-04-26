@@ -1,3 +1,4 @@
+
 import { z } from 'zod';
 
 // Schema for Itinerary Generation
@@ -27,5 +28,6 @@ export const ItineraryRequestSchema = z.object({
     numberOfNewStops: z.number().optional().describe('The number of new stops to generate.'),
     heldStops: z.array(ItineraryStopSchema.omit({ id: true, isHeld: true })).optional().describe('An array of stops the user has locked and wants to keep.'),
     venuePool: z.array(z.string()).optional().describe('A list of real, currently open venues to choose from.'),
+    weatherContext: z.string().optional().describe('The current weather conditions in Bondi.'),
 });
 export type ItineraryRequest = z.infer<typeof ItineraryRequestSchema>;

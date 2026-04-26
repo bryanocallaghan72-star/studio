@@ -51,6 +51,21 @@ function isVenueOpen(venue: any): boolean {
 }
 
 export async function generateItinerary(request: ItineraryRequest): Promise<{ success?: Itinerary, error?: { title: string, message: string } }> {
+  // Fetch current Bondi weather
+  let weatherContext: string | undefined = undefined;
+  try {
+    const weatherRes = await fetch(
+      'https://api.open-meteo.com/v1/forecast?latitude=-33.8908&longitude=151.2743&current=temperature_2m,weathercode&timezone=Australia/Sydney'
+    );
+    const weatherData = await weatherRes.json();
+    const temp = Math.round(weatherData.current?.temperature_2m ?? 22);
+    const code = weatherData.current?.weathercode ?? 0;
+    const condition = code === 0 ? 'sunny' : code <= 3 ? 'partly cloudy' : code <= 67 ? 'rainy' : 'cloudy';
+    weatherContext = `${temp}°C and ${condition}`;
+  } catch (err) {
+    console.warn("SERVER ACTION: Weather fetch failed:", err);
+  }
+
   // 1. Fetch real venues from Firestore and filter them
   let venuePool: string[] = [];
   try {
@@ -102,7 +117,8 @@ export async function generateItinerary(request: ItineraryRequest): Promise<{ su
 
   const validatedRequest = ItineraryRequestSchema.safeParse({
     ...request,
-    venuePool: venuePool.length > 0 ? venuePool : undefined
+    venuePool: venuePool.length > 0 ? venuePool : undefined,
+    weatherContext
   });
   
   if (!validatedRequest.success) {

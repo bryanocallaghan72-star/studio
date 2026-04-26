@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI flow for generating a personalized itinerary based on a user's mood.
@@ -50,6 +51,10 @@ IMPORTANT RULES:
 {{#if categoryHint}}
 CATEGORY GUIDANCE:
 {{{categoryHint}}}
+{{/if}}
+
+{{#if weatherContext}}
+WEATHER: It is currently {{weatherContext}} in Bondi. Adjust venue suggestions accordingly — prefer outdoor venues if sunny and warm, indoor venues if rainy or cold.
 {{/if}}
 
 {{#if heldStops}}
