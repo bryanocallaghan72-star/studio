@@ -5,20 +5,10 @@ import { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { appData } from "@/lib/data";
-import { Code, Rss, Trophy } from "lucide-react";
+import { Code, Rss, Trophy, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
-
-type Creator = {
-  id: string;
-  name: string;
-  avatar: string;
-  activity: { name: string; uv: number }[];
-};
-
-// Sort creators by a mock 'score' or just use index for ranking display
-const rankedCreators = appData.creators.slice(0, 10) as Creator[];
+import { useCreators } from '@/hooks/useCreators';
 
 const getTrophyColor = (rank: number) => {
   if (rank === 0) return "text-yellow-400"; // Gold
@@ -27,15 +17,34 @@ const getTrophyColor = (rank: number) => {
   return "text-muted-foreground";
 }
 
+const MOCK_ACTIVITY = [
+    { name: 'Mon', uv: 4000 },
+    { name: 'Tue', uv: 3000 },
+    { name: 'Wed', uv: 2000 },
+    { name: 'Thu', uv: 2780 },
+    { name: 'Fri', uv: 1890 },
+    { name: 'Sat', uv: 2390 },
+    { name: 'Sun', uv: 3490 },
+];
+
 export default function CodePage() {
   const [isClient, setIsClient] = useState(false);
+  const { creators, isLoading } = useCreators();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
+  if (isLoading) {
+    return (
+        <div className="flex h-[50vh] w-full items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+    );
+  }
+
   return (
-    <section>
+    <section className="p-4 md:p-6 pb-32">
       <div className="flex items-center gap-3 mb-4">
         <Code className="h-8 w-8 text-primary" />
         <div>
@@ -45,8 +54,8 @@ export default function CodePage() {
       </div>
 
       <div className="space-y-4 mt-8">
-        {rankedCreators.map((creator, index) => (
-          <Card key={creator.id} className="group flex items-center overflow-hidden transition-all hover:shadow-xl p-4 rounded-2xl border hover:border-primary">
+        {creators.slice(0, 10).map((creator, index) => (
+          <Card key={creator.id} className="group flex items-center overflow-hidden transition-all hover:shadow-xl p-4 rounded-2xl border hover:border-primary bg-card">
              <div className="flex items-center gap-4 w-1/12 md:w-1/5">
                 <Trophy className={`h-6 w-6 ${getTrophyColor(index)}`} />
                 <span className="text-2xl font-bold text-muted-foreground hidden md:inline">#{index + 1}</span>
@@ -62,7 +71,7 @@ export default function CodePage() {
             <div className="w-24 h-12 md:w-32 md:h-16 ml-4">
                 {isClient && (
                   <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={creator.activity}>
+                      <AreaChart data={MOCK_ACTIVITY}>
                           <defs>
                               <linearGradient id={`colorUv-${index}`} x1="0" y1="0" x2="0" y2="1">
                                   <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>

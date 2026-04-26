@@ -41,9 +41,6 @@ function isVenueOpen(venue: any): boolean {
 }
 
 export async function generateItinerary(request: ItineraryRequest): Promise<{ success?: Itinerary, error?: { title: string, message: string } }> {
-  // Temporary debug log to verify API key presence in production
-  console.log('API KEY CHECK:', process.env.GOOGLE_GENAI_API_KEY ? `Found, ends with: ${process.env.GOOGLE_GENAI_API_KEY.slice(-6)}` : 'UNDEFINED');
-
   // 1. Fetch real venues from Firestore and filter them
   let venuePool: string[] = [];
   try {

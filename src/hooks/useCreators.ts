@@ -2,7 +2,8 @@
 "use client";
 
 import { useMemo } from 'react';
-import { appData } from '@/lib/data';
+import { collection, query, where } from 'firebase/firestore';
+import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 
 // Define the shape of a creator for type safety
 export type Creator = {
@@ -10,22 +11,38 @@ export type Creator = {
   name: string;
   bio: string;
   avatar: string;
-  activity: { name: string; uv: number }[];
+  activity?: { name: string; uv: number }[];
 };
 
 /**
- * Hook to fetch creator data.
- * In this phase, it returns mock data from lib/data.
- * It will be updated to fetch from Firestore in a later phase.
+ * Hook to fetch creator data from Firestore.
+ * Fetches users where isCreator is true.
  *
  * @returns An object containing the creators array, a creatorsById map, loading state, and error state.
  */
 export function useCreators() {
-  const creators = appData.creators as Creator[];
+  const firestore = useFirestore();
+
+  const creatorsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'users'), where('isCreator', '==', true));
+  }, [firestore]);
+
+  const { data: rawCreators, isLoading, error } = useCollection<any>(creatorsQuery);
+
+  // Transform Firestore docs into the expected Creator shape
+  const creators = useMemo((): Creator[] => {
+    return (rawCreators || []).map(c => ({
+      id: c.id,
+      name: c.username || 'Bondi Local',
+      bio: c.bio || '',
+      avatar: c.avatarUrl || `https://api.dicebear.com/8.x/lorelei/svg?seed=${c.id}`,
+      activity: [] // Activity metrics can be linked here in future phases
+    }));
+  }, [rawCreators]);
 
   // Create a memoized lookup table for creators by their ID
   const creatorsById = useMemo(() => {
-    if (!creators) return {};
     return creators.reduce((acc, creator) => {
       acc[creator.id] = creator;
       return acc;
@@ -35,7 +52,7 @@ export function useCreators() {
   return {
     creators,
     creatorsById,
-    isLoading: false,
-    error: null,
+    isLoading,
+    error,
   };
 }

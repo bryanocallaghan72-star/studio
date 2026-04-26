@@ -1,13 +1,41 @@
+
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { appData } from "@/lib/data";
-import { Users, UserPlus } from "lucide-react";
+import { Users, UserPlus, Loader2 } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { Badge } from "../ui/badge";
+import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
+import { collection } from "firebase/firestore";
+
+export type Community = {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  members: number;
+  channels: string[];
+};
 
 export function CommunityList() {
+    const firestore = useFirestore();
+    const communitiesQuery = useMemoFirebase(() => {
+        if (!firestore) return null;
+        return collection(firestore, 'communities');
+    }, [firestore]);
+
+    const { data: communities, isLoading } = useCollection<Community>(communitiesQuery);
+
+    if (isLoading) {
+        return (
+            <div className="flex h-[50vh] w-full items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        );
+    }
+
     return (
         <section>
             <div className="text-center mb-8">
@@ -17,8 +45,9 @@ export function CommunityList() {
                 </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {appData.communities.map(community => {
-                    const CategoryIcon = appData.categories[community.category]?.icon;
+                {(communities || []).map(community => {
+                    const categoryMeta = appData.categories[community.category];
+                    const CategoryIcon = categoryMeta?.icon;
                     return (
                         <Card key={community.id} className="flex flex-col text-center items-center p-6 bg-card shadow-lg hover:shadow-xl transition-shadow hover:-translate-y-1">
                              <CardHeader className="p-0 items-center">

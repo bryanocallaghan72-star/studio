@@ -9,7 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 
-const { sliceOfLifePosts, creators } = appData;
+const { sliceOfLifePosts } = appData;
 
 export function SliceOfLifeFeed() {
     return (
@@ -27,7 +27,7 @@ export function SliceOfLifeFeed() {
             </header>
             
             {sliceOfLifePosts.map((post) => {
-                const creator = creators.find(c => c.id === post.creatorId);
+                const creator = post.creator;
                 return (
                     <div key={post.id} className="relative h-screen w-full snap-start flex-shrink-0 bg-black">
                         {/* Video Player Placeholder */}
@@ -47,15 +47,13 @@ export function SliceOfLifeFeed() {
                                 </Badge>
                                 <h2 className="text-3xl font-bold tracking-tight">{post.title}</h2>
                                 <div className="flex items-center gap-3">
-                                    {creator && (
-                                        <Link href={`/profile/${creator.id}`} className="flex items-center gap-3 group">
-                                            <Avatar className="h-10 w-10 border-2 border-white/50 group-hover:border-white transition-colors">
-                                                <AvatarImage src={creator.avatar} />
-                                                <AvatarFallback>{creator.name.charAt(0)}</AvatarFallback>
-                                            </Avatar>
-                                            <span className="font-semibold group-hover:underline">@{creator.name}</span>
-                                        </Link>
-                                    )}
+                                    <Link href={`/profile/${creator.id}`} className="flex items-center gap-3 group">
+                                        <Avatar className="h-10 w-10 border-2 border-white/50 group-hover:border-white transition-colors">
+                                            <AvatarImage src={creator.avatar} />
+                                            <AvatarFallback>{creator.name.charAt(0)}</AvatarFallback>
+                                        </Avatar>
+                                        <span className="font-semibold group-hover:underline">@{creator.name}</span>
+                                    </Link>
                                 </div>
                                 <p className="text-white/80 text-base leading-relaxed line-clamp-3">
                                     {post.description}
@@ -86,4 +84,3 @@ export function SliceOfLifeFeed() {
         </div>
     );
 }
-    

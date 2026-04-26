@@ -4,8 +4,8 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, PartyPopper } from "lucide-react";
-import { appData } from "@/lib/data";
 import { VenueLike } from "@/lib/venueUtils";
+import { useCreators } from "@/hooks/useCreators";
 
 
 type BookingConfirmationDialogProps = {
@@ -19,9 +19,9 @@ type BookingConfirmationDialogProps = {
 };
 
 export function BookingConfirmationDialog({ isOpen, onOpenChange, venue, partySize, bookingTime, bookingDate, creatorId }: BookingConfirmationDialogProps) {
-
+    const { creatorsById } = useCreators();
     const formattedDate = bookingDate ? new Date(bookingDate).toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' }) : 'Today';
-    const creator = creatorId ? appData.creators.find(c => c.id === creatorId) : null;
+    const creator = creatorId ? creatorsById[creatorId] : null;
 
     if (!venue) return null;
 
@@ -43,7 +43,7 @@ export function BookingConfirmationDialog({ isOpen, onOpenChange, venue, partySi
                     {creator && (
                         <div className="bg-primary/10 text-primary p-3 rounded-lg text-sm flex items-center justify-center gap-2">
                             <PartyPopper className="h-4 w-4" />
-                            <p>We'll let <strong>@{creator.id}</strong> know you liked their recommendation!</p>
+                            <p>We'll let <strong>@{creator.name}</strong> know you liked their recommendation!</p>
                         </div>
                     )}
 
@@ -58,5 +58,3 @@ export function BookingConfirmationDialog({ isOpen, onOpenChange, venue, partySi
         </Dialog>
     );
 }
-
-    

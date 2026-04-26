@@ -1,6 +1,7 @@
+
 "use client";
 
-import { appData, type Community } from "@/lib/data";
+import { appData } from "@/lib/data";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -8,8 +9,13 @@ import { ArrowLeft, Hash, Send } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import type { Community } from "@/app/social/[id]/page";
 
-const { mockMessages } = appData;
+const MOCK_MESSAGES = [
+    { id: 1, author: 'Alex', avatar: 'https://github.com/shadcn.png', text: 'Hey everyone! Is this still happening today?' },
+    { id: 2, author: 'You', avatar: 'https://github.com/user.png', text: 'Yeah, looks like the weather is clearing up!' },
+    { id: 3, author: 'Sam', avatar: 'https://github.com/sam.png', text: 'Perfect. See you all at the flags in 20.' },
+];
 
 export function CommunityChat({ community }: { community: Community }) {
     const [activeChannel, setActiveChannel] = useState('general');
@@ -53,10 +59,10 @@ export function CommunityChat({ community }: { community: Community }) {
 
                 <div className="flex-1 flex flex-col">
                     <div className="flex-1 space-y-4 p-4 overflow-y-auto">
-                        {mockMessages.map(message => (
+                        {MOCK_MESSAGES.map(message => (
                              <div key={message.id} className="flex items-start gap-3">
                                 <Avatar className="h-8 w-8">
-                                    <AvatarImage src={message.author === 'You' ? 'https://github.com/user.png' : message.avatar} />
+                                    <AvatarImage src={message.avatar} />
                                     <AvatarFallback>{message.author.charAt(0)}</AvatarFallback>
                                 </Avatar>
                                 <div>

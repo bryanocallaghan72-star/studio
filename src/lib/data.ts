@@ -1,14 +1,6 @@
+
 import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-
-export type Community = {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  members: number;
-  channels: string[];
-};
 
 export type SocialActivity = {
     id: string;
@@ -66,9 +58,6 @@ export interface AppData {
   reelsData: Reel[];
   quests: unknown[];
   rewards: unknown[];
-  creators: Creator[];
-  communities: Community[];
-  mockMessages: { id: number; author: string; avatar: string; text: string; }[];
   socialActivities: SocialActivity[];
   styleItems: unknown[];
   categories: Record<string, CategoryMeta>;
@@ -97,15 +86,7 @@ export type CategoryMeta = {
   color: string;
   textColor: string;
 };
-export type Creator = {
-  id: string;
-  name: string;
-  bio: string;
-  avatar: string;
-  x: string;
-  y: string;
-  activity: { name: string; uv: number }[];
-}
+
 export type PhotoFeedItem = {
   id: string;
   type: 'photo';
@@ -364,7 +345,7 @@ const rawSliceOfLifePosts: Omit<SliceOfLifePost, 'creator' | 'postType'>[] = [
 
 const enrichedSliceOfLifePosts = rawSliceOfLifePosts
   .map((post): SliceOfLifePost => {
-    // Fallback creator info since the mock lookup table is being removed
+    // Fallback creator info
     const creator = {
         id: post.creatorId,
         name: post.creatorId.charAt(0).toUpperCase() + post.creatorId.slice(1),
@@ -395,9 +376,6 @@ export const appData: AppData = {
       { id: 'reward-coffee', venueId: 'the-depot', title: 'Free Coffee Reward', venue: 'The Depot' },
       { id: 'reward-merch', venueId: 'hotel-ravesis', title: 'Exclusive Merch', venue: 'Hotel Ravesis' },
   ],
-  creators: [],
-  communities: [],
-  mockMessages: [],
   socialActivities: [
     {
         id: 'social-1',

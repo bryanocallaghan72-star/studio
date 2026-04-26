@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useParams } from 'next/navigation';
@@ -8,7 +9,6 @@ import { Loader2, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import type { Community } from '@/lib/data';
 
 // This type should align with the data stored in the 'socials' Firestore collection.
 type SocialActivity = {
@@ -21,6 +21,15 @@ type SocialActivity = {
     currentParticipants: number;
     maxParticipants: number;
     category: 'Health & Fitness' | 'Vibes' | 'Brunch' | 'Sushi';
+};
+
+export type Community = {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  members: number;
+  channels: string[];
 };
 
 export default function SocialChatPage() {
@@ -67,7 +76,7 @@ export default function SocialChatPage() {
     }
 
     // The data is valid, construct the prop for CommunityChat
-    const mockCommunity: Community = {
+    const communityData: Community = {
         id: activity.id,
         name: activity.title,
         description: activity.description,
@@ -76,5 +85,5 @@ export default function SocialChatPage() {
         channels: ["general"],
     };
 
-    return <CommunityChat community={mockCommunity} />;
+    return <CommunityChat community={communityData} />;
 }
