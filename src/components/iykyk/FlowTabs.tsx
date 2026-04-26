@@ -77,7 +77,7 @@ const VenueCard = memo(({ venue }: { venue: any }) => {
                             <h3 className="text-lg font-bold leading-tight">{venue.name}</h3>
                             <p className="text-xs text-white/60 line-clamp-1 flex items-center gap-1">
                                 <MapPin size={10} />
-                                {venue.location?.address}
+                                {venue.location?.address || venue.address}
                             </p>
                         </div>
                         {(venue.category || venue.details?.category) && (
