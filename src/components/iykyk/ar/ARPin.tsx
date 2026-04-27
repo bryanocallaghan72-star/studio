@@ -33,30 +33,45 @@ type ARPinProps = {
 export function ARPin({ pin }: ARPinProps) {
   const pinColor = getPinColor(pin.type);
 
+  // DEPTH CALCULATIONS
+  const distance = pin.distanceMeters ?? 50;
+  const scale = Math.max(0.45, 1 - distance / 220);
+  const opacity = Math.max(0.55, 1 - distance / 380);
+  const blur = Math.min(3, distance / 60);
+  const zIndex = Math.floor(1000 - distance);
+
   return (
     <div
       key={pin.id}
       className="absolute"
-      style={pin.style}
+      style={{ ...pin.style, zIndex }}
     >
-      {/* CSS-only glow, isolated from Framer Motion transforms */}
-      <div 
-        className="absolute top-0 left-0 w-16 h-16 pointer-events-none"
-      >
-          <div
-            style={{ backgroundColor: pinColor }}
-            className="absolute -inset-1 rounded-full blur-xl animate-pulse opacity-40"
-          ></div>
-      </div>
-      
       <motion.div
         initial={{ opacity: 0, y: 20, scale: 0.8 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
+        animate={{ 
+          opacity, 
+          y: 0, 
+          scale 
+        }}
         exit={{ opacity: 0, y: -20, scale: 0.8 }}
         transition={{ type: 'spring', stiffness: 100, damping: 10 }}
+        style={{ filter: blur > 0 ? `blur(${blur}px)` : 'none' }}
       >
         <Link href={`/venue/${pin.slug}`}>
           <div className="group relative cursor-pointer flex flex-col items-center">
+              {/* Dynamic Glow - Intensity tied to scale (proximity) */}
+              <div 
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-16 pointer-events-none"
+              >
+                  <div
+                    style={{ 
+                      backgroundColor: pinColor,
+                      opacity: scale * 0.4
+                    }}
+                    className="absolute inset-0 rounded-full blur-xl animate-pulse"
+                  />
+              </div>
+
               <ColorPinSVG color={pinColor} className="w-16 h-16 drop-shadow-2xl" />
 
               <div
