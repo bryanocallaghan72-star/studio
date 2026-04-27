@@ -33,6 +33,12 @@ interface VenueOption {
 }
 
 export function VenueEnricher() {
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const firestore = useFirestore();
   const { toast } = useToast();
   
@@ -50,6 +56,8 @@ export function VenueEnricher() {
 
   // Initial fetch of all venues
   useEffect(() => {
+    if (!isMounted) return;
+    
     async function fetchVenues() {
       if (!firestore) return;
       try {
@@ -67,14 +75,14 @@ export function VenueEnricher() {
       }
     }
     fetchVenues();
-  }, [firestore]);
+  }, [firestore, isMounted]);
 
   // Fetch venue details when selection changes
   useEffect(() => {
+    if (!isMounted || !selectedSlug || !firestore) return;
+    
+    setIsLoadingDetails(true);
     async function fetchVenueDetails() {
-      if (!firestore || !selectedSlug) return;
-      
-      setIsLoadingDetails(true);
       try {
         const docRef = doc(firestore, 'venues', selectedSlug);
         const snap = await getDoc(docRef);
@@ -93,7 +101,7 @@ export function VenueEnricher() {
       }
     }
     fetchVenueDetails();
-  }, [firestore, selectedSlug]);
+  }, [firestore, selectedSlug, isMounted]);
 
   const handleSave = async () => {
     if (!firestore || !selectedSlug) return;
@@ -133,6 +141,8 @@ export function VenueEnricher() {
       setIsSaving(false);
     }
   };
+
+  if (!isMounted) return null;
 
   return (
     <Card className="w-full max-w-lg mt-6 border-[#c4762a]/30">
