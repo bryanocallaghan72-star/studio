@@ -1,4 +1,3 @@
-
 "use server";
 
 import { generateItinerary as generateItineraryFlow } from "@/ai/flows/generate-itinerary-flow";
@@ -6,49 +5,7 @@ import { Itinerary, ItineraryRequest, ItineraryRequestSchema } from "@/ai/schema
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { firebaseConfig } from "@/firebase/config";
-
-/**
- * Checks if a venue is open based on its periods data.
- * Hardened to prevent crashes from malformed or incomplete data.
- */
-function isVenueOpen(venue: any): boolean {
-  try {
-    const periods = venue.openingHours?.periods;
-    if (!periods || !Array.isArray(periods) || periods.length === 0) return true; // Default to true if no data
-
-    const now = new Date();
-    const day = now.getDay();
-    const currentTime = now.getHours() * 100 + now.getMinutes();
-
-    const isAlwaysOpen = periods.length === 1 && 
-      periods[0]?.open &&
-      periods[0].open.day === 0 && 
-      periods[0].open.time === "0000" && 
-      (!periods[0].close || (periods[0].close.day === 0 && periods[0].close.time === "0000"));
-
-    if (isAlwaysOpen) return true;
-
-    return periods.some((p: any) => {
-      if (!p?.open) return false;
-      
-      const openDay = p.open.day;
-      const openTime = parseInt(p.open.time);
-      const closeDay = p.close?.day ?? openDay;
-      const closeTime = p.close ? parseInt(p.close.time) : 2359;
-
-      if (openDay === closeDay) {
-        return day === openDay && currentTime >= openTime && currentTime < closeTime;
-      } else {
-        if (day === openDay) return currentTime >= openTime;
-        if (day === (openDay + 1) % 7) return currentTime < closeTime;
-      }
-      return false;
-    });
-  } catch (err) {
-    console.warn("Venue open check failed for venue:", venue?.name, err);
-    return true; // Fallback to open on error
-  }
-}
+import { isVenueOpen } from "@/lib/venue-status";
 
 export async function generateItinerary(request: ItineraryRequest): Promise<{ success?: Itinerary, error?: { title: string, message: string } }> {
   // Fetch current Bondi weather
@@ -76,8 +33,8 @@ export async function generateItinerary(request: ItineraryRequest): Promise<{ su
     if (!querySnapshot.empty) {
         const allVenues = querySnapshot.docs.map(doc => doc.data());
         
-        // Filter to open venues
-        const openVenues = allVenues.filter(isVenueOpen);
+        // Filter to open venues using central utility
+        const openVenues = allVenues.filter(v => isVenueOpen(v));
 
         // Occasion-based category filtering
         const vibe = (request.vibe || "").toLowerCase();

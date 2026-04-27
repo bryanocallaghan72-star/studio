@@ -12,39 +12,7 @@ import { Skeleton } from '../ui/skeleton';
 import { useVenues } from '@/hooks/useVenues';
 import type { Venue } from '@/types/venue';
 import { useDemoTime } from "@/context/DemoTimeContext";
-
-const isStrictlyOpen = (venue: any, mockDate: Date): boolean => {
-    if (!venue?.openingHours?.periods || venue.openingHours.periods.length === 0) return true;
-
-    const now = mockDate;
-    const currentDay = now.getDay();
-    const currentTime = now.getHours() * 100 + now.getMinutes();
-    const periods = venue.openingHours.periods;
-
-    const isAlwaysOpen = periods.length === 1 && 
-        periods[0].open.day === 0 && 
-        periods[0].open.time === "0000" && 
-        (!periods[0].close || (periods[0].close.day === 0 && periods[0].close.time === "0000"));
-
-    if (isAlwaysOpen) return true;
-
-    const activePeriod = periods.find((p: any) => {
-        const openDay = p.open.day;
-        const openTime = parseInt(p.open.time);
-        const closeDay = p.close?.day ?? openDay;
-        const closeTime = p.close ? parseInt(p.close.time) : 2359;
-
-        if (openDay === closeDay) {
-            return currentDay === openDay && currentTime >= openTime && currentTime < closeTime;
-        } else {
-            if (currentDay === openDay) return currentTime >= openTime;
-            if (currentDay === (openDay + 1) % 7) return currentTime < closeTime;
-        }
-        return false;
-    });
-
-    return !!activePeriod;
-};
+import { isVenueOpen } from "@/lib/venue-status";
 
 const VenueCard = memo(({ venue }: { venue: any }) => {
     const getPhotoUrl = (photoRef: string) => {
@@ -221,8 +189,8 @@ export function FlowTabs() {
   const filteredVenues = useMemo(() => {
     const venuesForTime = tabData.find(t => t.value === activeTab)?.venues || [];
     
-    // Strict real-time "Open Now" filter
-    const openVenues = venuesForTime.filter(v => isStrictlyOpen(v, mockDate));
+    // Strict real-time "Open Now" filter using central utility
+    const openVenues = venuesForTime.filter(v => isVenueOpen(v, mockDate));
 
     if (activeSubCategory === 'All') {
         return openVenues;
