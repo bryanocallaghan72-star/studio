@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -13,6 +12,8 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { signInAnonymously } from 'firebase/auth';
+import { IykykSeeder } from '@/components/admin/IykykSeeder';
+import { VenueEnricher } from '@/components/admin/VenueEnricher';
 
 type SeedStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -289,11 +290,13 @@ function DropsSeeder() {
 
 export default function AdminPage() {
     return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-4">
+    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-4 overflow-y-auto">
       <FirebaseClientProvider>
-          <div className="space-y-8">
+          <div className="space-y-8 py-12">
             <Seeder />
             <DropsSeeder />
+            <IykykSeeder />
+            <VenueEnricher />
             <Button variant="link" asChild className='mx-auto mt-6 block'>
               <Link href="/discover">Back to App</Link>
             </Button>
