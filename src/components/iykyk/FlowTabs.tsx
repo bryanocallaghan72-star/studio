@@ -14,6 +14,10 @@ import type { Venue } from '@/types/venue';
 import { useDemoTime } from "@/context/DemoTimeContext";
 import { isVenueOpen } from "@/lib/venue-status";
 
+type Mood = 'Outdoor' | 'Social' | 'Chill' | 'Active' | 'Cosy';
+
+const MOODS: Mood[] = ['Outdoor', 'Social', 'Chill', 'Active', 'Cosy'];
+
 const VenueCard = memo(({ venue }: { venue: any }) => {
     const getPhotoUrl = (photoRef: string) => {
         if (!photoRef) return null;
@@ -160,6 +164,9 @@ export function FlowTabsSkeleton() {
 export function FlowTabs() {
   const [activeTab, setActiveTab] = useState<'morning' | 'day' | 'golden' | 'night'>('morning');
   const [activeSubCategory, setActiveSubCategory] = useState<SubCategory>('All');
+  const [activeMood, setActiveMood] = useState<Mood>('Chill');
+  const [weather, setWeather] = useState<{ temp: number; code: number } | null>(null);
+
   const { venues, isLoading, error } = useVenues();
   const { mockDate } = useDemoTime();
   
@@ -169,6 +176,37 @@ export function FlowTabs() {
     setActiveTab(newActiveTab);
     setActiveSubCategory('All'); 
   }, [mockDate]);
+
+  // Weather and Mood Logic
+  useEffect(() => {
+    async function fetchWeather() {
+      try {
+        const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-33.8915&longitude=151.2767&current=temperature_2m,weathercode');
+        const data = await res.json();
+        if (data && data.current) {
+          const { temperature_2m: temp, weathercode: code } = data.current;
+          setWeather({ temp, code });
+          
+          // Auto-select mood based on rules
+          const isSunny = code < 3;
+          const isRainy = code >= 61;
+          
+          let nextMood: Mood = 'Chill';
+          if (isRainy) nextMood = 'Cosy';
+          else if (isSunny && activeTab === 'morning') nextMood = 'Active';
+          else if (isSunny && temp > 22 && (activeTab === 'day' || activeTab === 'golden')) nextMood = 'Outdoor';
+          else if (activeTab === 'night') nextMood = 'Social';
+          else nextMood = 'Chill';
+          
+          setActiveMood(nextMood);
+        }
+      } catch (err) {
+        console.warn("FlowTabs: Weather fetch failed", err);
+        setActiveMood('Chill');
+      }
+    }
+    fetchWeather();
+  }, [activeTab]);
 
   const tabData = useMemo(() => {
     if (!venues) return [];
@@ -206,6 +244,17 @@ export function FlowTabs() {
 
   const availableSubcategories = SUBCATEGORY_MAP[activeTab];
 
+  const getWeatherEmoji = (code: number) => {
+    if (code < 3) return '☀️';
+    if (code === 3) return '☁️';
+    if (code >= 45 && code <= 48) return '🌫️';
+    if (code >= 51 && code <= 67) return '🌧️';
+    if (code >= 71 && code <= 77) return '❄️';
+    if (code >= 80 && code <= 82) return '🌧️';
+    if (code >= 95) return '⛈️';
+    return '☁️';
+  };
+
   if (isLoading || !venues) {
     return <FlowTabsSkeleton />;
   }
@@ -238,6 +287,37 @@ export function FlowTabs() {
             )
           })}
         </TabsList>
+
+        {/* Mood Selector Row */}
+        <div className="mt-6 flex items-center justify-between gap-4 -mx-4 px-4 overflow-hidden">
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide flex-1 pb-1">
+                {MOODS.map(mood => {
+                    const isActive = activeMood === mood;
+                    return (
+                        <button
+                            key={mood}
+                            onClick={() => setActiveMood(mood)}
+                            className={cn(
+                                "flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold transition-all duration-200 outline-none focus:outline-none focus:ring-0",
+                                isActive 
+                                    ? "text-white shadow-md shadow-[#c4762a]/10" 
+                                    : "bg-[rgba(128,128,128,0.15)] hover:bg-[rgba(128,128,128,0.25)]"
+                            )}
+                            style={isActive 
+                                ? { backgroundColor: 'var(--phase-accent)' } 
+                                : { color: 'var(--phase-text)', opacity: 0.7 }}
+                        >
+                            {mood}
+                        </button>
+                    );
+                })}
+            </div>
+            {weather && (
+                <div className="flex-shrink-0 text-[11px] font-bold text-muted-foreground uppercase whitespace-nowrap mb-1">
+                    {getWeatherEmoji(weather.code)} {Math.round(weather.temp)}°
+                </div>
+            )}
+        </div>
 
         <div className="mt-6 mb-8 flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4">
             {availableSubcategories.map(subCategory => {
