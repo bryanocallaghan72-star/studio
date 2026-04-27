@@ -1,7 +1,8 @@
+
 'use client';
 
 import { useState, useEffect, memo, useMemo } from 'react';
-import { Moon, Sparkles, Sun, MapPin, Coffee, Utensils, Beer, Waves } from "lucide-react";
+import { Moon, Sparkles, Sun, MapPin, Coffee, Utensils, Beer, Waves, Navigation } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
@@ -13,12 +14,33 @@ import { useVenues } from '@/hooks/useVenues';
 import type { Venue } from '@/types/venue';
 import { useDemoTime } from "@/context/DemoTimeContext";
 import { isVenueOpen } from "@/lib/venue-status";
+import { useUserLocation } from '@/hooks/useUserLocation';
+import { normalizeVenue } from '@/lib/venue-adapter';
 
 type Mood = 'Outdoor' | 'Social' | 'Chill' | 'Active' | 'Cosy';
 
 const MOODS: Mood[] = ['Outdoor', 'Social', 'Chill', 'Active', 'Cosy'];
 
-const VenueCard = memo(({ venue }: { venue: any }) => {
+const getWalkTime = (meters: number): string => {
+  if (meters < 100) return 'You\'re here';
+  if (meters < 800) return `${Math.round(meters)}m away`;
+  const mins = Math.round(meters / 80);
+  return `${mins} min walk`;
+};
+
+function getDistanceFromLatLonInM(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371e3; // Radius of the earth in meters
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+const VenueCard = memo(({ venue, distanceMeters }: { venue: any; distanceMeters?: number }) => {
     const getPhotoUrl = (photoRef: string) => {
         if (!photoRef) return null;
         if (photoRef.startsWith('http')) return photoRef;
@@ -51,6 +73,12 @@ const VenueCard = memo(({ venue }: { venue: any }) => {
                                 <MapPin size={10} />
                                 {venue.location?.address || venue.address}
                             </p>
+                            {distanceMeters !== undefined && (
+                                <p className="text-[10px] font-medium text-white/50 flex items-center gap-1 mt-0.5">
+                                    <Navigation size={10} />
+                                    {getWalkTime(distanceMeters)}
+                                </p>
+                            )}
                         </div>
                         {(venue.category || venue.details?.category) && (
                             <Badge 
@@ -169,6 +197,7 @@ export function FlowTabs() {
 
   const { venues, isLoading, error } = useVenues();
   const { mockDate } = useDemoTime();
+  const { coords: userCoords } = useUserLocation();
   
   useEffect(() => {
     const currentHour = mockDate.getHours();
@@ -187,7 +216,6 @@ export function FlowTabs() {
           const { temperature_2m: temp, weathercode: code } = data.current;
           setWeather({ temp, code });
           
-          // Auto-select mood based on rules
           const isSunny = code < 3;
           const isRainy = code >= 61;
           
@@ -294,7 +322,6 @@ export function FlowTabs() {
           })}
         </TabsList>
 
-        {/* Mood Selector Row */}
         <div className="mt-6 flex items-center justify-between gap-4 -mx-4 px-4 overflow-hidden">
             <div className="flex gap-2 overflow-x-auto scrollbar-hide flex-1 pb-1">
                 {MOODS.map(mood => {
@@ -304,7 +331,7 @@ export function FlowTabs() {
                             key={mood}
                             onClick={() => setActiveMood(mood)}
                             className={cn(
-                                "flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold transition-all duration-200 outline-none focus:outline-none focus:ring-0",
+                                "flex-shrink-0 px-4 py-1.5 rounded-full text-[12px] font-bold transition-all duration-200 outline-none focus:outline-none focus:ring-0",
                                 isActive 
                                     ? "text-white shadow-md shadow-[#c4762a]/10" 
                                     : "bg-[rgba(128,128,128,0.15)] hover:bg-[rgba(128,128,128,0.25)]"
@@ -352,7 +379,21 @@ export function FlowTabs() {
 
         <TabsContent value={activeTab} forceMount className="mt-0">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredVenues.map(venue => <VenueCard key={venue.id} venue={venue} />)}
+                {filteredVenues.map(venue => {
+                    let distanceMeters: number | undefined = undefined;
+                    if (userCoords) {
+                        const normalized = normalizeVenue(venue);
+                        if (normalized?.standardCoordinates) {
+                            distanceMeters = getDistanceFromLatLonInM(
+                                userCoords.latitude,
+                                userCoords.longitude,
+                                normalized.standardCoordinates.latitude,
+                                normalized.standardCoordinates.longitude
+                            );
+                        }
+                    }
+                    return <VenueCard key={venue.id} venue={venue} distanceMeters={distanceMeters} />;
+                })}
             </div>
              {filteredVenues.length === 0 && (
                 <div className="text-center py-24 px-6 border-2 border-dashed border-black/[0.05] rounded-3xl">
