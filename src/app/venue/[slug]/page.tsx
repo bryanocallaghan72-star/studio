@@ -41,6 +41,7 @@ import { logVaultEvent } from '@/lib/vault/logVaultEvent';
 import { trackVenueView } from '@/lib/vault/trackVenueView';
 import { useDemoTime } from '@/context/DemoTimeContext';
 import { cn } from '@/lib/utils';
+import { normalizeVenue } from '@/lib/venue-adapter';
 
 // Updated Venue type for this page supporting both flat and nested schemas
 type Venue = WithId<{
@@ -309,6 +310,11 @@ export default function VenuePage() {
     };
   }, [venue, mockDate]);
 
+  const normalized = normalizeVenue(venue as any);
+  const center = normalized?.standardCoordinates
+    ? { lat: normalized.standardCoordinates.latitude, lng: normalized.standardCoordinates.longitude }
+    : null;
+
   const handleShare = () => {
     const venueUrl = window.location.href;
     navigator.clipboard.writeText(venueUrl).then(() => {
@@ -320,10 +326,8 @@ export default function VenuePage() {
   };
 
   const handleGetDirections = () => {
-    if (venue) {
-      const lat = venue.location?.latitude ?? venue.latitude;
-      const lng = venue.location?.longitude ?? venue.longitude;
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+    if (center) {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${center.lat},${center.lng}`;
       window.open(url, '_blank', 'noopener,noreferrer');
     }
   };
@@ -384,10 +388,6 @@ export default function VenuePage() {
     return <VenueNotFound />;
   }
 
-  const lat = venue.location?.latitude ?? venue.latitude;
-  const lng = venue.location?.longitude ?? venue.longitude;
-  const center = { lat: lat ?? 0, lng: lng ?? 0 };
-
   return (
     <div className="space-y-6 bg-transparent min-h-screen pb-32">
       <Card className="overflow-hidden -mx-4 -mt-6 md:-mx-6 md:-mt-6 rounded-none md:rounded-b-3xl shadow-lg border-none">
@@ -418,7 +418,7 @@ export default function VenuePage() {
         <div className="flex items-center gap-4" style={{ color: 'var(--phase-text)', opacity: 0.50 }}>
             <p className="flex items-center gap-2 text-sm font-medium">
                 <MapPin className="h-4 w-4" />
-                {venue.location?.address ?? venue.address ?? ''}
+                {normalized?.displayAddress || ''}
             </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-sm">
@@ -496,6 +496,7 @@ export default function VenuePage() {
           <Button 
             onClick={handleGetDirections} 
             size="lg" 
+            disabled={!center}
             className="bg-[#c4762a] hover:bg-[#b06824] text-white font-bold rounded-2xl h-14 shadow-lg shadow-[#c4762a]/20"
           >
             <Navigation className="mr-2" />
@@ -590,7 +591,11 @@ export default function VenuePage() {
 
 
         <Card className="h-64 overflow-hidden rounded-[24px] border-black/[0.08] shadow-sm bg-white">
-          {loadError && (
+          {!center ? (
+            <div className="flex items-center justify-center h-full bg-black/5 p-4 text-center">
+              <p className="text-sm font-medium" style={{ color: 'var(--phase-text)', opacity: 0.40 }}>Location unavailable</p>
+            </div>
+          ) : loadError ? (
             <div className="p-6 text-center flex flex-col items-center justify-center h-full space-y-2">
               <AlertTriangle className="h-8 w-8 text-destructive opacity-50" />
               <p className="text-xs font-bold text-foreground uppercase tracking-widest">Map Load Error</p>
@@ -599,12 +604,11 @@ export default function VenuePage() {
               </p>
               <code className="text-[9px] bg-muted px-2 py-1 rounded break-all">{currentOrigin}</code>
             </div>
-          )}
-          {!isKeyValid && !loadError ? (
+          ) : !isKeyValid ? (
             <div className="flex items-center justify-center h-full bg-black/5 p-4 text-center">
               <p className="text-sm font-medium" style={{ color: 'var(--phase-text)', opacity: 0.40 }}>Google Maps key missing. Please set <code>NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code>.</p>
             </div>
-          ) : isLoaded && !loadError ? (
+          ) : isLoaded ? (
             <GoogleMap
               mapContainerStyle={mapContainerStyle}
               center={center}
@@ -613,7 +617,7 @@ export default function VenuePage() {
             >
               <MarkerF position={center} />
             </GoogleMap>
-          ) : !loadError && (
+          ) : (
             <div className="flex items-center justify-center h-full bg-black/5">
                   <Loader2 className="h-8 w-8 animate-spin" style={{ color: 'var(--phase-text)', opacity: 0.20 }} />
             </div>
