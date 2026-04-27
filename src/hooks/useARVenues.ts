@@ -1,10 +1,10 @@
-
 'use client';
 
 import { useMemo } from 'react';
 import { collection, query } from 'firebase/firestore';
 import { useFirestore, useCollection, useMemoFirebase, WithId } from '@/firebase';
 import { useUserLocation } from '@/hooks/useUserLocation';
+import { normalizeVenue } from '@/lib/venue-adapter';
 
 // This is the raw shape that might come from Firestore, supporting both schemas.
 type FetchedVenue = WithId<{
@@ -56,7 +56,7 @@ export function useARVenues() {
   const firestore = useFirestore();
   const { coords: userCoords } = useUserLocation();
 
-  // 1. The Raw Fetch (Unchanged)
+  // 1. The Raw Fetch
   const venuesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     return query(collection(firestore, 'venues'));
@@ -68,19 +68,17 @@ export function useARVenues() {
   const sortedVenues = useMemo(() => {
     if (!rawVenues) return [];
 
-    // Map the raw data to ARVenue shape, allowing nulls for invalid data
+    // Map the raw data to ARVenue shape, using normalizeVenue for consistency
     const mappedVenues = rawVenues.map((venue) => {
-      // --- ADAPTER LOGIC ---
-      // Prioritize new nested structure, fall back to legacy flat structure.
-      const latitude = venue.location?.latitude ?? venue.latitude;
-      const longitude = venue.location?.longitude ?? venue.longitude;
-      const category = venue.details?.category ?? venue.category;
+      const normalized = normalizeVenue(venue as any);
 
       // --- VALIDATION ---
       // Ensure we have valid coordinates before proceeding.
-      if (typeof latitude !== 'number' || typeof longitude !== 'number') {
+      if (!normalized || !normalized.standardCoordinates) {
         return null;
       }
+
+      const { latitude, longitude } = normalized.standardCoordinates;
 
       // --- DISTANCE CALCULATION ---
       const distanceMeters = userCoords
@@ -101,7 +99,7 @@ export function useARVenues() {
         name: venue.name,
         latitude,
         longitude,
-        category,
+        category: normalized.displayCategory,
         distanceMeters,
         vibe: venue.vibe,
         isSponsor: venue.isSponsored,
@@ -110,7 +108,7 @@ export function useARVenues() {
       return arVenue;
     });
 
-    // Filter out null values and use a type guard to ensure processedVenues is ARVenue[]
+    // Filter out null values
     const processedVenues: ARVenue[] = mappedVenues.filter((v): v is ARVenue => v !== null);
 
     // --- SORTING ---
