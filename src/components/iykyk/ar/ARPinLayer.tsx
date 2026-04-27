@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo } from 'react';
@@ -7,6 +6,7 @@ import type { LayerType } from '@/app/ar/page';
 import { ARPin } from './ARPin';
 import { useARVenues, type ARVenue } from '@/hooks/useARVenues';
 import { AR_DROPS, DEALS, HOT_ITEMS } from '@/data/seeds/drops';
+import { useDeviceOrientation } from '@/hooks/useDeviceOrientation';
 
 // 1. Expanded ARPinData type for future features
 export type ARPinData = {
@@ -46,10 +46,15 @@ function enrichPin(
     rawPin: ARVenue, 
     position: { top: string, left: string }, 
     index: number,
-    layer: LayerType
+    layer: LayerType,
+    alphaOffset: number | null
 ): ARPinData {
   const horizontalJitter = Math.floor(Math.random() * 11) - 5; // -5 to +5
   const verticalJitter = Math.floor(Math.random() * 11) - 5;
+
+  // Calculate horizontal pan based on device orientation (alpha)
+  // Mapping 0-360 degrees to ±15% horizontal shift
+  const panShift = alphaOffset !== null ? ((alphaOffset % 360) / 360) * 30 - 15 : 0;
 
   const uniqueId = `${layer}-${rawPin.id}`;
   
@@ -87,7 +92,7 @@ function enrichPin(
     distanceMeters: rawPin.distanceMeters,
     style: {
       top: `calc(${position.top} + ${verticalJitter}px)`,
-      left: `calc(${position.left} + ${horizontalJitter}px)`,
+      left: `calc(${position.left} + ${horizontalJitter}px + ${panShift}%)`,
       animationDelay: `${index * 0.15}s`,
     },
   };
@@ -98,7 +103,7 @@ function enrichPin(
  * 3. Refactored getPinsForLayer to use the enrichment function.
  * This function now only filters data and delegates the complex logic.
  */
-function getPinsForLayer(layer: LayerType, venuePins: ARVenue[]): ARPinData[] {
+function getPinsForLayer(layer: LayerType, venuePins: ARVenue[], alpha: number | null): ARPinData[] {
     let filteredPins: ARVenue[] = [];
 
     switch (layer) {
@@ -139,19 +144,20 @@ function getPinsForLayer(layer: LayerType, venuePins: ARVenue[]): ARPinData[] {
         .slice(0, MAX_PINS_DISPLAYED)
         .map((pin, index) => {
             const position = PREDEFINED_POSITIONS[index % PREDEFINED_POSITIONS.length];
-            return enrichPin(pin, position, index, layer);
+            return enrichPin(pin, position, index, layer, alpha);
         });
 }
 
 export function ARPinLayer({ activeLayer }: { activeLayer: LayerType }) {
     const { venues, isLoading, error } = useARVenues();
+    const { alpha, hasPermission, requestPermission } = useDeviceOrientation();
 
     const arPins = useMemo(() => {
         if (!venues || isLoading) {
             return [];
         }
-        return getPinsForLayer(activeLayer, venues);
-    }, [activeLayer, venues, isLoading]);
+        return getPinsForLayer(activeLayer, venues, alpha);
+    }, [activeLayer, venues, isLoading, alpha]);
 
     if (error) {
         // You could render an error state here if needed
@@ -160,6 +166,16 @@ export function ARPinLayer({ activeLayer }: { activeLayer: LayerType }) {
     
     return (
         <div className="relative z-10 h-full w-full">
+            {!hasPermission && (
+                <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30">
+                    <button 
+                        onClick={requestPermission}
+                        className="bg-white/10 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest rounded-full px-5 py-2 border border-white/20 active:bg-white/20 transition-all shadow-xl"
+                    >
+                        Enable Lens Motion
+                    </button>
+                </div>
+            )}
             <AnimatePresence>
                 {arPins.map(pin => (
                     <ARPin key={pin.id} pin={pin} />
