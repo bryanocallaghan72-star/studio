@@ -192,11 +192,17 @@ export function FlowTabs() {
           const isRainy = code >= 61;
           
           let nextMood: Mood = 'Chill';
-          if (isRainy) nextMood = 'Cosy';
-          else if (isSunny && activeTab === 'morning') nextMood = 'Active';
-          else if (isSunny && temp > 22 && (activeTab === 'day' || activeTab === 'golden')) nextMood = 'Outdoor';
-          else if (activeTab === 'night') nextMood = 'Social';
-          else nextMood = 'Chill';
+          if (activeTab === 'night') {
+            nextMood = 'Social';
+          } else if (isRainy) {
+            nextMood = 'Cosy';
+          } else if (isSunny && activeTab === 'morning') {
+            nextMood = 'Active';
+          } else if (isSunny && temp > 22 && (activeTab === 'day' || activeTab === 'golden')) {
+            nextMood = 'Outdoor';
+          } else {
+            nextMood = 'Chill';
+          }
           
           setActiveMood(nextMood);
         }
