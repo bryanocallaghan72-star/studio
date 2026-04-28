@@ -166,6 +166,13 @@ const SUBCATEGORY_ICONS: Record<SubCategory, React.ElementType> = {
     Active: Waves,
 };
 
+const weatherIcons: Record<string, string> = {
+  sunny: '☀️',
+  cloudy: '☁️',
+  rainy: '🌧️',
+  windy: '💨',
+};
+
 export function FlowTabsSkeleton() {
     return (
         <div className="flex flex-col bg-transparent p-4 md:p-6 min-h-screen">
@@ -406,6 +413,18 @@ export function FlowTabs() {
         </div>
 
         <TabsContent value={activeTab} forceMount className="mt-0">
+            {derivedPhase && derivedWeather && (
+              <div className="flex justify-center mb-6">
+                <div className="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+                  <p className="text-[10px] font-bold text-white/70 uppercase tracking-widest flex items-center gap-2">
+                    <span>{weatherIcons[derivedWeather] || '✨'}</span>
+                    <span>{derivedPhase}</span>
+                    <span className="opacity-40">·</span>
+                    <span>Bondi</span>
+                  </p>
+                </div>
+              </div>
+            )}
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredVenues.map(venue => {
                     let distanceMeters: number | undefined = undefined;
