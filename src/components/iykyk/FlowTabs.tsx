@@ -16,6 +16,7 @@ import { useDemoTime } from "@/context/DemoTimeContext";
 import { isVenueOpen } from "@/lib/venue-status";
 import { useUserLocation } from '@/hooks/useUserLocation';
 import { normalizeVenue } from '@/lib/venue-adapter';
+import { useContextualVenues } from '@/hooks/useContextualVenues';
 
 type Mood = 'Outdoor' | 'Social' | 'Chill' | 'Active' | 'Cosy';
 
@@ -198,6 +199,33 @@ export function FlowTabs() {
   const { venues, isLoading, error } = useVenues();
   const { mockDate } = useDemoTime();
   const { coords: userCoords } = useUserLocation();
+
+  const distanceMap = useMemo(() => {
+    if (!userCoords || !venues) return {};
+    const map: Record<string, number> = {};
+    venues.forEach((v) => {
+      const normalized = normalizeVenue(v);
+      if (normalized?.standardCoordinates) {
+        map[v.id] = getDistanceFromLatLonInM(
+          userCoords.latitude,
+          userCoords.longitude,
+          normalized.standardCoordinates.latitude,
+          normalized.standardCoordinates.longitude
+        );
+      }
+    });
+    return map;
+  }, [userCoords, venues]);
+
+  const { venues: rankedVenues, isLoading: isRanking, phase: derivedPhase, weather: derivedWeather } = useContextualVenues({ mood: activeMood, distanceMap, limit: 10 });
+
+  const contextualVenues = useMemo(() => {
+    if (!rankedVenues || !venues) return [];
+    return rankedVenues.map(rv => {
+      const full = venues.find(v => v.id === rv.id);
+      return { ...full, ...rv };
+    });
+  }, [rankedVenues, venues]);
   
   useEffect(() => {
     const currentHour = mockDate.getHours();
