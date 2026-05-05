@@ -50,3 +50,5 @@ certificates
 
 # service account keys
 serviceaccount.json
+.env
+.env.local
