@@ -1,0 +1,14 @@
+[35m0cdbeeb7b7d3195db91a179796c0743dfae3b3c2:src/firebase/config.ts[m[36m-[m[32m1[m[36m-[mexport const firebaseConfig = {
+[35m0cdbeeb7b7d3195db91a179796c0743dfae3b3c2:src/firebase/config.ts[m[36m-[m[32m2[m[36m-[m  "projectId": "studio-8946896495-11b4f",
+[35m0cdbeeb7b7d3195db91a179796c0743dfae3b3c2:src/firebase/config.ts[m[36m-[m[32m3[m[36m-[m  "appId": "1:863885862509:web:2b5a426d863bda90d88164",
+[35m0cdbeeb7b7d3195db91a179796c0743dfae3b3c2:src/firebase/config.ts[m[36m:[m[32m4[m[36m:[m  "apiKey": "[1;31mAIza[mSyC4ptOXoPUF8pnUHlRAUE4e-It2-7p4HY0",
+[35m0cdbeeb7b7d3195db91a179796c0743dfae3b3c2:src/firebase/config.ts[m[36m-[m[32m5[m[36m-[m  "authDomain": "studio-8946896495-11b4f.firebaseapp.com",
+[35m0cdbeeb7b7d3195db91a179796c0743dfae3b3c2:src/firebase/config.ts[m[36m-[m[32m6[m[36m-[m  "measurementId": "",
+[35m0cdbeeb7b7d3195db91a179796c0743dfae3b3c2:src/firebase/config.ts[m[36m-[m[32m7[m[36m-[m  "messagingSenderId": "863885862509",
+[36m--[m
+[35m0cdbeeb7b7d3195db91a179796c0743dfae3b3c2:src/lib/googleMaps.ts[m[36m-[m[32m10[m[36m-[mexport function isValidGoogleMapsKey(key: string | undefined | null): key is string {
+[35m0cdbeeb7b7d3195db91a179796c0743dfae3b3c2:src/lib/googleMaps.ts[m[36m-[m[32m11[m[36m-[m    if (!key) return false;
+[35m0cdbeeb7b7d3195db91a179796c0743dfae3b3c2:src/lib/googleMaps.ts[m[36m-[m[32m12[m[36m-[m    if (key === 'undefined' || key === 'null' || key === '') return false;
+[35m0cdbeeb7b7d3195db91a179796c0743dfae3b3c2:src/lib/googleMaps.ts[m[36m:[m[32m13[m[36m:[m    // Google Cloud API keys typically start with [1;31mAIza[m
+[35m0cdbeeb7b7d3195db91a179796c0743dfae3b3c2:src/lib/googleMaps.ts[m[36m:[m[32m14[m[36m:[m    return key.startsWith('[1;31mAIza[m');
+[35m0cdbeeb7b7d3195db91a179796c0743dfae3b3c2:src/lib/googleMaps.ts[m[36m-[m[32m15[m[36m-[m}
