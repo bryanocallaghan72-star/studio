@@ -1,9 +1,8 @@
-
 "use client";
 
 import { useMemo } from 'react';
 import { collection, query, where } from 'firebase/firestore';
-import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { useFirestore, useCollection, useMemoFirebase, useUser } from '@/firebase';
 
 // Define the shape of a creator for type safety
 export type Creator = {
@@ -21,12 +20,13 @@ export type Creator = {
  * @returns An object containing the creators array, a creatorsById map, loading state, and error state.
  */
 export function useCreators() {
+  const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
 
   const creatorsQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
+    if (!firestore || !user) return null;
     return query(collection(firestore, 'users'), where('isCreator', '==', true));
-  }, [firestore]);
+  }, [firestore, user]);
 
   const { data: rawCreators, isLoading, error } = useCollection<any>(creatorsQuery);
 
@@ -52,7 +52,7 @@ export function useCreators() {
   return {
     creators,
     creatorsById,
-    isLoading,
+    isLoading: isUserLoading || isLoading,
     error,
   };
 }
