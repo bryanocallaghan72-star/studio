@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -42,6 +43,7 @@ import { trackVenueView } from '@/lib/vault/trackVenueView';
 import { useDemoTime } from '@/context/DemoTimeContext';
 import { cn } from '@/lib/utils';
 import { normalizeVenue } from '@/lib/venue-adapter';
+import GoogleAttribution from '@/components/common/GoogleAttribution';
 
 // Updated Venue type for this page supporting both flat and nested schemas
 type Venue = WithId<{
@@ -202,7 +204,7 @@ export default function VenuePage() {
     if (photoRef) {
       const url = photoRef.startsWith('http') 
         ? photoRef 
-        : `/api/place-photo?ref=${encodeURIComponent(photoRef)}`;
+        : `/api/place-photo?photoReference=${encodeURIComponent(photoRef)}`;
       setPhotoUrl(url);
     } else {
       setPhotoUrl(null);
@@ -623,6 +625,11 @@ export default function VenuePage() {
             </div>
           )}
         </Card>
+
+        {/* Google attribution is required when displaying Places data outside of the map */}
+        <div className="flex justify-center pt-4">
+          <GoogleAttribution />
+        </div>
       </div>
     </div>
   );
