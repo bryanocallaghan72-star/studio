@@ -8,7 +8,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const photoReference = searchParams.get('photoReference');
+  // Support both 'photoReference' and 'ref' for convenience
+  const photoReference = searchParams.get('photoReference') || searchParams.get('ref');
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
 
   // 1. Validate Input
@@ -39,6 +40,7 @@ export async function GET(request: NextRequest) {
     const contentType = res.headers.get('content-type') || 'image/jpeg';
     
     // We proxy the body as a stream and set aggressive caching headers (24 hours)
+    // res.body is a ReadableStream which is supported by NextResponse
     return new NextResponse(res.body, {
       headers: {
         'Content-Type': contentType,
@@ -47,6 +49,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Place photo proxy critical error:', error);
-    return new NextResponse('Internal Server Error', { status: 500 });
+    // Returning a descriptive error instead of a generic one to help debugging
+    return new NextResponse(`Internal Server Error: ${error instanceof Error ? error.message : 'Unknown error'}`, { status: 500 });
   }
 }

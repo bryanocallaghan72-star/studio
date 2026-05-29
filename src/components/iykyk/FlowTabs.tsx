@@ -16,6 +16,7 @@ import { isVenueOpen } from "@/lib/venue-status";
 import { useUserLocation } from '@/hooks/useUserLocation';
 import { normalizeVenue } from '@/lib/venue-adapter';
 import { useContextualVenues } from '@/hooks/useContextualVenues';
+import GoogleAttribution from '@/components/common/GoogleAttribution';
 
 type Mood = 'Outdoor' | 'Social' | 'Chill' | 'Active' | 'Cosy';
 
@@ -41,22 +42,25 @@ function getDistanceFromLatLonInM(lat1: number, lon1: number, lat2: number, lon2
 }
 
 const VenueCard = memo(({ venue, distanceMeters }: { venue: any; distanceMeters?: number }) => {
+    const normalized = normalizeVenue(venue);
+    if (!normalized) return null;
+
     const getPhotoUrl = (photoRef: string) => {
         if (!photoRef) return null;
         if (photoRef.startsWith('http')) return photoRef;
-        return `/api/place-photo?ref=${encodeURIComponent(photoRef)}`;
+        return `/api/place-photo?photoReference=${encodeURIComponent(photoRef)}`;
     };
 
-    const imageUrl = getPhotoUrl(venue.photos?.[0]) || 
+    const imageUrl = getPhotoUrl(normalized.photos?.[0] || (normalized as any).photoReference) || 
         "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=800&auto=format&fit=crop";
 
     return (
-        <Link href={`/venue/${venue.slug}`}>
+        <Link href={`/venue/${normalized.slug}`}>
             <Card className="group relative h-64 overflow-hidden rounded-2xl border border-black/[0.08] shadow-sm transition-all hover:shadow-xl hover:-translate-y-1">
                  <div className="absolute inset-0">
                     <img
                         src={imageUrl}
-                        alt={venue.name}
+                        alt={normalized.name}
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div 
@@ -68,10 +72,10 @@ const VenueCard = memo(({ venue, distanceMeters }: { venue: any; distanceMeters?
                 <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
                     <div className="flex items-start justify-between gap-2">
                         <div className="space-y-0.5">
-                            <h3 className="text-lg font-bold leading-tight">{venue.name}</h3>
+                            <h3 className="text-lg font-bold leading-tight">{normalized.name}</h3>
                             <p className="text-xs text-white/60 line-clamp-1 flex items-center gap-1">
                                 <MapPin size={10} />
-                                {venue.location?.address || venue.address}
+                                {normalized.displayAddress}
                             </p>
                             {distanceMeters !== undefined && (
                                 <p className="text-[10px] font-medium text-white/50 flex items-center gap-1 mt-0.5">
@@ -80,11 +84,11 @@ const VenueCard = memo(({ venue, distanceMeters }: { venue: any; distanceMeters?
                                 </p>
                             )}
                         </div>
-                        {(venue.category || venue.details?.category) && (
+                        {normalized.displayCategory && (
                             <Badge 
                                 className="bg-white/20 text-white text-[10px] font-bold backdrop-blur-md border-none uppercase tracking-wider rounded-full px-2 py-0.5"
                             >
-                                {venue.category || venue.details?.category}
+                                {normalized.displayCategory}
                             </Badge>
                         )}
                     </div>
@@ -310,6 +314,10 @@ export function FlowTabs() {
     });
   }, [activeTab, activeSubCategory, tabData, mockDate]);
 
+  const needsAttribution = useMemo(() => {
+    return filteredVenues.some(v => !!v.googleCache);
+  }, [filteredVenues]);
+
   const availableSubcategories = SUBCATEGORY_MAP[activeTab];
 
   const getWeatherEmoji = (code: number) => {
@@ -441,7 +449,14 @@ export function FlowTabs() {
                     return <VenueCard key={venue.id} venue={venue} distanceMeters={distanceMeters} />;
                 })}
             </div>
-             {filteredVenues.length === 0 && (
+             
+            {needsAttribution && filteredVenues.length > 0 && (
+                <div className="flex justify-center pt-10 pb-4">
+                    <GoogleAttribution />
+                </div>
+            )}
+
+            {filteredVenues.length === 0 && (
                 <div className="text-center py-24 px-6 border-2 border-dashed border-black/[0.05] rounded-3xl">
                     <p className="text-sm font-bold uppercase tracking-widest" style={{ color: 'var(--phase-text)', opacity: 0.4 }}>Nothing open right now. Check back soon.</p>
                     <p className="text-xs mt-2" style={{ color: 'var(--phase-text)', opacity: 0.3 }}>Try another time of day or clear your filters.</p>

@@ -60,7 +60,7 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
             return {
                 imageUrl: photoRef.startsWith('http') 
                     ? photoRef 
-                    : `/api/place-photo?ref=${encodeURIComponent(photoRef)}`,
+                    : `/api/place-photo?photoReference=${encodeURIComponent(photoRef)}`,
                 imageHint: 'venue'
             };
         }
@@ -86,7 +86,7 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
         if (photoRef) {
           return photoRef.startsWith('http') 
             ? photoRef 
-            : `/api/place-photo?ref=${encodeURIComponent(photoRef)}`;
+            : `/api/place-photo?photoReference=${encodeURIComponent(photoRef)}`;
         }
         return PlaceHolderImages.find(p => p.id === 'sushi-1')!.imageUrl;
     };
