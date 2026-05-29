@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -430,9 +429,23 @@ export default function VenuePage() {
             {venue.subCategory && (
               <Badge variant="outline" className="text-xs font-semibold border-black/10" style={{ color: 'var(--phase-text)' }}>{venue.subCategory}</Badge>
             )}
-            {venue.vibeTags && venue.vibeTags.map(tag => (
-              <Badge key={tag} variant="secondary" className="bg-black/5 border-none" style={{ color: 'var(--phase-text)', opacity: 0.60 }}>{tag}</Badge>
-            ))}
+            {venue.vibeTags &&
+              Array.from(
+                new Set(
+                  venue.vibeTags
+                    .filter(Boolean)
+                    .map((tag) => tag.trim())
+                )
+              ).map((tag) => (
+                <Badge
+                  key={tag}
+                  variant="secondary"
+                  className="bg-black/5 border-none"
+                  style={{ color: 'var(--phase-text)', opacity: 0.60 }}
+                >
+                  {tag}
+                </Badge>
+              ))}
         </div>
 
         {venue.description && <p className="text-lg leading-relaxed" style={{ color: 'var(--phase-text)', opacity: 0.8 }}>{venue.description}</p>}
