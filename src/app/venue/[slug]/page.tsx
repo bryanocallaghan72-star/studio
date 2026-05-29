@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -188,6 +189,9 @@ export default function VenuePage() {
   const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const isKeyValid = isValidGoogleMapsKey(googleMapsApiKey);
 
+  // Normalization logic for schema resilience and compliance
+  const normalized = normalizeVenue(venue as any);
+
   // ownership logic
   const isOwner = Boolean(user?.uid && venue?.ownerId === user.uid);
   const isUnclaimed = !venue?.ownerId;
@@ -311,7 +315,6 @@ export default function VenuePage() {
     };
   }, [venue, mockDate]);
 
-  const normalized = normalizeVenue(venue as any);
   const center = normalized?.standardCoordinates
     ? { lat: normalized.standardCoordinates.latitude, lng: normalized.standardCoordinates.longitude }
     : null;
@@ -409,8 +412,8 @@ export default function VenuePage() {
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="absolute bottom-0 left-0 p-4 md:p-6">
-                  <Badge variant="secondary" className="bg-white/20 text-white backdrop-blur-md border-none">{venue.category}</Badge>
-                  <h1 className="text-4xl font-bold tracking-tight mt-2 text-white" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{venue.name}</h1>
+                  <Badge variant="secondary" className="bg-white/20 text-white backdrop-blur-md border-none">{normalized?.displayCategory}</Badge>
+                  <h1 className="text-4xl font-bold tracking-tight mt-2 text-white" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{normalized?.name}</h1>
               </div>
           </div>
       </Card>
@@ -482,25 +485,25 @@ export default function VenuePage() {
             </div>
 
             <div className="flex flex-col gap-3">
-              {venue.phone && (
+              {(normalized?.displayPhone || venue.phone) && (
                 <a 
-                  href={`tel:${venue.phone}`}
+                  href={`tel:${normalized?.displayPhone || venue.phone}`}
                   className="flex items-center gap-2.5 text-[13px] font-medium hover:text-phase-text transition-colors w-fit"
                   style={{ color: 'var(--phase-text)', opacity: 0.50 }}
                 >
                   <Phone size={14} strokeWidth={2.5} />
-                  {venue.phone}
+                  {normalized?.displayPhone || venue.phone}
                 </a>
               )}
-              {venue.website && (
+              {(normalized?.displayWebsite || venue.website) && (
                 <a 
-                  href={venue.website}
+                  href={normalized?.displayWebsite || venue.website}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2.5 text-[13px] font-bold text-[#c4762a] hover:opacity-80 transition-opacity w-fit"
                 >
                   <ExternalLink size={14} strokeWidth={2.5} />
-                  {getDomain(venue.website)}
+                  {getDomain(normalized?.displayWebsite || venue.website)}
                 </a>
               )}
             </div>

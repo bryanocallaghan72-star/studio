@@ -1,10 +1,11 @@
 
 /**
  * @fileOverview Google Places Venue Enrichment Script
- * Fetches real photos, opening hours, price levels, and contact info from Google Places API
- * and updates the Firestore 'venues' collection. 
- *
- * NOTE: Google ratings are excluded in favor of our internal iykykScore system.
+ * This script must not persist Google Places volatile fields permanently. 
+ * It may only update googleCache with timestamped, refreshable reference data.
+ * 
+ * NOTE: Google ratings and other restricted fields are excluded/deleted 
+ * to maintain compliance with Google Maps Platform Terms of Service.
  */
 
 import * as admin from 'firebase-admin';
@@ -58,7 +59,7 @@ async function fetchPlaceData(venueName: string, showDebug: boolean = false) {
   const placeId = searchData.results[0].place_id;
 
   // Step 2: Place Details for rich metadata (Excluding ratings)
-  const fields = 'place_id,photos,opening_hours,price_level,formatted_phone_number,website,business_status,formatted_address';
+  const fields = 'place_id,photos,opening_hours,price_level,formatted_phone_number,website,business_status,formatted_address,geometry,name';
   const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=${fields}&key=${GOOGLE_MAPS_API_KEY}`;
   
   const detailsRes = await fetch(detailsUrl);
@@ -68,7 +69,7 @@ async function fetchPlaceData(venueName: string, showDebug: boolean = false) {
 }
 
 async function main() {
-  console.log('🚀 Starting Google Places enrichment (Vibe Edition)...');
+  console.log('🚀 Starting Google Places enrichment (P1 Compliance Edition)...');
   console.log(`Project: ${PROJECT_ID} | API Key: ${GOOGLE_MAPS_API_KEY!.substring(0, 8)}...`);
 
   const venuesRef = db.collection('venues');
@@ -93,27 +94,49 @@ async function main() {
         continue;
       }
 
-      // Extract raw photo references (max 3)
-      const photos = place.photos?.slice(0, 3).map((p: any) => p.photo_reference) || [];
+      const now = new Date();
+      const refreshedAt = admin.firestore.Timestamp.fromDate(now);
+      const expiresAt = admin.firestore.Timestamp.fromDate(new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000));
 
       const updateData = {
-        photos: photos,
-        openingHours: {
-          periods: place.opening_hours?.periods || [],
-          weekdayText: place.opening_hours?.weekday_text || []
+        // Essential reference
+        placeId: place.place_id,
+        
+        // iykyk editorial status
+        iykykScore: 0,
+        enrichedAt: admin.firestore.FieldValue.serverTimestamp(),
+
+        // Safe Google Cache Layer (Refreshed Reference Data)
+        googleCache: {
+            displayName: place.name || venue.name,
+            formattedAddress: place.formatted_address || venue.address || null,
+            location: {
+                lat: place.geometry?.location?.lat || venue.latitude || null,
+                lng: place.geometry?.location?.lng || venue.longitude || null,
+            },
+            phone: place.formatted_phone_number || null,
+            website: place.website || null,
+            refreshedAt,
+            expiresAt,
+            attributionRequired: true
         },
-        priceLevel: place.price_level ?? null,
+
+        // STOP PERSISTING VOLATILE FIELDS PERMANENTLY (P1 Compliance)
+        // These fields are deleted from the top-level or restricted entirely.
+        openingHours: admin.firestore.FieldValue.delete(),
+        photos: admin.firestore.FieldValue.delete(),
+        priceLevel: admin.firestore.FieldValue.delete(),
+        businessStatus: admin.firestore.FieldValue.delete(),
+        rating: admin.firestore.FieldValue.delete(),
+        totalRatings: admin.firestore.FieldValue.delete(),
+
+        // Temporary backward compatibility
         phone: place.formatted_phone_number ?? null,
         website: place.website ?? null,
-        businessStatus: place.business_status ?? null,
-        placeId: place.place_id,
-        // Initialize/Reset internal iykykScore
-        iykykScore: 0,
-        enrichedAt: admin.firestore.FieldValue.serverTimestamp()
       };
 
       await doc.ref.update(updateData);
-      console.log(`✅ Enriched: ${venue.name} | 📸 ${photos.length} photos | ${place.business_status ?? 'OPERATIONAL'}`);
+      console.log(`✅ Enriched & Compliant: ${venue.name} | Cache expiry: 30 days`);
       successCount++;
 
       // Small delay to be polite to the API

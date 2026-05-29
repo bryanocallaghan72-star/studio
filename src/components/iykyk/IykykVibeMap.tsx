@@ -179,9 +179,42 @@ export function IykykVibeMap() {
         const venueDoc = await getDoc(venueRef);
         const isNew = !venueDoc.exists();
         
+        // Cache freshness timestamps (Compliance: must refresh every 30 days)
+        const now = new Date();
+        const refreshedAt = now.toISOString();
+        const expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
         const venueData = {
             slug: slug,
             placeId: place_id,
+            // iykyk Editorial Layer (Owned data)
+            iykyk: {
+                title: name,
+                category: "Vibes",
+                vibeTags: []
+            },
+            // Google Reference Cache (Temporary/Volatile data)
+            googleCache: {
+                displayName: name,
+                formattedAddress: formatted_address || vicinity || 'Address not available',
+                location: {
+                    lat: location.lat(),
+                    lng: location.lng(),
+                },
+                refreshedAt,
+                expiresAt,
+                attributionRequired: true
+            },
+            // Metadata for tracking and compliance
+            sourceMeta: {
+                createdVia: "google_places_add_venue",
+                googleFieldsStored: ["displayName", "formattedAddress", "location"],
+                manuallyVerified: false
+            },
+            updatedAt: serverTimestamp(),
+            ...(isNew && { createdAt: serverTimestamp() }),
+
+            // Temporary Backward Compatibility (Legacy fields)
             name: name,
             location: {
                 address: formatted_address || vicinity || 'Address not available',
@@ -192,8 +225,6 @@ export function IykykVibeMap() {
                 category: "Vibes",
                 description: "",
             },
-            updatedAt: serverTimestamp(),
-            ...(isNew && { createdAt: serverTimestamp() }),
         };
 
         await setDoc(venueRef, venueData, { merge: true });
