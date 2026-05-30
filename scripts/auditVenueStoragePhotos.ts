@@ -30,14 +30,18 @@ async function main() {
     console.log(`\nFound ${files.length} files in 'venue_images/' prefix.`);
     
     let totalSize = 0;
-    const candidates = files.map(file => {
-        totalSize += parseInt(file.metadata.size || '0');
-        return {
-            name: file.name,
-            size: `${(parseInt(file.metadata.size || '0') / 1024).toFixed(2)} KB`,
-            updated: file.metadata.updated
-        };
-    });
+
+const candidates = files.map((file) => {
+  const rawSize = file.metadata.size ?? 0;
+  const size = typeof rawSize === 'number' ? rawSize : Number(rawSize);
+
+  totalSize += Number.isFinite(size) ? size : 0;
+
+  return {
+    name: file.name,
+    size: `${((Number.isFinite(size) ? size : 0) / 1024).toFixed(2)} KB`,
+  };
+});
 
     if (files.length > 0) {
         console.table(candidates.slice(0, 20));

@@ -41,7 +41,7 @@ export function venueToMapPin(venue: Venue): MapPinData | null {
   return {
     id: venue.id,
     slug: venue.slug,
-    name: venue.name,
+    name: venue.iykyk?.title || venue.googleCache?.displayName || venue.name || venue.slug || 'Unnamed venue',
     latitude,
     longitude,
     category,

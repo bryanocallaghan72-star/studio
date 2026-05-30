@@ -16,11 +16,37 @@ if (admin.apps.length === 0) {
 
 const db = admin.firestore();
 
+type AuditVenue = {
+  id: string;
+  placeId?: string;
+  googleCache?: {
+    expiresAt?: admin.firestore.Timestamp;
+    [key: string]: any;
+  };
+  address?: string;
+  latitude?: number;
+  longitude?: number;
+  location?: any;
+  openingHours?: any;
+  photos?: any;
+  photoReference?: any;
+  rating?: any;
+  totalRatings?: any;
+  phone?: string;
+  website?: string;
+  businessStatus?: any;
+};
+
 async function main() {
   console.log('🔍 Starting READ-ONLY Audit of Google Fields in Firestore...');
   
   const snapshot = await db.collection('venues').get();
-  const venues = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const venues = snapshot.docs.map(doc => {
+    return {
+      id: doc.id,
+      ...(doc.data() as Omit<AuditVenue, "id">),
+    } as AuditVenue;
+  });
 
   const report = {
     totalVenues: venues.length,

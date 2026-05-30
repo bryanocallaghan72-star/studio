@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview An AI flow for generating a personalized itinerary based on a user's mood.
@@ -22,7 +21,7 @@ export async function generateItinerary(
 
 const prompt = ai.definePrompt({
   name: 'generateItineraryPrompt',
-  model: 'googleai/gemini-2.5-flash',
+  model: 'googleai/gemini-1.5-flash',
   input: { schema: ItineraryRequestSchema },
   output: { schema: ItinerarySchema },
   prompt: `You are a hyper-local concierge for Bondi, Australia, specializing in crafting perfect day plans for the iykyk app.
