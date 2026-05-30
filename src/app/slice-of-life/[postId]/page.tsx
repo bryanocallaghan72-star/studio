@@ -212,7 +212,15 @@ export default function SliceOfLifePostPage() {
                 <QRCodeDialog
                     isOpen={isQRDialogOpen}
                     onOpenChange={setQRDialogOpen}
-                    deal={{...deal, venue: venue.name}}
+                    deal={{
+                        ...deal,
+                        venue:
+                            venue.iykyk?.title ||
+                            venue.googleCache?.displayName ||
+                            venue.name ||
+                            venue.slug ||
+                            'Unknown venue',
+                    }}
                 />
             )}
         </>
