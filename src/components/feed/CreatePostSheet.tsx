@@ -239,43 +239,57 @@ export function CreatePostSheet({ isOpen, onClose }: CreatePostSheetProps) {
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
-                  <div className="space-y-2 relative">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">
-                      Venue Name (optional)
-                    </label>
-                    <div className="relative">
-                      <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-[#1a1208]/20" size={18} />
-                      <Input
-                        placeholder="Search venues..."
-                        className="pl-12 h-14 rounded-2xl border-black/[0.08] bg-white text-[#1a1208] placeholder:text-[#1a1208]/20"
-                        value={venueSearch}
-                        onChange={(e) => {
-                          setVenueSearch(e.target.value);
-                          setVenueName(e.target.value);
-                          setShowVenueSuggestions(true);
-                        }}
-                        onFocus={() => setShowVenueSuggestions(true)}
-                      />
-                    </div>
-                    {showVenueSuggestions && filteredVenues.length > 0 && (
-                      <div className="absolute z-10 w-full rounded-2xl bg-white border border-black/[0.08] shadow-lg overflow-hidden mt-1">
-                        {filteredVenues.map((venue) => (
-                          <button
-                            key={venue.slug ?? venue.name}
-                            type="button"
-                            className="w-full px-4 py-3 text-left text-sm font-medium text-[#1a1208] hover:bg-[#f2ece0] transition-colors border-b border-black/[0.04] last:border-none"
-                            onClick={() => {
-                              setVenueName(venue.name);
-                              setVenueSearch(venue.name);
-                              setShowVenueSuggestions(false);
-                            }}
-                          >
-                            {venue.name}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+  <div className="space-y-2 relative">
+    <label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">
+      Venue Name (optional)
+    </label>
+
+    <div className="relative">
+      <Building2
+        className="absolute left-4 top-1/2 -translate-y-1/2 text-[#1a1208]/20"
+        size={18}
+      />
+      <Input
+        placeholder="Search venues..."
+        className="pl-12 h-14 rounded-2xl border-black/[0.08] bg-white text-[#1a1208] placeholder:text-[#1a1208]/20"
+        value={venueSearch}
+        onChange={(e) => {
+          setVenueSearch(e.target.value);
+          setVenueName(e.target.value);
+          setShowVenueSuggestions(true);
+        }}
+        onFocus={() => setShowVenueSuggestions(true)}
+      />
+    </div>
+
+    {showVenueSuggestions && filteredVenues.length > 0 && (
+      <div className="absolute z-10 w-full rounded-2xl bg-white border border-black/[0.08] shadow-lg overflow-hidden mt-1">
+        {filteredVenues.map((venue) => {
+          const displayName =
+            venue.iykyk?.title ||
+            venue.googleCache?.displayName ||
+            venue.name ||
+            venue.slug ||
+            'Unknown venue';
+
+          return (
+            <button
+              key={venue.id || venue.slug || venue.name || displayName}
+              type="button"
+              className="w-full px-4 py-3 text-left text-sm font-medium text-[#1a1208] hover:bg-[#f2ece0] transition-colors border-b border-black/[0.04] last:border-none"
+              onClick={() => {
+                setVenueName(displayName);
+                setVenueSearch(displayName);
+                setShowVenueSuggestions(false);
+              }}
+            >
+              {displayName}
+            </button>
+          );
+        })}
+      </div>
+    )}
+  </div>
 
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Location</label>

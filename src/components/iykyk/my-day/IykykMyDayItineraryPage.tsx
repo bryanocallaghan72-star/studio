@@ -100,19 +100,31 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
         // Primary search: matches category AND search term
         let filtered = venues.filter(v => {
             const vCategory = v.category || v.details?.category;
+
+            const venueDisplayName =
+              v.iykyk?.title ||
+              v.googleCache?.displayName ||
+              v.name ||
+              v.slug ||
+              'Unknown venue';
+            
             const matchesCategory = vCategory === currentCategory;
-            const matchesSearch = v.name.toLowerCase().includes(search);
-            const isNotCurrent = v.name !== editingItem.location && v.slug !== editingItem.location;
+            const matchesSearch = venueDisplayName.toLowerCase().includes(search);
+            const isNotCurrent =
+              venueDisplayName !== editingItem.location &&
+              v.slug !== editingItem.location;
+            
             return matchesCategory && matchesSearch && isNotCurrent;
         });
 
         // Fallback: search across all categories if query is specific and no category matches
         if (filtered.length === 0 && search) {
-             filtered = venues.filter(v => 
-                v.name.toLowerCase().includes(search) && 
-                v.name !== editingItem.location && 
-                v.slug !== editingItem.location
-             );
+            filtered = venues.filter(v => {
+                const venueDisplayName = v.iykyk?.title || v.googleCache?.displayName || v.name || v.slug || 'Unknown venue';
+                return venueDisplayName.toLowerCase().includes(search) &&
+                    v.name !== editingItem.location &&
+                    v.slug !== editingItem.location;
+            });
         } else if (filtered.length === 0 && !search) {
              // If no category matches and no search, just show a handful of venues
              filtered = venues.filter(v => v.name !== editingItem.location).slice(0, 10);
@@ -222,7 +234,7 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
                                         <div className="w-12 h-12 bg-black/[0.03] rounded-xl overflow-hidden flex-shrink-0 relative">
                                             <Image 
                                                 src={getVenueImageUrl(item)} 
-                                                alt={item.name} 
+                                                alt={item.name ?? 'Venue image'}
                                                 fill 
                                                 className="object-cover" 
                                             />

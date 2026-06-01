@@ -91,13 +91,12 @@ export function useContextualVenues(options: UseContextualVenuesOptions = {}) {
       return {
         id: v.id,
         slug: v.slug,
-        name: v.name,
+        name: v.name ?? v.slug,
         score: 0,
         vibeTags: tags,
-        // Cast to any to access enriched fields not yet in types
-        seating: (v as any).seating, 
+        seating: (v as any).seating,
         cuisine: (v as any).cuisine,
-        distanceMeters: distanceMap[v.slug] || distanceMap[v.id],
+        distanceMeters: distanceMap[v.slug] ?? distanceMap[v.id] ?? 0,
       };
     });
 
