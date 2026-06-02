@@ -33,8 +33,8 @@ export async function generateItinerary(request: ItineraryRequest): Promise<{ su
     if (!querySnapshot.empty) {
         const allVenues = querySnapshot.docs.map(doc => doc.data());
         
-        // Filter to open venues using central utility
-        const openVenues = allVenues.filter(v => isVenueOpen(v));
+        // Filter venues. Fail-open on unknown status (null) to maintain a healthy pool.
+        const openVenues = allVenues.filter(v => isVenueOpen(v) !== false);
 
         // Occasion-based category filtering
         const vibe = (request.vibe || "").toLowerCase();

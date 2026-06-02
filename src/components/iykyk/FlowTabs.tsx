@@ -100,26 +100,10 @@ const VenueCard = memo(({ venue, distanceMeters }: { venue: any; distanceMeters?
 VenueCard.displayName = 'VenueCard';
 
 
-const isOpenDuringPhase = (venue: any, phaseStart: number, phaseEnd: number) => {
-  if (!venue?.openingHours?.periods?.length) return true;
-  
-  const periods = venue.openingHours.periods;
-  return periods.some((p: any) => {
-    const openHour = parseInt(p.open.time.substring(0, 2));
-    const closeHour = p.close ? parseInt(p.close.time.substring(0, 2)) : 23;
-    // venue overlaps with phase window
-    return openHour < phaseEnd && closeHour > phaseStart;
-  });
-};
-
 const getVenuesForTime = (time: 'morning' | 'day' | 'golden' | 'night', allVenues: Venue[]) => {
-    switch(time) {
-        case 'morning': return allVenues.filter(v => isOpenDuringPhase(v, 5, 12));
-        case 'day':     return allVenues.filter(v => isOpenDuringPhase(v, 12, 17));
-        case 'golden':  return allVenues.filter(v => isOpenDuringPhase(v, 17, 21));
-        case 'night':   return allVenues.filter(v => isOpenDuringPhase(v, 21, 24));
-        default:        return allVenues;
-    }
+    // Phase logic is now handled primarily by the contextual ranker or broad category hints
+    // as detailed period data is no longer cached.
+    return allVenues;
 };
 
 const getCurrentTimeCategory = (hour: number): 'morning' | 'day' | 'golden' | 'night' => {
@@ -299,8 +283,8 @@ export function FlowTabs() {
   const filteredVenues = useMemo(() => {
     const venuesForTime = tabData.find(t => t.value === activeTab)?.venues || [];
     
-    // Strict real-time "Open Now" filter using central utility
-    const openVenues = venuesForTime.filter(v => isVenueOpen(v, mockDate));
+    // Fail-open on unknown status (null) since detail data is no longer cached.
+    const openVenues = venuesForTime.filter(v => isVenueOpen(v, mockDate) !== false);
 
     if (activeSubCategory === 'All') {
         return openVenues;

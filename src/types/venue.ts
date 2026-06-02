@@ -53,14 +53,11 @@ export interface Venue {
   description?: string;
   photos?: string[];
   photoReference?: string;
-  openingHours?: {
-    periods?: any[];
-    weekdayText?: string[];
-  };
   phone?: string;
   website?: string;
   priceLevel?: number | null;
   businessStatus?: string;
+  forceOpen?: boolean;
 
   // new nested legacy fields
   location?: {
@@ -72,7 +69,6 @@ export interface Venue {
   details?: {
     category?: string;
     description?: string;
-    openingHours?: string;
     vibeTags?: string[];
     currentVibe?: string;
   };

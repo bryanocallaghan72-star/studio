@@ -4,51 +4,25 @@
  */
 
 /**
- * Checks if a venue is open based on its periods data.
+ * Checks if a venue is open.
+ * NOTE: Google Places opening hours are no longer cached in Firestore for compliance.
+ * Status is derived from iykyk-owned 'forceOpen' flag or returns null (unknown).
+ * 
  * @param venue - The venue object from Firestore.
  * @param now - The reference date (defaults to real-time, can be overriden for God Mode).
+ * @returns boolean if status is certain, null if status is unknown (missing hours).
  */
-export function isVenueOpen(venue: any, now: Date = new Date()): boolean {
+export function isVenueOpen(venue: any, now: Date = new Date()): boolean | null {
   try {
-    // Force open bypass for landmarks (e.g. Bondi Beach)
+    // Authoritative override for 24/7 landmarks or manual overrides
     if (venue.forceOpen === true) return true;
 
-    const periods = venue.openingHours?.periods;
-    // Fallback to true if no data exists - don't hide venues we aren't sure about
-    if (!periods || !Array.isArray(periods) || periods.length === 0) return true;
-
-    const day = now.getDay();
-    const currentTime = now.getHours() * 100 + now.getMinutes();
-
-    // Special case for 24/7 venues
-    const isAlwaysOpen = periods.length === 1 && 
-      periods[0]?.open &&
-      periods[0].open.day === 0 && 
-      periods[0].open.time === "0000" && 
-      (!periods[0].close || (periods[0].close.day === 0 && periods[0].close.time === "0000"));
-
-    if (isAlwaysOpen) return true;
-
-    return periods.some((p: any) => {
-      if (!p?.open) return false;
-      
-      const openDay = p.open.day;
-      const openTime = parseInt(p.open.time);
-      const closeDay = p.close?.day ?? openDay;
-      const closeTime = p.close ? parseInt(p.close.time) : 2359;
-
-      // Check if currently within this specific open period
-      if (openDay === closeDay) {
-        return day === openDay && currentTime >= openTime && currentTime < closeTime;
-      } else {
-        // Period spans across midnight (e.g. 9pm - 2am)
-        if (day === openDay) return currentTime >= openTime;
-        if (day === (openDay + 1) % 7) return currentTime < closeTime;
-      }
-      return false;
-    });
+    // We no longer persist Google openingHours in Firestore to comply with 
+    // Google Maps Platform Terms of Service. Status must be fetched live 
+    // from the Google Places API on the client.
+    return null;
   } catch (err) {
     console.warn("Venue status check failed for venue:", venue?.name, err);
-    return true; // Fallback to open on error
+    return null;
   }
 }
