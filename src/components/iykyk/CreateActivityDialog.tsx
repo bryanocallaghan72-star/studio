@@ -25,7 +25,7 @@ type CreateActivityDialogProps = {
 };
 
 export function CreateActivityDialog({ isOpen, onOpenChange, defaultTitle, defaultCategory }: CreateActivityDialogProps) {
-    const { firestore } = useFirestore();
+    const firestore = useFirestore();
     const { user } = useUser();
     const { toast } = useToast();
 
