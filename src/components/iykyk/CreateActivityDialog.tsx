@@ -32,7 +32,7 @@ export function CreateActivityDialog({ isOpen, onOpenChange, defaultTitle, defau
     const [title, setTitle] = useState(defaultTitle);
     const [description, setDescription] = useState("");
     const [location, setLocation] = useState("");
-    const [maxParticipants, setMaxParticipants] = useState(10);
+    const [maxParticipants, setMaxParticipants] = useState<number | "">(10);
     const [date, setDate] = useState<Date | undefined>(new Date());
     const [time, setTime] = useState("12:00");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -157,8 +157,11 @@ export function CreateActivityDialog({ isOpen, onOpenChange, defaultTitle, defau
                             <Input 
                                 id="participants" 
                                 type="number" 
-                                value={maxParticipants} 
-                                onChange={(e) => setMaxParticipants(parseInt(e.target.value, 10))} 
+                                value={String(maxParticipants ?? '')} 
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setMaxParticipants(val === '' ? '' : parseInt(val, 10));
+                                }} 
                                 className="rounded-xl border-black/[0.08] bg-white h-12 text-sm font-bold text-[#1a1208]"
                             />
                         </div>
