@@ -24,6 +24,7 @@ import type { Venue } from '@/types/venue';
 import { venueToMapPin, type MapPinData } from "@/adapters/venueToMapPin";
 import { useMapTheme, type MapPhase } from "@/hooks/useMapTheme";
 import { useDemoTime } from "@/context/DemoTimeContext";
+import { MOOD_BUCKETS } from "@/lib/scoring";
 
 // Map container style
 const containerStyle = {
@@ -90,8 +91,18 @@ export function IykykVibeMap() {
       .filter(pin => {
         if (activeTab === 'All' || venueSlug) return true;
 
-        if (!pin.vibeTags || pin.vibeTags.length === 0) return true;
-        return pin.vibeTags.includes(activeTab);
+        const vibeTags = pin.vibeTags || [];
+        const normalizedMood = activeTab.toLowerCase();
+        const bucket = MOOD_BUCKETS[normalizedMood];
+        const lowerVibeTags = vibeTags.map(tag => tag.toLowerCase());
+
+        // A venue passes the filter if any of its lowercased vibeTags appear in the bucket
+        const bucketMatch = bucket && lowerVibeTags.some(tag => bucket.includes(tag));
+        
+        // OR if a vibeTag directly matches selectedMood case-insensitively (fallback)
+        const directMatch = lowerVibeTags.includes(normalizedMood);
+
+        return bucketMatch || directMatch;
       });
   }, [venues, activeTab, venueSlug]);
 

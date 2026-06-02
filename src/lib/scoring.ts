@@ -30,7 +30,7 @@ const FOOD_TAGS = ['brunch', 'coffee', 'cocktails', 'wine bar', 'date night'];
 /**
  * Mood Buckets for mapping high-level filters to sets of related tags.
  */
-const MOOD_BUCKETS: Record<string, string[]> = {
+export const MOOD_BUCKETS: Record<string, string[]> = {
   'social': SOCIAL_TAGS,
   'chill': CHILL_TAGS,
   'cosy': CHILL_TAGS,
