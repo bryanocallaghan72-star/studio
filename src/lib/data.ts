@@ -1,4 +1,3 @@
-
 import { Sparkles, Coffee, Utensils, Beer, Dumbbell, Sun, Calendar, Zap, Waves, Shirt, Gift } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -521,6 +520,7 @@ export const appData: AppData = {
         pace: 2,
         budget: 3,
         travelMode: 'walking',
+        scoringMood: 'sunset ritual'
       },
       mockItinerary: [
         { time: '17:00', name: 'Bondi to Bronte Coastal Walk', venueId: 'bondi-to-bronte-coastal-walk', notes: 'Golden hour walk.' },
@@ -539,6 +539,7 @@ export const appData: AppData = {
         pace: 3,
         budget: 4,
         travelMode: 'walking',
+        scoringMood: 'date night'
       },
       mockItinerary: [
         { time: '18:30', name: 'The Corner House', venueId: 'the-corner-house', notes: 'Booked in for a cheeky cocktail.' },
@@ -557,6 +558,7 @@ export const appData: AppData = {
         pace: 4,
         budget: 3,
         travelMode: 'walking',
+        scoringMood: 'buzzing'
       },
       mockItinerary: [
         { time: '18:30', name: 'Lulu', venueId: 'lulu', notes: 'Trivia & tapas at the local.' },
@@ -575,6 +577,7 @@ export const appData: AppData = {
         pace: 2,
         budget: 3,
         travelMode: 'walking',
+        scoringMood: 'morning reset'
       },
       mockItinerary: [
         { time: '08:00', name: 'Fluidform Pilates', venueId: 'fluidform-pilates', notes: 'Sunrise yoga at the Pavilion.' },
@@ -593,6 +596,7 @@ export const appData: AppData = {
         pace: 3,
         budget: 4,
         travelMode: 'walking',
+        scoringMood: 'date night'
       },
       mockItinerary: [
         { time: '18:00', name: 'Totti\'s', venueId: 'tottis', notes: 'Reservation for an amazing meal.' },
@@ -611,6 +615,7 @@ export const appData: AppData = {
         pace: 4,
         budget: 3,
         travelMode: 'uber',
+        scoringMood: 'buzzing'
       },
       mockItinerary: [
         { time: '18:00', name: 'Lulu', venueId: 'lulu', notes: 'Margaritas and shared tapas.' },
@@ -629,6 +634,7 @@ export const appData: AppData = {
         pace: 2,
         budget: 4,
         travelMode: 'walking',
+        scoringMood: 'local favourite'
       },
       mockItinerary: [
         { time: '12:00', name: 'Bills', venueId: 'bills', notes: 'Ricotta hotcakes & spritz.' },
@@ -647,6 +653,7 @@ export const appData: AppData = {
         pace: 5,
         budget: 2,
         travelMode: 'walking',
+        scoringMood: 'local favourite'
       },
       mockItinerary: [
         { time: '13:30', name: 'Raw Bar', venueId: 'raw-bar', notes: 'Healthy and fresh lunch.' },
@@ -664,6 +671,7 @@ export const appData: AppData = {
         pace: 4,
         budget: 3,
         travelMode: 'walking',
+        scoringMood: 'morning reset'
       },
       mockItinerary: [
         { time: '07:00', name: 'Bondi Beach', venueId: 'bondi-beach', notes: 'PT Session at the outdoor gym.' },
@@ -710,6 +718,7 @@ export const appData: AppData = {
             pace: 3,
             budget: 4,
             travelMode: 'uber',
+            scoringMood: 'buzzing'
         },
         mockItinerary: [
             { time: '18:00', name: 'Chiswick', venueId: 'chiswick', notes: 'Welcome drinks and canapés in the garden.' },
@@ -727,6 +736,7 @@ export const appData: AppData = {
             pace: 4,
             budget: 4,
             travelMode: 'uber',
+            scoringMood: 'buzzing'
         },
         mockItinerary: [
             { time: '19:00', name: 'Sean\'s', venueId: 'seans', notes: 'Elegant dinner to start the night.' },

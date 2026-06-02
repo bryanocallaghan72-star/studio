@@ -6,10 +6,13 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { firebaseConfig } from "@/firebase/config";
 import { isVenueOpen } from "@/lib/venue-status";
+import { rankVenues, type ScoringContext, type ScoredVenue } from "@/lib/scoring";
 
 export async function generateItinerary(request: ItineraryRequest): Promise<{ success?: Itinerary, error?: { title: string, message: string } }> {
   // Fetch current Bondi weather
   let weatherContext: string | undefined = undefined;
+  let scoringWeather: ScoringContext['weather'] = 'sunny';
+
   try {
     const weatherRes = await fetch(
       'https://api.open-meteo.com/v1/forecast?latitude=-33.8908&longitude=151.2743&current=temperature_2m,weathercode&timezone=Australia/Sydney'
@@ -19,9 +22,25 @@ export async function generateItinerary(request: ItineraryRequest): Promise<{ su
     const code = weatherData.current?.weathercode ?? 0;
     const condition = code === 0 ? 'sunny' : code <= 3 ? 'partly cloudy' : code <= 67 ? 'rainy' : 'cloudy';
     weatherContext = `${temp}°C and ${condition}`;
+
+    // Map weather code to scoring engine types
+    if (code <= 1) scoringWeather = 'sunny';
+    else if (code >= 2 && code <= 3) scoringWeather = 'cloudy';
+    else if (code >= 51 && code <= 67) scoringWeather = 'rainy';
+    else if (code >= 80) scoringWeather = 'rainy';
+    else scoringWeather = 'cloudy';
+
   } catch (err) {
     console.warn("SERVER ACTION: Weather fetch failed:", err);
   }
+
+  // Derive phase from current server hour
+  const hour = new Date().getHours();
+  let phase: ScoringContext['phase'] = 'night';
+  if (hour >= 5 && hour <= 11) phase = 'morning';
+  else if (hour >= 12 && hour <= 16) phase = 'afternoon';
+  else if (hour >= 17 && hour <= 20) phase = 'evening';
+  else phase = 'night';
 
   // 1. Fetch real venues from Firestore and filter them
   let venuePool: string[] = [];
@@ -31,7 +50,7 @@ export async function generateItinerary(request: ItineraryRequest): Promise<{ su
     
     const querySnapshot = await getDocs(collection(db, "venues"));
     if (!querySnapshot.empty) {
-        const allVenues = querySnapshot.docs.map(doc => doc.data());
+        const allVenues = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
         
         // Filter venues. Fail-open on unknown status (null) to maintain a healthy pool.
         const openVenues = allVenues.filter(v => isVenueOpen(v) !== false);
@@ -61,12 +80,35 @@ export async function generateItinerary(request: ItineraryRequest): Promise<{ su
         // Ensure we have a decent pool, fallback if filtering was too restrictive
         if (filteredVenues.length < 5) filteredVenues = openVenues;
 
-        // Pick top 15 candidates
-        venuePool = filteredVenues
-          .sort(() => 0.5 - Math.random())
-          .slice(0, 15)
-          .map((v: any) => v.name)
-          .filter(name => !!name);
+        // SMART POOLING: Use rankVenues if a scoringMood is present
+        const scoringMood = (request as any).scoringMood;
+        if (scoringMood) {
+          const scoringContext: ScoringContext = {
+            phase,
+            weather: scoringWeather,
+            mood: scoringMood
+          };
+
+          const scoredVenues: ScoredVenue[] = filteredVenues.map((v: any) => ({
+            id: v.id,
+            slug: v.slug || v.id,
+            name: v.name || v.slug || v.id,
+            score: 0,
+            vibeTags: v.vibeTags || v.details?.vibeTags || [],
+            seating: v.seating,
+            cuisine: v.cuisine
+          }));
+
+          const ranked = rankVenues(scoredVenues, scoringContext);
+          venuePool = ranked.slice(0, 15).map(v => v.name);
+        } else {
+          // Pick top 15 candidates randomly (existing fallback)
+          venuePool = filteredVenues
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 15)
+            .map((v: any) => v.name)
+            .filter(name => !!name);
+        }
     }
   } catch (err) {
     console.error('SERVER ACTION: Failsafe pool construction:', err);
