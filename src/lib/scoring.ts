@@ -1,3 +1,4 @@
+
 /**
  * @fileOverview Contextual venue scoring and ranking engine for iykyk.
  * Calculates relevance scores (0-100) based on time, weather, mood, and location.
@@ -25,6 +26,23 @@ const SOCIAL_TAGS = ['social', 'buzzing', 'lively', 'groups', 'group energy', 'l
 const CHILL_TAGS = ['relaxed', 'quiet', 'intimate', 'cosy', 'hidden gem', 'local favourite', 'neighbourhood spot'];
 const OUTDOOR_TAGS = ['beachside', 'alfresco', 'ocean views', 'sunny', 'outdoor dining', 'post-surf', 'sunset ritual'];
 const FOOD_TAGS = ['brunch', 'coffee', 'cocktails', 'wine bar', 'date night'];
+
+/**
+ * Mood Buckets for mapping high-level filters to sets of related tags.
+ */
+const MOOD_BUCKETS: Record<string, string[]> = {
+  'social': SOCIAL_TAGS,
+  'chill': CHILL_TAGS,
+  'cosy': CHILL_TAGS,
+  'outdoor': OUTDOOR_TAGS,
+  'food': FOOD_TAGS,
+  'local favourite': ['local favourite', 'post-surf', 'community', 'group energy', 'neighbourhood gem'],
+  'sunset ritual':   ['sunset ritual', 'cocktails', 'date night', 'lively', 'wine', 'wine bar'],
+  'buzzing':         ['buzzing', 'social', 'lively', 'group energy', 'high voltage', 'post-surf'],
+  'hidden gem':      ['hidden gem', 'neighbourhood gem', 'intimate'],
+  'morning reset':   ['morning reset', 'wellness', 'pilates', 'yoga', 'barre', 'coffee', 'healthy eats', 'smoothies', 'grab-and-go'],
+  'date night':      ['date night', 'cocktails', 'hidden gem', 'intimate', 'wine', 'wine bar', 'modern dining', 'sunset ritual'],
+};
 
 /**
  * Calculates a contextual relevance score for a venue.
@@ -77,16 +95,12 @@ export function scoreVenue(venue: Partial<ScoredVenue>, context: ScoringContext)
   if (!context.mood) {
     score += 8; // Neutral boost
   } else {
-    let bucket: string[] = [];
-    if (currentMood === 'social') bucket = SOCIAL_TAGS;
-    else if (currentMood === 'chill' || currentMood === 'cosy') bucket = CHILL_TAGS;
-    else if (currentMood === 'outdoor') bucket = OUTDOOR_TAGS;
-    else if (currentMood === 'food') bucket = FOOD_TAGS;
-
-    const overlap = tags.filter(t => bucket.includes(t)).length;
-    if (bucket.length > 0 && overlap >= 1) {
-      // Full match for the bucket
-      score += overlap >= 2 ? 15 : 8;
+    const bucket = MOOD_BUCKETS[currentMood];
+    if (bucket) {
+      const overlap = tags.filter(t => bucket.includes(t)).length;
+      if (overlap >= 1) {
+        score += overlap >= 2 ? 15 : 8;
+      }
     } else if (tags.includes(currentMood)) {
       score += 15;
     }

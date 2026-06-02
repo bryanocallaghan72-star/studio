@@ -300,16 +300,16 @@ export function IykykVibeMap() {
 
   const vibeIcons: Record<string, React.ReactNode> = {
     "All": <Sparkles className="mr-2 h-4 w-4" />,
-    "Post-Surf": <Waves className="mr-2 h-4 w-4" />,
+    "Local Favourite": <Waves className="mr-2 h-4 w-4" />,
     "Sunset Ritual": <Sun className="mr-2 h-4 w-4" />,
-    "High Voltage": <Zap className="mr-2 h-4 w-4" />,
+    "Buzzing": <Zap className="mr-2 h-4 w-4" />,
     "Hidden Gem": <Star className="mr-2 h-4 w-4" />,
     "Morning Reset": <Coffee className="mr-2 h-4 w-4" />,
     "Date Night": <Sparkles className="mr-2 h-4 w-4" />,
     "Group Energy": <UserPlus className="mr-2 h-4 w-4" />,
   };
 
-  const mapFilterCategories = ["All", "Post-Surf", "Sunset Ritual", "High Voltage", "Hidden Gem", "Morning Reset", "Date Night", "Group Energy"];
+  const mapFilterCategories = ["All", "Local Favourite", "Sunset Ritual", "Buzzing", "Hidden Gem", "Morning Reset", "Date Night", "Group Energy"];
 
   const getButtonText = () => {
       if (isSaving || isUserLoading) return "Loading...";
