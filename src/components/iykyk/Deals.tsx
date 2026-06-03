@@ -1,19 +1,20 @@
-
 "use client";
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Ticket, Utensils, Droplet, ShoppingBag, Calendar, CalendarCheck2 } from "lucide-react";
+import { Ticket, Utensils, Droplet, ShoppingBag, Calendar, CalendarCheck2, CheckCircle, Copy, Check } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { QRCodeDialog } from './QRCodeDialog';
 import { useDeals } from '@/hooks/useDeals';
 import type { Deal } from '@/data/seeds/drops';
 import { useVenues } from '@/hooks/useVenues';
 import { Skeleton } from '../ui/skeleton';
 import { cn } from '@/lib/utils';
+import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
+import { collection, serverTimestamp } from 'firebase/firestore';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 
 const categories = [
     { name: 'All', icon: Ticket },
@@ -32,10 +33,14 @@ const DealCardSkeleton = () => (
 );
 
 export function Deals() {
-    const [selectedDeal, setSelectedDeal] = useState<{ title: string; description: string; venue: string; } | null>(null);
-    const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
+    const [confirmingDeal, setConfirmingDeal] = useState<{ deal: Deal; venueName: string } | null>(null);
+    const [successfulDeal, setSuccessfulDeal] = useState<{ deal: Deal; venueName: string } | null>(null);
+    const [redemptionCode, setRedemptionCode] = useState('');
+    const [copied, setCopied] = useState(false);
     const [activeCategory, setActiveCategory] = useState('All');
 
+    const { user } = useUser();
+    const firestore = useFirestore();
     const { deals, isLoading: areDealsLoading } = useDeals();
     const { venues, isLoading: areVenuesLoading } = useVenues();
 
@@ -49,14 +54,61 @@ export function Deals() {
         }, {} as Record<string, (typeof venues)[number]>);
     }, [venues]);
 
+    const handleClaimClick = (deal: Deal, venueName: string) => {
+        setConfirmingDeal({ deal, venueName });
+    };
 
-    const handleClaimDeal = (deal: Deal, venueName: string) => {
-        setSelectedDeal({
-          title: deal.title,
-          description: deal.description,
-          venue: venueName,
+    const handleConfirmClaim = () => {
+        if (!confirmingDeal || !user || !firestore) return;
+        
+        const { deal, venueName } = confirmingDeal;
+        
+        // Generate the token code here so we can persist it immediately
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let generatedCode = 'BND-';
+        for (let i = 0; i < 3; i++) {
+            generatedCode += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        
+        setRedemptionCode(generatedCode);
+
+        // Firestore Write: Persistent claim record for venue attribution
+        const claimsRef = collection(firestore, 'claims');
+        addDocumentNonBlocking(claimsRef, {
+            userId: user.uid,
+            dropId: deal.id,
+            venueName: venueName,
+            offerTitle: deal.title,
+            code: generatedCode,
+            claimedAt: serverTimestamp(),
+            type: 'deal',
+            status: 'claimed'
         });
-        setIsQRDialogOpen(true);
+
+        setSuccessfulDeal(confirmingDeal);
+        setConfirmingDeal(null);
+    };
+
+    const handleCopy = async () => {
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(redemptionCode);
+            } else {
+                const el = document.createElement("textarea");
+                el.value = redemptionCode;
+                el.style.position = "absolute";
+                el.style.left = "-9999px";
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand("copy");
+                document.body.removeChild(el);
+            }
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        }
     };
 
     const filteredDeals = useMemo(() => {
@@ -149,7 +201,7 @@ export function Deals() {
                                     </div>
                                     <Button 
                                         className="bg-[#c4762a] hover:bg-[#b06824] text-white font-bold rounded-full px-6 h-10 shadow-lg shadow-[#c4762a]/20 transition-all active:scale-95 flex-shrink-0"
-                                        onClick={() => handleClaimDeal(deal, venueName)}
+                                        onClick={() => handleClaimClick(deal, venueName)}
                                     >
                                         Claim
                                     </Button>
@@ -167,12 +219,69 @@ export function Deals() {
                 </div>
             )}
 
-             {selectedDeal && (
-                <QRCodeDialog
-                    isOpen={isQRDialogOpen}
-                    onOpenChange={setIsQRDialogOpen}
-                    deal={selectedDeal}
-                />
+            {/* Confirmation Dialog */}
+            {confirmingDeal && (
+                <Dialog open={!!confirmingDeal} onOpenChange={() => setConfirmingDeal(null)}>
+                    <DialogContent className="bg-[#f2ece0] border-none rounded-3xl shadow-2xl">
+                        <DialogHeader>
+                            <DialogTitle className="text-xl font-bold text-[#1a1208]">Claim This Deal?</DialogTitle>
+                            <DialogDescription className="text-[rgba(26,18,8,0.60)]">
+                                You're about to claim <strong>{confirmingDeal.deal.title}</strong> at {confirmingDeal.venueName}.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter className="mt-4 gap-2 flex-col sm:flex-row">
+                            <Button variant="ghost" onClick={() => setConfirmingDeal(null)} className="text-[rgba(26,18,8,0.40)] font-bold">Cancel</Button>
+                            <Button className="bg-[#c4762a] hover:bg-[#b06824] text-white font-bold rounded-xl h-12" onClick={handleConfirmClaim}>Confirm Claim</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            )}
+
+            {/* Success Dialog */}
+            {successfulDeal && (
+                <Dialog open={!!successfulDeal} onOpenChange={() => setSuccessfulDeal(null)}>
+                    <DialogContent className="sm:max-w-md bg-[#f2ece0] border-none rounded-3xl shadow-2xl">
+                        <DialogHeader>
+                            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#c4762a]/10 mb-4">
+                                <CheckCircle className="h-6 w-6 text-[#c4762a]" />
+                            </div>
+                            <DialogTitle className="text-center text-2xl font-bold text-[#1a1208]">
+                                Deal Claimed!
+                            </DialogTitle>
+                            <DialogDescription className="text-center text-[rgba(26,18,8,0.60)]">
+                                {successfulDeal.deal.title} at <strong>{successfulDeal.venueName}</strong>
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="flex flex-col items-center justify-center space-y-6 p-4">
+                            <div className="relative w-full">
+                                <div className="flex items-center justify-center rounded-2xl border border-black/[0.08] bg-white py-8 px-6 shadow-sm">
+                                    <span className="font-mono text-4xl font-black tracking-[0.2em] text-[#1a1208]">
+                                        {redemptionCode}
+                                    </span>
+                                </div>
+                                <button
+                                    onClick={handleCopy}
+                                    className="absolute -right-2 -top-2 flex h-10 w-10 items-center justify-center rounded-full bg-[#c4762a] text-white shadow-lg transition-transform active:scale-90"
+                                >
+                                    {copied ? <Check size={18} /> : <Copy size={18} />}
+                                </button>
+                            </div>
+                            <div className="text-center space-y-1">
+                                <p className="text-xs font-bold text-[#c4762a] uppercase tracking-widest">
+                                    Redemption Code
+                                </p>
+                                <p className="text-[11px] font-medium text-[rgba(26,18,8,0.40)]">
+                                    Valid for 24 hours · Show at venue
+                                </p>
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button className="w-full h-14 bg-[#c4762a] hover:bg-[#b06824] text-white font-black text-lg rounded-2xl" onClick={() => setSuccessfulDeal(null)}>
+                                DONE
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             )}
         </div>
     );
