@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -16,6 +15,8 @@ import {
   Save,
   Phone,
   ExternalLink,
+  CheckCircle,
+  Check,
 } from 'lucide-react';
 import { GoogleMap, useJsApiLoader, MarkerF } from '@react-google-maps/api';
 
@@ -38,6 +39,14 @@ import {
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { logVaultEvent } from '@/lib/vault/logVaultEvent';
 import { trackVenueView } from '@/lib/vault/trackVenueView';
 import { useDemoTime } from '@/context/DemoTimeContext';
@@ -190,6 +199,14 @@ export default function VenuePage() {
   const [isSaved, setIsSaved] = useState(false);
   const [saveDocId, setSaveDocId] = useState<string | null>(null);
 
+  // Claim Request state
+  const [isClaimDialogOpen, setIsClaimDialogOpen] = useState(false);
+  const [claimName, setClaimName] = useState('');
+  const [claimRole, setClaimRole] = useState('Owner');
+  const [claimEmail, setClaimEmail] = useState('');
+  const [isClaimSubmitting, setIsClaimSubmitting] = useState(false);
+  const [isClaimSuccess, setIsClaimSuccess] = useState(false);
+
   const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const isKeyValid = isValidGoogleMapsKey(googleMapsApiKey);
 
@@ -205,6 +222,12 @@ export default function VenuePage() {
       setCurrentOrigin(window.location.origin);
     }
   }, []);
+
+  useEffect(() => {
+    if (user?.email && !claimEmail) {
+      setClaimEmail(user.email);
+    }
+  }, [user, claimEmail]);
 
   // Check saved status on mount or when user/venue changes
   useEffect(() => {
@@ -431,6 +454,38 @@ export default function VenuePage() {
     }, 500);
   };
 
+  const handleClaimRequest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!firestore || !slug || !venue) return;
+
+    setIsClaimSubmitting(true);
+    
+    const requestData = {
+      venueId: slug,
+      slug: slug,
+      venueName: venue.name || normalized?.name || slug,
+      name: claimName,
+      role: claimRole,
+      contactEmail: claimEmail,
+      requestedAt: serverTimestamp(),
+      status: 'pending'
+    };
+
+    try {
+      await addDocumentNonBlocking(collection(firestore, 'venueRequests'), requestData);
+      setIsClaimSuccess(true);
+    } catch (err) {
+      console.error("Venue claim request failed:", err);
+      toast({
+        variant: "destructive",
+        title: "Request failed",
+        description: "Something went wrong. Please try again later.",
+      });
+    } finally {
+      setIsClaimSubmitting(false);
+    }
+  };
+
   const getPriceSymbols = (level?: number) => {
     if (level === undefined || level === null) return null;
     if (level === 0) return 'Free';
@@ -611,7 +666,10 @@ export default function VenuePage() {
 
         {isUnclaimed && (
           <div className="text-center">
-            <button className="text-sm font-medium text-[#c4762a] hover:underline transition-all">
+            <button 
+              onClick={() => setIsClaimDialogOpen(true)}
+              className="text-sm font-medium text-[#c4762a] hover:underline transition-all"
+            >
               Own this venue? Claim it →
             </button>
           </div>
@@ -714,6 +772,86 @@ export default function VenuePage() {
           <GoogleAttribution />
         </div>
       </div>
+
+      {/* Claim Venue Request Dialog */}
+      <Dialog open={isClaimDialogOpen} onOpenChange={(open) => {
+        setIsClaimDialogOpen(open);
+        if (!open) setIsClaimSuccess(false);
+      }}>
+        <DialogContent className="max-w-md bg-[#f2ece0] border-none rounded-3xl shadow-2xl">
+          {isClaimSuccess ? (
+            <div className="py-8 flex flex-col items-center text-center">
+              <div className="h-20 w-20 flex items-center justify-center rounded-full bg-[#c4762a]/10 mb-6">
+                <CheckCircle className="h-10 w-10 text-[#c4762a]" />
+              </div>
+              <h2 className="text-2xl font-black tracking-tighter text-[#1a1208] uppercase">Request Received</h2>
+              <p className="mt-3 text-sm text-[rgba(26,18,8,0.60)] leading-relaxed px-4">
+                We'll be in touch within 24 hours to verify your ownership of <strong>{normalized?.name}</strong>.
+              </p>
+              <Button 
+                onClick={() => setIsClaimDialogOpen(false)}
+                className="w-full h-14 mt-8 bg-[#c4762a] hover:bg-[#b06824] text-white font-black text-lg rounded-2xl"
+              >
+                DONE
+              </Button>
+            </div>
+          ) : (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-xl font-bold text-[#1a1208]">Claim {normalized?.name}</DialogTitle>
+                <DialogDescription className="text-[rgba(26,18,8,0.50)]">
+                  Verify your relationship to this venue to unlock owner tools and post live drops.
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleClaimRequest} className="space-y-5 py-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="claim-name" className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Full Name</Label>
+                  <Input 
+                    id="claim-name" 
+                    required
+                    value={claimName} 
+                    onChange={(e) => setClaimName(e.target.value)} 
+                    placeholder="Your legal name"
+                    className="rounded-xl border-black/[0.08] bg-white h-12 text-sm font-bold text-[#1a1208]"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="claim-role" className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Your Role</Label>
+                  <Select value={claimRole} onValueChange={setClaimRole}>
+                    <SelectTrigger id="claim-role" className="rounded-xl border-black/[0.08] bg-white h-12 text-sm font-bold text-[#1a1208]">
+                      <SelectValue placeholder="Select your role" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-black/[0.08] bg-white">
+                      <SelectItem value="Owner">Owner</SelectItem>
+                      <SelectItem value="Manager">Manager</SelectItem>
+                      <SelectItem value="Chef">Chef / Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="claim-email" className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Contact Email</Label>
+                  <Input 
+                    id="claim-email" 
+                    type="email"
+                    required
+                    value={claimEmail} 
+                    onChange={(e) => setClaimEmail(e.target.value)} 
+                    placeholder="business@example.com"
+                    className="rounded-xl border-black/[0.08] bg-white h-12 text-sm font-bold text-[#1a1208]"
+                  />
+                </div>
+                <Button 
+                  type="submit"
+                  disabled={isClaimSubmitting}
+                  className="w-full h-14 mt-4 bg-[#c4762a] hover:bg-[#b06824] text-white font-black text-lg rounded-2xl shadow-xl shadow-[#c4762a]/20"
+                >
+                  {isClaimSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : "SUBMIT CLAIM"}
+                </Button>
+              </form>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
