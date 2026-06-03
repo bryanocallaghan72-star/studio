@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
-import { collection, query, where, orderBy, limit, Timestamp } from 'firebase/firestore';
-import { Users, UserPlus, MapPin, Coffee, Dumbbell, Waves, Plus, Loader2 } from "lucide-react";
+import { useCollection, useFirestore, useMemoFirebase, useUser } from "@/firebase";
+import { collection, query, where, orderBy, limit, Timestamp, doc, updateDoc, increment, serverTimestamp, addDoc } from 'firebase/firestore';
+import { Users, UserPlus, MapPin, Coffee, Dumbbell, Waves, Plus, Loader2, Check } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { Badge } from "../ui/badge";
@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { CreateActivityDialog } from "./CreateActivityDialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 
 // Define a more specific type for the social activities fetched from Firestore
 type SocialActivity = {
@@ -93,10 +94,14 @@ const ActivityCardSkeleton = () => (
 export function SocialPageClient() {
     const [selectedActivity, setSelectedActivity] = useState<SocialActivity | null>(null);
     const [isJoinDialogOpen, setJoinDialogOpen] = useState(false);
+    const [isJoining, setIsJoining] = useState(false);
+    const [requestedActivities, setRequestedActivities] = useState<string[]>([]);
     const [isCreateDialogOpen, setCreateDialogOpen] = useState(false);
     const [createActivityData, setCreateActivityData] = useState<{title: string; category: SocialActivity['category']} | null>(null);
 
     const firestore = useFirestore();
+    const { user } = useUser();
+    const { toast } = useToast();
 
     const socialsQuery = useMemoFirebase(() => {
         if (!firestore) return null;
@@ -113,8 +118,58 @@ export function SocialPageClient() {
     const { data: socialActivities, isLoading } = useCollection<SocialActivity>(socialsQuery);
 
     const handleAskToJoin = (activity: SocialActivity) => {
+        if (!user) {
+            toast({
+                title: "Sign in required",
+                description: "Join the inner circle to connect with others.",
+            });
+            return;
+        }
         setSelectedActivity(activity);
         setJoinDialogOpen(true);
+    };
+
+    const handleConfirmJoin = async () => {
+        if (!user || !firestore || !selectedActivity) return;
+
+        setIsJoining(true);
+
+        try {
+            const activityId = selectedActivity.id;
+            const participantsRef = collection(firestore, 'socials', activityId, 'participants');
+            const parentDocRef = doc(firestore, 'socials', activityId);
+
+            // 1. Add participation record
+            await addDoc(participantsRef, {
+                userId: user.uid,
+                displayName: user.displayName || user.email?.split('@')[0] || 'Bondi Local',
+                joinedAt: serverTimestamp(),
+                status: 'pending'
+            });
+
+            // 2. Increment participant count
+            await updateDoc(parentDocRef, {
+                currentParticipants: increment(1)
+            });
+
+            setRequestedActivities(prev => [...prev, activityId]);
+            setJoinDialogOpen(false);
+            
+            toast({
+                title: "Request Sent! 🤙",
+                description: `You've asked to join ${selectedActivity.title}.`,
+            });
+        } catch (error: any) {
+            console.error("Join request failed:", error);
+            toast({
+                variant: "destructive",
+                title: "Request failed",
+                description: "Something went wrong. Please try again.",
+            });
+        } finally {
+            setIsJoining(false);
+            setSelectedActivity(null);
+        }
     };
 
     const openCreateDialog = (title: string, category: SocialActivity['category']) => {
@@ -156,6 +211,8 @@ export function SocialPageClient() {
                     const progress = (activity.currentParticipants / activity.maxParticipants) * 100;
                     // Safely format the timestamp
                     const startTime = activity.startAt ? activity.startAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '...';
+                    const isRequested = requestedActivities.includes(activity.id);
+                    const isFull = activity.currentParticipants >= activity.maxParticipants;
 
                     return (
                         <Card key={activity.id} className="flex flex-col p-6 bg-card shadow-lg hover:shadow-xl transition-shadow hover:-translate-y-1">
@@ -201,9 +258,23 @@ export function SocialPageClient() {
                                             </Avatar>
                                             <span>@{activity.hostUsername}</span>
                                         </Link>
-                                        <Button className="font-semibold" size="sm" onClick={() => handleAskToJoin(activity)} disabled={activity.currentParticipants >= activity.maxParticipants}>
-                                            <UserPlus className="mr-2 h-4 w-4" />
-                                            Ask to Join
+                                        <Button 
+                                            className="font-semibold" 
+                                            size="sm" 
+                                            onClick={() => handleAskToJoin(activity)} 
+                                            disabled={isFull || isRequested}
+                                        >
+                                            {isRequested ? (
+                                                <>
+                                                    <Check className="mr-2 h-4 w-4" />
+                                                    Requested
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <UserPlus className="mr-2 h-4 w-4" />
+                                                    Ask to Join
+                                                </>
+                                            )}
                                         </Button>
                                     </div>
                                 </div>
@@ -254,23 +325,26 @@ export function SocialPageClient() {
 
             {selectedActivity && (
                  <Dialog open={isJoinDialogOpen} onOpenChange={setJoinDialogOpen}>
-                    <DialogContent>
+                    <DialogContent className="max-w-md bg-[#f2ece0] border-none rounded-3xl shadow-2xl">
                         <DialogHeader className="items-center text-center">
-                             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-2">
-                                <Users className="h-6 w-6 text-primary" />
+                             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#c4762a]/10 mb-2">
+                                <Users className="h-6 w-6 text-[#c4762a]" />
                             </div>
-                            <DialogTitle className="text-2xl">Ask to join?</DialogTitle>
-                            <DialogDescription>
+                            <DialogTitle className="text-2xl font-bold text-[#1a1208]">Ask to join?</DialogTitle>
+                            <DialogDescription className="text-[rgba(26,18,8,0.60)]">
                                 A request will be sent to the host, <strong>{selectedActivity.hostUsername}</strong>, to join the activity: <strong>{selectedActivity.title}</strong>.
                             </DialogDescription>
                         </DialogHeader>
-                        <DialogFooter className="flex-col gap-2">
-                             <Link href={`/social/${selectedActivity.id}`}>
-                                <Button className="w-full">
-                                    Send Join Request
-                                </Button>
-                            </Link>
-                             <Button variant="outline" className="w-full" onClick={() => setJoinDialogOpen(false)}>Cancel</Button>
+                        <DialogFooter className="flex-col gap-2 mt-4">
+                             <Button 
+                                className="w-full h-14 rounded-2xl bg-[#c4762a] text-lg font-bold text-white shadow-lg shadow-[#c4762a]/20 hover:bg-[#b06824]"
+                                onClick={handleConfirmJoin}
+                                disabled={isJoining}
+                             >
+                                {isJoining ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : null}
+                                Send Join Request
+                             </Button>
+                             <Button variant="ghost" className="w-full text-[rgba(26,18,8,0.40)] font-bold" onClick={() => setJoinDialogOpen(false)}>Cancel</Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
@@ -287,5 +361,3 @@ export function SocialPageClient() {
         </>
     );
 }
-
-    
