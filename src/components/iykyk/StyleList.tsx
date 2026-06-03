@@ -14,6 +14,8 @@ import { useRouter } from 'next/navigation';
 import { useStyleDrops } from '@/hooks/useStyleDrops';
 import type { StyleDrop } from '@/data/seeds/drops';
 import { useVenues } from '@/hooks/useVenues';
+import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
+import { collection, serverTimestamp } from 'firebase/firestore';
 
 type StyleDropWithClaim = StyleDrop & {
     hasUserClaimed: boolean;
@@ -138,6 +140,9 @@ export function StyleList() {
     const [redemptionCode, setRedemptionCode] = useState('');
     const [copied, setCopied] = useState(false);
 
+    const firestore = useFirestore();
+    const { user } = useUser();
+
     const { styleDrops, isLoading: areDropsLoading } = useStyleDrops();
     const { venues, isLoading: areVenuesLoading } = useVenues();
     
@@ -150,17 +155,6 @@ export function StyleList() {
             return acc;
         }, {} as Record<string, (typeof venues)[number]>);
     }, [venues]);
-
-    useEffect(() => {
-        if (successfulDrop) {
-            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-            let result = 'BND-';
-            for (let i = 0; i < 3; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            setRedemptionCode(result);
-        }
-    }, [successfulDrop]);
 
     const handleCopy = async () => {
         try {
@@ -187,7 +181,33 @@ export function StyleList() {
     const handleClaimClick = (drop: StyleDrop) => setConfirmingDrop(drop);
 
     const handleConfirmClaim = () => {
-        if (!confirmingDrop) return;
+        if (!confirmingDrop || !user || !firestore) return;
+        
+        // Generate the token code here so we can persist it immediately
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let generatedCode = 'BND-';
+        for (let i = 0; i < 3; i++) {
+            generatedCode += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        
+        setRedemptionCode(generatedCode);
+        
+        const key = confirmingDrop.slug ?? confirmingDrop.venueId;
+        const venueName = (key ? venuesBySlug[key]?.name : undefined) ?? confirmingDrop.venueName ?? "A special place";
+
+        // Firestore Write: Persistent claim record for venue attribution
+        const claimsRef = collection(firestore, 'claims');
+        addDocumentNonBlocking(claimsRef, {
+            userId: user.uid,
+            dropId: confirmingDrop.id,
+            venueName: venueName,
+            offerTitle: confirmingDrop.title,
+            code: generatedCode,
+            claimedAt: serverTimestamp(),
+            type: 'style',
+            status: 'claimed'
+        });
+
         setClaimedDrops(prev => [...prev, confirmingDrop.id]);
         setSuccessfulDrop(confirmingDrop);
         setConfirmingDrop(null);
