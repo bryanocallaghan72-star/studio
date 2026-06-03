@@ -19,8 +19,8 @@ import {
 } from 'lucide-react';
 import { GoogleMap, useJsApiLoader, MarkerF } from '@react-google-maps/api';
 
-import { useDoc, useFirestore, useMemoFirebase, setDocumentNonBlocking, useUser } from '@/firebase';
-import { doc, serverTimestamp } from 'firebase/firestore';
+import { useDoc, useFirestore, useMemoFirebase, setDocumentNonBlocking, useUser, addDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase';
+import { doc, serverTimestamp, collection, query, where, getDocs } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -186,6 +186,10 @@ export default function VenuePage() {
   const [isSaving, setIsSaving] = useState(false);
   const [currentOrigin, setCurrentOrigin] = useState("");
 
+  // Save functionality state
+  const [isSaved, setIsSaved] = useState(false);
+  const [saveDocId, setSaveDocId] = useState<string | null>(null);
+
   const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const isKeyValid = isValidGoogleMapsKey(googleMapsApiKey);
 
@@ -201,6 +205,27 @@ export default function VenuePage() {
       setCurrentOrigin(window.location.origin);
     }
   }, []);
+
+  // Check saved status on mount or when user/venue changes
+  useEffect(() => {
+    if (!user || !slug || !firestore) return;
+
+    const q = query(
+      collection(firestore, 'savedVenues'),
+      where('userId', '==', user.uid),
+      where('venueId', '==', slug)
+    );
+
+    getDocs(q).then((snapshot) => {
+      if (!snapshot.empty) {
+        setIsSaved(true);
+        setSaveDocId(snapshot.docs[0].id);
+      } else {
+        setIsSaved(false);
+        setSaveDocId(null);
+      }
+    }).catch(err => console.warn("Error checking saved status:", err));
+  }, [user, slug, firestore]);
 
   useEffect(() => {
     const photoRef = venue?.photos?.[0] || venue?.photoReference;
@@ -336,12 +361,51 @@ export default function VenuePage() {
     }
   };
   
-  const handleStubSave = () => {
-     toast({
-        title: "Coming Soon!",
-        description: "The ability to save your favorite venues is on its way.",
+  const handleSaveToggle = () => {
+    if (!user) {
+      toast({
+        title: "Sign in to save",
+        description: "Join the inner circle to save your favorite Bondi spots.",
       });
-  }
+      return;
+    }
+
+    if (!firestore || !slug || !venue) return;
+
+    if (isSaved && saveDocId) {
+      // Optimistic Update: Unsave
+      const currentSaveId = saveDocId;
+      setIsSaved(false);
+      setSaveDocId(null);
+      
+      deleteDocumentNonBlocking(doc(firestore, 'savedVenues', currentSaveId));
+      toast({
+        title: "Removed from favorites",
+      });
+    } else {
+      // Optimistic Update: Save
+      setIsSaved(true);
+      
+      const saveData = {
+        userId: user.uid,
+        venueId: slug,
+        slug: slug,
+        venueName: venue.name || normalized?.name || slug,
+        savedAt: serverTimestamp(),
+      };
+
+      addDocumentNonBlocking(collection(firestore, 'savedVenues'), saveData).then((docRef) => {
+        if (docRef) {
+          setSaveDocId(docRef.id);
+        }
+      });
+
+      toast({
+        title: "Saved to your Vault 🤙",
+        description: "Access your favorite spots anytime from your profile.",
+      });
+    }
+  };
 
   const handleEnrichmentSave = () => {
     if (!venueDocRef || !user) return;
@@ -531,14 +595,17 @@ export default function VenuePage() {
             Share
           </Button>
           <Button 
-            onClick={handleStubSave} 
+            onClick={handleSaveToggle} 
             variant="outline" 
             size="lg"
-            className="bg-white border-black/[0.08] font-bold rounded-2xl h-14 shadow-sm"
-            style={{ color: 'var(--phase-text)' }}
+            className={cn(
+                "bg-white border-black/[0.08] font-bold rounded-2xl h-14 shadow-sm transition-all",
+                isSaved && "bg-amber-50 border-[#c4762a]/20"
+            )}
+            style={{ color: isSaved ? '#c4762a' : 'var(--phase-text)' }}
           >
-            <Bookmark className="mr-2" />
-            Save
+            <Bookmark className={cn("mr-2", isSaved && "fill-current")} />
+            {isSaved ? "Saved" : "Save"}
           </Button>
         </div>
 
