@@ -5,19 +5,22 @@ import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Utensils, CheckCircle, Copy, Check } from "lucide-react";
+import { Utensils, CheckCircle, Copy, Check, Plus, Loader2, X } from "lucide-react";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
-import { doc, collection } from 'firebase/firestore';
+import { useFirestore, useUser, setDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase';
+import { doc, collection, serverTimestamp } from 'firebase/firestore';
 import { useTableDrops, type TableDrop } from '@/hooks/useTableDrops';
 import { useVenues } from '@/hooks/useVenues';
 import { useCreators } from '@/hooks/useCreators';
 import { cn } from '@/lib/utils';
 import { useDemoTime } from '@/context/DemoTimeContext';
+import { useToast } from '@/hooks/use-toast';
 
 type TableDropWithClaim = TableDrop & {
     hasUserClaimed: boolean;
@@ -82,7 +85,7 @@ const TableDropCard = ({ drop, onClaim, venueName, creator }: { drop: TableDropW
         <Card key={drop.id} className="group relative overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 border-2 border-transparent hover:border-[#c4762a]/50 rounded-2xl bg-white shadow-sm">
             <div className="absolute inset-0">
                 <Image
-                    src={drop.venueImageUrl}
+                    src={drop.venueImageUrl || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop'}
                     alt={venueName}
                     fill
                     unoptimized
@@ -152,9 +155,25 @@ export function Tables() {
     const [redemptionCode, setRedemptionCode] = useState('');
     const [copied, setCopied] = useState(false);
     const [isClient, setIsClient] = useState(false);
+    
+    // Create Drop State
+    const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+    const [isSubmittingDrop, setIsSubmittingDrop] = useState(false);
+    const [newDrop, setNewDrop] = useState({
+        venueName: '',
+        tableLabel: '',
+        partySize: 2,
+        startTime: '',
+        endTime: '',
+        expiresAt: '',
+        priceToClaimCents: 0,
+        currency: 'AUD'
+    });
+
     const firestore = useFirestore();
     const { user } = useUser();
     const { mockDate } = useDemoTime();
+    const { toast } = useToast();
 
     const { tableDrops, isLoading: areDropsLoading } = useTableDrops();
     const { venues, isLoading: areVenuesLoading } = useVenues();
@@ -245,6 +264,57 @@ export function Tables() {
             setDocumentNonBlocking(influenceRef, influenceData, { merge: true });
         }
     };
+
+    const handleCreateTableDrop = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!firestore || !user) return;
+
+        setIsSubmittingDrop(true);
+
+        const dropData = {
+            venueName: newDrop.venueName,
+            tableLabel: newDrop.tableLabel,
+            partySize: Number(newDrop.partySize),
+            startTime: new Date(newDrop.startTime).toISOString(),
+            endTime: new Date(newDrop.endTime).toISOString(),
+            expiresAt: new Date(newDrop.expiresAt).toISOString(),
+            priceToClaimCents: Number(newDrop.priceToClaimCents),
+            currency: newDrop.currency,
+            venueId: '', // Default to empty if not mapped
+            venueImageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop',
+            location: { lat: -33.8908, lng: 151.2743 },
+            createdAt: serverTimestamp(),
+            isFavoriteVenue: false,
+        };
+
+        try {
+            await addDocumentNonBlocking(collection(firestore, 'tableDrops'), dropData);
+            toast({
+                title: "Table Released! 🤙",
+                description: `${newDrop.venueName} is now live on the Tables feed.`,
+            });
+            setIsCreateDialogOpen(false);
+            setNewDrop({
+                venueName: '',
+                tableLabel: '',
+                partySize: 2,
+                startTime: '',
+                endTime: '',
+                expiresAt: '',
+                priceToClaimCents: 0,
+                currency: 'AUD'
+            });
+        } catch (error) {
+            console.error("Table drop creation failed:", error);
+            toast({
+                variant: "destructive",
+                title: "Release failed",
+                description: "Something went wrong. Please try again.",
+            });
+        } finally {
+            setIsSubmittingDrop(false);
+        }
+    };
     
     const liveDrops = useMemo(() => {
         if (!isClient || !tableDrops) return [];
@@ -331,6 +401,109 @@ export function Tables() {
                     </TabsContent>
                 </Tabs>
             )}
+
+            {/* Create Table Drop FAB */}
+            <button 
+                onClick={() => setIsCreateDialogOpen(true)}
+                className="fixed bottom-36 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#c4762a] text-white shadow-lg shadow-[#c4762a]/30 transition-transform active:scale-90 hover:bg-[#b06824] focus:outline-none"
+                aria-label="Release table"
+            >
+                <Plus size={28} strokeWidth={3} />
+            </button>
+
+            {/* Create Table Drop Dialog */}
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+                <DialogContent className="max-w-md bg-[#f2ece0] border-none rounded-3xl shadow-2xl overflow-y-auto max-h-[90vh]">
+                    <DialogHeader>
+                        <DialogTitle className="text-2xl font-black tracking-tighter text-[#1a1208] uppercase italic">RELEASE TABLE</DialogTitle>
+                        <DialogDescription className="text-[rgba(26,18,8,0.50)] font-medium">Post immediate availability to Bondi locals.</DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleCreateTableDrop} className="space-y-5 py-4">
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Venue Name</Label>
+                            <Input 
+                                required
+                                value={newDrop.venueName}
+                                onChange={e => setNewDrop({...newDrop, venueName: e.target.value})}
+                                placeholder="e.g. Totti's"
+                                className="rounded-xl border-black/[0.08] bg-white h-12 text-sm font-bold text-[#1a1208]"
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Table Description</Label>
+                            <Input 
+                                value={newDrop.tableLabel}
+                                onChange={e => setNewDrop({...newDrop, tableLabel: e.target.value})}
+                                placeholder="e.g. Courtyard Window"
+                                className="rounded-xl border-black/[0.08] bg-white h-12 text-sm font-bold text-[#1a1208]"
+                            />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Party Size</Label>
+                                <Input 
+                                    type="number"
+                                    required
+                                    value={newDrop.partySize}
+                                    onChange={e => setNewDrop({...newDrop, partySize: Number(e.target.value)})}
+                                    className="rounded-xl border-black/[0.08] bg-white h-12 text-sm font-bold text-[#1a1208]"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Price (Cents)</Label>
+                                <Input 
+                                    type="number"
+                                    required
+                                    value={newDrop.priceToClaimCents}
+                                    onChange={e => setNewDrop({...newDrop, priceToClaimCents: Number(e.target.value)})}
+                                    className="rounded-xl border-black/[0.08] bg-white h-12 text-sm font-bold text-[#1a1208]"
+                                />
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Start Time</Label>
+                                <Input 
+                                    type="datetime-local"
+                                    required
+                                    value={newDrop.startTime}
+                                    onChange={e => setNewDrop({...newDrop, startTime: e.target.value})}
+                                    className="rounded-xl border-black/[0.08] bg-white h-12 text-sm font-bold text-[#1a1208]"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">End Time</Label>
+                                <Input 
+                                    type="datetime-local"
+                                    required
+                                    value={newDrop.endTime}
+                                    onChange={e => setNewDrop({...newDrop, endTime: e.target.value})}
+                                    className="rounded-xl border-black/[0.08] bg-white h-12 text-sm font-bold text-[#1a1208]"
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Drop Expires</Label>
+                            <Input 
+                                type="datetime-local"
+                                required
+                                value={newDrop.expiresAt}
+                                onChange={e => setNewDrop({...newDrop, expiresAt: e.target.value})}
+                                className="rounded-xl border-black/[0.08] bg-white h-12 text-sm font-bold text-[#1a1208]"
+                            />
+                        </div>
+                        <DialogFooter className="pt-4">
+                            <Button 
+                                type="submit" 
+                                disabled={isSubmittingDrop}
+                                className="w-full h-14 bg-[#c4762a] hover:bg-[#b06824] text-white font-black text-lg rounded-2xl shadow-xl shadow-[#c4762a]/20"
+                            >
+                                {isSubmittingDrop ? <Loader2 className="animate-spin h-6 w-6" /> : "RELEASE TABLE 🤙"}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
             
             {confirmingDrop && (() => {
                 const venue = venuesBySlug[confirmingDrop.venueId];
