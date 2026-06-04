@@ -176,5 +176,41 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isSignedIn();
     }
+
+    // /savedVenues/{saveId}
+    match /savedVenues/{saveId} {
+      allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isOwner(request.resource.data.userId);
+    }
+
+    // /savedStyle/{saveId}
+    match /savedStyle/{saveId} {
+      allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isOwner(request.resource.data.userId);
+    }
+
+    // /savedDeals/{saveId}
+    match /savedDeals/{saveId} {
+      allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isOwner(request.resource.data.userId);
+    }
+
+    // /savedStays/{saveId}
+    match /savedStays/{saveId} {
+      allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isOwner(request.resource.data.userId);
+    }
+
+    // /venueRequests/{requestId}
+    match /venueRequests/{requestId} {
+      allow create: if isSignedIn();
+      allow read, update, delete: if false;
+    }
+
+    // /userPlans/{planId}
+    match /userPlans/{planId} {
+      allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create, update: if isOwner(request.resource.data.userId);
+    }
   }
 }
