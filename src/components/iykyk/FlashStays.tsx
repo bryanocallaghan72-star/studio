@@ -11,8 +11,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
 import Link from 'next/link';
 import { CheckCircle, CalendarPlus } from 'lucide-react';
-import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
-import { doc, collection } from 'firebase/firestore';
+import { useFirestore, useUser, setDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase';
+import { doc, collection, serverTimestamp } from 'firebase/firestore';
 import { useCreators } from '@/hooks/useCreators';
 import { useStays } from '@/hooks/useStays';
 
@@ -109,7 +109,18 @@ export function FlashStays() {
 
         if (!user || !firestore) return;
 
-        // Log the claim for the user
+        // Unified Claims Collection write (Top-level)
+        const claimsRef = collection(firestore, 'claims');
+        addDocumentNonBlocking(claimsRef, {
+            userId: user.uid,
+            stayId: stay.id,
+            title: stay.title,
+            type: 'flash-stay',
+            claimedAt: serverTimestamp(),
+            status: 'claimed'
+        });
+
+        // Log the claim for the user (Private history)
         const claimedDealRef = doc(firestore, 'users', user.uid, 'claimedDeals', stay.id);
         const claimData = {
             itemId: stay.id,
