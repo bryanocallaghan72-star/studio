@@ -169,5 +169,54 @@ service cloud.firestore {
       allow update: if isSignedIn();
       allow delete: if false;
     }
+
+    // /classDrops/{dropId}
+    // Live class drops. Discoverable by all, writable by authenticated instructors/users.
+    match /classDrops/{dropId} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+
+    // /savedVenues/{saveId}
+    match /savedVenues/{saveId} {
+      allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isOwner(request.resource.data.userId);
+    }
+
+    // /savedStyle/{saveId}
+    match /savedStyle/{saveId} {
+      allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isOwner(request.resource.data.userId);
+    }
+
+    // /savedDeals/{saveId}
+    match /savedDeals/{saveId} {
+      allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isOwner(request.resource.data.userId);
+    }
+
+    // /savedStays/{saveId}
+    match /savedStays/{saveId} {
+      allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isOwner(request.resource.data.userId);
+    }
+
+    // /venueRequests/{requestId}
+    match /venueRequests/{requestId} {
+      allow create: if isSignedIn();
+      allow read, update, delete: if false;
+    }
+
+    // /userPlans/{planId}
+    match /userPlans/{planId} {
+      allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create, update: if isOwner(request.resource.data.userId);
+    }
+
+    // /tableDrops/{dropId}
+    match /tableDrops/{dropId} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
   }
 }

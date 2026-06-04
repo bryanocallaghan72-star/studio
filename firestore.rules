@@ -212,5 +212,11 @@ service cloud.firestore {
       allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
       allow create, update: if isOwner(request.resource.data.userId);
     }
+
+    // /tableDrops/{dropId}
+    match /tableDrops/{dropId} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
   }
 }
