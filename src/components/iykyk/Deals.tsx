@@ -4,7 +4,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Ticket, Utensils, Droplet, ShoppingBag, Calendar, CalendarCheck2, CheckCircle, Copy, Check } from "lucide-react";
+import { Ticket, Utensils, Droplet, ShoppingBag, Calendar, CalendarCheck2, CheckCircle, Copy, Check, Bookmark } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useDeals } from '@/hooks/useDeals';
@@ -12,9 +12,10 @@ import type { Deal } from '@/data/seeds/drops';
 import { useVenues } from '@/hooks/useVenues';
 import { Skeleton } from '../ui/skeleton';
 import { cn } from '@/lib/utils';
-import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
-import { collection, serverTimestamp } from 'firebase/firestore';
+import { useFirestore, useUser, addDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase';
+import { collection, serverTimestamp, doc, query, where, getDocs } from 'firebase/firestore';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
 
 const categories = [
     { name: 'All', icon: Ticket },
@@ -25,12 +26,141 @@ const categories = [
     { name: 'Weekend', icon: CalendarCheck2 },
 ];
 
-
 const DealCardSkeleton = () => (
   <Card className="group overflow-hidden relative bg-card h-64">
     <Skeleton className="h-full w-full" />
   </Card>
 );
+
+const DealCard = ({ deal, venueName, onClaim }: { deal: Deal; venueName: string; onClaim: () => void }) => {
+    const { user } = useUser();
+    const firestore = useFirestore();
+    const { toast } = useToast();
+    const [isSaved, setIsSaved] = useState(false);
+    const [saveDocId, setSaveDocId] = useState<string | null>(null);
+
+    const image = PlaceHolderImages.find(img => img.id === deal.imageId);
+
+    useEffect(() => {
+        if (!user || !deal.id || !firestore) return;
+
+        const q = query(
+          collection(firestore, 'savedDeals'),
+          where('userId', '==', user.uid),
+          where('dealId', '==', deal.id)
+        );
+
+        getDocs(q).then((snapshot) => {
+          if (!snapshot.empty) {
+            setIsSaved(true);
+            setSaveDocId(snapshot.docs[0].id);
+          }
+        }).catch(err => console.warn("Error checking saved deal status:", err));
+    }, [user, deal.id, firestore]);
+
+    const handleSaveToggle = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!user) {
+            toast({
+                title: "Sign in to save",
+                description: "Join the inner circle to save your favorite Bondi deals.",
+            });
+            return;
+        }
+
+        if (!firestore || !deal.id) return;
+
+        if (isSaved && saveDocId) {
+            const currentSaveId = saveDocId;
+            setIsSaved(false);
+            setSaveDocId(null);
+            
+            deleteDocumentNonBlocking(doc(firestore, 'savedDeals', currentSaveId));
+            toast({
+                title: "Removed from favorites",
+            });
+        } else {
+            setIsSaved(true);
+            
+            const saveData = {
+                userId: user.uid,
+                dealId: deal.id,
+                title: deal.title,
+                venueName: venueName,
+                savedAt: serverTimestamp(),
+            };
+
+            addDocumentNonBlocking(collection(firestore, 'savedDeals'), saveData).then((docRef) => {
+                if (docRef) {
+                    setSaveDocId(docRef.id);
+                }
+            });
+
+            toast({
+                title: "Saved to your Vault 🤙",
+                description: "Access your favorite deals anytime from your profile.",
+            });
+        }
+    };
+
+    return (
+        <Card className="group overflow-hidden relative aspect-[16/10] transition-all hover:shadow-xl border border-black/[0.08] rounded-2xl bg-white">
+            <div className="absolute inset-0">
+                {image ? (
+                    <>
+                        <Image
+                            src={image.imageUrl}
+                            alt={deal.description}
+                            fill
+                            unoptimized
+                            className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
+                            data-ai-hint={image.imageHint}
+                        />
+                        <div 
+                            className="absolute inset-0" 
+                            style={{ background: 'linear-gradient(to top, rgba(8,10,13,0.85) 0%, rgba(8,10,13,0.4) 35%, transparent 55%)' }} 
+                        />
+                    </>
+                ) : (
+                    <div className="bg-secondary h-full w-full"/>
+                )}
+            </div>
+
+            <Button 
+                variant="ghost" 
+                size="icon" 
+                className={cn(
+                    "absolute top-3 left-3 z-20 text-white/80 hover:text-white bg-black/20 backdrop-blur-sm rounded-full transition-all",
+                    isSaved && "text-[#c4762a] bg-amber-50/20"
+                )}
+                onClick={handleSaveToggle}
+            >
+                <Bookmark className={cn("h-5 w-5", isSaved && "fill-current")} />
+            </Button>
+            
+            <Badge className="absolute top-3 right-3 bg-[#c4762a] text-white border-none font-black text-[10px] tracking-widest px-2 py-0.5 z-10 shadow-lg">
+                DEAL
+            </Badge>
+
+            <div className="absolute inset-0 flex flex-col justify-end p-5 text-white">
+                <div className="flex justify-between items-end gap-4">
+                    <div className="space-y-0.5">
+                        <h3 className="text-xl font-bold leading-tight">{deal.title}</h3>
+                        <p className="text-sm text-white/60 font-medium">{venueName} · {deal.validity}</p>
+                    </div>
+                    <Button 
+                        className="bg-[#c4762a] hover:bg-[#b06824] text-white font-bold rounded-full px-6 h-10 shadow-lg shadow-[#c4762a]/20 transition-all active:scale-95 flex-shrink-0"
+                        onClick={onClaim}
+                    >
+                        Claim
+                    </Button>
+                </div>
+            </div>
+        </Card>
+    );
+};
 
 export function Deals() {
     const [confirmingDeal, setConfirmingDeal] = useState<{ deal: Deal; venueName: string } | null>(null);
@@ -63,7 +193,6 @@ export function Deals() {
         
         const { deal, venueName } = confirmingDeal;
         
-        // Generate the token code here so we can persist it immediately
         const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
         let generatedCode = 'BND-';
         for (let i = 0; i < 3; i++) {
@@ -72,7 +201,6 @@ export function Deals() {
         
         setRedemptionCode(generatedCode);
 
-        // Firestore Write: Persistent claim record for venue attribution
         const claimsRef = collection(firestore, 'claims');
         addDocumentNonBlocking(claimsRef, {
             userId: user.uid,
@@ -163,51 +291,14 @@ export function Deals() {
                   </>
                 ) : (
                   filteredDeals.map(deal => {
-                     const image = PlaceHolderImages.find(img => img.id === deal.imageId);
                      const venueName = venuesBySlug[deal.venueSlug]?.name ?? "A special place";
-
                      return (
-                        <Card key={deal.id} className="group overflow-hidden relative aspect-[16/10] transition-all hover:shadow-xl border border-black/[0.08] rounded-2xl bg-white">
-                            <div className="absolute inset-0">
-                                {image ? (
-                                    <>
-                                        <Image
-                                            src={image.imageUrl}
-                                            alt={deal.description}
-                                            fill
-                                            unoptimized
-                                            className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
-                                            data-ai-hint={image.imageHint}
-                                        />
-                                        <div 
-                                            className="absolute inset-0" 
-                                            style={{ background: 'linear-gradient(to top, rgba(8,10,13,0.85) 0%, rgba(8,10,13,0.4) 35%, transparent 55%)' }} 
-                                        />
-                                    </>
-                                ) : (
-                                    <div className="bg-secondary h-full w-full"/>
-                                )}
-                            </div>
-                            
-                            <Badge className="absolute top-3 right-3 bg-[#c4762a] text-white border-none font-black text-[10px] tracking-widest px-2 py-0.5 z-10 shadow-lg">
-                                DEAL
-                            </Badge>
-
-                            <div className="absolute inset-0 flex flex-col justify-end p-5 text-white">
-                                <div className="flex justify-between items-end gap-4">
-                                    <div className="space-y-0.5">
-                                        <h3 className="text-xl font-bold leading-tight">{deal.title}</h3>
-                                        <p className="text-sm text-white/60 font-medium">{venueName} · {deal.validity}</p>
-                                    </div>
-                                    <Button 
-                                        className="bg-[#c4762a] hover:bg-[#b06824] text-white font-bold rounded-full px-6 h-10 shadow-lg shadow-[#c4762a]/20 transition-all active:scale-95 flex-shrink-0"
-                                        onClick={() => handleClaimClick(deal, venueName)}
-                                    >
-                                        Claim
-                                    </Button>
-                                </div>
-                            </div>
-                        </Card>
+                        <DealCard 
+                            key={deal.id} 
+                            deal={deal} 
+                            venueName={venueName} 
+                            onClaim={() => handleClaimClick(deal, venueName)} 
+                        />
                      )
                   })
                 )}
