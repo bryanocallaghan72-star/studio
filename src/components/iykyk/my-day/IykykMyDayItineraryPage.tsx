@@ -29,6 +29,15 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
     const [swapQuery, setSwapQuery] = useState('');
     const { venues, isLoading: isVenuesLoading } = useVenues();
 
+    /**
+     * Normalizes a string for fuzzy comparison.
+     * Lowercases, trims, and removes all non-alphanumeric characters.
+     */
+    const normalizeString = (s: string) => {
+        if (!s) return "";
+        return s.toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+    };
+
     if (!itineraryData) {
         return null;
     }
@@ -42,17 +51,26 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
     const getItemType = (item: ItineraryStop) => {
         if (!item?.location) return 'Restaurants';
         
+        const searchNorm = normalizeString(item.location);
+
         // Check real Firestore venues first
-        const realVenue = venues?.find(v => v.name === item.location || v.slug === item.location);
+        const realVenue = venues?.find(v => 
+            normalizeString(v.name || "") === searchNorm || 
+            normalizeString(v.slug || "") === searchNorm
+        );
         if (realVenue) return realVenue.category || realVenue.details?.category || 'Restaurants';
         
         // Fallback to legacy appData pins mapping
-        const pin = appData.map.pins.find(p => p.name === item.location);
+        const pin = appData.map.pins.find(p => normalizeString(p.name) === searchNorm);
         return pin?.type || 'Restaurants';
     }
     
     const getImageForStop = (stop: ItineraryStop) => {
-        const venue = venues?.find(v => v.name === stop.location || v.slug === stop.location);
+        const searchNorm = normalizeString(stop.location);
+        const venue = venues?.find(v => 
+            normalizeString(v.name || "") === searchNorm || 
+            normalizeString(v.slug || "") === searchNorm
+        );
         
         // If venue has a photo, use it (handles proxy/direct)
         const photoRef = venue?.photos?.[0] || venue?.photoReference;
@@ -96,6 +114,7 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
         
         const currentCategory = getItemType(editingItem);
         const search = swapQuery.toLowerCase();
+        const currentLocNorm = normalizeString(editingItem.location);
         
         // Primary search: matches category AND search term
         let filtered = venues.filter(v => {
@@ -111,8 +130,8 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
             const matchesCategory = vCategory === currentCategory;
             const matchesSearch = venueDisplayName.toLowerCase().includes(search);
             const isNotCurrent =
-              venueDisplayName !== editingItem.location &&
-              v.slug !== editingItem.location;
+              normalizeString(venueDisplayName) !== currentLocNorm &&
+              normalizeString(v.slug) !== currentLocNorm;
             
             return matchesCategory && matchesSearch && isNotCurrent;
         });
@@ -122,12 +141,12 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
             filtered = venues.filter(v => {
                 const venueDisplayName = v.iykyk?.title || v.googleCache?.displayName || v.name || v.slug || 'Unknown venue';
                 return venueDisplayName.toLowerCase().includes(search) &&
-                    v.name !== editingItem.location &&
-                    v.slug !== editingItem.location;
+                    normalizeString(v.name || "") !== currentLocNorm &&
+                    normalizeString(v.slug || "") !== currentLocNorm;
             });
         } else if (filtered.length === 0 && !search) {
              // If no category matches and no search, just show a handful of venues
-             filtered = venues.filter(v => v.name !== editingItem.location).slice(0, 10);
+             filtered = venues.filter(v => normalizeString(v.name || "") !== currentLocNorm).slice(0, 10);
         }
 
         return filtered.slice(0, 15);
