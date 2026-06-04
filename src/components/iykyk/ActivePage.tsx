@@ -1,16 +1,17 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dumbbell, CheckCircle, Zap, Clock, Copy, Check } from "lucide-react";
+import { Dumbbell, CheckCircle, Zap, Clock, Copy, Check, Plus, Loader2, X } from "lucide-react";
 import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useFirestore, useUser, setDocumentNonBlocking } from '@/firebase';
+import { useFirestore, useUser, setDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase';
 import { doc, collection } from 'firebase/firestore';
 import { useVenues } from '@/hooks/useVenues';
 import { useClassDrops } from '@/hooks/useClassDrops';
@@ -18,6 +19,7 @@ import type { ClassDrop } from '@/data/seeds/drops';
 import { useCreators } from '@/hooks/useCreators';
 import { cn } from '@/lib/utils';
 import { useDemoTime } from '@/context/DemoTimeContext';
+import { useToast } from '@/hooks/use-toast';
 
 const Countdown = ({ expiresAt }: { expiresAt: string }) => {
     const { mockDate } = useDemoTime();
@@ -144,9 +146,24 @@ export function ActivePage() {
     const [successfulDrop, setSuccessfulDrop] = useState<ClassDrop | null>(null);
     const [redemptionCode, setRedemptionCode] = useState('');
     const [copied, setCopied] = useState(false);
+
+    // Create Drop State
+    const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+    const [isSubmittingDrop, setIsSubmittingDrop] = useState(false);
+    const [newDrop, setNewDrop] = useState({
+        className: '',
+        venueName: '',
+        spotsAvailable: 5,
+        startTime: '',
+        expiresAt: '',
+        instructorHandle: '',
+        classImageUrl: ''
+    });
+
     const firestore = useFirestore();
     const { user } = useUser();
     const { mockDate } = useDemoTime();
+    const { toast } = useToast();
     
     const { classDrops, isLoading: areDropsLoading } = useClassDrops();
     const { venues, isLoading: areVenuesLoading } = useVenues();
@@ -233,6 +250,54 @@ export function ActivePage() {
             setDocumentNonBlocking(influenceRef, influenceData, { merge: true });
         }
     };
+
+    const handleCreateDrop = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!firestore || !user) return;
+
+        setIsSubmittingDrop(true);
+
+        const dropData = {
+            className: newDrop.className,
+            venueName: newDrop.venueName,
+            venueId: '',
+            spotsAvailable: Number(newDrop.spotsAvailable),
+            startTime: new Date(newDrop.startTime).toISOString(),
+            expiresAt: new Date(newDrop.expiresAt).toISOString(),
+            instructorHandle: newDrop.instructorHandle || null,
+            classImageUrl: newDrop.classImageUrl || 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80',
+            isFavoriteVenue: false,
+            location: { lat: -33.8908, lng: 151.2743 },
+            createdAt: new Date().toISOString()
+        };
+
+        try {
+            await addDocumentNonBlocking(collection(firestore, 'classDrops'), dropData);
+            toast({
+                title: "Drop Created! 🤙",
+                description: `${newDrop.className} is now live on the Active feed.`,
+            });
+            setIsCreateDialogOpen(false);
+            setNewDrop({
+                className: '',
+                venueName: '',
+                spotsAvailable: 5,
+                startTime: '',
+                expiresAt: '',
+                instructorHandle: '',
+                classImageUrl: ''
+            });
+        } catch (error) {
+            console.error("Drop creation failed:", error);
+            toast({
+                variant: "destructive",
+                title: "Creation failed",
+                description: "Something went wrong. Please try again.",
+            });
+        } finally {
+            setIsSubmittingDrop(false);
+        }
+    };
     
     const liveDrops = useMemo(() => {
         if (!isClient || !classDrops) return [];
@@ -315,6 +380,106 @@ export function ActivePage() {
                     </TabsContent>
                 </Tabs>
             )}
+
+            {/* Create Drop FAB */}
+            <button 
+                onClick={() => setIsCreateDialogOpen(true)}
+                className="fixed bottom-36 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#c4762a] text-white shadow-lg shadow-[#c4762a]/30 transition-transform active:scale-90 hover:bg-[#b06824] focus:outline-none"
+                aria-label="Create new drop"
+            >
+                <Plus size={28} strokeWidth={3} />
+            </button>
+            
+            {/* Create Drop Dialog */}
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+                <DialogContent className="max-w-md bg-[#f2ece0] border-none rounded-3xl shadow-2xl overflow-y-auto max-h-[90vh]">
+                    <DialogHeader>
+                        <DialogTitle className="text-2xl font-black tracking-tighter text-[#1a1208] uppercase italic">NEW CLASS DROP</DialogTitle>
+                        <DialogDescription className="text-[rgba(26,18,8,0.50)] font-medium">Release last-minute spots to the community.</DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleCreateDrop} className="space-y-5 py-4">
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Class Name</Label>
+                            <Input 
+                                required
+                                value={newDrop.className}
+                                onChange={e => setNewDrop({...newDrop, className: e.target.value})}
+                                placeholder="e.g. Reformer Fundamentals"
+                                className="rounded-xl border-black/[0.08] bg-white h-12 text-sm font-bold text-[#1a1208]"
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Studio Name</Label>
+                            <Input 
+                                required
+                                value={newDrop.venueName}
+                                onChange={e => setNewDrop({...newDrop, venueName: e.target.value})}
+                                placeholder="e.g. Fluidform Pilates"
+                                className="rounded-xl border-black/[0.08] bg-white h-12 text-sm font-bold text-[#1a1208]"
+                            />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Spots</Label>
+                                <Input 
+                                    type="number"
+                                    required
+                                    value={newDrop.spotsAvailable}
+                                    onChange={e => setNewDrop({...newDrop, spotsAvailable: Number(e.target.value)})}
+                                    className="rounded-xl border-black/[0.08] bg-white h-12 text-sm font-bold text-[#1a1208]"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Instructor @</Label>
+                                <Input 
+                                    value={newDrop.instructorHandle}
+                                    onChange={e => setNewDrop({...newDrop, instructorHandle: e.target.value})}
+                                    placeholder="shannon"
+                                    className="rounded-xl border-black/[0.08] bg-white h-12 text-sm font-bold text-[#1a1208]"
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Start Time</Label>
+                            <Input 
+                                type="datetime-local"
+                                required
+                                value={newDrop.startTime}
+                                onChange={e => setNewDrop({...newDrop, startTime: e.target.value})}
+                                className="rounded-xl border-black/[0.08] bg-white h-12 text-sm font-bold text-[#1a1208]"
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Drop Expires</Label>
+                            <Input 
+                                type="datetime-local"
+                                required
+                                value={newDrop.expiresAt}
+                                onChange={e => setNewDrop({...newDrop, expiresAt: e.target.value})}
+                                className="rounded-xl border-black/[0.08] bg-white h-12 text-sm font-bold text-[#1a1208]"
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-[#c4762a]">Image URL (Optional)</Label>
+                            <Input 
+                                value={newDrop.classImageUrl}
+                                onChange={e => setNewDrop({...newDrop, classImageUrl: e.target.value})}
+                                placeholder="https://..."
+                                className="rounded-xl border-black/[0.08] bg-white h-12 text-sm font-bold text-[#1a1208]"
+                            />
+                        </div>
+                        <DialogFooter className="pt-4">
+                            <Button 
+                                type="submit" 
+                                disabled={isSubmittingDrop}
+                                className="w-full h-14 bg-[#c4762a] hover:bg-[#b06824] text-white font-black text-lg rounded-2xl shadow-xl shadow-[#c4762a]/20"
+                            >
+                                {isSubmittingDrop ? <Loader2 className="animate-spin h-6 w-6" /> : "POST DROP 🤙"}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
             
             {confirmingDrop && (() => {
                 const venueName = venuesBySlug[confirmingDrop.venueId]?.name ?? confirmingDrop.venueName;
