@@ -13,6 +13,9 @@ import { appData } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { cn } from '@/lib/utils';
 import { useVenues } from '@/hooks/useVenues';
+import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
+import { collection, serverTimestamp } from 'firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
 
 type ItineraryPageProps = {
     itineraryData: any;
@@ -28,6 +31,9 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
     const [editingItem, setEditingItem] = useState<ItineraryStop | null>(null);
     const [swapQuery, setSwapQuery] = useState('');
     const { venues, isLoading: isVenuesLoading } = useVenues();
+    const { user } = useUser();
+    const firestore = useFirestore();
+    const { toast } = useToast();
 
     /**
      * Normalizes a string for fuzzy comparison.
@@ -42,6 +48,33 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
         return null;
     }
 
+    const handleSaveAndStart = async () => {
+        // Trigger the original transition to confirmation
+        onStartPlan(itineraryData);
+
+        // Persist the plan to Firestore for the user's vault
+        if (user && firestore) {
+            try {
+                const planData = {
+                    userId: user.uid,
+                    occasionTitle: itineraryData.title || 'My Bondi Day',
+                    stops: itineraryData.stops,
+                    generatedAt: new Date().toISOString(),
+                    savedAt: serverTimestamp(),
+                };
+
+                addDocumentNonBlocking(collection(firestore, 'userPlans'), planData);
+                
+                toast({
+                    title: "Plan saved to your vault!",
+                    description: "Access your saved itineraries anytime from your profile.",
+                });
+            } catch (error) {
+                console.error("Failed to persist itinerary:", error);
+            }
+        }
+    };
+
     const handleSwapClick = (originalItem: ItineraryStop, newItem: any) => {
         onSwap(originalItem, newItem);
         setEditingItem(null);
@@ -54,10 +87,11 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
         const searchNorm = normalizeString(item.location);
 
         // Check real Firestore venues first
-        const realVenue = venues?.find(v => 
-            normalizeString(v.name || "") === searchNorm || 
-            normalizeString(v.slug || "") === searchNorm
-        );
+        const realVenue = venues?.find(v => {
+            const venueDisplayName = v.iykyk?.title || v.googleCache?.displayName || v.name || v.slug || '';
+            return normalizeString(venueDisplayName) === searchNorm || normalizeString(v.slug || "") === searchNorm;
+        });
+        
         if (realVenue) return realVenue.category || realVenue.details?.category || 'Restaurants';
         
         // Fallback to legacy appData pins mapping
@@ -67,10 +101,10 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
     
     const getImageForStop = (stop: ItineraryStop) => {
         const searchNorm = normalizeString(stop.location);
-        const venue = venues?.find(v => 
-            normalizeString(v.name || "") === searchNorm || 
-            normalizeString(v.slug || "") === searchNorm
-        );
+        const venue = venues?.find(v => {
+            const venueDisplayName = v.iykyk?.title || v.googleCache?.displayName || v.name || v.slug || '';
+            return normalizeString(venueDisplayName) === searchNorm || normalizeString(v.slug || "") === searchNorm;
+        });
         
         // If venue has a photo, use it (handles proxy/direct)
         const photoRef = venue?.photos?.[0] || venue?.photoReference;
@@ -206,7 +240,7 @@ export const IykykMyDayItineraryPage = ({ itineraryData, onStartPlan, onBack, on
             <div className="mt-8 flex space-x-3 sticky bottom-[83px] bg-[#f2ece0] py-4 pb-[env(safe-area-inset-bottom)]">
                 <Button 
                     className="flex-grow h-14 bg-[#c4762a] text-white hover:bg-[#b06824] rounded-2xl font-black shadow-lg shadow-[#c4762a]/20" 
-                    onClick={() => onStartPlan(itineraryData)}
+                    onClick={handleSaveAndStart}
                 >
                     Start Plan
                 </Button>
