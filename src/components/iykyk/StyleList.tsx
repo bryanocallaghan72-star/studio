@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Shirt, CheckCircle, Ticket, MapPin, Copy, Check } from "lucide-react";
+import { Shirt, CheckCircle, Ticket, MapPin, Bookmark, Copy, Check } from "lucide-react";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';
@@ -14,8 +14,10 @@ import { useRouter } from 'next/navigation';
 import { useStyleDrops } from '@/hooks/useStyleDrops';
 import type { StyleDrop } from '@/data/seeds/drops';
 import { useVenues } from '@/hooks/useVenues';
-import { useFirestore, useUser, addDocumentNonBlocking } from '@/firebase';
-import { collection, serverTimestamp } from 'firebase/firestore';
+import { useFirestore, useUser, addDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase';
+import { collection, serverTimestamp, query, where, getDocs, doc } from 'firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 type StyleDropWithClaim = StyleDrop & {
     hasUserClaimed: boolean;
@@ -66,6 +68,29 @@ const Countdown = ({ expiresAt }: { expiresAt: string }) => {
 
 const StyleDropCard = ({ drop, venueName, onClaim }: { drop: StyleDropWithClaim, venueName: string, onClaim: (drop: StyleDropWithClaim) => void }) => {
     const router = useRouter();
+    const { toast } = useToast();
+    const firestore = useFirestore();
+    const { user } = useUser();
+    
+    const [isSaved, setIsSaved] = useState(false);
+    const [saveDocId, setSaveDocId] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!user || !drop.id || !firestore) return;
+
+        const q = query(
+          collection(firestore, 'savedStyle'),
+          where('userId', '==', user.uid),
+          where('dropId', '==', drop.id)
+        );
+
+        getDocs(q).then((snapshot) => {
+          if (!snapshot.empty) {
+            setIsSaved(true);
+            setSaveDocId(snapshot.docs[0].id);
+          }
+        }).catch(err => console.warn("Error checking saved style status:", err));
+    }, [user, drop.id, firestore]);
 
     const handleClaim = () => onClaim(drop);
 
@@ -73,6 +98,53 @@ const StyleDropCard = ({ drop, venueName, onClaim }: { drop: StyleDropWithClaim,
         e.preventDefault();
         e.stopPropagation();
         router.push(`/map?venue=${drop.slug}`);
+    };
+
+    const handleSaveToggle = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!user) {
+            toast({
+                title: "Sign in to save",
+                description: "Join the inner circle to save your favorite Bondi style drops.",
+            });
+            return;
+        }
+
+        if (!firestore || !drop.id) return;
+
+        if (isSaved && saveDocId) {
+            const currentSaveId = saveDocId;
+            setIsSaved(false);
+            setSaveDocId(null);
+            
+            deleteDocumentNonBlocking(doc(firestore, 'savedStyle', currentSaveId));
+            toast({
+                title: "Removed from style vault",
+            });
+        } else {
+            setIsSaved(true);
+            
+            const saveData = {
+                userId: user.uid,
+                dropId: drop.id,
+                title: drop.title,
+                venueName: venueName,
+                savedAt: serverTimestamp(),
+            };
+
+            addDocumentNonBlocking(collection(firestore, 'savedStyle'), saveData).then((docRef) => {
+                if (docRef) {
+                    setSaveDocId(docRef.id);
+                }
+            });
+
+            toast({
+                title: "Saved to your Style Vault 🤙",
+                description: "Access this drop anytime from your profile.",
+            });
+        }
     };
 
     return (
@@ -94,6 +166,17 @@ const StyleDropCard = ({ drop, venueName, onClaim }: { drop: StyleDropWithClaim,
                             <Ticket className="h-3 w-3" />
                             <span>DROP</span>
                         </Badge>
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className={cn(
+                                "text-white/80 hover:text-white bg-black/20 backdrop-blur-sm rounded-full transition-all",
+                                isSaved && "text-[#c4762a] bg-amber-50/20"
+                            )}
+                            onClick={handleSaveToggle}
+                        >
+                            <Bookmark className={cn("h-5 w-5", isSaved && "fill-current")} />
+                        </Button>
                     </div>
                      <div className="flex justify-between items-start">
                         <div>
