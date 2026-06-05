@@ -46,8 +46,8 @@ service cloud.firestore {
     match /users/{userId} {
       // Allow any signed-in user to READ a profile for creator features, etc.
       allow get: if isSignedIn();
-      // Block listing all users for security.
-      allow list: if false;
+      // Allow listing users for discovery/leaderboards if signed in.
+      allow list: if isSignedIn();
 
       // Allow a user to create their own profile document.
       allow create: if isOwner(userId);
