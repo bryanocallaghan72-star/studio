@@ -39,6 +39,13 @@ service cloud.firestore {
       return isSignedIn() && socialDoc.data.hostId == request.auth.uid;
     }
 
+    /**
+     * @description Checks if the user has administrative privileges.
+     */
+    function isAdmin() {
+      return isSignedIn() && request.auth.uid in ['ADMIN_UID_PLACEHOLDER'];
+    }
+
     // --- Collection Rules ---
 
     // /users/{userId}
@@ -52,10 +59,12 @@ service cloud.firestore {
       // Allow a user to create their own profile document.
       allow create: if isOwner(userId);
       
-      // Allow owner to update everything, allow others to ONLY increment followerCount.
+      // Allow owner to update everything, allow others to ONLY increment/decrement followerCount by 1.
       allow update: if isExistingOwner(userId) || (
         isSignedIn() && 
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['followerCount', 'updatedAt'])
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['followerCount', 'updatedAt']) &&
+        (request.resource.data.followerCount == resource.data.get('followerCount', 0) + 1 ||
+         request.resource.data.followerCount == resource.data.get('followerCount', 0) - 1)
       );
       
       allow delete: if isExistingOwner(userId);
@@ -97,9 +106,8 @@ service cloud.firestore {
     // /venues/{venueId}
     match /venues/{venueId} {
       allow get, list: if true;
+      allow create, update: if isAdmin();
       allow delete: if false;
-      allow create: if isSignedIn() && request.resource.data.slug == venueId;
-      allow update: if isSignedIn();
 
       match /experiences/{experienceId} {
         allow get, list: if true;
@@ -157,24 +165,24 @@ service cloud.firestore {
 
     // /claims/{claimId}
     match /claims/{claimId} {
-      allow get, list: if isSignedIn();
-      allow create: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow get, list: if isSignedIn() && resource.data.userId == request.auth.uid;
       allow update, delete: if false;
     }
 
     // /notifications/{notificationId}
     match /notifications/{notificationId} {
-      allow get, list: if isSignedIn();
-      allow create: if isSignedIn();
-      allow update: if isSignedIn();
+      allow get, list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isSignedIn() && resource.data.userId == request.auth.uid && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
       allow delete: if false;
     }
 
     // /classDrops/{dropId}
-    // Live class drops. Discoverable by all, writable by authenticated instructors/users.
     match /classDrops/{dropId} {
       allow read: if true;
-      allow write: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isExistingOwner(resource.data.userId);
     }
 
     // /savedVenues/{saveId}
@@ -210,13 +218,15 @@ service cloud.firestore {
     // /userPlans/{planId}
     match /userPlans/{planId} {
       allow read, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
-      allow create, update: if isOwner(request.resource.data.userId);
+      allow create: if isOwner(request.resource.data.userId);
+      allow update: if isExistingOwner(resource.data.userId) && request.resource.data.userId == resource.data.userId;
     }
 
     // /tableDrops/{dropId}
     match /tableDrops/{dropId} {
       allow read: if true;
-      allow write: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isExistingOwner(resource.data.userId);
     }
   }
 }
