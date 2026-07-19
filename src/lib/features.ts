@@ -1,6 +1,13 @@
 
 import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, Shirt, Camera, Bed, Code, Utensils, Star, Dumbbell } from "lucide-react";
 
+/**
+ * LAUNCH MODE — City2Surf (Sun 9 Aug).
+ * The hub shows only the launch trio + a Coming Soon teaser.
+ * Every parked card is preserved below in PARKED_FEATURES —
+ * to restore any of them after race day, move entries back into featureData.
+ */
+
 export const featureData = [
     {
       href: "/city2surf",
@@ -11,13 +18,33 @@ export const featureData = [
       imageId: "morning-1",
     },
     {
+      href: "/fire",
+      icon: "Flame",
+      title: "iykyk Fire",
+      description: "Real-time drops from Bondi venues. Claim before they're gone.",
+      color: "text-rose-500",
+      imageId: "sushi-1",
+    },
+    {
       href: "/my-day",
       icon: "Calendar",
       title: "iykyk My Day",
-      description: "Curated daily itinerary that you can shuffle like a playlist.",
+      description: "Crossed the line - what now? A local day plan, shuffled to your vibe.",
       color: "text-primary",
       imageId: "community-fitness",
     },
+    {
+      href: "/city2surf",
+      icon: "Sparkles",
+      title: "More Coming Soon",
+      description: "Vibe map, stays, tables, style, AR and more unlock after race day.",
+      color: "text-primary",
+      imageId: "night-2",
+    },
+];
+
+// ─── PARKED FOR LAUNCH — restore after Aug 9 by moving back into featureData ───
+export const PARKED_FEATURES = [
     {
       href: "/map",
       icon: "Map",
@@ -30,7 +57,7 @@ export const featureData = [
       href: "/flow",
       icon: "Compass",
       title: "iykyk Flow",
-      description: "Discover the rhythm of your city through creators’ movements.",
+      description: "Discover the rhythm of your city through creators' movements.",
       color: "text-indigo-500",
       imageId: "morning-1",
     },
@@ -50,14 +77,6 @@ export const featureData = [
       color: "text-pink-500",
       imageId: "fitness-1",
     },
-     {
-      href: "/fire",
-      icon: "Flame",
-      title: "iykyk Fire",
-      description: "Trending venues and creator hotspots updated daily.",
-      color: "text-rose-500",
-      imageId: "sushi-1",
-    },
     {
       href: "/deals",
       icon: "Tag",
@@ -66,7 +85,7 @@ export const featureData = [
       color: "text-emerald-500",
       imageId: "community-sushi",
     },
-     {
+    {
       href: "/code",
       icon: "Code",
       title: "iykyk Code",
