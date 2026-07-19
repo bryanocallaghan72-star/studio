@@ -213,6 +213,15 @@ service cloud.firestore {
       allow create, update: if isOwner(request.resource.data.userId);
     }
 
+    // /hotItems/{itemId}
+    // Fire drops (venue offers). Public read; writes via signed-in sessions
+    // (the /admin seeder). TODO: tighten to admin-only before scale.
+    match /hotItems/{itemId} {
+      allow get, list: if true;
+      allow create, update: if isSignedIn();
+      allow delete: if false;
+    }
+
     // /tableDrops/{dropId}
     match /tableDrops/{dropId} {
       allow read: if true;

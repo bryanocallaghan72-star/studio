@@ -1,39 +1,30 @@
-
 "use client";
 
-import { useMemo } from 'react';
-import { HOT_ITEMS } from '@/data/seeds/drops';
+import { collection } from 'firebase/firestore';
+import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import type { HotItem } from '@/data/seeds/drops';
-import { useDemoTime } from '@/context/DemoTimeContext';
-
-// Capture the time when the module loads to calculate stable relative offsets
-const DATA_INIT_TIME = Date.now();
 
 /**
- * Hook to fetch "hot item" data.
- * Updated to be phase-aware, shifting timestamps relative to the God Mode mock date.
+ * Hook to fetch "hot item" (Fire) drops.
  *
- * @returns An object containing the hotItems array, loading state, and error state.
+ * NOW LIVE: reads the `hotItems` collection from Firestore in real-time
+ * (onSnapshot), instead of the local seed file. Publish or edit an offer in
+ * Firestore (via the /admin seeder or the console) and every open app updates
+ * instantly — no deploy needed.
  */
 export function useHotItems() {
-  const { mockDate } = useDemoTime();
+  const firestore = useFirestore();
 
-  const hotItems = useMemo(() => {
-    return (HOT_ITEMS as HotItem[]).map(item => {
-      const originalExpiresAt = new Date(item.expiresAt).getTime();
-      const offset = originalExpiresAt - DATA_INIT_TIME;
-      
-      return {
-        ...item,
-        // Shift expiration to be relative to the current God Mode mock date
-        expiresAt: new Date(mockDate.getTime() + offset).toISOString(),
-      };
-    });
-  }, [mockDate]);
+  const hotItemsRef = useMemoFirebase(
+    () => (firestore ? collection(firestore, 'hotItems') : null),
+    [firestore]
+  );
+
+  const { data, isLoading, error } = useCollection<HotItem>(hotItemsRef);
 
   return {
-    hotItems,
-    isLoading: false,
-    error: null,
+    hotItems: (data ?? []) as HotItem[],
+    isLoading,
+    error,
   };
 }
