@@ -3,6 +3,14 @@ import { Sparkles, Map, Flame, Tag, Calendar, Users, Gift, Home, Compass, Zap, S
 
 export const featureData = [
     {
+      href: "/city2surf",
+      icon: "Zap",
+      title: "City2Surf x iykyk",
+      description: "One day only - Sun 9 Aug. Finisher-only offers from Bondi locals.",
+      color: "text-primary",
+      imageId: "morning-1",
+    },
+    {
       href: "/my-day",
       icon: "Calendar",
       title: "iykyk My Day",
