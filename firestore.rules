@@ -222,6 +222,15 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // /venueSubmissions/{submissionId}
+    // "Claim your venue" form (City2Surf onboarding). Create-only from the
+    // app (anonymous auth ok); reads restricted to console/admin.
+    match /venueSubmissions/{submissionId} {
+      allow get, list: if false;
+      allow create: if isSignedIn();
+      allow update, delete: if false;
+    }
+
     // /tableDrops/{dropId}
     match /tableDrops/{dropId} {
       allow read: if true;
